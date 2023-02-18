@@ -1,0 +1,9 @@
+{
+  "name": "@ume/tailwind-config",
+  "version": "0.0.0",
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "tailwindcss": "^3.2.7"
+  }
+}

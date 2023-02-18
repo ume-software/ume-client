@@ -1,0 +1,22 @@
+{
+    // Format a file on save. A formatter must be available, the file must not be auto-saved, and editor must not be shutting down.
+    // Enable/disable default JavaScript formatter (For Prettier)
+    "javascript.format.enable": false,
+    //
+    "javascript.validate.enable": false,
+    "editor.codeActionsOnSave": {
+        "eslint.autoFixOnSave": true,
+        "source.fixAll.eslint": true
+    },
+    "css.validate": false,
+    "cSpell.words": [
+        "Formik",
+        "trpc"
+    ],
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+    "editor.formatOnPaste": false, // required
+    "editor.formatOnType": false, // required
+    "editor.formatOnSave": true, // optional
+    "editor.formatOnSaveMode": "file", // required to format on save
+    "files.autoSave": "onFocusChange" // optional but recommended
+}

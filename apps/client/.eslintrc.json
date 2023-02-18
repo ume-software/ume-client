@@ -1,0 +1,36 @@
+{
+    "root": true,
+    "extends": [
+        "custom",
+        "plugin:prettier/recommended",
+        "prettier"
+    ],
+    "rules": {
+        "prettier/prettier": [
+            1,
+            {
+                "singleQuote": true,
+                "trailingComma": "all",
+                "tabWidth": 2,
+                "semi": false,
+                "importOrder": [
+                    "^react$",
+                    "^next$",
+                    "^model/(.*)$",
+                    "^[a-z\\-/]*$",
+                    "^[./]",
+                    "~/components/(.*)$",
+                    "~/container/(.*)$",
+                    "~/common/(.*)$",
+                    "~/utils/(.*)$"
+                ],
+                "importOrderSeparation": true,
+                "importOrderSortSpecifiers": true,
+                "printWidth": 120,
+                "bracketSpacing": true,
+                "arrowParens": "always",
+                "endOfLine": "auto"
+            }
+        ]
+    }
+}

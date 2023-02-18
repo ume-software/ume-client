@@ -1,0 +1,24 @@
+{
+  "extends": "@ume/tsconfig/react-library.json",
+  "include": [
+    "."
+  ],
+  "exclude": [
+    "dist",
+    "build",
+    "node_modules"
+  ],
+  "compilerOptions": {
+    "isolatedModules": true,
+    "baseUrl": ".",
+    "paths": {
+      "~/*": [
+        "./src/*"
+      ]
+    },
+    "lib": [
+      "es6",
+      "dom"
+    ]
+  }
+}

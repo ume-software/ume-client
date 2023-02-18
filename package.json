@@ -1,0 +1,35 @@
+{
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel --filter=@ume/client...",
+    "dev:client": "turbo run dev --parallel --filter=@ume/client...",
+    "test:client": "turbo run test ",
+    "lint": "turbo run lint",
+    "clean": "turbo run clean",
+    "format": "turbo run format"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^14.4.3",
+    "@trivago/prettier-plugin-sort-imports": "^3.4.0",
+    "@types/jest": "^29.4.0",
+    "eslint": "^8.27.0",
+    "eslint-config-custom": "0.0.0",
+    "eslint-plugin-prettier": "4.2.1",
+    "jest": "^29.4.2",
+    "jest-environment-jsdom": "^29.4.2",
+    "next-router-mock": "^0.9.1",
+    "prettier": "^2.7.1",
+    "prettier-plugin-tailwindcss": "^0.1.13",
+    "tailwindcss": "^3.2.4",
+    "turbo": "^1.6.3",
+    "typescript": "4.8.4"
+  },
+  "packageManager": "yarn@1.22.19"
+}

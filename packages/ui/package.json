@@ -1,0 +1,35 @@
+{
+  "name": "@ume/ui",
+  "version": "0.0.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist",
+    "./styles.css": "./dist/styles.css",
+    "./index.css": "./dist/index.css"
+  },
+  "license": "MIT",
+  "scripts": {
+    "build": "npx tsup-node src/index.tsx --format esm,cjs --dts --external react --treeshake --minify && npx tailwindcss -i ./src/styles.css -o ./dist/styles.css",
+    "dev": "concurrently \"npm:watch-js\" \"npm:watch-tailwind\"",
+    "watch-js": "npx tsup-node src/index.tsx --format esm,cjs --dts --external react --watch --treeshake",
+    "watch-tailwind": "npx tailwindcss -i ./src/styles.css -o ./dist/styles.css -w",
+    "clean": "rm -rf dist",
+    "format": "npx eslint --fix \"./src/**/*.{ts,tsx,json}\"",
+    "lint": "rome check \"./src\""
+  },
+  "devDependencies": {
+    "@ume/tailwind-config": "*",
+    "@ume/tsconfig": "*",
+    "@types/react": "^18.0.25",
+    "@types/react-dom": "^18.0.9",
+    "concurrently": "^7.6.0",
+    "eslint": "^8.28.0",
+    "eslint-config-custom": "0.0.0",
+    "postcss": "^8.4.19",
+    "react": "^18.2.0",
+    "tailwindcss": "^3.2.4",
+    "tsup": "^6.5.0",
+    "typescript": "^4.8.4"
+  }
+}
