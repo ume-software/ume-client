@@ -1,4 +1,4 @@
-# Ume Client
+# Ume Client 
 
 ## Getting Started
 
@@ -11,7 +11,6 @@ yarn global add turbo
 yarn global add tsup
 yarn install
 yarn dev:client ## For portal
-yarn dev:home ## For home page / landing page
 ```
 
 ## Git Conventional
