@@ -10,8 +10,8 @@ export const Header: React.FC = () => {
   const router = useRouter()
 
   return (
-    <div className="fixed z-10 flex items-center w-full h-16 pr-8 ">
-      <span className="pl-8 ">
+    <div className="fixed z-10 flex items-center w-full h-16 bg-[#2A235A]">
+      <span className="pl-8F ">
         <Image className="mx-auto" width={65} height={35} alt="logo-ume" src={logo} layout="fixed" />
       </span>
     </div>

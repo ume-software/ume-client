@@ -15,7 +15,7 @@ module.exports = {
         xsm: { max: '520px' },
       },
       colors: {
-        umeHeader: '2A235A',
+        umeHeader: '#2A235A',
       },
     },
   },
