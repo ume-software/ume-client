@@ -14,9 +14,12 @@
         "trpc"
     ],
     "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-    "editor.formatOnPaste": false, // required
+    "editor.formatOnPaste": true, // required
     "editor.formatOnType": false, // required
     "editor.formatOnSave": true, // optional
     "editor.formatOnSaveMode": "file", // required to format on save
-    "files.autoSave": "onFocusChange" // optional but recommended
+    "files.autoSave": "onFocusChange",
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    } // optional but recommended
 }

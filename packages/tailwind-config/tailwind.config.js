@@ -35,6 +35,9 @@ module.exports = {
             //         white: '#FFFFFF',
             //     },
             // },
+            colors: {
+                
+            }
         },
     },
 }

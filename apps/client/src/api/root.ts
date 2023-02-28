@@ -1,5 +1,5 @@
 import { type } from 'os'
-import { createRouter } from './configurations/createRouter'
+import { createRouter } from './configurations'
 
 
 export const rootRouter = createRouter()
