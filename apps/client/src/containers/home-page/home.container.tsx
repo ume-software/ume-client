@@ -12,7 +12,7 @@ const HomePage = (props) => {
           <Image className="w-full" src={cover} alt="cover"></Image>
         </div>
       </div>
-    </AppLayout >
+    </AppLayout>
   )
 }
 

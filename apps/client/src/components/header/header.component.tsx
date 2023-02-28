@@ -1,4 +1,4 @@
-import logo from 'public/ume-logo-2.png'
+import logo from 'public/ume-logo-2.svg'
 
 import React from 'react'
 
@@ -10,10 +10,15 @@ export const Header: React.FC = () => {
   const router = useRouter()
 
   return (
-    <div className="fixed z-10 flex items-center w-full h-16 bg-[#2A235A]">
-      <span className="pl-8F ">
-        <Image className="mx-auto" width={65} height={35} alt="logo-ume" src={logo} layout="fixed" />
-      </span>
+    <div className="fixed z-10 flex items-center w-full h-16 bg-[#100C2E]">
+      <div>
+        <span className="pl-8">
+          <Image className="mx-auto" width={160} height={40} alt="logo-ume" src={logo} layout="fixed" />
+        </span>
+        <span className="text-white font-bold">
+          <Link href={'/'}>Trang chủ</Link>
+        </span>
+      </div>
     </div>
   )
 }
