@@ -6,6 +6,9 @@ module.exports = {
     screen: {
       lgmax: { max: '1024px' },
     },
+    fontFamily: {
+      umeDefault: 'Francois One',
+    },
     extend: {
       screens: {
         lgmax: { max: '1024px' },
@@ -15,7 +18,8 @@ module.exports = {
         xsm: { max: '520px' },
       },
       colors: {
-        umeHeader: '#2A235A',
+        umeHeader: '#100C2E',
+        umeBackground: '#03001C',
         ume: {
           primary: '#00B549',
           error: '#FF4D4F',
