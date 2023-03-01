@@ -18,8 +18,8 @@ module.exports = {
         xsm: { max: '520px' },
       },
       colors: {
-        umeHeader: '#100C2E',
-        umeBackground: '#03001C',
+        umeHeader: '#292734',
+        umeBackground: '#15151B',
         ume: {
           primary: '#00B549',
           error: '#FF4D4F',
