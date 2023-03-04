@@ -12,25 +12,25 @@ export const Header: React.FC = () => {
   return (
     <div className="fixed z-10 flex items-center justify-between w-full h-16 bg-umeHeader ">
       <div className='flex items-center '>
-        <span className="pl-6  hover:scale-105">
+        <span className="pl-6">
           <Link href={'/'}><Image width={160} height={40} alt="logo-ume" src={logo} layout="fixed" /></Link>
         </span>
-        <span className="text-white font-semibold text-xl align-middle mr-6 font-mono hover:scale-105 hover:ease-in-out">
+        <span className="mr-6 text-xl font-semibold text-white align-middle hover:scale-105 hover:ease-in-out font-umeFrancois">
           <Link href={'/'}>Trang chủ</Link>
         </span>
-        <span className="text-white font-semibold text-xl align-middle mr-6 font-mono hover:scale-105 hover:ease-in-out">
+        <span className="mr-6 text-xl font-semibold text-white align-middle hover:scale-105 hover:ease-in-out font-umeFrancois">
           <Link href={'/'}>Tạo phòng</Link>
         </span>
-        <span className="text-white font-semibold hover:scale-105 text-xl align-middle font-mono hover:scale-105 hover:ease-in-out">
+        <span className="text-xl font-semibold text-white align-middle hover:scale-105 hover:ease-in-out font-umeFrancois">
           <Link href={'/'}>Cộng đồng</Link>
         </span>
       </div>
       <div className='flex items-center'>
-        <div className="pr-6 flex flex-row-auto" >
+        <div className="flex pr-6 flex-row-auto" >
           <span className='mr-5'>
             <Button
               name='register'
-              customCSS='bg-[#37354F] py-2 hover:scale-105 rounded-3xl max-h-10 w-[160px] text-[15px] font-mono'
+              customCSS='bg-[#37354F] py-2 hover:scale-105 rounded-3xl max-h-10 w-[160px] text-[15px] font-umeNunito'
               type='button'
             >
               Trở thành ume
@@ -45,7 +45,7 @@ export const Header: React.FC = () => {
           <span className='mr-5'>
             <Button
               name='register'
-              customCSS='bg-[#37354F] py-2 hover:scale-105 rounded-3xl max-h-10 w-[120px] text-[15px] font-mono'
+              customCSS='bg-[#37354F] py-2 hover:scale-105 rounded-3xl max-h-10 w-[120px] text-[15px] font-umeNunito'
               type='button'
             >
               Đăng nhập
@@ -54,7 +54,7 @@ export const Header: React.FC = () => {
           <span>
             <Button
               name='register'
-              customCSS='bg-[#7463F0] py-2 rounded-3xl max-h-10 w-[120px] hover:scale-105 text-[15px] font-mono '
+              customCSS='bg-[#7463F0] py-2 rounded-3xl max-h-10 w-[120px] hover:scale-105 text-[15px] font-umeNunito'
               type='button'
             >
               Đăng ký
