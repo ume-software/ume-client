@@ -7,9 +7,9 @@ module.exports = {
       lgmax: { max: '1024px' },
     },
     fontFamily: {
-      umeFrancois: ['Francois One'],
-      umeNunito: ['Nunito'],
-      umeRoboto: ['Roboto'],
+      francois: ['Francois One', 'sans-serif'],
+      nunito: ['Nunito', 'sans-serif'],
+      roboto: ['Roboto', 'sans-serif'],
     },
     extend: {
       screens: {

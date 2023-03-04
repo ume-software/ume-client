@@ -15,13 +15,13 @@ export const Header: React.FC = () => {
         <span className="pl-6">
           <Link href={'/'}><Image width={160} height={40} alt="logo-ume" src={logo} layout="fixed" /></Link>
         </span>
-        <span className="mr-6 text-xl font-semibold text-white align-middle hover:scale-105 hover:ease-in-out font-umeFrancois">
+        <span className="mr-6 text-xl font-semibold text-white align-middle hover:scale-105 hover:ease-in-out font-francois">
           <Link href={'/'}>Trang chủ</Link>
         </span>
-        <span className="mr-6 text-xl font-semibold text-white align-middle hover:scale-105 hover:ease-in-out font-umeFrancois">
+        <span className="mr-6 text-xl font-semibold text-white align-middle hover:scale-105 hover:ease-in-out font-francois ">
           <Link href={'/'}>Tạo phòng</Link>
         </span>
-        <span className="text-xl font-semibold text-white align-middle hover:scale-105 hover:ease-in-out font-umeFrancois">
+        <span className="text-xl font-semibold text-white align-middle hover:scale-105 hover:ease-in-out font-francois">
           <Link href={'/'}>Cộng đồng</Link>
         </span>
       </div>
@@ -30,7 +30,7 @@ export const Header: React.FC = () => {
           <span className='mr-5'>
             <Button
               name='register'
-              customCSS='bg-[#37354F] py-2 hover:scale-105 rounded-3xl max-h-10 w-[160px] text-[15px] font-umeNunito'
+              customCSS='bg-[#37354F] py-2 hover:scale-105 rounded-3xl max-h-10 w-[160px] text-[15px] font-nunito'
               type='button'
             >
               Trở thành ume
@@ -45,7 +45,7 @@ export const Header: React.FC = () => {
           <span className='mr-5'>
             <Button
               name='register'
-              customCSS='bg-[#37354F] py-2 hover:scale-105 rounded-3xl max-h-10 w-[120px] text-[15px] font-umeNunito'
+              customCSS='bg-[#37354F] py-2 hover:scale-105 rounded-3xl max-h-10 w-[120px] text-[15px] font-nunito'
               type='button'
             >
               Đăng nhập
@@ -54,7 +54,7 @@ export const Header: React.FC = () => {
           <span>
             <Button
               name='register'
-              customCSS='bg-[#7463F0] py-2 rounded-3xl max-h-10 w-[120px] hover:scale-105 text-[15px] font-umeNunito'
+              customCSS='bg-[#7463F0] py-2 rounded-3xl max-h-10 w-[120px] hover:scale-105 text-[15px] font-nunito'
               type='button'
             >
               Đăng ký
