@@ -13,7 +13,6 @@
   },
   "dependencies": {
     "@icon-park/react": "^1.4.2",
-    "@ume/ui": "*",
     "@next/bundle-analyzer": "^13.0.5",
     "@next/font": "13.0.5",
     "@tanstack/react-query": "^4.20.2",
@@ -22,6 +21,7 @@
     "@trpc/react": "^9.27.4",
     "@trpc/server": "^9.27.4",
     "@types/lodash": "^4.14.190",
+    "@ume/ui": "*",
     "address": "^1.2.2",
     "cookie": "^0.5.0",
     "formik": "^2.2.9",
@@ -37,14 +37,15 @@
     "react-use": "^17.4.0",
     "sharp": "^0.31.2",
     "turbo": "^1.6.3",
+    "ume-openapi-indentity": "^1.0.2",
     "zod": "^3.19.1"
   },
   "devDependencies": {
-    "@ume/tailwind-config": "*",
-    "@ume/tsconfig": "*",
     "@types/node": "^18.11.9",
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.9",
+    "@ume/tailwind-config": "*",
+    "@ume/tsconfig": "*",
     "autoprefixer": "^10.4.13",
     "cross-env": "^7.0.3",
     "eslint-config-custom": "0.0.0",
