@@ -41,7 +41,6 @@ export const TextInput = ({
     maxLength,
 }: TextInputProps) => {
     const [showPassword, setShowPassword] = useState(false)
-
     const handleClickShowPassword = () => {
         setShowPassword(!showPassword)
     }
