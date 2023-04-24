@@ -1,3 +1,4 @@
+import * as react_jsx_runtime from 'react/jsx-runtime';
 import React, { ReactNode, ChangeEventHandler, FocusEventHandler, MouseEventHandler } from 'react';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -11,7 +12,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     isDisabled?: boolean;
     icon?: ReactNode;
 }
-declare const Button: ({ helper, children, customCSS, loadingIconColor, isLoading, isOutlinedButton, icon, type, isDisabled, ...props }: ButtonProps) => JSX.Element;
+declare const Button: ({ helper, children, customCSS, loadingIconColor, isLoading, isOutlinedButton, icon, type, isDisabled, ...props }: ButtonProps) => react_jsx_runtime.JSX.Element;
 
 interface TextInputProps {
     icon?: ReactNode;
