@@ -1,5 +1,3 @@
-import { useEffect } from 'react'
-
 import Category from './component/category'
 import Cover from './component/cover'
 import Promotion from './component/promotion'
@@ -16,9 +14,7 @@ const HomePage = (props) => {
     <AppLayout {...props}>
       <div className="flex flex-col mx-16">
         <Cover />
-      </div>
-      <div>
-        <p className="block mx-20 my-10 text-3xl font-semibold text-white ">Danh mục</p>
+        <Category />
       </div>
     </AppLayout>
   )
