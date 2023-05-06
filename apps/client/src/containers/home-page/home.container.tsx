@@ -1,18 +1,21 @@
-import Category from './component/category'
-import Cover from './component/cover'
-import Promotion from './component/promotion'
+
 
 import { AppLayout } from '~/components/layouts/app-layout/app-layout'
+import Category from './component/category'
+import Cover from './component/cover'
 
 const HomePage = (props) => {
-  const ListCardDumbData = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
   return (
     <AppLayout {...props}>
-      <div className="flex mx-16 flex-col">
+      <div className="flex flex-1">
         <Cover />
-        <Category />
-        <Promotion listCard={ListCardDumbData} />
       </div>
+      <div>
+        <p className='text-white mx-20 my-10 block font-semibold text-3xl '>
+          Danh mục
+        </p>
+      </div>
+
     </AppLayout>
   )
 }
