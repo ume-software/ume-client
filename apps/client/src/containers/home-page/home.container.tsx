@@ -10,6 +10,7 @@ const HomePage = (props) => {
     <AppLayout {...props}>
       <div className="flex mx-16 flex-col">
         <Cover />
+        <Category />
         <Promotion listCard={ListCardDumbData} />
       </div>
     </AppLayout>
