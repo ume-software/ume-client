@@ -1,20 +1,13 @@
 import img1 from 'public/categories_pic/league_of_legends.jpg'
-import cover from 'public/cover.png'
-
-import { useState } from 'react'
-
-import { Button, Carousel, Drawer, Modal } from 'antd'
-import Image from 'next/legacy/image'
-
 import CategoryDrawer from './category-drawer'
 import CategorySlide from './category-slide'
 
 const Category = () => {
   return (
     <>
-      <div className=" w-full flex-col items-center">
-        <div className="my-8 grid grid-cols-2 text-white">
-          <h2 className="block font-semibold text-3xl">Dịch vụ</h2>
+      <div className="flex-col items-center w-full ">
+        <div className="grid grid-cols-2 my-8 text-white">
+          <h2 className="block text-3xl font-semibold">Dịch vụ</h2>
           <CategoryDrawer data={categories} />
         </div>
         <CategorySlide data={categories} />

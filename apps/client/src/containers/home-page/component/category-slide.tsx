@@ -1,6 +1,4 @@
 import React, { useRef, useState } from 'react'
-
-import { redirect } from 'next/dist/server/api-utils'
 import Image from 'next/image'
 
 const CategorySlide = ({ data }) => {
@@ -46,7 +44,7 @@ const CategorySlide = ({ data }) => {
 
   return (
     <>
-      <div className="w-full mt-16 overflow-hidden" ref={outerBox}>
+      <div className="w-full mt-8 overflow-hidden" ref={outerBox}>
         {/* <div className="flex justify-end px-3">
           <svg
             className="w-12 h-12 p-2 m-1 bg-gray-800 rounded-full cursor-pointer hover:bg-gray-700"
@@ -92,14 +90,14 @@ const CategorySlide = ({ data }) => {
         >
           {dataList.map((item) => {
             return (
-              <div className="mr-6 cursor-pointer " key={item.cateName}>
+              <div className="mr-6 duration-500 ease-in-out cursor-pointer hover:scale-105" key={item.cateName}>
                 <a href="#" draggable="false">
                   <Image
                     src={item.cateImg.src}
                     alt={item.cateName}
                     width={170}
                     height={250}
-                    className="pointer-events-none h-auto rounded-lg mb-2"
+                    className="h-auto mb-2 rounded-lg pointer-events-none"
                   />
                 </a>
               </div>

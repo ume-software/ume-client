@@ -6428,17 +6428,10 @@ ume-booking-service-openapi@^1.0.6:
   dependencies:
     axios "^0.27.2"
 
-ume-chatting-service-openapi@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.npmjs.org/ume-chatting-service-openapi/-/ume-chatting-service-openapi-1.0.1.tgz"
-  integrity sha512-oNB4FYp9AxhLGdqDWaMO6ywklUh4jZZDNG1EfvHEt6k7zijiXmWRYIn3Z9ljU7jJS9MqSujf+RqavxshFS+LgA==
-  dependencies:
-    axios "^0.27.2"
-
-ume-identity-service-openapi@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.npmjs.org/ume-identity-service-openapi/-/ume-identity-service-openapi-1.0.5.tgz"
-  integrity sha512-kVvo/ZyFQxiygotZvebzPKl4J467b/l5q2A7OKlWjmV+OeET+jRDV5+1WPFuGW3iGL7GxAuvOBA5LSVp3umJzQ==
+ume-openapi-indentity@^1.0.2:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/ume-openapi-indentity/-/ume-openapi-indentity-1.0.4.tgz#b07ee5ac1162a35bfabf72b8fd79a7869c7baf72"
+  integrity sha512-QZ0Asbz65EzOBmqDyyqrH733rWzQKp+j6mO5Oh/zrFD27LastugrGIPpky33+m6yYG4qtDc/ZvfAsZmi4O1YcQ==
   dependencies:
     axios "^0.27.2"
 

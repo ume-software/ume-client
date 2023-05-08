@@ -1,16 +1,14 @@
-import * as React from 'react'
+import { PromoteCard } from "./promoteCard";
 
-import PromoteCard from './promoteCard'
-
-export interface Promotion {}
+export interface Promotion { }
 
 export default function Promotion({ listCard }) {
   return (
     <div className="container mx-auto">
-      <p className="text-white block font-semibold text-3xl pt-8">Ume</p>
-      <div className="grid lg:grid-cols-4 gap-8 mt-12">
+      <p className="block pt-8 text-3xl font-semibold text-white">Ume</p>
+      <div className="grid gap-6 mt-6 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1">
         {listCard.map((card) => (
-          <PromoteCard card={card} />
+          <PromoteCard />
         ))}
       </div>
     </div>
