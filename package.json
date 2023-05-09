@@ -18,6 +18,7 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^14.4.3",
     "@trivago/prettier-plugin-sort-imports": "^3.4.0",
+    "@types/antd": "^1.0.0",
     "@types/jest": "^29.4.0",
     "eslint": "^8.27.0",
     "eslint-config-custom": "0.0.0",
