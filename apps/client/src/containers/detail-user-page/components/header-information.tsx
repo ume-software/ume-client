@@ -1,14 +1,22 @@
 import Image from 'next/legacy/image';
 import detailBackground from 'public/detail-cover-background.png'
 import cover from 'public/cover.png'
-import { Dot, Male } from '@icon-park/react';
-import type { TabsProps } from 'antd';
-import { Tabs } from 'antd';
-import { useState } from 'react';
+import { Dot, Male, ShareTwo } from '@icon-park/react';
+import { ReactElement, useState } from 'react';
+import MorenButton from './more-button';
+import MoreTable from './more-table';
 
 interface tabData {
   label: string,
   children: string,
+}
+
+interface morenButtonData {
+  className?: string,
+  children?: {
+    name: string,
+    icon?: ReactElement
+  }
 }
 
 const tabDatas: tabData[] = [
@@ -26,11 +34,35 @@ const tabDatas: tabData[] = [
   },
 ]
 
+const morenButtonDatas: morenButtonData[] = [
+  {
+    className: 'hover:bg-gray-700 rounded-md pl-2 pr-2',
+    children: { name: 'Chỉnh sửa thông tin' }
+  },
+  {
+    className: 'hover:bg-gray-700 rounded-md pl-2 pr-2',
+    children: { name: 'Thay đổi ảnh đại diện' }
+  },
+  { className: 'w-full bg-white h-0.5 rounded-all' },
+  {
+    children: {
+      name: 'Chia sẻ đến Facebook',
+      icon: <ShareTwo className={`transition-opacity opacity-0 group-hover:opacity-100 duration-200`} theme="outline" size="12" fill="#fff" />
+    }
+  },
+  {
+    children: {
+      name: 'Chia sẻ đến Zalo',
+      icon: <ShareTwo className={`transition-opacity opacity-0 group-hover:opacity-100 duration-200`} theme="outline" size="12" fill="#fff" />
+    }
+  }
+]
 
 
 const HeaderInformation = (props) => {
 
   const [selectedTab, setSelectedTab] = useState('Thông tin cá nhân')
+  const [actionModal, setActionModal] = useState(false)
 
   const handleChangeTab = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
@@ -41,6 +73,10 @@ const HeaderInformation = (props) => {
     setSelectedTab(target)
   }
 
+  const handleMorenButton = () => {
+    setActionModal(!actionModal)
+  }
+
   return (
     <>
       <div style={{ height: '380px', margin: '0 70px' }}>
@@ -48,8 +84,8 @@ const HeaderInformation = (props) => {
           <Image layout='fill' src={detailBackground} alt='background'></Image>
         </div>
         <div className='h-full flex flex-col justify-end gap-5'>
-          <div className='flex flex-row justify-between md:items-center items-baseline'>
-            <div className='flex md:flex-row md:gap-x-8 flex-col gap-y-2' style={{ zIndex: 100 }}>
+          <div className='flex flex-row justify-between md:items-center items-baseline pl-7 pr-7'>
+            <div className='flex md:flex-row md:gap-x-8 flex-col gap-y-2' style={{ zIndex: 2 }}>
               <div>
                 <Image className='rounded-full' width={194} height={182} src={cover} alt='avatar'></Image>
               </div>
@@ -61,25 +97,39 @@ const HeaderInformation = (props) => {
                     <p>16</p>
                   </div>
                   <div className='bg-gray-700 p-2 rounded-full flex items-center gap-1'>
-                    <Dot theme="multi-color" size="24" fill={['#54AF45', '#54AF45', '#54AF45', '#54AF45']} />
+                    <Dot theme="multi-color" size="24" fill={'#54AF45'} />
                     <p>Đang hoạt động</p>
                   </div>
                 </div>
               </div>
             </div>
-            <div style={{ zIndex: 100 }}>
-              <div className='flex flex-row bg-gray-700 p-2 rounded-full cursor-pointer'>
-                <Dot theme="outline" size="8" fill="#fff" />
-                <Dot theme="outline" size="8" fill="#fff" />
-                <Dot theme="outline" size="8" fill="#fff" />
+
+            <div className='relative flex flex-col items-center justify-start' style={{ zIndex: 3 }}>
+              <MorenButton className='flex flex-row items-center bg-gray-700 p-2 rounded-full' onClick={handleMorenButton}></MorenButton>
+              {/* <div className={`absolute w-max top-10 bottom-auto text-white p-3 border border-gray-300 bg-gray-900 rounded-xl gap-3 font-nunito font-medium text-20 ${actionModal ? 'flex flex-col' : 'hidden'}`}>
+                <a href='#' className='hover:bg-gray-700 rounded-md pl-2 pr-2'>Chỉnh sửa thông tin</a>
+                <a href='#' className='hover:bg-gray-700 rounded-md pl-2 pr-2'>Thay đổi ảnh đại diện</a>
+                <a className='w-full bg-white h-0.5 rounded-all' />
+                <div className='w-full overflow-hidden hover:bg-gray-700 group rounded-md pl-2 pr-2 '>
+                  <div className='w-full overflow-hidden scale-x-100 group-hover:scale-x-95 flex items-center justify-between gap-2 group-hover:-translate-x-2 duration-300'>
+                    <a href='#'>Chia sẻ đến Facebook</a>
+                    <ShareTwo className={`transition-opacity opacity-0 group-hover:opacity-100 duration-200`} theme="outline" size="12" fill="#fff" />
+                  </div>
+                </div>
+                <a href='#' className='hover:bg-gray-700 rounded-md pl-2 pr-2'>Chia sẻ đến Zalo</a>
+              </div> */}
+              <div className={`absolute w-max top-10 bottom-auto text-white p-3 pt-5 border border-gray-300 bg-gray-900 rounded-xl gap-3 font-nunito font-medium text-20 ${actionModal ? 'flex flex-col' : 'hidden'}`}>
+                {morenButtonDatas.map(item => (
+                  <MoreTable>{item.children}</MoreTable>
+                ))}
               </div>
             </div>
           </div>
 
-          <div className='flex flex-row gap-10' style={{ zIndex: 100 }}>
+          <div className='flex flex-row gap-10' style={{ zIndex: 2 }}>
             {tabDatas.map((item, index) => (
               <>
-                <a href="#tab" className={`text-white text-3xl font-medium p-4 ${item.label == selectedTab ? 'border-b-4 border-purple-700' : ''}`} key={index} onClick={handleChangeTab} data-tab={item.label}>{item.label}</a>
+                <a href="#tab" className={`text-white xl:text-3xl text-xl font-medium p-4 ${item.label == selectedTab ? 'border-b-4 border-purple-700' : ''}`} key={index} onClick={handleChangeTab} data-tab={item.label}>{item.label}</a>
               </>
             ))}
           </div>
