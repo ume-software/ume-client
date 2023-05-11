@@ -1,14 +1,16 @@
-import Image from 'next/legacy/image';
+import Image, { StaticImageData } from 'next/legacy/image';
 import detailBackground from 'public/detail-cover-background.png'
 import cover from 'public/cover.png'
 import { Dot, Male, ShareTwo } from '@icon-park/react';
 import { ReactElement, useState } from 'react';
 import MorenButton from './more-button';
 import MoreTable from './more-table';
+import ImgForEmpty from 'public/img-for-empty.png'
+import InformationTab from './information-tab/information-tab';
 
 interface tabData {
   label: string,
-  children: string,
+  children: ReactElement,
 }
 
 interface morenButtonData {
@@ -22,15 +24,15 @@ interface morenButtonData {
 const tabDatas: tabData[] = [
   {
     label: `Thông tin cá nhân`,
-    children: `Content of Tab Pane 1`,
+    children: <InformationTab></InformationTab>,
   },
   {
     label: `Album`,
-    children: `Content of Tab Pane 2`,
+    children: <Image src={ImgForEmpty}></Image>,
   },
   {
     label: `Khoảnh khắc`,
-    children: `Content of Tab Pane 3`,
+    children: <Image src={ImgForEmpty}></Image>,
   },
 ]
 
@@ -139,7 +141,9 @@ const HeaderInformation = (props) => {
         {tabDatas.map((item, index) => {
           return (
             <p className='text-white' key={index} hidden={selectedTab !== item.label}>
-              {item.children}
+              <div className='flex justify-center my-10'>
+                {item.children}
+              </div>
             </p>
           );
         })}
