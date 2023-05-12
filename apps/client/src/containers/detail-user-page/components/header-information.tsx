@@ -1,22 +1,25 @@
-import Image, { StaticImageData } from 'next/legacy/image';
-import detailBackground from 'public/detail-cover-background.png'
+import { Dot, Male, Plus, ShareTwo } from '@icon-park/react'
 import cover from 'public/cover.png'
-import { Dot, Male, ShareTwo } from '@icon-park/react';
-import { ReactElement, useState } from 'react';
-import MorenButton from './more-button';
-import MoreTable from './more-table';
+import detailBackground from 'public/detail-cover-background.png'
 import ImgForEmpty from 'public/img-for-empty.png'
-import InformationTab from './information-tab/information-tab';
+
+import { ReactElement, useState } from 'react'
+
+import Image, { StaticImageData } from 'next/legacy/image'
+
+import InformationTab from './information-tab'
+import MorenButton from './more-button'
+import MoreTable from './more-table'
 
 interface tabData {
-  label: string,
-  children: ReactElement,
+  label: string
+  children: ReactElement
 }
 
 interface morenButtonData {
-  className?: string,
+  className?: string
   children?: {
-    name: string,
+    name: string
     icon?: ReactElement
   }
 }
@@ -28,49 +31,61 @@ const tabDatas: tabData[] = [
   },
   {
     label: `Album`,
-    children: <Image src={ImgForEmpty}></Image>,
+    children: <Image src={ImgForEmpty} alt="EmptyImage"></Image>,
   },
   {
     label: `Khoảnh khắc`,
-    children: <Image src={ImgForEmpty}></Image>,
+    children: <Image src={ImgForEmpty} alt="EmptyImage"></Image>,
   },
 ]
 
 const morenButtonDatas: morenButtonData[] = [
   {
     className: 'hover:bg-gray-700 rounded-md pl-2 pr-2',
-    children: { name: 'Chỉnh sửa thông tin' }
+    children: { name: 'Chỉnh sửa thông tin' },
   },
   {
     className: 'hover:bg-gray-700 rounded-md pl-2 pr-2',
-    children: { name: 'Thay đổi ảnh đại diện' }
+    children: { name: 'Thay đổi ảnh đại diện' },
   },
   { className: 'w-full bg-white h-0.5 rounded-all' },
   {
     children: {
-      name: 'Chia sẻ đến Facebook',
-      icon: <ShareTwo className={`transition-opacity opacity-0 group-hover:opacity-100 duration-200`} theme="outline" size="12" fill="#fff" />
-    }
+      name: 'Follow',
+      icon: (
+        <Plus
+          className={`transition-opacity opacity-0 group-hover:opacity-100 duration-200`}
+          theme="outline"
+          size="15"
+          fill="#fff"
+        />
+      ),
+    },
   },
   {
     children: {
-      name: 'Chia sẻ đến Zalo',
-      icon: <ShareTwo className={`transition-opacity opacity-0 group-hover:opacity-100 duration-200`} theme="outline" size="12" fill="#fff" />
-    }
-  }
+      name: 'Chia sẻ đến Facebook',
+      icon: (
+        <ShareTwo
+          className={`transition-opacity opacity-0 group-hover:opacity-100 duration-200`}
+          theme="outline"
+          size="15"
+          fill="#fff"
+        />
+      ),
+    },
+  },
 ]
 
-
 const HeaderInformation = (props) => {
-
   const [selectedTab, setSelectedTab] = useState('Thông tin cá nhân')
   const [actionModal, setActionModal] = useState(false)
 
   const handleChangeTab = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
+    e.preventDefault()
     const target = (e.target as HTMLElement).dataset.tab
     if (typeof target !== 'string') {
-      return;
+      return
     }
     setSelectedTab(target)
   }
@@ -82,23 +97,23 @@ const HeaderInformation = (props) => {
   return (
     <>
       <div style={{ height: '380px', margin: '0 70px' }}>
-        <div className='absolute top-16 left-0' style={{ width: '100%', height: '416px' }}>
-          <Image layout='fill' src={detailBackground} alt='background'></Image>
+        <div className="absolute top-16 left-0" style={{ width: '100%', height: '416px' }}>
+          <Image layout="fill" src={detailBackground} alt="background"></Image>
         </div>
-        <div className='h-full flex flex-col justify-end gap-5'>
-          <div className='flex flex-row justify-between md:items-center items-baseline pl-7 pr-7'>
-            <div className='flex md:flex-row md:gap-x-8 flex-col gap-y-2' style={{ zIndex: 2 }}>
+        <div className="h-full flex flex-col justify-end gap-5">
+          <div className="flex flex-row justify-between md:items-center items-baseline pl-7 pr-7">
+            <div className="flex md:flex-row md:gap-x-8 flex-col gap-y-2" style={{ zIndex: 2 }}>
               <div>
-                <Image className='rounded-full' width={194} height={182} src={cover} alt='avatar'></Image>
+                <Image className="rounded-full" width={194} height={182} src={cover} alt="avatar"></Image>
               </div>
-              <div className='text-white flex flex-col gap-y-2'>
-                <p className='text-white text-4xl font-medium'>@ame147</p>
-                <div className='flex flex-row justify-around gap-x-5'>
-                  <div className='bg-gray-700 p-2 rounded-full flex items-center gap-1'>
+              <div className="text-white flex flex-col gap-y-2">
+                <p className="text-white text-4xl font-medium">@ame147</p>
+                <div className="flex flex-row justify-around gap-x-5">
+                  <div className="bg-gray-700 p-2 rounded-full flex items-center gap-1">
                     <Male theme="outline" size="24" fill="#1CB3FF" />
                     <p>16</p>
                   </div>
-                  <div className='bg-gray-700 p-2 rounded-full flex items-center gap-1'>
+                  <div className="bg-gray-700 p-2 rounded-full flex items-center gap-1">
                     <Dot theme="multi-color" size="24" fill={'#54AF45'} />
                     <p>Đang hoạt động</p>
                   </div>
@@ -106,8 +121,11 @@ const HeaderInformation = (props) => {
               </div>
             </div>
 
-            <div className='relative flex flex-col items-center justify-start' style={{ zIndex: 3 }}>
-              <MorenButton className='flex flex-row items-center bg-gray-700 p-2 rounded-full' onClick={handleMorenButton}></MorenButton>
+            <div className="relative flex flex-col items-center justify-start" style={{ zIndex: 3 }}>
+              <MorenButton
+                className="flex flex-row items-center bg-gray-700 p-2 rounded-full"
+                onClick={handleMorenButton}
+              ></MorenButton>
               {/* <div className={`absolute w-max top-10 bottom-auto text-white p-3 border border-gray-300 bg-gray-900 rounded-xl gap-3 font-nunito font-medium text-20 ${actionModal ? 'flex flex-col' : 'hidden'}`}>
                 <a href='#' className='hover:bg-gray-700 rounded-md pl-2 pr-2'>Chỉnh sửa thông tin</a>
                 <a href='#' className='hover:bg-gray-700 rounded-md pl-2 pr-2'>Thay đổi ảnh đại diện</a>
@@ -120,32 +138,44 @@ const HeaderInformation = (props) => {
                 </div>
                 <a href='#' className='hover:bg-gray-700 rounded-md pl-2 pr-2'>Chia sẻ đến Zalo</a>
               </div> */}
-              <div className={`absolute w-max top-10 bottom-auto text-white p-3 pt-5 border border-gray-300 bg-gray-900 rounded-xl gap-3 font-nunito font-medium text-20 ${actionModal ? 'flex flex-col' : 'hidden'}`}>
-                {morenButtonDatas.map(item => (
+              <div
+                className={`absolute w-max top-10 bottom-auto text-white p-3 pt-5 border border-gray-300 bg-gray-900 rounded-xl gap-3 font-nunito font-medium text-20 ${
+                  actionModal ? 'flex flex-col' : 'hidden'
+                }`}
+              >
+                {morenButtonDatas.map((item) => (
                   <MoreTable>{item.children}</MoreTable>
                 ))}
               </div>
             </div>
           </div>
 
-          <div className='flex flex-row gap-10' style={{ zIndex: 2 }}>
+          <div className="flex flex-row gap-10" style={{ zIndex: 2 }}>
             {tabDatas.map((item, index) => (
               <>
-                <a href="#tab" className={`text-white xl:text-3xl text-xl font-medium p-4 ${item.label == selectedTab ? 'border-b-4 border-purple-700' : ''}`} key={index} onClick={handleChangeTab} data-tab={item.label}>{item.label}</a>
+                <a
+                  href="#tab"
+                  className={`text-white xl:text-3xl text-xl font-medium p-4 ${
+                    item.label == selectedTab ? 'border-b-4 border-purple-700' : ''
+                  }`}
+                  key={index}
+                  onClick={handleChangeTab}
+                  data-tab={item.label}
+                >
+                  {item.label}
+                </a>
               </>
             ))}
           </div>
         </div>
       </div>
-      <div className='p-5'>
+      <div className="p-5">
         {tabDatas.map((item, index) => {
           return (
-            <p className='text-white' key={index} hidden={selectedTab !== item.label}>
-              <div className='flex justify-center my-10'>
-                {item.children}
-              </div>
+            <p className="text-white" key={index} hidden={selectedTab !== item.label}>
+              <div className="flex justify-center my-10">{item.children}</div>
             </p>
-          );
+          )
         })}
       </div>
     </>
