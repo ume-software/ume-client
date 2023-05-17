@@ -1,18 +1,18 @@
 import { Star } from '@icon-park/react'
 
-const PersonalInformation = ({ datas }) => {
+const PersonalInformation = (props: { datas }) => {
   return (
     <>
       <div className="bg-zinc-800 rounded-3xl p-10">
         <div className="flex flex-col gap-10">
-          <p className="font-inter font-bold text-4xl">{datas.title}</p>
-          <span className="font-roboto font-normal text-lg leading-9">{datas.content}</span>
+          <p className="font-inter font-bold text-4xl">{props.datas.title}</p>
+          <span className="font-roboto font-normal text-lg leading-9">{props.datas.content}</span>
         </div>
       </div>
       <div className="bg-zinc-800 rounded-3xl p-5">
         <div className="flex flex-col gap-10">
           <p className="font-inter font-bold text-4xl">Reviews</p>
-          {datas.reviews?.map((item, index) => (
+          {props.datas.reviews?.map((item, index) => (
             <div key={index} className="flex flex-col border-2 border-gray-600 rounded-lg p-3">
               <div className="flex flex-row justify-between">
                 <span className="font-roboto font-bold text-2xl leading-9">{item.name}</span>
