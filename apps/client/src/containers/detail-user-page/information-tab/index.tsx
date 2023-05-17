@@ -146,7 +146,11 @@ const InformationTab = (props) => {
             {gameSelected < 0 ? (
               <PersonalInformation datas={informationTabDatas} />
             ) : (
-              <GamePlayed datas={gamesDatas[gameSelected]} />
+              <div className="bg-zinc-800 rounded-3xl p-10">
+                <div className="flex flex-col gap-10">
+                  <GamePlayed datas={gamesDatas[gameSelected]} />
+                </div>
+              </div>
             )}
           </div>
         </div>
@@ -158,13 +162,13 @@ const InformationTab = (props) => {
             <div className="my-10 flex flex-col gap-5">
               <button
                 type="button"
-                className="rounded-full w-full text-purple-700 border-2 border-purple-700 py-2 font-nunito font-bold text-2xl hover:-translate-y-1"
+                className="rounded-full w-full text-purple-700 border-2 border-purple-700 py-2 font-nunito font-bold text-2xl hover:scale-105"
               >
                 Chat
               </button>
               <button
                 type="button"
-                className="rounded-full w-full text-white bg-purple-700 py-2 font-nunito font-bold text-2xl hover:-translate-y-1"
+                className="rounded-full w-full text-white bg-purple-700 py-2 font-nunito font-bold text-2xl hover:scale-105"
               >
                 Order
               </button>

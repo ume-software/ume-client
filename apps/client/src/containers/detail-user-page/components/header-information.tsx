@@ -1,13 +1,19 @@
 import { Dot, Male, Plus, ShareTwo } from '@icon-park/react'
+import TestImage2 from 'public/16x16/ume-logo-black.png'
+import TestImage1 from 'public/32x32/ume-logo-black.png'
+import TestImage3 from 'public/categories_pic/league_of_legends.jpg'
 import cover from 'public/cover.png'
+import TestImage4 from 'public/cover.png'
 import detailBackground from 'public/detail-cover-background.png'
 import ImgForEmpty from 'public/img-for-empty.png'
 
 import { ReactElement, useState } from 'react'
 
-import Image, { StaticImageData } from 'next/legacy/image'
+import Image, { ImageProps, StaticImageData } from 'next/legacy/image'
 
-import InformationTab from './information-tab'
+import AlbumTab from '../album-tab'
+import FeedsTab from '../feeds-tab'
+import InformationTab from '../information-tab'
 import MorenButton from './more-button'
 import MoreTable from './more-table'
 
@@ -24,6 +30,66 @@ interface morenButtonData {
   }
 }
 
+interface personalImageProps {
+  src: string
+}
+interface feedProps {
+  feedLink: string
+  imgSrc: string | StaticImageData
+  numberLike?: number
+  numberCom?: number
+}
+const personalImageDatas: personalImageProps[] = [
+  {
+    src: 'https://www.shelterluv.com/sites/default/files/animal_pics/5789/2023/05/11/07/20230511075451.png',
+  },
+  {
+    src: `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSr1OdSY02rL7B8t0vY_OHkQ1y_yadZY9dd5w&usqp=CAU`,
+  },
+  {
+    src: `https://www.shelterluv.com/sites/default/files/animal_pics/5789/2023/05/11/07/20230511075451.png`,
+  },
+  {
+    src: `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSr1OdSY02rL7B8t0vY_OHkQ1y_yadZY9dd5w&usqp=CAU`,
+  },
+  {
+    src: `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSr1OdSY02rL7B8t0vY_OHkQ1y_yadZY9dd5w&usqp=CAU`,
+  },
+  {
+    src: `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSr1OdSY02rL7B8t0vY_OHkQ1y_yadZY9dd5w&usqp=CAU`,
+  },
+  {
+    src: `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSr1OdSY02rL7B8t0vY_OHkQ1y_yadZY9dd5w&usqp=CAU`,
+  },
+  {
+    src: `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS70aQuCJpUvEQn6UEdCUtZ9oWZhviLNDxQ_Q&usqp=CAU`,
+  },
+]
+
+const feedData: feedProps[] = [
+  {
+    feedLink: '/1',
+    imgSrc: TestImage1,
+    numberLike: 2,
+    numberCom: 1,
+  },
+  {
+    feedLink: '/1',
+    imgSrc: TestImage2,
+    numberLike: 25,
+    numberCom: 1,
+  },
+  {
+    feedLink: '/1',
+    imgSrc: TestImage3,
+  },
+  {
+    feedLink: '/1',
+    imgSrc: TestImage4,
+    numberCom: 8,
+  },
+]
+
 const tabDatas: tabData[] = [
   {
     label: `Thông tin cá nhân`,
@@ -31,11 +97,11 @@ const tabDatas: tabData[] = [
   },
   {
     label: `Album`,
-    children: <Image src={ImgForEmpty} alt="EmptyImage"></Image>,
+    children: <AlbumTab datas={personalImageDatas} />,
   },
   {
     label: `Khoảnh khắc`,
-    children: <Image src={ImgForEmpty} alt="EmptyImage"></Image>,
+    children: <FeedsTab datas={feedData}></FeedsTab>,
   },
 ]
 
@@ -103,8 +169,14 @@ const HeaderInformation = (props) => {
         <div className="h-full flex flex-col justify-end gap-5">
           <div className="flex flex-row justify-between md:items-center items-baseline pl-7 pr-7">
             <div className="flex md:flex-row md:gap-x-8 flex-col gap-y-2" style={{ zIndex: 2 }}>
-              <div>
-                <Image className="rounded-full" width={194} height={182} src={cover} alt="avatar"></Image>
+              <div style={{ width: 194, height: 182, position: 'relative' }}>
+                <Image
+                  className="absolute rounded-full"
+                  layout="fill"
+                  objectFit="cover"
+                  src={cover}
+                  alt="avatar"
+                ></Image>
               </div>
               <div className="text-white flex flex-col gap-y-2">
                 <p className="text-white text-4xl font-medium">@ame147</p>
