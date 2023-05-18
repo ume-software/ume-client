@@ -1,4 +1,5 @@
 import img1 from 'public/categories_pic/league_of_legends.jpg'
+
 import CategoryDrawer from './category-drawer'
 import CategorySlide from './category-slide'
 
