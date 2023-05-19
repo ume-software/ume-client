@@ -15,7 +15,7 @@ RUN find . \! -name "package.json"  -type f -print | xargs rm
 COPY --from=builder /app/out/yarn.lock ./yark.lock
 # COPY ./.npmrc .npmrc
 COPY ./.gitignore .gitignore
-COPY ./.turbo.json turbo.json
+COPY ./turbo.json turbo.json
 
 # Add lockfile and package.json's of isolated subworkspace
 FROM node:19.7-bullseye AS installer
