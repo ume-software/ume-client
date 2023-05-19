@@ -19,7 +19,7 @@ env:
   DOCKER_SERVER: ${{ secrets.DOCKER_SERVER }}
 jobs:
   docker:
-    name: Build Portal
+    name: Build Ume Client
     runs-on: [ 'self-hosted' ]
     steps:
       - uses: actions/checkout@v3
@@ -49,7 +49,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          file: dockers/portal.Dockerfile
+          file: dockers/client.Dockerfile
           push: true
           tags: "default"
 #           tags: ${{ env.docker_tag_release }}
