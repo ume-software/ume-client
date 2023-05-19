@@ -3,7 +3,7 @@ FROM node:19.7-bullseye AS builder
 WORKDIR /app
 RUN yarn global add turbo
 COPY . .
-# RUN turbo prune --scope=@ume/client --docker
+RUN turbo prune --scope=@ume/client --docker
 
 FROM node:19.7-bullseye AS optimizer
 # Ser working directory
