@@ -52,8 +52,8 @@ jobs:
           file: dockers/portal.Dockerfile
           push: true
           tags: ${{ env.docker_tag_release }}
-          cache-from: type=registry,ref=${{ env.cache_image }}
-          cache-to: type=registry,ref=${{ env.cache_image }}
+#           cache-from: type=registry,ref=${{ env.cache_image }}
+#           cache-to: type=registry,ref=${{ env.cache_image }}
 
       - name: Get tag release
         id: tag_release
