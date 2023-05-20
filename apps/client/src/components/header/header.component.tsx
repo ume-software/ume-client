@@ -1,5 +1,5 @@
-import { Gift, Search } from '@icon-park/react'
-import { Button } from '@ume/ui'
+import { CloseSmall, Gift, Search } from '@icon-park/react'
+import { Button, Modal } from '@ume/ui'
 import logo from 'public/ume-logo-2.svg'
 
 import React from 'react'
@@ -9,11 +9,36 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 
 export const Header: React.FC = () => {
+  const [isModalVisible, setIsModalVisible] = React.useState(false)
   const router = useRouter()
+  const handleClose = () => {
+    setIsModalVisible(false)
+  }
 
+  const loginModal = Modal.useEditableForm({
+    onOK: () => {},
+    onClose: handleClose,
+    show: isModalVisible,
+    form: <div className="bg-[#15151B]rounded-xl"></div>,
+    backgroundColor: '#15151B',
+    closeButtonOnConner: (
+      <>
+        <CloseSmall
+          onClick={handleClose}
+          onKeyDown={(e) => e.key === 'Enter' && handleClose()}
+          tabIndex={1}
+          className=" bg-[#7463F0] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
+          theme="outline"
+          size="30"
+          fill="#FFFFFF"
+        />
+      </>
+    ),
+  })
   return (
     <div className="fixed z-10 flex items-center justify-between w-full h-16 bg-umeHeader ">
-      <div className="flex items-center ">
+      {loginModal}
+      <div className="flex items-center">
         <span className="pl-6">
           <Link href={'/'}>
             <Image width={160} height={40} alt="logo-ume" src={logo} layout="fixed" />
@@ -55,6 +80,9 @@ export const Header: React.FC = () => {
               name="register"
               customCSS="bg-[#37354F] py-2 hover:scale-105 rounded-3xl max-h-10 w-[120px] text-[15px] font-nunito"
               type="button"
+              onClick={() => {
+                setIsModalVisible(true)
+              }}
             >
               Đăng nhập
             </Button>

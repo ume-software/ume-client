@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-title-in-document-head */
 import Document, { DocumentContext, DocumentInitialProps, Head, Html, Main, NextScript } from 'next/document'
 
 class MyDocument extends Document {
@@ -10,9 +11,7 @@ class MyDocument extends Document {
   render() {
     return (
       <Html>
-
         <Head>
-          <title>Ume</title>
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" />
           <link

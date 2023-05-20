@@ -1,6 +1,7 @@
 import cover from 'public/cover.png'
 
 import Image from 'next/legacy/image'
+
 //TODO: fix this component to use dynamic
 const Cover = () => {
   return (
