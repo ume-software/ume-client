@@ -9,12 +9,12 @@ import ImgForEmpty from 'public/img-for-empty.png'
 
 import { ReactElement, useState } from 'react'
 
-import Image, { ImageProps, StaticImageData } from 'next/legacy/image'
+import Image, { StaticImageData } from 'next/legacy/image'
 
 import AlbumTab from '../album-tab'
 import FeedsTab from '../feeds-tab'
 import InformationTab from '../information-tab'
-import MorenButton from './more-button'
+import MoreButton from './more-button'
 import MoreTable from './more-table'
 
 interface tabData {
@@ -22,7 +22,7 @@ interface tabData {
   children: ReactElement
 }
 
-interface morenButtonData {
+interface moreButtonData {
   className?: string
   children?: {
     name: string
@@ -105,7 +105,7 @@ const tabDatas: tabData[] = [
   },
 ]
 
-const morenButtonDatas: morenButtonData[] = [
+const moreButtonDatas: moreButtonData[] = [
   {
     className: 'hover:bg-gray-700 rounded-md pl-2 pr-2',
     children: { name: 'Chỉnh sửa thông tin' },
@@ -143,7 +143,7 @@ const morenButtonDatas: morenButtonData[] = [
   },
 ]
 
-const HeaderInformation = (props) => {
+const DetailPlayer = (props) => {
   const [selectedTab, setSelectedTab] = useState('Thông tin cá nhân')
   const [actionModal, setActionModal] = useState(false)
 
@@ -156,7 +156,7 @@ const HeaderInformation = (props) => {
     setSelectedTab(target)
   }
 
-  const handleMorenButton = () => {
+  const handleMoreButton = () => {
     setActionModal(!actionModal)
   }
 
@@ -194,10 +194,10 @@ const HeaderInformation = (props) => {
             </div>
 
             <div className="relative flex flex-col items-center justify-start" style={{ zIndex: 3 }}>
-              <MorenButton
+              <MoreButton
                 className="flex flex-row items-center bg-gray-700 p-2 rounded-full"
-                onClick={handleMorenButton}
-              ></MorenButton>
+                onClick={handleMoreButton}
+              ></MoreButton>
               {/* <div className={`absolute w-max top-10 bottom-auto text-white p-3 border border-gray-300 bg-gray-900 rounded-xl gap-3 font-nunito font-medium text-20 ${actionModal ? 'flex flex-col' : 'hidden'}`}>
                 <a href='#' className='hover:bg-gray-700 rounded-md pl-2 pr-2'>Chỉnh sửa thông tin</a>
                 <a href='#' className='hover:bg-gray-700 rounded-md pl-2 pr-2'>Thay đổi ảnh đại diện</a>
@@ -215,7 +215,7 @@ const HeaderInformation = (props) => {
                   actionModal ? 'flex flex-col' : 'hidden'
                 }`}
               >
-                {morenButtonDatas.map((item) => (
+                {moreButtonDatas.map((item) => (
                   <MoreTable>{item.children}</MoreTable>
                 ))}
               </div>
@@ -253,4 +253,4 @@ const HeaderInformation = (props) => {
     </>
   )
 }
-export default HeaderInformation
+export default DetailPlayer

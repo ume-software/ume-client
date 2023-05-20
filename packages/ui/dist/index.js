@@ -2,6 +2,7 @@
 
 var jsxRuntime = require('react/jsx-runtime');
 var react = require('react');
+var antd = require('antd');
 
 var __defProp = Object.defineProperty;
 var __defProps = Object.defineProperties;
@@ -137,6 +138,44 @@ var TextInput = ({
     error && /* @__PURE__ */ jsxRuntime.jsx("span", { className: "mt-1.5 inline-block text-ume-error text-[14px]", children: error })
   ] }) });
 };
+var DrawerSidebar = (_a) => {
+  var _b = _a, {
+    classNameButton,
+    childrenButton,
+    titleDrawer,
+    classNameDrawer,
+    childrenDrawer
+  } = _b; __objRest(_b, [
+    "classNameButton",
+    "childrenButton",
+    "titleDrawer",
+    "classNameDrawer",
+    "childrenDrawer"
+  ]);
+  const [open, setOpen] = react.useState(false);
+  const showDrawer = () => {
+    setOpen(true);
+  };
+  const onClose = () => {
+    setOpen(false);
+  };
+  return /* @__PURE__ */ jsxRuntime.jsxs(jsxRuntime.Fragment, { children: [
+    /* @__PURE__ */ jsxRuntime.jsx("div", { className: `classNameButton`, onClick: showDrawer, children: childrenButton }),
+    /* @__PURE__ */ jsxRuntime.jsx(
+      antd.Drawer,
+      {
+        className: `classNameDrawer`,
+        title: titleDrawer,
+        placement: "right",
+        closable: false,
+        onClose,
+        open,
+        children: childrenDrawer
+      }
+    )
+  ] });
+};
 
 exports.Button = Button;
+exports.DrawerSidebar = DrawerSidebar;
 exports.TextInput = TextInput;

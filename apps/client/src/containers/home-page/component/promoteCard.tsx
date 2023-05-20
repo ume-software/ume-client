@@ -30,7 +30,7 @@ export const PromoteCard = (props: { datas }) => {
   }, [isPlaying])
   return (
     <>
-      <Link href={''}>
+      <Link href={`/player/${props.datas.id}`}>
         <div className="bg-[#292734] text-white rounded-3xl pl-6 pb-4 mt-6 max-w-[320px] hover:scale-105 duration-500 ease-in-out block">
           <div className="flex flex-row justify-between">
             <Image

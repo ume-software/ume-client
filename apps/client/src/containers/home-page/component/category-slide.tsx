@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react'
+
 import Image from 'next/image'
 
 const CategorySlide = ({ data }) => {
@@ -90,7 +91,7 @@ const CategorySlide = ({ data }) => {
         >
           {dataList.map((item) => {
             return (
-              <div className="mr-6 duration-500 ease-in-out cursor-pointer hover:scale-105" key={item.cateName}>
+              <div className="mr-6 duration-500 ease-in-out cursor-pointer hover:scale-105" key={item.id}>
                 <a href="#" draggable="false">
                   <Image
                     src={item.cateImg.src}

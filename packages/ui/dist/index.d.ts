@@ -1,6 +1,6 @@
-import React, { ReactNode, ChangeEventHandler, FocusEventHandler, MouseEventHandler } from 'react';
+import React$1, { ReactNode, ChangeEventHandler, FocusEventHandler, MouseEventHandler } from 'react';
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends React$1.ButtonHTMLAttributes<HTMLButtonElement> {
     helper?: ReactNode;
     children?: any;
     value?: string;
@@ -35,4 +35,14 @@ interface TextInputProps {
 }
 declare const TextInput: ({ icon, type, placeholder, name, value, disabled, required, title, onChange, onClick, onBlur, state, subtitle, className, error, minLength, maxLength, }: TextInputProps) => JSX.Element;
 
-export { Button, TextInput };
+interface DrawerSidebarProps {
+    classNameButton?: string;
+    childrenButton: React.ReactNode;
+    titleDrawer?: React.ReactNode;
+    classNameDrawer?: string;
+    childrenDrawer?: React.ReactNode;
+    [key: string]: any;
+}
+declare const DrawerSidebar: ({ classNameButton, childrenButton, titleDrawer, classNameDrawer, childrenDrawer, ...props }: DrawerSidebarProps) => JSX.Element;
+
+export { Button, DrawerSidebar, TextInput };

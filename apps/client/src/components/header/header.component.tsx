@@ -12,7 +12,7 @@ export const Header: React.FC = () => {
   const router = useRouter()
 
   return (
-    <div className="fixed z-10 flex items-center justify-between w-full h-16 bg-umeHeader ">
+    <div className="flex items-center justify-between w-full h-16 bg-umeHeader ">
       <div className="flex items-center ">
         <span className="pl-6">
           <Link href={'/'}>
