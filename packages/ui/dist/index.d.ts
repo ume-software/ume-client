@@ -34,6 +34,51 @@ interface TextInputProps {
     maxLength?: number;
     required?: boolean;
 }
-declare const TextInput: ({ icon, type, placeholder, name, value, disabled, required, title, onChange, onClick, onBlur, state, subtitle, className, error, minLength, maxLength, }: TextInputProps) => JSX.Element;
+declare const TextInput: ({ icon, type, placeholder, name, value, disabled, required, title, onChange, onClick, onBlur, state, subtitle, className, error, minLength, maxLength, }: TextInputProps) => react_jsx_runtime.JSX.Element;
 
-export { Button, TextInput };
+interface SuccessErrorProps {
+    show: boolean;
+    onClose: () => void;
+    title: string | ReactNode;
+    message: string | ReactNode;
+    closeButton: string | ReactNode;
+    colorIcon?: string;
+}
+interface RiskConfirmProps extends SuccessErrorProps {
+    okButton: string | ReactNode;
+    form?: ReactNode;
+    closeOnConfirm?: boolean;
+    titleCustomCss?: string;
+    panelCustomCss?: string;
+}
+interface EditableFormProps {
+    show: boolean;
+    onClose: () => void;
+    onOK: () => void;
+    title?: string | ReactNode;
+    form: ReactNode;
+    closeButtonOnConner?: ReactNode;
+    backgroundColor?: string;
+}
+declare const useSuccess: ({ show, onClose, title, message, closeButton }: SuccessErrorProps) => react_jsx_runtime.JSX.Element;
+declare const useAlertError: ({ show, onClose, title, message, closeButton, colorIcon }: SuccessErrorProps) => react_jsx_runtime.JSX.Element;
+declare const useRiskConfirm: ({ show, onClose, title, message, closeButton, okButton, form, closeOnConfirm, panelCustomCss, titleCustomCss, }: RiskConfirmProps) => react_jsx_runtime.JSX.Element;
+declare const useEditableForm: ({ show, onClose, title, form, onOK, closeButtonOnConner, backgroundColor, }: EditableFormProps) => react_jsx_runtime.JSX.Element;
+declare const useLoading: ({ show, onClose, title, message, closeButton }: SuccessErrorProps) => react_jsx_runtime.JSX.Element;
+
+declare const modal_useAlertError: typeof useAlertError;
+declare const modal_useEditableForm: typeof useEditableForm;
+declare const modal_useLoading: typeof useLoading;
+declare const modal_useRiskConfirm: typeof useRiskConfirm;
+declare const modal_useSuccess: typeof useSuccess;
+declare namespace modal {
+  export {
+    modal_useAlertError as useAlertError,
+    modal_useEditableForm as useEditableForm,
+    modal_useLoading as useLoading,
+    modal_useRiskConfirm as useRiskConfirm,
+    modal_useSuccess as useSuccess,
+  };
+}
+
+export { Button, modal as Modal, TextInput };
