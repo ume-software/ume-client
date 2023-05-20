@@ -7,19 +7,19 @@ import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
 export const getListSkill = async () => {
   try {
-    const listSkill = await new SkillApi({
+    const response = await new SkillApi({
       basePath: getENV().baseBookingURL,
       isJsonMime: () => true,
     }).findAndCountAll()
 
     return {
-      data: listSkill.data,
+      data: response.data,
     }
   } catch (error) {
     console.log('error at catch', error)
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
-      message: error.message || 'Failed to get applications',
+      message: error.message || 'Failed to get list skill',
     })
   }
 }
