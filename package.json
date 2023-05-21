@@ -32,8 +32,5 @@
     "turbo": "^1.9.8",
     "typescript": "5.0.4"
   },
-  "packageManager": "yarn@1.22.19",
-  "dependencies": {
-    "antd": "^5.5.0"
-  }
+  "packageManager": "yarn@1.22.19"
 }

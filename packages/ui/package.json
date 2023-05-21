@@ -19,6 +19,7 @@
     "lint": "rome check \"./src\""
   },
   "devDependencies": {
+    "@headlessui/react": "^1.7.4",
     "@ume/tailwind-config": "*",
     "@ume/tsconfig": "*",
     "@types/react": "^18.0.25",
