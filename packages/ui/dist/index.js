@@ -2,6 +2,9 @@
 
 var jsxRuntime = require('react/jsx-runtime');
 var react = require('react');
+var react$1 = require('@icon-park/react');
+var ui = require('@ume/ui');
+var antd = require('antd');
 
 var __defProp = Object.defineProperty;
 var __defProps = Object.defineProperties;
@@ -137,6 +140,107 @@ var TextInput = ({
     error && /* @__PURE__ */ jsxRuntime.jsx("span", { className: "mt-1.5 inline-block text-ume-error text-[14px]", children: error })
   ] }) });
 };
+var CustomDrawer = (_a) => {
+  var _b = _a, {
+    customOpenBtn,
+    openBtn,
+    footer,
+    isSearch,
+    children,
+    drawerTitle
+  } = _b; __objRest(_b, [
+    "customOpenBtn",
+    "openBtn",
+    "footer",
+    "isSearch",
+    "children",
+    "drawerTitle"
+  ]);
+  const [searchTex, setSearchText] = react.useState("");
+  const [drawerOpen, setDrawerOpen] = react.useState(false);
+  const onSearch = () => console.log(searchTex);
+  console.log(open);
+  const showDrawer = () => {
+    setDrawerOpen(true);
+  };
+  const onClose = () => {
+    setDrawerOpen(false);
+  };
+  const drawerFooter = () => {
+    return /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex items-center justify-between px-6 py-4 text-white", children: [
+      /* @__PURE__ */ jsxRuntime.jsx("div", { className: "flex items-center gap-2", children: /* @__PURE__ */ jsxRuntime.jsx("span", { className: "my-auto text-1xl font-bold", children: "1 units total 4.75" }) }),
+      /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "space-x-4 flex items-center self-end", children: [
+        /* @__PURE__ */ jsxRuntime.jsx(
+          ui.Button,
+          {
+            onClick: onClose,
+            name: "register",
+            customCSS: "bg-[#37354F] py-2 hover:scale-105 rounded-3xl max-h-10 w-[120px] text-[15px] font-nunito",
+            type: "button",
+            children: "Tho\xE1t"
+          }
+        ),
+        /* @__PURE__ */ jsxRuntime.jsx(
+          ui.Button,
+          {
+            name: "register",
+            customCSS: "bg-[#7463F0] py-2 rounded-3xl max-h-10 w-[120px] hover:scale-105 text-[15px] font-nunito",
+            type: "button",
+            children: "Thu\xEA"
+          }
+        )
+      ] })
+    ] });
+  };
+  const drawerHeader = () => {
+    return /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "grid grid-cols-2 p-6 space-x-5 text-white", children: [
+      /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex items-center space-x-5", children: [
+        /* @__PURE__ */ jsxRuntime.jsx("div", { className: "inline-block p-2 bg-gray-700 rounded-full cursor-pointer hover:bg-gray-500 active:bg-gray-400", children: /* @__PURE__ */ jsxRuntime.jsx(react$1.ArrowRight, { onClick: onClose, theme: "outline", size: "24", fill: "#fff" }) }),
+        /* @__PURE__ */ jsxRuntime.jsx("span", { className: "my-auto text-3xl font-bold", children: drawerTitle })
+      ] }),
+      isSearch && /* @__PURE__ */ jsxRuntime.jsxs("div", { className: "flex items-center self-end", children: [
+        /* @__PURE__ */ jsxRuntime.jsx(
+          react$1.Search,
+          {
+            theme: "outline",
+            size: "32",
+            fill: "#fff",
+            className: "p-2 mt-2 mr-2 rounded-full hover:bg-gray-700 active:bg-gray-500",
+            onClick: onSearch
+          }
+        ),
+        /* @__PURE__ */ jsxRuntime.jsx(
+          ui.TextInput,
+          {
+            placeholder: "T\xECm ki\u1EBFm...",
+            value: searchTex,
+            type: "text",
+            name: "categorySearch",
+            onChange: (e) => setSearchText(e.target.value),
+            className: "text-black w-[11rem]"
+          }
+        )
+      ] })
+    ] });
+  };
+  return /* @__PURE__ */ jsxRuntime.jsxs(jsxRuntime.Fragment, { children: [
+    /* @__PURE__ */ jsxRuntime.jsx("div", { onClick: showDrawer, className: customOpenBtn, children: openBtn }),
+    /* @__PURE__ */ jsxRuntime.jsx(
+      antd.Drawer,
+      {
+        className: "bg-black",
+        title: drawerHeader(),
+        placement: "right",
+        footer: footer && drawerFooter(),
+        closable: false,
+        onClose,
+        open: drawerOpen,
+        children
+      }
+    )
+  ] });
+};
 
 exports.Button = Button;
+exports.CustomDrawer = CustomDrawer;
 exports.TextInput = TextInput;

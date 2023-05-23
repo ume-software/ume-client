@@ -1,8 +1,9 @@
 import React, { useRef, useState } from 'react'
+
 import Image from 'next/image'
 
 const CategorySlide = ({ data }) => {
-  console.log(data)
+  // console.log(data)
 
   const boxList = useRef<any>(null)
   const outerBox = useRef<any>(null)

@@ -35,4 +35,14 @@ interface TextInputProps {
 }
 declare const TextInput: ({ icon, type, placeholder, name, value, disabled, required, title, onChange, onClick, onBlur, state, subtitle, className, error, minLength, maxLength, }: TextInputProps) => JSX.Element;
 
-export { Button, TextInput };
+interface DrawerProps {
+    drawerTitle?: string;
+    children?: any;
+    isSearch?: boolean;
+    customOpenBtn?: string;
+    openBtn?: ReactNode;
+    footer?: ReactNode;
+}
+declare const CustomDrawer: ({ customOpenBtn, openBtn, footer, isSearch, children, drawerTitle, ...props }: DrawerProps) => JSX.Element;
+
+export { Button, CustomDrawer, TextInput };

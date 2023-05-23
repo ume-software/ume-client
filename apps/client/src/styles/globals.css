@@ -9,3 +9,11 @@
     background-color: #15151b;
     color: white;
 }
+
+.ant-drawer .ant-drawer-content-wrapper{
+    width: 1000px !important;
+}
+
+.ant-drawer .ant-drawer-footer {
+        border-top: 0.5px #a1a1a1 solid;
+}
