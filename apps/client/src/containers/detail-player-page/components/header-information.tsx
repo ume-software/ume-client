@@ -9,12 +9,12 @@ import ImgForEmpty from 'public/img-for-empty.png'
 
 import { ReactElement, useState } from 'react'
 
-import Image, { StaticImageData } from 'next/legacy/image'
+import Image, { ImageProps, StaticImageData } from 'next/legacy/image'
 
 import AlbumTab from '../album-tab'
 import FeedsTab from '../feeds-tab'
 import InformationTab from '../information-tab'
-import MoreButton from './more-button'
+import MorenButton from './more-button'
 import MoreTable from './more-table'
 
 interface tabData {
@@ -22,7 +22,7 @@ interface tabData {
   children: ReactElement
 }
 
-interface moreButtonData {
+interface morenButtonData {
   className?: string
   children?: {
     name: string
@@ -105,7 +105,7 @@ const tabDatas: tabData[] = [
   },
 ]
 
-const moreButtonDatas: moreButtonData[] = [
+const morenButtonDatas: morenButtonData[] = [
   {
     className: 'hover:bg-gray-700 rounded-md pl-2 pr-2',
     children: { name: 'Chỉnh sửa thông tin' },
@@ -143,7 +143,7 @@ const moreButtonDatas: moreButtonData[] = [
   },
 ]
 
-const DetailPlayer = (props) => {
+const PlayerInformation = (props) => {
   const [selectedTab, setSelectedTab] = useState('Thông tin cá nhân')
   const [actionModal, setActionModal] = useState(false)
 
@@ -156,7 +156,7 @@ const DetailPlayer = (props) => {
     setSelectedTab(target)
   }
 
-  const handleMoreButton = () => {
+  const handleMorenButton = () => {
     setActionModal(!actionModal)
   }
 
@@ -194,10 +194,10 @@ const DetailPlayer = (props) => {
             </div>
 
             <div className="relative flex flex-col items-center justify-start" style={{ zIndex: 3 }}>
-              <MoreButton
+              <MorenButton
                 className="flex flex-row items-center bg-gray-700 p-2 rounded-full"
-                onClick={handleMoreButton}
-              ></MoreButton>
+                onClick={handleMorenButton}
+              ></MorenButton>
               {/* <div className={`absolute w-max top-10 bottom-auto text-white p-3 border border-gray-300 bg-gray-900 rounded-xl gap-3 font-nunito font-medium text-20 ${actionModal ? 'flex flex-col' : 'hidden'}`}>
                 <a href='#' className='hover:bg-gray-700 rounded-md pl-2 pr-2'>Chỉnh sửa thông tin</a>
                 <a href='#' className='hover:bg-gray-700 rounded-md pl-2 pr-2'>Thay đổi ảnh đại diện</a>
@@ -211,11 +211,10 @@ const DetailPlayer = (props) => {
                 <a href='#' className='hover:bg-gray-700 rounded-md pl-2 pr-2'>Chia sẻ đến Zalo</a>
               </div> */}
               <div
-                className={`absolute w-max top-10 bottom-auto text-white p-3 pt-5 border border-gray-300 bg-gray-900 rounded-xl gap-3 font-nunito font-medium text-20 ${
-                  actionModal ? 'flex flex-col' : 'hidden'
-                }`}
+                className={`absolute w-max top-10 bottom-auto text-white p-3 pt-5 border border-gray-300 bg-gray-900 rounded-xl gap-3 font-nunito font-medium text-20 ${actionModal ? 'flex flex-col' : 'hidden'
+                  }`}
               >
-                {moreButtonDatas.map((item) => (
+                {morenButtonDatas.map((item) => (
                   <MoreTable>{item.children}</MoreTable>
                 ))}
               </div>
@@ -227,9 +226,8 @@ const DetailPlayer = (props) => {
               <>
                 <a
                   href="#tab"
-                  className={`text-white xl:text-3xl text-xl font-medium p-4 ${
-                    item.label == selectedTab ? 'border-b-4 border-purple-700' : ''
-                  }`}
+                  className={`text-white xl:text-3xl text-xl font-medium p-4 ${item.label == selectedTab ? 'border-b-4 border-purple-700' : ''
+                    }`}
                   key={index}
                   onClick={handleChangeTab}
                   data-tab={item.label}
@@ -253,4 +251,4 @@ const DetailPlayer = (props) => {
     </>
   )
 }
-export default DetailPlayer
+export default PlayerInformation

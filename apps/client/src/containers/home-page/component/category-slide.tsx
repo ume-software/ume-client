@@ -1,5 +1,4 @@
 import React, { useRef, useState } from 'react'
-
 import Image from 'next/image'
 
 const CategorySlide = ({ data }) => {

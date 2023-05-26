@@ -22,7 +22,7 @@ function CategoryDrawer({ data }) {
       <div className="grid grid-cols-2 p-6 space-x-5 text-white">
         <div className="flex items-center space-x-5">
           <div className="inline-block p-2 bg-gray-700 rounded-full cursor-pointer hover:bg-gray-500 active:bg-gray-400">
-            <ArrowRight onClick={onClose} theme="outline" size="40" fill="#fff" />
+            <ArrowRight onClick={onClose} theme="outline" size="24" fill="#fff" />
           </div>
           <span className="my-auto text-3xl font-bold">Tất cả dịch vụ</span>
         </div>

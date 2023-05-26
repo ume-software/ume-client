@@ -81,7 +81,7 @@ const informationTabDatas: informationTabProps = {
 
 const InformationTab = (props) => {
   const [gamesToggle, setGamesToggle] = useState(false)
-  const [gameSelected, setGameSeleccted] = useState(-1)
+  const [gameSelected, setGameSelected] = useState(-1)
 
   const handleGamesToggle = () => {
     console.log({ gamesToggle })
@@ -90,7 +90,7 @@ const InformationTab = (props) => {
   }
 
   const handleSelected = (index) => {
-    setGameSeleccted(index)
+    setGameSelected(index)
   }
 
   return (
@@ -123,15 +123,12 @@ const InformationTab = (props) => {
                     <div
                       key={index}
                       className={`flex flex-row items-center gap-3 hover:bg-gray-700 p-1 rounded-xl ${
-                        gameSelected == index ? 'bg-gray-700' : ''
+                        gameSelected === index ? 'bg-gray-700' : ''
                       }`}
                       onClick={() => handleSelected(index)}
                     >
                       <Image src={item.src} alt="Game Image" width={60} height={60}></Image>
-                      <p
-                        className="font-nunito font-semibold text-xl truncate"
-                        style={{ width: '200px', height: '28px', zIndex: 4 }}
-                      >
+                      <p className="w-[200px] h-[28px] font-nunito font-semibold text-xl truncate text-white z-[4]">
                         {item.name}
                       </p>
                     </div>

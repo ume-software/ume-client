@@ -1,4 +1,4 @@
-import DetailPlayer from './components/detail-player'
+import PlayerInformation from './components/header-information'
 
 import { AppLayout } from '~/components/layouts/app-layout/app-layout'
 
@@ -6,7 +6,7 @@ const DetailUser = (props) => {
   return (
     <>
       <AppLayout {...props}>
-        <DetailPlayer />
+        <PlayerInformation />
       </AppLayout>
     </>
   )
