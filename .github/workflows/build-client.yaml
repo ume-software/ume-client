@@ -19,8 +19,8 @@ env:
   DOCKER_SERVER: ${{ secrets.DOCKER_SERVER }}
 jobs:
   docker:
-    name: Build Portal
-    runs-on: [ 'self-hosted', 'build' ]
+    name: Build Ume Client
+    runs-on: [ 'self-hosted' ]
     steps:
       - uses: actions/checkout@v3
       - run: git pull
@@ -49,11 +49,12 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          file: dockers/portal.Dockerfile
+          file: dockers/client.Dockerfile
           push: true
-          tags: ${{ env.docker_tag_release }}
-          cache-from: type=registry,ref=${{ env.cache_image }}
-          cache-to: type=registry,ref=${{ env.cache_image }}
+          tags: "default"
+#           tags: ${{ env.docker_tag_release }}
+#           cache-from: type=registry,ref=${{ env.cache_image }}
+#           cache-to: type=registry,ref=${{ env.cache_image }}
 
       - name: Get tag release
         id: tag_release
@@ -62,6 +63,7 @@ jobs:
       - name: Mark tag release
         uses: EndBug/latest-tag@latest
         with:
-          tag-name: ${{ env.tag_release }}
+#           tag-name: ${{ env.tag_release }}
+          tag-name: "default"
           description: "release: Ume - Client"
       

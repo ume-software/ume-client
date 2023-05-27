@@ -45,8 +45,9 @@ export const Button = ({
           <div className="flex items-center justify-center gap-x-2">
             {isLoading && (
               <span
-                className={`spinner h-5 w-5 animate-spin rounded-full border-[3px] border-r-transparent dark:border-navy-300 dark:border-r-transparent ${loadingIconColor === 'white' ? 'border-white' : 'border-black'
-                  }`}
+                className={`spinner h-5 w-5 animate-spin rounded-full border-[3px] border-r-transparent dark:border-navy-300 dark:border-r-transparent ${
+                  loadingIconColor === 'white' ? 'border-white' : 'border-black'
+                }`}
               />
             )}
             {icon && <span>{icon}</span>}
