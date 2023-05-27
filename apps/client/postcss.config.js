@@ -1,8 +1,8 @@
 const config = require('@ume/tailwind-config/tailwind.config.js')
 
 module.exports = {
-    plugins: {
-        tailwindcss: { config },
-        autoprefixer: {},
-    },
+  plugins: {
+    tailwindcss: { config },
+    autoprefixer: {},
+  },
 }

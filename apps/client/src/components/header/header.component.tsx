@@ -1,40 +1,46 @@
+import { Menu, Transition } from '@headlessui/react'
 import { CloseSmall, Gift, Search } from '@icon-park/react'
 import { Button, Modal } from '@ume/ui'
 import logo from 'public/ume-logo-2.svg'
 
 import React from 'react'
+import { Fragment } from 'react'
 
+import { useSession } from 'next-auth/react'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
+import { AuthForm } from './auth-form.component'
+
 export const Header: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = React.useState(false)
   const router = useRouter()
+  const { data: data, status: status } = useSession()
   const handleClose = () => {
     setIsModalVisible(false)
   }
-
   const loginModal = Modal.useEditableForm({
     onOK: () => {},
     onClose: handleClose,
     show: isModalVisible,
-    form: <div className="bg-[#15151B]rounded-xl"></div>,
-    backgroundColor: '#15151B',
+    form: <AuthForm />,
+    backgroundColor: '#15151b',
     closeButtonOnConner: (
       <>
         <CloseSmall
           onClick={handleClose}
           onKeyDown={(e) => e.key === 'Enter' && handleClose()}
           tabIndex={1}
-          className=" bg-[#7463F0] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
+          className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
           theme="outline"
-          size="30"
+          size="24"
           fill="#FFFFFF"
         />
       </>
     ),
   })
+
   return (
     <div className="fixed z-10 flex items-center justify-between w-full h-16 bg-umeHeader ">
       {loginModal}
@@ -59,7 +65,7 @@ export const Header: React.FC = () => {
           <span className="mr-5">
             <Button
               name="register"
-              customCSS="bg-[#37354F] py-2 hover:scale-105 rounded-3xl max-h-10 w-[160px] text-[15px] font-nunito"
+              customCSS="bg-[#37354F] py-2 hover:bg-slate-500 !rounded-3xl max-h-10 w-[160px] text-[15px] font-nunito"
               type="button"
             >
               Trở thành ume
@@ -76,25 +82,60 @@ export const Header: React.FC = () => {
             </button>
           </span>
           <span className="mr-5">
-            <Button
-              name="register"
-              customCSS="bg-[#37354F] py-2 hover:scale-105 rounded-3xl max-h-10 w-[120px] text-[15px] font-nunito"
-              type="button"
-              onClick={() => {
-                setIsModalVisible(true)
-              }}
-            >
-              Đăng nhập
-            </Button>
-          </span>
-          <span>
-            <Button
-              name="register"
-              customCSS="bg-[#7463F0] py-2 rounded-3xl max-h-10 w-[120px] hover:scale-105 text-[15px] font-nunito"
-              type="button"
-            >
-              Đăng ký
-            </Button>
+            {!data ? (
+              <>
+                <Button
+                  name="register"
+                  customCSS="bg-[#37354F] py-2 hover:bg-slate-500  !rounded-3xl max-h-10 w-[120px] text-[15px] font-nunito"
+                  type="button"
+                  onClick={() => {
+                    setIsModalVisible(true)
+                  }}
+                >
+                  Đăng nhập
+                </Button>
+              </>
+            ) : (
+              <div className="mt-1">
+                <Menu>
+                  <div>
+                    <Menu.Button>
+                      <Image
+                        className="rounded-full"
+                        layout="fixed"
+                        height={35}
+                        width={35}
+                        src={data?.user?.image || ''}
+                        alt="avatar"
+                      />
+                    </Menu.Button>
+                  </div>
+                  <Transition
+                    as={Fragment}
+                    enter="transition ease-out duration-100"
+                    enterFrom="transform opacity-0 scale-95"
+                    enterTo="transform opacity-100 scale-100"
+                    leave="transition ease-in duration-75"
+                    leaveFrom="transform opacity-100 scale-100"
+                    leaveTo="transform opacity-0 scale-95"
+                  >
+                    <Menu.Items className="absolute right-0 w-56 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                      <Menu.Item as="div">
+                        {({ active }) => (
+                          <button
+                            className={`${
+                              active ? 'bg-violet-500 text-white' : 'text-gray-900'
+                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                          >
+                            Edit
+                          </button>
+                        )}
+                      </Menu.Item>
+                    </Menu.Items>
+                  </Transition>
+                </Menu>
+              </div>
+            )}
           </span>
         </div>
       </div>
