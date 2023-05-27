@@ -104,23 +104,6 @@ export const Sidebar = (props) => {
             </div>
           ))}
         </div>
-
-        {/* <Drawer title={drawerHeader()} className="" placement="right" closable={false} onClose={onClose} open={open}>
-          <div className="flex flex-col gap-3">
-            {chatTest.map((item, index) => (
-              <div style={{ width: 60, height: 60, position: 'relative' }}>
-                <Image
-                  className="absolute rounded-full"
-                  layout="fill"
-                  objectFit="cover"
-                  key={index}
-                  src={item.imgSrc}
-                  alt="avatar"
-                />
-              </div>
-            ))}
-          </div>
-        </Drawer> */}
       </div>
     </>
   )
