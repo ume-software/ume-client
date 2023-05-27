@@ -36,10 +36,10 @@ export const CustomDrawer = ({
     return (
       <div className="flex items-center justify-between px-6 py-4 text-white">
         <div className="flex items-center gap-2">
-          <span className="my-auto text-1xl font-bold">1 units total 4.75</span>
+          <span className="my-auto font-bold text-1xl">1 units total 4.75</span>
         </div>
 
-        <div className="space-x-4 flex items-center self-end">
+        <div className="flex items-center self-end space-x-4">
           <Button
             onClick={onClose}
             name="register"
