@@ -17,3 +17,27 @@
 .ant-drawer .ant-drawer-footer {
         border-top: 0.5px #a1a1a1 solid;
 }
+.ant-drawer .ant-drawer-body{
+    padding: 0;
+}
+
+
+.hide-scrollbar::-webkit-scrollbar {
+  width: 0.5em;
+  background-color: transparent;
+}
+
+/* Track */
+.hide-scrollbar::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+/* Handle */
+.hide-scrollbar::-webkit-scrollbar-thumb {
+  background-color: transparent;
+}
+
+/* Handle on hover */
+.hide-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: transparent;
+}

@@ -14,7 +14,7 @@ function CategoryDrawer({ data }) {
         openBtn={'Tất cả dịch vụ'}
       >
         <div className="w-full px-6">
-          <div className="grid grid-cols-4 pb-8 mt-8 overflow-hidden">
+          <div className="grid grid-cols-4 place-items-center pb-8 mt-8 overflow-hidden">
             {data.map((category, index) => (
               <div className="inline-block my-8 w-[10rem] ">
                 <a href="#" className="flex-col justify-center">

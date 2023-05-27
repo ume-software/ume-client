@@ -126,12 +126,9 @@ const Chat = () => {
   }
   return (
     <>
-      <div className="w-full grid grid-cols-10">
-        <div className="bg-zinc-800 h-screen col-span-3 border-r-2 border-light-700">
-          <div className="inline-block p-2 bg-gray-700 rounded-full cursor-pointer hover:bg-gray-500 active:bg-gray-400">
-            <ArrowLeft theme="outline" size="24" fill="#fff" />
-          </div>
-          <div className="flex items-center justify-center">
+      <div className="w-full grid grid-cols-10 pl-5 pr-5">
+        <div className="h-full col-span-3 border-r-2 border-light-700">
+          <div className="flex items-center justify-center mb-5">
             <Search
               theme="outline"
               size="32"
@@ -147,7 +144,7 @@ const Chat = () => {
               className="text-white w-full"
             />
           </div>
-          <div className="transition-transform -translate-x-full sm:translate-x-0">
+          <div className="h-full overflow-y-scroll hide-scrollbar">
             {channelData.map((item, index) => (
               <div
                 key={index}
@@ -174,10 +171,8 @@ const Chat = () => {
         </div>
         <div className="col-span-7">
           <div className="flex flex-col gap-8">
-            <div className="bg-zinc-800 p-10">
-              <div className="flex flex-col gap-10">
-                <ChatContent datas={channelData[channelSelected]} />
-              </div>
+            <div className="flex flex-col pl-5 pr-5 gap-5">
+              <ChatContent datas={channelData[channelSelected]} />
             </div>
           </div>
         </div>

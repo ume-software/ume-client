@@ -29,7 +29,7 @@ const ChatContent = (props: { datas }) => {
 
   return (
     <>
-      <div className="flex justify-between items-center p-3 overflow-y-auto bg-gray-50 dark:bg-gray-800">
+      <div className="flex justify-between items-center">
         <div className="flex items-center gap-3">
           <div className="relative w-[60px] h-[60px]">
             <Image
@@ -72,7 +72,7 @@ const ChatContent = (props: { datas }) => {
         <div className="bg-[#413F4D] p-2 rounded-3xl">
           <ChatService serviceData={props.datas.services[gameSelected]} />
         </div>
-        <div>Message here</div>
+        <div className="h-[450px] overflow-auto">Message here</div>
         <div className="flex items-center gap-3">
           <div className="w-[40px] h-[40px] p-2 content-center bg-[#413F4D] rounded-full cursor-pointer hover:bg-gray-500 active:bg-gray-400">
             <Picture theme="outline" size="24" fill="#FFFFFF" strokeLinejoin="bevel" />
