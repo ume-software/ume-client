@@ -15,17 +15,6 @@ interface gamesProps {
   description?: string
 }
 
-interface informationTabProps {
-  title?: string
-  content?: string
-  reviews?: {
-    name: string
-    rate: number
-    serviceUsed: string[]
-    comment: string
-  }[]
-}
-
 const gamesDatas: gamesProps[] = [
   {
     src: ImgForEmpty,
@@ -49,43 +38,11 @@ const gamesDatas: gamesProps[] = [
   },
 ]
 
-const informationTabDatas: informationTabProps = {
-  title: 'Hé lô các bạn',
-  content: `Xin chào các user thân yêu đã ghé thăm playerduo của Mìn nha.
-            Cả nhà thân yêu ơi, nt fb cả pld không thấy Mìn trả lời thì gọi Mìn nha: 0935623471 Cảm ơn ạ
-            ❥Nhận: >Liên Minh, Farmtogether, TFTsvViet, TFT sv NA,cờ tỷ phú,audition.
-            >Mở nhạc theo yêu cầu, mở phim theo yêu cầu (có tài khoản netflix).
-            >Call video = x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16
-            ❥Không nhận: Các game bắn súng và không nhận hát ( Đơn giản vì em mù âm nhạc).
-            ❥Sở thích: Anime, phim, chơi game,....
-            ❥Tính tình hiền lành,thật thà và ngoan ngoãn như cún.
-            ❥Không nợ, không donate sau. Vì niềm zui đôi bên.
-            ❥Khách mến thì cho Tiểu Mìn xin 1 phiếu theo dõi trên Playerduo nhen.
-            ❥Thời gian rảnh: Từ khi ngủ dậy.
-            ❥❥❥Nhắn tin playerduo không được thì vui lòng gửi tin vào fb này giúp Mìn nha: https://www.facebook.com/1212dobietai`,
-  reviews: [
-    {
-      name: 'Chu',
-      rate: 5.0,
-      serviceUsed: ['chat', 'game', 'xxx'],
-      comment: 'Ngon',
-    },
-    {
-      name: 'Chu',
-      rate: 5,
-      serviceUsed: ['chat', 'game', 'xxx'],
-      comment: 'Ngon',
-    },
-  ],
-}
-
-const InformationTab = (props) => {
+const InformationTab = (props: { data }) => {
   const [gamesToggle, setGamesToggle] = useState(false)
   const [gameSelected, setGameSelected] = useState(-1)
 
   const handleGamesToggle = () => {
-    console.log({ gamesToggle })
-
     setGamesToggle(!gamesToggle)
   }
 
@@ -141,7 +98,7 @@ const InformationTab = (props) => {
         <div className="col-span-5">
           <div className="flex flex-col gap-8">
             {gameSelected < 0 ? (
-              <PersonalInformation datas={informationTabDatas} />
+              <PersonalInformation key={props.data.id} data={props.data} />
             ) : (
               <div className="bg-zinc-800 rounded-3xl p-10">
                 <div className="flex flex-col gap-10">
@@ -152,9 +109,15 @@ const InformationTab = (props) => {
           </div>
         </div>
         <div className="col-span-3">
-          <div className="flex flex-col gap-10">
-            <div className="bg-zinc-800 rounded-3xl p-10">
-              <Image src={ImgForEmpty} alt="Empty Image"></Image>
+          <div className="flex flex-col gap-3">
+            <div className="relative w-full h-[450px] bg-zinc-800 rounded-3xl p-10">
+              <Image
+                className="absolute rounded-xl"
+                layout="fill"
+                objectFit="cover"
+                src={props.data?.avatarUrl || ImgForEmpty}
+                alt="Empty Image"
+              />
             </div>
             <div className="my-10 flex flex-col gap-5">
               <button

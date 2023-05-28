@@ -16,7 +16,7 @@ function CategoryDrawer({ data }) {
         <div className="w-full h-full px-6 overflow-y-auto">
           <div className="grid grid-cols-4 place-items-center pb-8 mt-8 ">
             {data.map((category, index) => (
-              <div className="inline-block my-8 w-[10rem] ">
+              <div key={index} className="inline-block my-8 w-[10rem]">
                 <a href="#" className="flex-col justify-center">
                   <Image
                     className="mb-4 rounded-lg pointer-events-none "

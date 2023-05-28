@@ -41,3 +41,21 @@ export const getProviders = async () => {
     })
   }
 }
+
+export const getProviderBySlug = async (providerId: string) => {
+  try {
+    const respone = await new ProviderApi({
+      basePath: getENV().baseBookingURL,
+      isJsonMime: () => true,
+    }).getProviderBySlug(providerId)
+    return {
+      data: respone.data,
+    }
+  } catch (error) {
+    console.log('error at catch', error)
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status) || 500,
+      message: error.message || 'Fail to get list skill',
+    })
+  }
+}
