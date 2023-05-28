@@ -268,8 +268,6 @@ const useRiskConfirm = ({
                             stroke-linejoin="round"
                           />
                           <path
-                            fill-rule="evenodd"
-                            clip-rule="evenodd"
                             d="M24.4998 38.4089C25.9093 38.4089 27.0519 37.2662 27.0519 35.8568C27.0519 34.4473 25.9093 33.3047 24.4998 33.3047C23.0904 33.3047 21.9478 34.4473 21.9478 35.8568C21.9478 37.2662 23.0904 38.4089 24.4998 38.4089Z"
                             fill="#FF0000"
                           />
@@ -385,15 +383,14 @@ const useEditableForm = ({
                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               >
                 <Dialog.Panel
-                  className={`relative overflow-hidden text-left transition-all transform rounded-lg shadow-xl sm:my-8 sm:max-w-lg sm:w-full ${
+                  className={`relative overflow-hidden text-left transition-all transform rounded-3xl shadow-xl sm:my-8 sm:max-w-lg sm:w-full ${
                     backgroundColor ? `bg-[${backgroundColor}]` : 'bg-white'
                   }`}
                 >
-                  <div className="flex items-start justify-between pt-6 pb-3 mx-4 rounded-t-lg dark:bg-navy-800 sm:px-5">
+                  <div className="flex items-start justify-between pt-6 mx-4 rounded-t-lg dark:bg-navy-800 sm:px-5">
                     <h3 className="flex items-center text-xl font-medium text-bg-kmsconnect-textGrey dark:text-navy-100">
                       {title}
                     </h3>
-
                     {closeButtonOnConner ? (
                       closeButtonOnConner
                     ) : (
