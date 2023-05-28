@@ -6,6 +6,7 @@ import logo from 'public/ume-logo-2.svg'
 import React from 'react'
 import { Fragment } from 'react'
 
+import { signOut } from 'next-auth/react'
 import { useSession } from 'next-auth/react'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
@@ -40,6 +41,10 @@ export const Header: React.FC = () => {
       </>
     ),
   })
+  const handleSignout = (e) => {
+    e.preventDefault()
+    signOut()
+  }
 
   return (
     <div className="fixed z-10 flex items-center justify-between w-full h-16 bg-umeHeader ">
@@ -96,7 +101,7 @@ export const Header: React.FC = () => {
                 </Button>
               </>
             ) : (
-              <div className="mt-1">
+              <div className="mt-1 bg-[#292734]">
                 <Menu>
                   <div>
                     <Menu.Button>
@@ -127,7 +132,52 @@ export const Header: React.FC = () => {
                               active ? 'bg-violet-500 text-white' : 'text-gray-900'
                             } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                           >
-                            Edit
+                            Tài khoản của bạn
+                          </button>
+                        )}
+                      </Menu.Item>
+                      <Menu.Item as="div">
+                        {({ active }) => (
+                          <button
+                            className={`${
+                              active ? 'bg-violet-500 text-white' : 'text-gray-900'
+                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                          >
+                            Nhận nhiệm vụ hằng ngày
+                          </button>
+                        )}
+                      </Menu.Item>
+                      <Menu.Item as="div">
+                        {({ active }) => (
+                          <button
+                            className={`${
+                              active ? 'bg-violet-500 text-white' : 'text-gray-900'
+                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                          >
+                            Kiểm tra ví tiên
+                          </button>
+                        )}
+                      </Menu.Item>
+                      <Menu.Item as="div">
+                        {({ active }) => (
+                          <button
+                            className={`${
+                              active ? 'bg-violet-500 text-white' : 'text-gray-900'
+                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                          >
+                            Lịch sử giao dịch
+                          </button>
+                        )}
+                      </Menu.Item>
+                      <Menu.Item as="div">
+                        {({ active }) => (
+                          <button
+                            onClick={handleSignout}
+                            className={`${
+                              active ? 'bg-violet-500 text-white' : 'text-gray-900'
+                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                          >
+                            Đăng xuất
                           </button>
                         )}
                       </Menu.Item>

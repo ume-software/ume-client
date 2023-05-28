@@ -1,11 +1,5 @@
 import { signIn } from 'next-auth/react'
 
-enum LoginType {
-  GOOGLE = 'GOOGLE',
-  FACEBOOK = 'FACEBOOK',
-  TWITCH = 'TWITCH',
-}
-
 export const AuthForm = () => {
   // const popupCenter = (url: string, title: string) => {
   //   const dualScreenLeft = window.screenLeft ?? window.screenX
