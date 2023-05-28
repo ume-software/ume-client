@@ -29,7 +29,8 @@ export const getProviders = async () => {
     const response = await new ProviderApi({
       basePath: getENV().baseBookingURL,
       isJsonMime: () => true,
-    }).getListProvider('en', '[$all]')
+    }).getListProvider()
+    console.log(response.data)
     return {
       data: response.data,
     }

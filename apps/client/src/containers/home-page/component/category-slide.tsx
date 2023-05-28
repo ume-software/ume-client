@@ -62,7 +62,7 @@ const CategorySlide = (props: ICategoryProps) => {
               <div
                 tabIndex={index}
                 className="mr-6 duration-500 ease-in-out cursor-pointer hover:scale-105"
-                key={item.cateName}
+                key={item.name}
               >
                 <a href="#" draggable="false">
                   <Image

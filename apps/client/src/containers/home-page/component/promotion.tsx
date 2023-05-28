@@ -23,6 +23,7 @@ export const Promotion = () => {
               id={provider?.id}
               image={provider?.avatarurl}
               name={provider?.name}
+              key={provider.id}
               rating={5}
               totalVote={5}
               description={provider.description}
