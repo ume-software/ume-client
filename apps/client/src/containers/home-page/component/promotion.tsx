@@ -1,4 +1,9 @@
+import Link from 'next/link'
+import { FilterProviderResponse } from 'ume-booking-service-openapi'
+
 import { PromoteCard } from './promoteCard'
+
+import { trpc } from '~/utils/trpc'
 
 export interface Promotion {}
 
@@ -15,21 +20,18 @@ export const Promotion = () => {
       <div className="grid gap-6 mt-6 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1">
         {!isFetching &&
           listProvider?.map((provider) => (
-            <PromoteCard
-              id={provider?.id}
-              image={provider?.avatarurl}
-              name={provider?.name}
-              rating={5}
-              totalVote={5}
-              description={provider.description}
-              coin={provider.cost}
-            />
+            <Link key={provider?.id} href={`/player/${provider?.id}`}>
+              <PromoteCard
+                id={provider?.id}
+                image={provider?.avatarurl}
+                name={provider?.name}
+                rating={5}
+                totalVote={5}
+                description={provider.description}
+                coin={provider.cost}
+              />
+            </Link>
           ))}
-        {props.datas.map((card) => (
-          <Link key={`/player/${card.id}`} href={`/player/${card.id}`}>
-            <PromoteCard />
-          </Link>
-        ))}
       </div>
     </div>
   )
