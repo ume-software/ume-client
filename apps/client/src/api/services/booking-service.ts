@@ -10,7 +10,7 @@ export const getListSkill = async () => {
     const response = await new SkillApi({
       basePath: getENV().baseBookingURL,
       isJsonMime: () => true,
-    }).findAndCountAll('en', '["$all"]')
+    }).findAndCountAll()
 
     return {
       data: response.data,
@@ -29,7 +29,7 @@ export const getProviders = async () => {
     const response = await new ProviderApi({
       basePath: getENV().baseBookingURL,
       isJsonMime: () => true,
-    }).getListProvider('en', '[$all]')
+    }).getListProvider()
     return {
       data: response.data,
     }

@@ -1,31 +1,28 @@
-enum LoginType {
-  GOOGLE = 'GOOGLE',
-  FACEBOOK = 'FACEBOOK',
-  TWITCH = 'TWITCH',
-}
+import { signIn } from 'next-auth/react'
 
 export const AuthForm = () => {
-  const popupCenter = (url: string, title: string) => {
-    const dualScreenLeft = window.screenLeft ?? window.screenX
-    const dualScreenTop = window.screenTop ?? window.screenY
+  // const popupCenter = (url: string, title: string) => {
+  //   const dualScreenLeft = window.screenLeft ?? window.screenX
+  //   const dualScreenTop = window.screenTop ?? window.screenY
 
-    const width = window.innerWidth ?? document.documentElement.clientWidth ?? screen.width
+  //   const width = window.innerWidth ?? document.documentElement.clientWidth ?? screen.width
 
-    const height = window.innerHeight ?? document.documentElement.clientHeight ?? screen.height
+  //   const height = window.innerHeight ?? document.documentElement.clientHeight ?? screen.height
 
-    const systemZoom = width / window.screen.availWidth
+  //   const systemZoom = width / window.screen.availWidth
 
-    const left = (width - 500) / 2 / systemZoom + dualScreenLeft
-    const top = (height - 550) / 2 / systemZoom + dualScreenTop
+  //   const left = (width - 500) / 2 / systemZoom + dualScreenLeft
+  //   const top = (height - 550) / 2 / systemZoom + dualScreenTop
 
-    const newWindow = window.open(
-      url,
-      title,
-      `width=${500 / systemZoom},height=${550 / systemZoom},top=${top},left=${left}`,
-    )
+  //   const newWindow = window.open(
+  //     url,
+  //     title,
+  //     `width=${500 / systemZoom},height=${550 / systemZoom},top=${top},left=${left}`,
+  //   )
 
-    newWindow?.focus()
-  }
+  //   newWindow?.focus()
+  // }
+
   return (
     <div className="flex flex-col w-full p-6 bg-[#15151b] font-nunito">
       <div className="text-xl font-semibold text-center text-white">
@@ -33,7 +30,8 @@ export const AuthForm = () => {
       </div>
       <div className="flex flex-col justify-center gap-4 my-4">
         <button
-          onClick={() => popupCenter('/auth/sign-in-google', 'Sign In Google')}
+          // onClick={() => popupCenter('/auth/sign-in-google', 'Sign In Google')}
+          onClick={() => signIn('google')}
           className="hover:bg-slate-700 bg-[#292734] px-3 py-2 rounded-2xl"
         >
           <div className="flex justify-center flex-1">

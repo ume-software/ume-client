@@ -16,16 +16,17 @@ function CategoryDrawer({ data }) {
         <div className="w-full px-6">
           <div className="grid grid-cols-4 pb-8 mt-8 overflow-hidden">
             {data.map((category, index) => (
-              <div className="inline-block my-8 w-[10rem] ">
+              <div tabIndex={index} key={category.id} className="inline-block my-8 w-[10rem] ">
                 <a href="#" className="flex-col justify-center">
                   <Image
                     className="mb-4 rounded-lg pointer-events-none "
-                    src={category.cateImg.src}
-                    alt={category.cateName}
+                    src={category.imageUrl}
+                    alt={category.name}
                     width={170}
+                    key={category.id}
                     height={250}
                   />
-                  <span className="font-bold">{category.cateName}</span>
+                  <span className="font-bold">{category.name}</span>
                 </a>
               </div>
             ))}
