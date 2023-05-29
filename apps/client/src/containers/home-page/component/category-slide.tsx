@@ -62,17 +62,18 @@ const CategorySlide = (props: ICategoryProps) => {
               <div
                 tabIndex={index}
                 className="mr-6 duration-500 ease-in-out cursor-pointer hover:scale-105"
-                key={item.name}
+                key={item.id}
               >
                 <a href="#" draggable="false">
-                  <Image
-                    src={item.imageUrl}
-                    alt={item.name}
-                    key={item.id}
-                    width={170}
-                    height={250}
-                    className="h-auto mb-2 rounded-lg pointer-events-none"
-                  />
+                  <div className="relative w-[170px] h-[250px]">
+                    <Image
+                      key={item.id}
+                      className="absolute rounded-lg pointer-events-none"
+                      layout="fill"
+                      src={item.imageUrl}
+                      alt={item.name}
+                    />
+                  </div>
                 </a>
               </div>
             )

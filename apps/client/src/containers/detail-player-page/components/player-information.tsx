@@ -1,4 +1,4 @@
-import { Dot, Male, Plus, ShareTwo } from '@icon-park/react'
+import { Dot, Male, More, Plus, ShareTwo } from '@icon-park/react'
 import TestImage2 from 'public/16x16/ume-logo-black.png'
 import TestImage1 from 'public/32x32/ume-logo-black.png'
 import TestImage3 from 'public/categories_pic/league_of_legends.jpg'
@@ -14,7 +14,6 @@ import Image, { ImageProps, StaticImageData } from 'next/legacy/image'
 import AlbumTab from '../album-tab'
 import FeedsTab from '../feeds-tab'
 import InformationTab from '../information-tab'
-import MorenButton from './more-button'
 import MoreTable from './more-table'
 
 interface tabData {
@@ -22,7 +21,7 @@ interface tabData {
   children: ReactElement
 }
 
-interface morenButtonData {
+interface moreButtonData {
   className?: string
   children?: {
     name: string
@@ -90,22 +89,7 @@ const feedData: feedProps[] = [
   },
 ]
 
-const tabDatas: tabData[] = [
-  {
-    label: `Thông tin cá nhân`,
-    children: <InformationTab></InformationTab>,
-  },
-  {
-    label: `Album`,
-    children: <AlbumTab datas={personalImageDatas} />,
-  },
-  {
-    label: `Khoảnh khắc`,
-    children: <FeedsTab datas={feedData}></FeedsTab>,
-  },
-]
-
-const morenButtonDatas: morenButtonData[] = [
+const moreButtonDatas: moreButtonData[] = [
   {
     className: 'hover:bg-gray-700 rounded-md pl-2 pr-2',
     children: { name: 'Chỉnh sửa thông tin' },
@@ -143,7 +127,21 @@ const morenButtonDatas: morenButtonData[] = [
   },
 ]
 
-const HeaderInformation = (props) => {
+const PlayerInformation = (props: { data }) => {
+  const tabDatas: tabData[] = [
+    {
+      label: `Thông tin cá nhân`,
+      children: <InformationTab data={props.data || ImgForEmpty} />,
+    },
+    {
+      label: `Album`,
+      children: <AlbumTab datas={personalImageDatas} />,
+    },
+    {
+      label: `Khoảnh khắc`,
+      children: <FeedsTab datas={feedData} />,
+    },
+  ]
   const [selectedTab, setSelectedTab] = useState('Thông tin cá nhân')
   const [actionModal, setActionModal] = useState(false)
 
@@ -156,7 +154,7 @@ const HeaderInformation = (props) => {
     setSelectedTab(target)
   }
 
-  const handleMorenButton = () => {
+  const handleMoreButton = () => {
     setActionModal(!actionModal)
   }
 
@@ -174,12 +172,12 @@ const HeaderInformation = (props) => {
                   className="absolute rounded-full"
                   layout="fill"
                   objectFit="cover"
-                  src={cover}
+                  src={props.data?.avatarUrl}
                   alt="avatar"
-                ></Image>
+                />
               </div>
               <div className="text-white flex flex-col gap-y-2">
-                <p className="text-white text-4xl font-medium">@ame147</p>
+                <p className="text-white text-4xl font-medium">{props.data?.name}</p>
                 <div className="flex flex-row justify-around gap-x-5">
                   <div className="bg-gray-700 p-2 rounded-full flex items-center gap-1">
                     <Male theme="outline" size="24" fill="#1CB3FF" />
@@ -194,28 +192,20 @@ const HeaderInformation = (props) => {
             </div>
 
             <div className="relative flex flex-col items-center justify-start" style={{ zIndex: 3 }}>
-              <MorenButton
-                className="flex flex-row items-center bg-gray-700 p-2 rounded-full"
-                onClick={handleMorenButton}
-              ></MorenButton>
-              {/* <div className={`absolute w-max top-10 bottom-auto text-white p-3 border border-gray-300 bg-gray-900 rounded-xl gap-3 font-nunito font-medium text-20 ${actionModal ? 'flex flex-col' : 'hidden'}`}>
-                <a href='#' className='hover:bg-gray-700 rounded-md pl-2 pr-2'>Chỉnh sửa thông tin</a>
-                <a href='#' className='hover:bg-gray-700 rounded-md pl-2 pr-2'>Thay đổi ảnh đại diện</a>
-                <a className='w-full bg-white h-0.5 rounded-all' />
-                <div className='w-full overflow-hidden hover:bg-gray-700 group rounded-md pl-2 pr-2 '>
-                  <div className='w-full overflow-hidden scale-x-100 group-hover:scale-x-95 flex items-center justify-between gap-2 group-hover:-translate-x-2 duration-300'>
-                    <a href='#'>Chia sẻ đến Facebook</a>
-                    <ShareTwo className={`transition-opacity opacity-0 group-hover:opacity-100 duration-200`} theme="outline" size="12" fill="#fff" />
-                  </div>
-                </div>
-                <a href='#' className='hover:bg-gray-700 rounded-md pl-2 pr-2'>Chia sẻ đến Zalo</a>
-              </div> */}
+              <More
+                className="flex flex-row items-center bg-gray-700 rounded-full cursor-pointer"
+                theme="outline"
+                size="30"
+                fill="#FFFFFF"
+                strokeLinejoin="bevel"
+                onClick={handleMoreButton}
+              />
               <div
                 className={`absolute w-max top-10 bottom-auto text-white p-3 pt-5 border border-gray-300 bg-gray-900 rounded-xl gap-3 font-nunito font-medium text-20 ${
                   actionModal ? 'flex flex-col' : 'hidden'
                 }`}
               >
-                {morenButtonDatas.map((item) => (
+                {moreButtonDatas.map((item) => (
                   <MoreTable>{item.children}</MoreTable>
                 ))}
               </div>
@@ -253,4 +243,4 @@ const HeaderInformation = (props) => {
     </>
   )
 }
-export default HeaderInformation
+export default PlayerInformation

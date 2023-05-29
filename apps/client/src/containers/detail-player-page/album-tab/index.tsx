@@ -6,7 +6,7 @@ const AlbumTab = (props: { datas }) => {
   const right: JSX.Element[] = []
 
   props.datas.forEach((data, index) => {
-    const imgSrc = <AlbumImage data={data.src} />
+    const imgSrc = <AlbumImage key={index} data={data.src} />
     let newIndex = index + 1
     if (newIndex % 3 == 0) {
       right.push(imgSrc)

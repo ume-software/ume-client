@@ -1,5 +1,7 @@
+import { z } from 'zod'
+
 import { createRouter } from './configurations'
-import { getListSkill, getProviders } from './services/booking-service'
+import { getListSkill, getProviderBySlug, getProviders } from './services/booking-service'
 
 export const bookingRouter = createRouter()
   .query('getListSkill', {
@@ -10,5 +12,11 @@ export const bookingRouter = createRouter()
   .query('getProviders', {
     resolve: async ({ ctx }) => {
       return await getProviders()
+    },
+  })
+  .query('getProviderBySlug', {
+    input: z.string(),
+    resolve: async ({ ctx, input }) => {
+      return await getProviderBySlug(input)
     },
   })

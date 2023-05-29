@@ -10,7 +10,7 @@ export const getListSkill = async () => {
     const response = await new SkillApi({
       basePath: getENV().baseBookingURL,
       isJsonMime: () => true,
-    }).findAndCountAll()
+    }).findAndCountAll('unlimited', '1', '["$all"]')
 
     return {
       data: response.data,
@@ -38,6 +38,24 @@ export const getProviders = async () => {
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
       message: error.message || 'Failed to get list skill',
+    })
+  }
+}
+
+export const getProviderBySlug = async (providerId: string) => {
+  try {
+    const respone = await new ProviderApi({
+      basePath: getENV().baseBookingURL,
+      isJsonMime: () => true,
+    }).getProviderBySlug(providerId)
+    return {
+      data: respone.data,
+    }
+  } catch (error) {
+    console.log('error at catch', error)
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status) || 500,
+      message: error.message || 'Fail to get list skill',
     })
   }
 }

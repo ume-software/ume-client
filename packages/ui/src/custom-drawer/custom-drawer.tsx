@@ -1,5 +1,6 @@
 import { ArrowRight, Search } from '@icon-park/react'
-import { Button, TextInput } from '@ume/ui'
+import { Button } from '~/button'
+import { TextInput } from '~/text-input'
 
 import React, { ReactNode, useState } from 'react'
 
@@ -61,7 +62,7 @@ export const CustomDrawer = ({
   }
   const drawerHeader = () => {
     return (
-      <div className="grid grid-cols-2 p-6 space-x-5 text-white">
+      <div className="flex flex-col pt-3 pl-3 gap-5 text-white">
         <div className="flex items-center space-x-5">
           <div className="inline-block p-2 bg-gray-700 rounded-full cursor-pointer hover:bg-gray-500 active:bg-gray-400">
             <ArrowRight onClick={onClose} theme="outline" size="24" fill="#fff" />
@@ -70,7 +71,7 @@ export const CustomDrawer = ({
         </div>
 
         {isSearch && (
-          <div className="flex items-center self-end">
+          <div className="flex items-center">
             <Search
               theme="outline"
               size="32"
@@ -83,7 +84,7 @@ export const CustomDrawer = ({
               value={searchTex}
               type="text"
               name="categorySearch"
-              onChange={(e) => setSearchText(e.target.value)}
+              onChange={(e: any) => setSearchText(e.target.value)}
               className="text-black w-[11rem]"
             />
           </div>

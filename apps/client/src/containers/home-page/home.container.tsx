@@ -8,18 +8,13 @@ import { AppLayout } from '~/components/layouts/app-layout/app-layout'
 
 const HomePage = (props) => {
   return (
-    <div>
-      <Head>
-        <title>Home | UME</title>
-      </Head>
-      <AppLayout {...props}>
-        <div className="flex flex-col mx-16">
-          <Cover />
-          <Category />
-          <Promotion />
-        </div>
-      </AppLayout>
-    </div>
+    <AppLayout {...props}>
+      <div className="flex mx-16 flex-col">
+        <Cover />
+        <Category />
+        <Promotion />
+      </div>
+    </AppLayout>
   )
 }
 
