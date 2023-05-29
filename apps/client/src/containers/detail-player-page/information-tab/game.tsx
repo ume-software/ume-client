@@ -6,11 +6,12 @@ import Image from 'next/legacy/image'
 const GamePlayed = (props: { datas }) => {
   return (
     <>
+      <p className="font-roboto font-bold text-white text-3xl">{props.datas.skill.name}</p>
       <Carousel autoplay>
         {props.datas.images?.map((item, index) => <Image key={index} src={item} alt="Game Image" />) || (
           <>
             <Image src={ImgForEmpty} alt="Empty" />
-            <p className="font-roboto font-bold text-white text-3xl text-center leading-9">Chả có gì ở đây cả</p>
+            <p className="font-roboto font-semibold text-white text-2xl text-center leading-9">Chả có gì ở đây cả</p>
           </>
         )}
       </Carousel>

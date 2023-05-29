@@ -80,16 +80,16 @@ const InformationTab = (props: { data }) => {
                   {props.data.providerSkills.map((item, index) => (
                     <div
                       key={index}
-                      className={`flex flex-row items-center gap-3 hover:bg-gray-700 p-1 rounded-xl ${
+                      className={`flex lg:flex-row flex-col items-center gap-3 hover:bg-gray-700 p-1 rounded-xl ${
                         gameSelected === index ? 'bg-gray-700' : ''
                       }`}
                       onClick={() => handleSelected(index)}
                     >
                       <Image src={item.skill.imageUrl} alt="Game Image" width={60} height={60} />
-                      <div className="w-[200px] h-[28px]">
-                        <p className="font-nunito font-semibold text-xl truncate text-white z-[4]">{item.skill.name}</p>
-                        <p className="font-nunito font-semibold text-xl truncate text-white z-[4]">
-                          {item.skill.defaultCost}
+                      <div className="w-[200px] truncate">
+                        <p className="font-nunito font-semibold text-lg text-white z-[4]">{item.skill.name}</p>
+                        <p className="font-nunito font-semibold text-md text-white opacity-30 z-[4]">
+                          {item.defaultCost}
                         </p>
                       </div>
                     </div>
