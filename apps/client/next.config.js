@@ -10,6 +10,7 @@ module.exports = {
       'cdn.tgdd.vn',
       'picsum.photos',
       'loremflickr.com',
+      'static-oss.epal.gg',
     ],
   },
 }

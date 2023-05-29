@@ -21,7 +21,7 @@ interface tabData {
   children: ReactElement
 }
 
-interface morenButtonData {
+interface moreButtonData {
   className?: string
   children?: {
     name: string
@@ -89,7 +89,7 @@ const feedData: feedProps[] = [
   },
 ]
 
-const morenButtonDatas: morenButtonData[] = [
+const moreButtonDatas: moreButtonData[] = [
   {
     className: 'hover:bg-gray-700 rounded-md pl-2 pr-2',
     children: { name: 'Chỉnh sửa thông tin' },
@@ -139,7 +139,7 @@ const PlayerInformation = (props: { data }) => {
     },
     {
       label: `Khoảnh khắc`,
-      children: <FeedsTab datas={feedData}></FeedsTab>,
+      children: <FeedsTab datas={feedData} />,
     },
   ]
   const [selectedTab, setSelectedTab] = useState('Thông tin cá nhân')
@@ -205,7 +205,7 @@ const PlayerInformation = (props: { data }) => {
                   actionModal ? 'flex flex-col' : 'hidden'
                 }`}
               >
-                {morenButtonDatas.map((item) => (
+                {moreButtonDatas.map((item) => (
                   <MoreTable>{item.children}</MoreTable>
                 ))}
               </div>

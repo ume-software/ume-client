@@ -8,36 +8,6 @@ import Image, { ImageProps, StaticImageData } from 'next/legacy/image'
 import GamePlayed from './game'
 import PersonalInformation from './personal-information'
 
-interface gamesProps {
-  name: string
-  src: any
-  images?: ImageProps[]
-  description?: string
-}
-
-const gamesDatas: gamesProps[] = [
-  {
-    src: ImgForEmpty,
-    name: 'Valorant',
-    images: [ImgForEmpty, ImgForEmpty, ImgForEmpty],
-    description: 'Valorant description',
-  },
-  {
-    src: ImgForEmpty,
-    name: 'Valorant',
-  },
-  {
-    src: ImgForEmpty,
-    name: 'Valorant',
-  },
-  {
-    src: ImgForEmpty,
-    name: 'Game gì đó tên dài vl asdasdasfdad',
-    images: [ImgForEmpty, ImgForEmpty, ImgForEmpty],
-    description: 'Game gì đó tên dài vl asdasdasfdad description',
-  },
-]
-
 const InformationTab = (props: { data }) => {
   const [gamesToggle, setGamesToggle] = useState(false)
   const [gameSelected, setGameSelected] = useState(-1)
@@ -89,7 +59,7 @@ const InformationTab = (props: { data }) => {
                       <div className="w-[200px] truncate">
                         <p className="font-nunito font-semibold text-lg text-white z-[4]">{item.skill.name}</p>
                         <p className="font-nunito font-semibold text-md text-white opacity-30 z-[4]">
-                          {item.defaultCost}
+                          {item.defaultCost}U / 1h
                         </p>
                       </div>
                     </div>

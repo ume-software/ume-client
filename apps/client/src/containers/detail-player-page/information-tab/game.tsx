@@ -4,6 +4,8 @@ import { Carousel } from 'antd'
 import Image from 'next/legacy/image'
 
 const GamePlayed = (props: { datas }) => {
+  console.log(props.datas)
+
   return (
     <>
       <p className="font-roboto font-bold text-white text-3xl">{props.datas.skill.name}</p>

@@ -68,19 +68,6 @@ const chatTest: chatProps[] = [
 ]
 
 export const Sidebar = (props) => {
-  const [open, setOpen] = useState(false)
-
-  const showDrawer = () => {
-    setOpen(true)
-  }
-
-  // const drawerHeader = () => {
-  //   return (
-  //     <div className="inline-block p-2 bg-gray-700 rounded-full cursor-pointer hover:bg-gray-500 active:bg-gray-400">
-  //       <ArrowRight onClick={onClose} theme="outline" size="40" fill="#fff" />
-  //     </div>
-  //   )
-  // }
   return (
     <>
       <div className="flex flex-col items-center justify-center gap-8 pt-10">
@@ -88,11 +75,11 @@ export const Sidebar = (props) => {
           customOpenBtn={`p-2 bg-gray-700 rounded-full cursor-pointer hover:bg-gray-500 active:bg-gray-400`}
           openBtn={<ArrowLeft theme="outline" size="40" fill="#fff" />}
         >
-          <Chat></Chat>
+          <Chat />
         </CustomDrawer>
         <div className="flex flex-col gap-3">
           {chatTest.map((item, index) => (
-            <div style={{ width: 60, height: 60, position: 'relative' }}>
+            <div className="w-[60px] h-[60px] relative">
               <Image
                 className="absolute rounded-full"
                 layout="fill"
