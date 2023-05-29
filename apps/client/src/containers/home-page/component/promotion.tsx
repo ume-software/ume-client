@@ -1,7 +1,3 @@
-import { Filter } from '@icon-park/react'
-
-import { useState } from 'react'
-
 import Link from 'next/link'
 import { FilterProviderResponse } from 'ume-booking-service-openapi'
 
@@ -13,7 +9,6 @@ import { trpc } from '~/utils/trpc'
 export interface Promotion {}
 
 export const Promotion = () => {
-  const [actionModal, setActionModal] = useState(false)
   let listProvider: FilterProviderResponse[] | undefined
   const { data: providers, isLoading: loadingProvider, isFetching } = trpc.useQuery(['booking.getProviders'])
   if (loadingProvider) {
@@ -21,9 +16,6 @@ export const Promotion = () => {
   }
   listProvider = providers?.data?.row
 
-  const hanhdleFilterOpen = () => {
-    setActionModal(!actionModal)
-  }
   const handleFilter = (filterData) => {
     console.log(filterData)
   }

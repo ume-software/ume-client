@@ -44,6 +44,7 @@ const InformationTab = (props: { data }) => {
 
   const handleGamesToggle = () => {
     setGamesToggle(!gamesToggle)
+    console.log(props.data.providerSkills)
   }
 
   const handleSelected = (index) => {
@@ -76,7 +77,7 @@ const InformationTab = (props: { data }) => {
                   )}
                 </div>
                 <div className={`pl-5 gap-3 ${gamesToggle ? 'flex flex-col items-start' : 'hidden'}`}>
-                  {gamesDatas.map((item, index) => (
+                  {props.data.providerSkills.map((item, index) => (
                     <div
                       key={index}
                       className={`flex flex-row items-center gap-3 hover:bg-gray-700 p-1 rounded-xl ${
@@ -84,10 +85,13 @@ const InformationTab = (props: { data }) => {
                       }`}
                       onClick={() => handleSelected(index)}
                     >
-                      <Image src={item.src} alt="Game Image" width={60} height={60}></Image>
-                      <p className="w-[200px] h-[28px] font-nunito font-semibold text-xl truncate text-white z-[4]">
-                        {item.name}
-                      </p>
+                      <Image src={item.skill.imageUrl} alt="Game Image" width={60} height={60} />
+                      <div className="w-[200px] h-[28px]">
+                        <p className="font-nunito font-semibold text-xl truncate text-white z-[4]">{item.skill.name}</p>
+                        <p className="font-nunito font-semibold text-xl truncate text-white z-[4]">
+                          {item.skill.defaultCost}
+                        </p>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -102,7 +106,7 @@ const InformationTab = (props: { data }) => {
             ) : (
               <div className="bg-zinc-800 rounded-3xl p-10">
                 <div className="flex flex-col gap-10">
-                  <GamePlayed datas={gamesDatas[gameSelected]} />
+                  <GamePlayed datas={props.data.providerSkills[gameSelected]} />
                 </div>
               </div>
             )}
