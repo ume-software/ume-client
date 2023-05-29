@@ -1,7 +1,7 @@
 /* eslint-disable import/no-anonymous-default-export */
 import { NextApiRequest, NextApiResponse } from 'next'
 
-import NextAuth, { NextAuthOptions } from 'next-auth'
+import NextAuth, { NextAuthOptions, SessionStrategy } from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 
 export const authOptions: NextAuthOptions = {
@@ -32,6 +32,14 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user, account, profile }) {
       return token
     },
+  },
+  session: {
+    strategy: 'jwt' as SessionStrategy,
+    maxAge: 24 * 60 * 60,
+    updateAge: 24 * 60 * 60,
+  },
+  jwt: {
+    maxAge: 3 * 24 * 60 * 60,
   },
 }
 
