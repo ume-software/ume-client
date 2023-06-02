@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server'
 import { getENV } from '~/env'
 
-import { BookingApi, ProviderApi, SkillApi } from 'ume-booking-service-openapi'
+import { BookingApi, BookingProviderRequest, ProviderApi, SkillApi } from 'ume-booking-service-openapi'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
@@ -56,6 +56,24 @@ export const getProviderBySlug = async (providerId: string) => {
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.respone?.status) || 500,
       message: error.message || 'Fail to get list skill',
+    })
+  }
+}
+
+export const createBooking = async (provider: BookingProviderRequest) => {
+  try {
+    const respone = await new BookingApi({
+      basePath: getENV().baseBookingURL,
+      isJsonMime: () => true,
+    }).createbooking(provider)
+    return {
+      data: respone,
+    }
+  } catch (error) {
+    console.log('error at catch', error)
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status) || 500,
+      message: error.message || 'Fail to get create new booking',
     })
   }
 }

@@ -1,24 +1,35 @@
 import { Down, Gamepad, People, Right, Star } from '@icon-park/react'
+import { CustomDrawer } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
+import Chat from '~/containers/chat/chat.container'
 
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 
 import Image, { ImageProps, StaticImageData } from 'next/legacy/image'
 
+import BookingPlayer from '../booking/booking-player.container'
 import GamePlayed from './game'
 import PersonalInformation from './personal-information'
 
+import { drawerContext } from '~/components/layouts/app-layout/app-layout'
+
 const InformationTab = (props: { data }) => {
+  const { childrenDrawer, setChildrenDrawer } = useContext(drawerContext)
   const [gamesToggle, setGamesToggle] = useState(false)
   const [gameSelected, setGameSelected] = useState(-1)
 
   const handleGamesToggle = () => {
     setGamesToggle(!gamesToggle)
-    console.log(props.data.providerSkills)
   }
 
   const handleSelected = (index) => {
     setGameSelected(index)
+  }
+  const handleChatOpen = () => {
+    setChildrenDrawer(<Chat data={props.data} />)
+  }
+  const handleOrderOpen = () => {
+    setChildrenDrawer(<BookingPlayer data={props.data} />)
   }
 
   return (
@@ -94,18 +105,20 @@ const InformationTab = (props: { data }) => {
               />
             </div>
             <div className="my-10 flex flex-col gap-5">
-              <button
-                type="button"
-                className="rounded-full w-full text-purple-700 border-2 border-purple-700 py-2 font-nunito font-bold text-2xl hover:scale-105"
+              <CustomDrawer
+                customOpenBtn={`rounded-full w-full text-purple-700 border-2 border-purple-700 py-2 font-nunito font-bold text-2xl hover:scale-105 text-center`}
+                openBtn={<div onClick={handleChatOpen}>Chat</div>}
               >
-                Chat
-              </button>
-              <button
-                type="button"
-                className="rounded-full w-full text-white bg-purple-700 py-2 font-nunito font-bold text-2xl hover:scale-105"
+                {childrenDrawer}
+              </CustomDrawer>
+
+              <CustomDrawer
+                drawerTitle="Xác nhận đặt"
+                customOpenBtn="rounded-full w-full text-white bg-purple-700 py-2 font-nunito font-bold text-2xl hover:scale-105 text-center"
+                openBtn={<div onClick={handleOrderOpen}>Order</div>}
               >
-                Order
-              </button>
+                {childrenDrawer}
+              </CustomDrawer>
             </div>
           </div>
         </div>
