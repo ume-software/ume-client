@@ -13,7 +13,7 @@ export const Input = ({ className, ...props }: InputProps) => {
   return (
     <input
       tabIndex={99}
-      className={`form-input w-full text-white rounded  px-3 py-2 placeholder:text-slate-400/70 hover:border-ume-blue  ${className}`}
+      className={`form-input w-full rounded px-3 py-2 placeholder:text-slate-400/70 hover:border-ume-blue  ${className}`}
       {...props}
     />
   )
@@ -32,7 +32,7 @@ export const FormInput = ({ error, errorMessage, ...props }: FormInputProps) => 
         tabIndex={99}
         className={`${
           error ? '!border-ume-error !focus:border-ume-error !focus:outline-ume-error  !hover:border-ume-error' : ''
-        }`}
+        } ${props.className}`}
       />
       {error ? <span className="block mt-1 text-ume-error text-[14px]">{errorMessage}</span> : null}
     </>
