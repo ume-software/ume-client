@@ -1,11 +1,14 @@
 import { ArrowLeft, ArrowRight } from '@icon-park/react'
 import { CustomDrawer } from '@ume/ui'
 import cover from 'public/cover.png'
+import { SocketContext } from '~/api/socket'
 import Chat from '~/containers/chat/chat.container'
 
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 
 import Image, { StaticImageData } from 'next/legacy/image'
+
+import { drawerContext } from '../layouts/app-layout/app-layout'
 
 interface chatProps {
   imgSrc: string | StaticImageData
@@ -66,16 +69,23 @@ const chatTest: chatProps[] = [
     },
   },
 ]
-
+SocketContext
 export const Sidebar = (props) => {
+  const socket = useContext(SocketContext)
+  console.log({ socket })
+
+  const { childrenDrawer, setChildrenDrawer } = useContext(drawerContext)
+  const handleChatOpen = () => {
+    setChildrenDrawer(<Chat />)
+  }
   return (
     <>
       <div className="flex flex-col items-center justify-center gap-8 pt-10">
         <CustomDrawer
           customOpenBtn={`p-2 bg-gray-700 rounded-full cursor-pointer hover:bg-gray-500 active:bg-gray-400`}
-          openBtn={<ArrowLeft theme="outline" size="40" fill="#fff" />}
+          openBtn={<ArrowLeft theme="outline" size="40" fill="#fff" onClick={handleChatOpen} />}
         >
-          <Chat />
+          {childrenDrawer}
         </CustomDrawer>
         <div className="flex flex-col gap-3">
           {chatTest.map((item, index) => (

@@ -20,12 +20,13 @@ const actionButtons: actionButtonProps[] = [
   { actionButton: <MoreOne theme="outline" size="20" fill="#FFFFFF" strokeLinejoin="bevel" /> },
 ]
 
-const ChatContent = (props: { datas }) => {
+const ChatContent = (props: { data }) => {
   const [gameSelected, setGameSelected] = useState(0)
 
   useEffect(() => {
     setGameSelected(0)
-  }, [props.datas.id])
+    console.log(props.data)
+  }, [props.data])
 
   return (
     <>
@@ -36,12 +37,12 @@ const ChatContent = (props: { datas }) => {
               className="absolute rounded-full"
               layout="fill"
               objectFit="cover"
-              src={props.datas?.imgSrc}
+              src={props.data?.imgSrc || props.data?.avatarUrl}
               alt="Avatar"
             />
           </div>
           <span className="font-nunito font-bold text-white text-3xl">
-            {props.datas?.nameChannel || props.datas?.name}
+            {props.data?.nameChannel || props.data?.name}
           </span>
         </div>
         <div className="flex gap-2">
@@ -56,8 +57,8 @@ const ChatContent = (props: { datas }) => {
         </div>
       </div>
       <div className="flex flex-col gap-5">
-        <div className="flex border-b-2 pb-5 gap-2 overflow-hidden">
-          {props.datas.services.map((service, index) => (
+        <div className="flex border-b-2 pb-5 gap-2 overflow-auto hide-scrollbar">
+          {props.data?.providerSkills?.map((providerSkill, index) => (
             <div
               key={index}
               className={`px-5 text-center rounded-2xl border-2 cursor-pointer ${
@@ -65,14 +66,14 @@ const ChatContent = (props: { datas }) => {
               }`}
               onClick={() => setGameSelected(index)}
             >
-              <span className="font-nunito font-medium text-white text-lg">{service.name}</span>
+              <p className="font-nunito font-medium text-white text-lg whitespace-nowrap">{providerSkill.skill.name}</p>
             </div>
           ))}
         </div>
         <div className="bg-[#413F4D] p-2 rounded-3xl">
-          <ChatService serviceData={props.datas.services[gameSelected]} />
+          <ChatService serviceData={props.data?.providerSkills[gameSelected]} />
         </div>
-        <div className="h-[500px] overflow-y-auto">Message here</div>
+        <div className="h-[450px] overflow-y-auto">Message here</div>
         <div className="flex items-center gap-3">
           <div className="w-[40px] h-[40px] p-2 content-center bg-[#413F4D] rounded-full cursor-pointer hover:bg-gray-500 active:bg-gray-400">
             <Picture theme="outline" size="24" fill="#FFFFFF" strokeLinejoin="bevel" />

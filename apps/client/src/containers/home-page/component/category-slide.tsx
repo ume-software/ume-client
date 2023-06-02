@@ -45,9 +45,14 @@ const CategorySlide = (props: ICategoryProps) => {
     setNewtranslateXPosition(newtranslateXPosition)
   }
 
+  const handleClickSkill = (e: React.MouseEvent) => {
+    e.preventDefault()
+    console.log(e)
+  }
+
   return (
     <>
-      <div className="w-full mt-8 overflow-hidden" ref={outerBox}>
+      <div className="w-full overflow-hidden" ref={outerBox}>
         <div
           className={`flex select-none duration-0 min-w-max ${hadAddTransition ? `duration-${500} ease-in-out` : ''}`}
           style={{ transform: `translateX(${translateXPosition}px)` }}
@@ -61,10 +66,10 @@ const CategorySlide = (props: ICategoryProps) => {
             return (
               <div
                 tabIndex={index}
-                className="mr-6 duration-500 ease-in-out cursor-pointer hover:scale-105"
+                className="p-3 duration-500 ease-in-out cursor-pointer hover:scale-105"
                 key={item.id}
               >
-                <a href="#" draggable="false">
+                <a href={`${translateXPosition != 0 ? '#1' : '#'}`} draggable="false">
                   <div className="relative w-[170px] h-[250px]">
                     <Image
                       key={item.id}

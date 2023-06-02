@@ -65,7 +65,7 @@ export const CustomDrawer = ({
       <div className="flex flex-col pt-3 pl-3 gap-5 text-white">
         <div className="flex items-center space-x-5">
           <div className="inline-block p-2 bg-gray-700 rounded-full cursor-pointer hover:bg-gray-500 active:bg-gray-400">
-            <ArrowRight onClick={onClose} theme="outline" size="24" fill="#fff" />
+            <ArrowRight onClick={onClose} theme="outline" size="30" fill="#fff" />
           </div>
           <span className="my-auto text-3xl font-bold">{drawerTitle}</span>
         </div>

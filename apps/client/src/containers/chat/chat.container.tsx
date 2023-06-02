@@ -2,7 +2,7 @@ import { ArrowLeft, FullScreen, Search } from '@icon-park/react'
 import { TextInput } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import Image from 'next/legacy/image'
 
@@ -16,7 +16,7 @@ interface channelProps {
   channelType: string
   members: { id: number; name: string; joinAt: Date; lastRead: Date }[]
   messages: { id: number; content: string; sendAt: Date }[]
-  services?: { gameImg: any; name: string; cost: number }[]
+  providerSkills?: { gameImg: any; skill?: { name: string }; cost: number }[]
 }
 
 const channelData: channelProps[] = [
@@ -62,10 +62,10 @@ const channelData: channelProps[] = [
         sendAt: new Date('2023-04-16T14:30:00Z'),
       },
     ],
-    services: [
-      { gameImg: ImgForEmpty, name: 'Valorant', cost: 2 },
-      { gameImg: ImgForEmpty, name: 'Valorant', cost: 3 },
-      { gameImg: ImgForEmpty, name: 'Valorant', cost: 4 },
+    providerSkills: [
+      { gameImg: ImgForEmpty, skill: { name: 'Valorant' }, cost: 2 },
+      { gameImg: ImgForEmpty, skill: { name: 'Valorant' }, cost: 3 },
+      { gameImg: ImgForEmpty, skill: { name: 'Valorant' }, cost: 4 },
     ],
   },
   {
@@ -110,20 +110,128 @@ const channelData: channelProps[] = [
         sendAt: new Date('2023-04-18T15:10:00Z'),
       },
     ],
-    services: [
-      { gameImg: ImgForEmpty, name: 'Valorant', cost: 6 },
-      { gameImg: ImgForEmpty, name: 'Valorant', cost: 1 },
-      // { gameImg: ImgForEmpty, name: 'Valorant', cost: 5 },
+    providerSkills: [
+      { gameImg: ImgForEmpty, skill: { name: 'Valorant' }, cost: 6 },
+      { gameImg: ImgForEmpty, skill: { name: 'Valorant' }, cost: 1 },
+      // { gameImg: ImgForEmpty, skill:{name:'Valorant'} , cost: 5 },
     ],
   },
 ]
-const Chat = () => {
+const Chat = (props) => {
   const [searchTex, setSearchText] = useState('')
   const [channelSelected, setChannelSelected] = useState(0)
+  const [channelData, setChannelData] = useState<channelProps[]>([
+    {
+      id: 1,
+      nameChannel: 'Channel 1',
+      channelType: 'public',
+      imgSrc: ImgForEmpty,
+      members: [
+        {
+          id: 1,
+          name: 'John',
+          joinAt: new Date('2023-04-15T10:30:00Z'),
+          lastRead: new Date('2023-04-16T15:45:00Z'),
+        },
+        {
+          id: 2,
+          name: 'Alice',
+          joinAt: new Date('2023-04-15T10:30:00Z'),
+          lastRead: new Date('2023-04-17T08:20:00Z'),
+        },
+        {
+          id: 3,
+          name: 'Bob',
+          joinAt: new Date('2023-04-16T09:15:00Z'),
+          lastRead: new Date('2023-04-17T12:10:00Z'),
+        },
+      ],
+      messages: [
+        {
+          id: 1,
+          content: 'Hello everyone!',
+          sendAt: new Date('2023-04-15T11:05:00Z'),
+        },
+        {
+          id: 2,
+          content: 'How are you all?',
+          sendAt: new Date('2023-04-15T11:25:00Z'),
+        },
+        {
+          id: 3,
+          content: 'Any plans for the weekend?',
+          sendAt: new Date('2023-04-16T14:30:00Z'),
+        },
+      ],
+      providerSkills: [
+        { gameImg: ImgForEmpty, skill: { name: 'Valorant' }, cost: 2 },
+        { gameImg: ImgForEmpty, skill: { name: 'Valorant' }, cost: 3 },
+        { gameImg: ImgForEmpty, skill: { name: 'Valorant' }, cost: 4 },
+      ],
+    },
+    {
+      id: 2,
+      nameChannel: 'Channel 2',
+      channelType: 'public',
+      imgSrc: ImgForEmpty,
+      members: [
+        {
+          id: 1,
+          name: 'John',
+          joinAt: new Date('2023-04-17T09:40:00Z'),
+          lastRead: new Date('2023-04-17T11:55:00Z'),
+        },
+        {
+          id: 4,
+          name: 'Sarah',
+          joinAt: new Date('2023-04-17T09:40:00Z'),
+          lastRead: new Date('2023-04-17T13:30:00Z'),
+        },
+        {
+          id: 5,
+          name: 'Michael',
+          joinAt: new Date('2023-04-18T14:20:00Z'),
+          lastRead: new Date('2023-04-18T16:45:00Z'),
+        },
+      ],
+      messages: [
+        {
+          id: 1,
+          content: 'Welcome to Channel 2!',
+          sendAt: new Date('2023-04-17T10:05:00Z'),
+        },
+        {
+          id: 2,
+          content: "Let's discuss the new project.",
+          sendAt: new Date('2023-04-17T11:30:00Z'),
+        },
+        {
+          id: 3,
+          content: 'Any suggestions?',
+          sendAt: new Date('2023-04-18T15:10:00Z'),
+        },
+      ],
+      providerSkills: [
+        { gameImg: ImgForEmpty, skill: { name: 'Valorant' }, cost: 6 },
+        { gameImg: ImgForEmpty, skill: { name: 'Valorant' }, cost: 1 },
+        // { gameImg: ImgForEmpty, skill:{name:'Valorant'} , cost: 5 },
+      ],
+    },
+  ])
+  console.log(props.data)
 
-  const handleSelected = (index) => {
-    setChannelSelected(index)
+  const handleSelected = (id) => {
+    setChannelSelected(id)
   }
+  useEffect(
+    () =>
+      setChannelData(() => {
+        if (props.data == undefined) return [...channelData]
+        return [...channelData, props?.data]
+      }),
+    [props.data],
+  )
+
   return (
     <>
       <div className="w-full grid grid-cols-10 pl-5 pr-5">
@@ -145,25 +253,26 @@ const Chat = () => {
             />
           </div>
           <div className="h-full overflow-y-scroll hide-scrollbar">
-            {channelData.map((item, index) => (
+            {channelData.map((item) => (
               <div
-                key={index}
+                key={item.id}
+                tabIndex={item.id}
                 className={`flex flex-row items-center gap-3 hover:bg-gray-700 p-1 rounded-xl ${
-                  channelSelected == index ? 'bg-gray-700' : ''
+                  channelSelected == item.id ? 'bg-gray-700' : ''
                 }`}
-                onClick={() => handleSelected(index)}
+                onClick={() => handleSelected(item.id)}
               >
                 <div className="relative w-[60px] h-[60px]">
                   <Image
                     className="absolute rounded-full"
                     layout="fill"
                     objectFit="cover"
-                    src={item.imgSrc}
+                    src={item?.imgSrc}
                     alt="Avatar"
                   />
                 </div>
                 <p className="w-[200px] h-[28px] font-nunito font-semibold text-xl truncate text-white z-[4]">
-                  {item.nameChannel ? item.nameChannel : item.name}
+                  {item?.nameChannel || item?.name}
                 </p>
               </div>
             ))}
@@ -172,7 +281,7 @@ const Chat = () => {
         <div className="col-span-7">
           <div className="flex flex-col gap-8">
             <div className="flex flex-col pl-5 pr-5 gap-5">
-              <ChatContent datas={channelData[channelSelected]} />
+              <ChatContent data={channelData[channelSelected] || props.data} />
             </div>
           </div>
         </div>
