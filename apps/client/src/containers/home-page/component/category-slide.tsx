@@ -9,14 +9,35 @@ interface ICategoryProps {
 const CategorySlide = (props: ICategoryProps) => {
   const boxList = useRef<any>(null)
   const outerBox = useRef<any>(null)
+  const intervalMousePress = useRef<NodeJS.Timeout | null>(null)
+  const [pressCount, setPressCount] = useState<number>(0)
   const [translateXPosition, setTranslateXPosition] = useState<number>(0)
   const [pressed, setPressed] = useState<boolean>(false)
   const [startX, setStartX] = useState<number>(0)
   const [dataList, setDataList] = useState(props)
   const [hadAddTransition, setHadAddTransition] = useState<boolean>(false)
+
+  const startCounter = () => {
+    if (!intervalMousePress.current) {
+      intervalMousePress.current = setInterval(() => {
+        setPressCount((prevCounter) => prevCounter + 1)
+      }, 10)
+    }
+  }
+
+  const stopCounter = () => {
+    if (intervalMousePress.current) {
+      clearInterval(intervalMousePress.current)
+      intervalMousePress.current = null
+      setPressCount(0)
+    }
+  }
+
   const handleMouseDown = (e: React.MouseEvent) => {
     setStartX(e.clientX - translateXPosition)
     setPressed(true)
+
+    startCounter()
   }
   const timing = 500
   const handleMouseMove = (e: React.MouseEvent) => {
@@ -24,9 +45,13 @@ const CategorySlide = (props: ICategoryProps) => {
     setHadAddTransition(false)
     const newtranslateXPosition = e.clientX - startX
     setNewtranslateXPosition(newtranslateXPosition)
+
+    startCounter()
   }
   const handleMouseUp = (e: React.MouseEvent) => {
     setPressed(false)
+
+    stopCounter()
   }
   const setNewtranslateXPosition = (newtranslateXPosition: number) => {
     const childrenWidth = boxList.current.children[0].offsetWidth
@@ -66,10 +91,10 @@ const CategorySlide = (props: ICategoryProps) => {
             return (
               <div
                 tabIndex={index}
-                className="p-3 duration-500 ease-in-out cursor-pointer hover:scale-105"
+                className={`p-3 duration-500 ease-in-out cursor-pointer hover:scale-105`}
                 key={item.id}
               >
-                <a href={`${translateXPosition != 0 ? '#1' : '#'}`} draggable="false">
+                <a href={`${pressCount != 0 ? '#1' : '#'}`} draggable="false">
                   <div className="relative w-[170px] h-[250px]">
                     <Image
                       key={item.id}

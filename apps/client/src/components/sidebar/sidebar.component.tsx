@@ -69,7 +69,6 @@ const chatTest: chatProps[] = [
     },
   },
 ]
-SocketContext
 export const Sidebar = (props) => {
   const socket = useContext(SocketContext)
   console.log({ socket })
