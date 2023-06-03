@@ -6,8 +6,6 @@ import logo from 'public/ume-logo-2.svg'
 import React from 'react'
 import { Fragment } from 'react'
 
-import { signOut } from 'next-auth/react'
-import { useSession } from 'next-auth/react'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -17,10 +15,10 @@ import { AuthForm } from './auth-form.component'
 export const Header: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = React.useState(false)
   const router = useRouter()
-  const { data: data, status: status } = useSession()
   const handleClose = () => {
     setIsModalVisible(false)
   }
+  const data = null
   const loginModal = Modal.useEditableForm({
     onOK: () => {},
     onClose: handleClose,
@@ -43,7 +41,6 @@ export const Header: React.FC = () => {
   })
   const handleSignout = (e) => {
     e.preventDefault()
-    signOut()
   }
 
   return (
@@ -105,14 +102,7 @@ export const Header: React.FC = () => {
                 <Menu>
                   <div>
                     <Menu.Button>
-                      <Image
-                        className="rounded-full"
-                        layout="fixed"
-                        height={35}
-                        width={35}
-                        src={data?.user?.image || ''}
-                        alt="avatar"
-                      />
+                      <Image className="rounded-full" layout="fixed" height={35} width={35} src={''} alt="avatar" />
                     </Menu.Button>
                   </div>
                   <Transition

@@ -1,39 +1,25 @@
-import { signIn } from 'next-auth/react'
+import { useGoogleLogin } from '@react-oauth/google'
+
+import { trpc } from '~/utils/trpc'
 
 export const AuthForm = () => {
-  // const popupCenter = (url: string, title: string) => {
-  //   const dualScreenLeft = window.screenLeft ?? window.screenX
-  //   const dualScreenTop = window.screenTop ?? window.screenY
-
-  //   const width = window.innerWidth ?? document.documentElement.clientWidth ?? screen.width
-
-  //   const height = window.innerHeight ?? document.documentElement.clientHeight ?? screen.height
-
-  //   const systemZoom = width / window.screen.availWidth
-
-  //   const left = (width - 500) / 2 / systemZoom + dualScreenLeft
-  //   const top = (height - 550) / 2 / systemZoom + dualScreenTop
-
-  //   const newWindow = window.open(
-  //     url,
-  //     title,
-  //     `width=${500 / systemZoom},height=${550 / systemZoom},top=${top},left=${left}`,
-  //   )
-
-  //   newWindow?.focus()
-  // }
-
+  const signIn = trpc.useMutation(['auth.signin'])
+  const login = useGoogleLogin({
+    onSuccess: (response) => {
+      console.log(response)
+      signIn.mutateAsync({ token: response.access_token, type: 'GOOGLE' }).then((response) => {
+        console.log(response)
+      })
+    },
+    onError: (error) => console.log(error),
+  })
   return (
     <div className="flex flex-col w-full p-6 bg-[#15151b] font-nunito">
       <div className="text-xl font-semibold text-center text-white">
         Đăng nhập vào <span className="font-bold ">Ume</span>
       </div>
       <div className="flex flex-col justify-center gap-4 my-4">
-        <button
-          // onClick={() => popupCenter('/auth/sign-in-google', 'Sign In Google')}
-          onClick={() => signIn('google')}
-          className="hover:bg-slate-700 bg-[#292734] px-3 py-2 rounded-2xl"
-        >
+        <button onClick={() => login()} className="hover:bg-slate-700 bg-[#292734] px-3 py-2 rounded-2xl">
           <div className="flex justify-center flex-1">
             <svg width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path
