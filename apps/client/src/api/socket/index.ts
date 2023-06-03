@@ -1,1 +1,1 @@
-export * from './socketBooking.socket'
+export * from './socket-booking'

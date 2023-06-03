@@ -1,5 +1,5 @@
+import { isEmpty } from 'lodash'
 import Link from 'next/link'
-import { FilterProviderResponse } from 'ume-booking-service-openapi'
 
 import { FilterModal } from './filterModal'
 import { PromoteCard } from './promoteCard'
@@ -9,8 +9,17 @@ import { trpc } from '~/utils/trpc'
 export interface Promotion {}
 
 export const Promotion = () => {
-  let listProvider: FilterProviderResponse[] | undefined
-  const { data: providers, isLoading: loadingProvider, isFetching } = trpc.useQuery(['booking.getProviders'])
+  let listProvider: any
+  const {
+    data: providers,
+    isLoading: loadingProvider,
+    isFetching,
+  } = trpc.useQuery(['booking.getProviders'], {
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: 'always',
+    cacheTime: 0,
+    refetchOnMount: true,
+  })
   if (loadingProvider) {
     return <></>
   }

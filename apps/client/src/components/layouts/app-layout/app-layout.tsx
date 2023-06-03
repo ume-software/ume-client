@@ -1,4 +1,4 @@
-import { SocketContext, socket } from '~/api/socket/socketBooking.socket'
+import { SocketContext, socket } from '~/api/socket/socket-booking'
 import Chat from '~/containers/chat/chat.container'
 
 import { ReactElement, ReactNode, createContext, useContext, useState } from 'react'
