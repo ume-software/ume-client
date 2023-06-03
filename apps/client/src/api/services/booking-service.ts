@@ -1,5 +1,5 @@
 import { TRPCError } from '@trpc/server'
-import { getENV } from '~/env'
+import { getEnv } from '~/env'
 
 import { BookingApi, BookingProviderRequest, ProviderApi, SkillApi } from 'ume-booking-service-openapi'
 
@@ -8,7 +8,7 @@ import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 export const getListSkill = async () => {
   try {
     const response = await new SkillApi({
-      basePath: getENV().baseBookingURL,
+      basePath: getEnv().baseBookingURL,
       isJsonMime: () => true,
     }).findAndCountAll('unlimited', '1', '["$all"]')
 
@@ -27,7 +27,7 @@ export const getListSkill = async () => {
 export const getProviders = async () => {
   try {
     const response = await new ProviderApi({
-      basePath: getENV().baseBookingURL,
+      basePath: getEnv().baseBookingURL,
       isJsonMime: () => true,
     }).getListProvider()
     return {
@@ -45,7 +45,7 @@ export const getProviders = async () => {
 export const getProviderBySlug = async (providerId: string) => {
   try {
     const respone = await new ProviderApi({
-      basePath: getENV().baseBookingURL,
+      basePath: getEnv().baseBookingURL,
       isJsonMime: () => true,
     }).getProviderBySlug(providerId)
     return {
@@ -63,7 +63,7 @@ export const getProviderBySlug = async (providerId: string) => {
 export const createBooking = async (provider: BookingProviderRequest) => {
   try {
     const respone = await new BookingApi({
-      basePath: getENV().baseBookingURL,
+      basePath: getEnv().baseBookingURL,
       isJsonMime: () => true,
     }).createbooking(provider)
     return {

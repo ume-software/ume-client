@@ -1,7 +1,7 @@
 import { ArrowRight, Search } from '@icon-park/react'
 import { CustomDrawer, TextInput } from '@ume/ui'
 
-import React, { ReactNode, useContext, useState } from 'react'
+import React, { useContext } from 'react'
 
 import Image from 'next/image'
 
@@ -13,7 +13,7 @@ function CategoryDrawer({ data }) {
   const handleAllServiceOpen = () => {
     setChildrenDrawer(
       <div className="w-full h-full px-6 overflow-y-auto">
-        <div className="grid grid-cols-4 place-items-center pb-8 mt-8 ">
+        <div className="grid grid-cols-4 pb-8 mt-8 place-items-center ">
           {data.map((category, index) => (
             <div tabIndex={index} key={category.id} className="inline-block my-8 w-[10rem] ">
               <a href="#" className="flex-col justify-center">
