@@ -1,5 +1,4 @@
 import { useGoogleLogin } from '@react-oauth/google'
-import { useQueryClient } from '@tanstack/react-query'
 
 import { Dispatch, SetStateAction } from 'react'
 
@@ -9,7 +8,8 @@ interface AuthFormProps {
   setShowModal: Dispatch<SetStateAction<boolean>>
 }
 export const AuthForm = ({ setShowModal }: AuthFormProps) => {
-  const useQuery = useQueryClient()
+  const utils = trpc.useContext()
+
   const signIn = trpc.useMutation(['auth.signin'])
   const login = useGoogleLogin({
     onSuccess: (response) => {
@@ -17,8 +17,8 @@ export const AuthForm = ({ setShowModal }: AuthFormProps) => {
         { token: response.access_token, type: 'GOOGLE' },
         {
           onSuccess: (data) => {
+            utils.refetchQueries(['identity.identityInfo'])
             setShowModal(false)
-            useQuery.invalidateQueries(['identity.identityInfo'])
           },
           onError: (error) => console.log(error),
         },
