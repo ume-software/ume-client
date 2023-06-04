@@ -3,21 +3,20 @@ import { CloseSmall, Gift, Search } from '@icon-park/react'
 import { Button, Modal } from '@ume/ui'
 import logo from 'public/ume-logo-2.svg'
 
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Fragment } from 'react'
 
 import Image from 'next/legacy/image'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
-import { UserInfomationResponse } from 'ume-booking-service-openapi'
 
 import { AuthForm } from './auth-form.component'
 
 import { trpc } from '~/utils/trpc'
 
-export const Header: React.FC = () => {
+interface HeaderProps {}
+export const Header: React.FC = ({}: HeaderProps) => {
   const [isModalVisible, setIsModalVisible] = React.useState(false)
-  const [userInfo, setUserInfo] = useState<UserInfomationResponse>()
+  const { data: userInfo, isLoading: loading, isFetching: fetching } = trpc.useQuery(['identity.identityInfo'])
   const handleClose = () => {
     setIsModalVisible(false)
   }
@@ -26,7 +25,7 @@ export const Header: React.FC = () => {
     onOK: () => {},
     onClose: handleClose,
     show: isModalVisible,
-    form: <AuthForm setShowModal={setIsModalVisible} setUserInfo={setUserInfo} />,
+    form: <AuthForm setShowModal={setIsModalVisible} />,
     backgroundColor: '#15151b',
     closeButtonOnConner: (
       <>
@@ -45,7 +44,6 @@ export const Header: React.FC = () => {
   const handleSignout = (e) => {
     e.preventDefault()
   }
-  console.log(userInfo)
   return (
     <div className="fixed z-10 flex items-center justify-between w-full h-16 bg-umeHeader ">
       {loginModal}
@@ -110,7 +108,7 @@ export const Header: React.FC = () => {
                         layout="fixed"
                         height={35}
                         width={35}
-                        src={userInfo.avatar}
+                        src={userInfo?.data?.avatarUrl.toString()}
                         alt="avatar"
                       />
                     </Menu.Button>

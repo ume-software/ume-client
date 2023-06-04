@@ -1,36 +1,24 @@
 import { useGoogleLogin } from '@react-oauth/google'
-import { useLocalStorage } from '~/hooks/useLocalStorage'
+import { useQueryClient } from '@tanstack/react-query'
 
 import { Dispatch, SetStateAction } from 'react'
-
-import { UserInfomationResponse } from 'ume-booking-service-openapi'
 
 import { trpc } from '~/utils/trpc'
 
 interface AuthFormProps {
   setShowModal: Dispatch<SetStateAction<boolean>>
-  setUserInfo: Dispatch<SetStateAction<any>>
 }
-export const AuthForm = ({ setShowModal, setUserInfo }: AuthFormProps) => {
+export const AuthForm = ({ setShowModal }: AuthFormProps) => {
+  const useQuery = useQueryClient()
   const signIn = trpc.useMutation(['auth.signin'])
-  const {
-    data: useInfo,
-    isLoading: loading,
-    isFetching: fetching,
-    refetch: refetchUserInfo,
-  } = trpc.useQuery(['identity.identityInfo'])
   const login = useGoogleLogin({
     onSuccess: (response) => {
       signIn.mutate(
         { token: response.access_token, type: 'GOOGLE' },
         {
           onSuccess: (data) => {
-            refetchUserInfo()
-            if (useInfo) {
-              setUserInfo(useInfo?.data)
-              console.log(useInfo)
-              setShowModal(false)
-            }
+            setShowModal(false)
+            useQuery.invalidateQueries(['identity.identityInfo'])
           },
           onError: (error) => console.log(error),
         },
