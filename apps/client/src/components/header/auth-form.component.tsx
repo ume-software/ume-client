@@ -1,15 +1,28 @@
 import { useGoogleLogin } from '@react-oauth/google'
+import { useQueryClient } from '@tanstack/react-query'
+
+import { Dispatch, SetStateAction } from 'react'
 
 import { trpc } from '~/utils/trpc'
 
-export const AuthForm = () => {
+interface AuthFormProps {
+  setShowModal: Dispatch<SetStateAction<boolean>>
+}
+export const AuthForm = ({ setShowModal }: AuthFormProps) => {
+  const useQuery = useQueryClient()
   const signIn = trpc.useMutation(['auth.signin'])
   const login = useGoogleLogin({
     onSuccess: (response) => {
-      console.log(response)
-      signIn.mutateAsync({ token: response.access_token, type: 'GOOGLE' }).then((response) => {
-        console.log(response)
-      })
+      signIn.mutate(
+        { token: response.access_token, type: 'GOOGLE' },
+        {
+          onSuccess: (data) => {
+            setShowModal(false)
+            useQuery.invalidateQueries(['identity.identityInfo'])
+          },
+          onError: (error) => console.log(error),
+        },
+      )
     },
     onError: (error) => console.log(error),
   })

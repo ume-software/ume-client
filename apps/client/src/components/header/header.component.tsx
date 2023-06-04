@@ -3,27 +3,29 @@ import { CloseSmall, Gift, Search } from '@icon-park/react'
 import { Button, Modal } from '@ume/ui'
 import logo from 'public/ume-logo-2.svg'
 
-import React from 'react'
+import React, { useState } from 'react'
 import { Fragment } from 'react'
 
 import Image from 'next/legacy/image'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 
 import { AuthForm } from './auth-form.component'
 
-export const Header: React.FC = () => {
+import { trpc } from '~/utils/trpc'
+
+interface HeaderProps {}
+export const Header: React.FC = ({}: HeaderProps) => {
   const [isModalVisible, setIsModalVisible] = React.useState(false)
-  const router = useRouter()
+  const { data: userInfo, isLoading: loading, isFetching: fetching } = trpc.useQuery(['identity.identityInfo'])
   const handleClose = () => {
     setIsModalVisible(false)
   }
-  const data = null
+
   const loginModal = Modal.useEditableForm({
     onOK: () => {},
     onClose: handleClose,
     show: isModalVisible,
-    form: <AuthForm />,
+    form: <AuthForm setShowModal={setIsModalVisible} />,
     backgroundColor: '#15151b',
     closeButtonOnConner: (
       <>
@@ -42,7 +44,6 @@ export const Header: React.FC = () => {
   const handleSignout = (e) => {
     e.preventDefault()
   }
-
   return (
     <div className="fixed z-10 flex items-center justify-between w-full h-16 bg-umeHeader ">
       {loginModal}
@@ -84,7 +85,7 @@ export const Header: React.FC = () => {
             </button>
           </span>
           <span className="mr-5">
-            {!data ? (
+            {!userInfo ? (
               <>
                 <Button
                   name="register"
@@ -102,7 +103,14 @@ export const Header: React.FC = () => {
                 <Menu>
                   <div>
                     <Menu.Button>
-                      <Image className="rounded-full" layout="fixed" height={35} width={35} src={''} alt="avatar" />
+                      <Image
+                        className="rounded-full"
+                        layout="fixed"
+                        height={35}
+                        width={35}
+                        src={userInfo?.data?.avatarUrl.toString()}
+                        alt="avatar"
+                      />
                     </Menu.Button>
                   </div>
                   <Transition

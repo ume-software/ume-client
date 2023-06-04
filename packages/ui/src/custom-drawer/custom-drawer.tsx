@@ -26,7 +26,6 @@ export const CustomDrawer = ({
   const [searchTex, setSearchText] = useState('')
   const [drawerOpen, setDrawerOpen] = useState(false)
   const onSearch = () => console.log(searchTex)
-  console.log(open)
   const showDrawer = () => {
     setDrawerOpen(true)
   }
@@ -62,7 +61,7 @@ export const CustomDrawer = ({
   }
   const drawerHeader = () => {
     return (
-      <div className="flex flex-col pt-3 pl-3 gap-5 text-white">
+      <div className="flex flex-col gap-5 pt-3 pl-3 text-white">
         <div className="flex items-center space-x-5">
           <div className="inline-block p-2 bg-gray-700 rounded-full cursor-pointer hover:bg-gray-500 active:bg-gray-400">
             <ArrowRight onClick={onClose} theme="outline" size="30" fill="#fff" />
