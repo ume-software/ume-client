@@ -71,7 +71,6 @@ const chatTest: chatProps[] = [
 ]
 export const Sidebar = (props) => {
   const socket = useContext(SocketContext)
-  console.log({ socket })
 
   const { childrenDrawer, setChildrenDrawer } = useContext(drawerContext)
   const handleChatOpen = () => {

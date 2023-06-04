@@ -30,7 +30,28 @@ export const signinHandler = async ({ type, token }, ctx) => {
       message: '',
     }
   } catch (error) {
-    console.log('error at catch', error)
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.message || 'Authentication failed',
+    })
+  }
+}
+
+export const getIdentityInfo = async (ctx) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie ?? '')
+    const response = await new AuthApi({
+      basePath: getEnv().baseIdentityURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).getInfo()
+
+    return {
+      data: response.data,
+      success: true,
+      message: '',
+    }
+  } catch (error) {
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
       message: error.message || 'Authentication failed',
