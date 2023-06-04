@@ -74,7 +74,7 @@ export const FilterModal = (props: { handleFilter; data }) => {
               showArrow={false}
               style={{ width: '500px' }}
               size="large"
-              placeholder="Select game type"
+              placeholder="Select service type"
               value={selectedGameType}
               onChange={handleGameTypeChange}
             >

@@ -88,7 +88,7 @@ export const Sidebar = (props) => {
         </CustomDrawer>
         <div className="flex flex-col gap-3">
           {chatTest.map((item, index) => (
-            <div className="w-[60px] h-[60px] relative">
+            <div key={index} className="w-[60px] h-[60px] relative">
               <Image
                 className="absolute rounded-full"
                 layout="fill"

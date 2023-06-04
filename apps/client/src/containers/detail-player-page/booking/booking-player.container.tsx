@@ -74,6 +74,8 @@ const BookingPlayer = (props: { data }) => {
                         className="w-full"
                         size="large"
                         showSearch
+                        showArrow={false}
+                        placeholder="Select service"
                         optionFilterProp="children"
                         filterOption={(input, option) =>
                           ((option?.label as string) ?? '').toLowerCase().includes(input)
