@@ -1,8 +1,7 @@
-import { getServerSession } from 'next-auth'
 import dynamic from 'next/dynamic'
 
 const HomeRender = dynamic(() => import('~/containers/home-page/home.container'), {
-  ssr: false,
+  ssr: true,
 })
 
 const HomePage = (props) => {

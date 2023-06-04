@@ -34,8 +34,6 @@ const BookingPlayer = (props: { data }) => {
   }, [booking])
 
   const handleCreateBooking = async (bookingData: BookingProviderRequest) => {
-    console.log({ bookingData })
-
     const result = await mutate(bookingData)
     console.log(result)
 
@@ -65,9 +63,9 @@ const BookingPlayer = (props: { data }) => {
                 </div>
                 <div className="col-span-6">
                   <div className="flex flex-col gap-10">
-                    <p className="font-nunito font-bold text-4xl">Tên người được book</p>
+                    <p className="text-4xl font-bold font-nunito">Tên người được book</p>
                     <div className="flex flex-col gap-3">
-                      <label htmlFor="providerSkillId" className="font-nunito font-medium text-2xl">
+                      <label htmlFor="providerSkillId" className="text-2xl font-medium font-nunito">
                         Chọn dịch vụ
                       </label>
                       <Select
@@ -90,7 +88,7 @@ const BookingPlayer = (props: { data }) => {
                     </div>
 
                     <div className="flex flex-col gap-3">
-                      <label htmlFor="bookingPeriod" className="font-nunito font-medium text-2xl">
+                      <label htmlFor="bookingPeriod" className="text-2xl font-medium font-nunito">
                         Chọn thời gian
                       </label>
                       <InputNumber
@@ -110,7 +108,7 @@ const BookingPlayer = (props: { data }) => {
               </div>
               <div className="grid grid-cols-10 pt-5 pb-5">
                 <div className="col-span-4">
-                  <label htmlFor="bookingPeriod" className="font-nunito font-medium text-2xl text-white opacity-40">
+                  <label htmlFor="bookingPeriod" className="text-2xl font-medium text-white font-nunito opacity-40">
                     Mã giảm giá
                   </label>
                 </div>
@@ -126,14 +124,14 @@ const BookingPlayer = (props: { data }) => {
                 </div>
               </div>
               <div className="flex justify-between border-b-2 border-[#B9B8CC] pb-5">
-                <p className="font-nunito font-bold text-4xl">Thành tiền:</p>
-                <p className="font-nunito font-bold text-4xl">
+                <p className="text-4xl font-bold font-nunito">Thành tiền:</p>
+                <p className="text-4xl font-bold font-nunito">
                   {booking.bookingPeriod}h giá {total}U
                 </p>
               </div>
               <button
                 type="submit"
-                className="rounded-full mt-5 text-white bg-purple-700 py-2 font-nunito font-bold text-2xl hover:scale-105 text-center"
+                className="py-2 mt-5 text-2xl font-bold text-center text-white bg-purple-700 rounded-full font-nunito hover:scale-105"
               >
                 Đặt
               </button>

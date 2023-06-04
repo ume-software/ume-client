@@ -3,27 +3,30 @@ import { CloseSmall, Gift, Search } from '@icon-park/react'
 import { Button, Modal } from '@ume/ui'
 import logo from 'public/ume-logo-2.svg'
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Fragment } from 'react'
 
 import Image from 'next/legacy/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { UserInfomationResponse } from 'ume-booking-service-openapi'
 
 import { AuthForm } from './auth-form.component'
 
+import { trpc } from '~/utils/trpc'
+
 export const Header: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = React.useState(false)
-  const router = useRouter()
+  const [userInfo, setUserInfo] = useState<UserInfomationResponse>()
   const handleClose = () => {
     setIsModalVisible(false)
   }
-  const data = null
+
   const loginModal = Modal.useEditableForm({
     onOK: () => {},
     onClose: handleClose,
     show: isModalVisible,
-    form: <AuthForm />,
+    form: <AuthForm setShowModal={setIsModalVisible} setUserInfo={setUserInfo} />,
     backgroundColor: '#15151b',
     closeButtonOnConner: (
       <>
@@ -42,7 +45,7 @@ export const Header: React.FC = () => {
   const handleSignout = (e) => {
     e.preventDefault()
   }
-
+  console.log(userInfo)
   return (
     <div className="fixed z-10 flex items-center justify-between w-full h-16 bg-umeHeader ">
       {loginModal}
@@ -84,7 +87,7 @@ export const Header: React.FC = () => {
             </button>
           </span>
           <span className="mr-5">
-            {!data ? (
+            {!userInfo ? (
               <>
                 <Button
                   name="register"
@@ -102,7 +105,14 @@ export const Header: React.FC = () => {
                 <Menu>
                   <div>
                     <Menu.Button>
-                      <Image className="rounded-full" layout="fixed" height={35} width={35} src={''} alt="avatar" />
+                      <Image
+                        className="rounded-full"
+                        layout="fixed"
+                        height={35}
+                        width={35}
+                        src={userInfo.avatar}
+                        alt="avatar"
+                      />
                     </Menu.Button>
                   </div>
                   <Transition

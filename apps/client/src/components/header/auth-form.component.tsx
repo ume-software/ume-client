@@ -1,15 +1,40 @@
 import { useGoogleLogin } from '@react-oauth/google'
+import { useLocalStorage } from '~/hooks/useLocalStorage'
+
+import { Dispatch, SetStateAction } from 'react'
+
+import { UserInfomationResponse } from 'ume-booking-service-openapi'
 
 import { trpc } from '~/utils/trpc'
 
-export const AuthForm = () => {
+interface AuthFormProps {
+  setShowModal: Dispatch<SetStateAction<boolean>>
+  setUserInfo: Dispatch<SetStateAction<any>>
+}
+export const AuthForm = ({ setShowModal, setUserInfo }: AuthFormProps) => {
   const signIn = trpc.useMutation(['auth.signin'])
+  const {
+    data: useInfo,
+    isLoading: loading,
+    isFetching: fetching,
+    refetch: refetchUserInfo,
+  } = trpc.useQuery(['identity.identityInfo'])
   const login = useGoogleLogin({
     onSuccess: (response) => {
-      console.log(response)
-      signIn.mutateAsync({ token: response.access_token, type: 'GOOGLE' }).then((response) => {
-        console.log(response)
-      })
+      signIn.mutate(
+        { token: response.access_token, type: 'GOOGLE' },
+        {
+          onSuccess: (data) => {
+            refetchUserInfo()
+            if (useInfo) {
+              setUserInfo(useInfo?.data)
+              console.log(useInfo)
+              setShowModal(false)
+            }
+          },
+          onError: (error) => console.log(error),
+        },
+      )
     },
     onError: (error) => console.log(error),
   })
