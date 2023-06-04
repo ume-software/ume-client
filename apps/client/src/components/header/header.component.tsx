@@ -1,5 +1,5 @@
 import { Menu, Transition } from '@headlessui/react'
-import { CloseSmall, Gift, Search } from '@icon-park/react'
+import { CloseSmall, Gift, Logout, Search } from '@icon-park/react'
 import { Button, Modal } from '@ume/ui'
 import logo from 'public/ume-logo-2.svg'
 
@@ -49,17 +49,17 @@ export const Header: React.FC = ({}: HeaderProps) => {
       {loginModal}
       <div className="flex items-center">
         <span className="pl-6">
-          <Link href={'/'}>
+          <Link href={'/home'}>
             <Image width={160} height={40} alt="logo-ume" src={logo} layout="fixed" />
           </Link>
         </span>
-        <span className="mr-6 text-xl font-semibold text-white align-middle hover:scale-105 hover:ease-in-out font-francois">
-          <Link href={'/'}>Trang chủ</Link>
+        <span className="mr-6 text-lg font-medium text-white align-middle hover:ease-in-out font-francois">
+          <Link href={'/home'}>Trang chủ</Link>
         </span>
-        <span className="mr-6 text-xl font-semibold text-white align-middle hover:scale-105 hover:ease-in-out font-francois ">
+        <span className="mr-6 text-lg font-medium text-white align-middle hover:ease-in-out font-francois ">
           <Link href={'/'}>Tạo phòng</Link>
         </span>
-        <span className="text-xl font-semibold text-white align-middle hover:scale-105 hover:ease-in-out font-francois">
+        <span className="text-lg font-medium text-white align-middle hover:ease-in-out font-francois">
           <Link href={'/'}>Cộng đồng</Link>
         </span>
       </div>
@@ -159,23 +159,13 @@ export const Header: React.FC = ({}: HeaderProps) => {
                       <Menu.Item as="div">
                         {({ active }) => (
                           <button
-                            className={`${
-                              active ? 'bg-violet-500 text-white' : 'text-gray-900'
-                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                          >
-                            Lịch sử giao dịch
-                          </button>
-                        )}
-                      </Menu.Item>
-                      <Menu.Item as="div">
-                        {({ active }) => (
-                          <button
                             onClick={handleSignout}
                             className={`${
                               active ? 'bg-violet-500 text-white' : 'text-gray-900'
                             } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                           >
                             Đăng xuất
+                            <Logout className="ml-2" theme="outline" size="20" fill="#333" />
                           </button>
                         )}
                       </Menu.Item>
