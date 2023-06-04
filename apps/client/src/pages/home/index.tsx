@@ -1,7 +1,7 @@
 import dynamic from 'next/dynamic'
 
 const HomeRender = dynamic(() => import('~/containers/home-page/home.container'), {
-  ssr: true,
+  ssr: false,
 })
 
 const HomePage = (props) => {
