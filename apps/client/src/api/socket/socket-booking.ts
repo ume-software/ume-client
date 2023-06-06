@@ -3,6 +3,8 @@ import { getEnv } from '~/env'
 
 import { Dispatch, SetStateAction, createContext } from 'react'
 
+import { getSocket } from '~/utils/constants'
+
 interface SocketTokenContextValue {
   socketToken: string | null
   setSocketToken: Dispatch<SetStateAction<string | null>>
@@ -24,7 +26,7 @@ export const socket = (token: string | null) => {
           authorization: `bearer ${token}`,
         },
       })
-      .on('connection', () => console.log('connection'))
+      .on(getSocket().SOCKET_EVENT.CONNECTION, () => console.log('connection'))
     return socketInstance
   } else {
     return null

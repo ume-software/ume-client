@@ -1,10 +1,11 @@
 import { SocketContext, socket, socketTokenContext } from '~/api/socket/socket-booking'
-import { getSocketEnv } from '~/env'
 
 import { ReactNode, createContext, useContext, useEffect, useState } from 'react'
 
 import { Header } from '~/components/header/header.component'
 import { Sidebar } from '~/components/sidebar'
+
+import { getSocket } from '~/utils/constants'
 
 interface AppLayoutProps {
   children: ReactNode
@@ -26,11 +27,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
   useEffect(() => {
     if (socketInstance) {
-      socketInstance.on(getSocketEnv().SOCKET_SERVER_EMIT.USER_BOOKING_PROVIDER, (...args) => {
+      socketInstance.on(getSocket().SOCKET_SERVER_EMIT.USER_BOOKING_PROVIDER, (...args) => {
         console.log(...args)
       })
     }
-  }, [])
+  }, [socketInstance])
 
   return (
     <>
