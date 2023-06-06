@@ -1,6 +1,6 @@
 import { useGoogleLogin } from '@react-oauth/google'
 
-import { Dispatch, SetStateAction } from 'react'
+import { Dispatch, SetStateAction, useContext } from 'react'
 
 import { trpc } from '~/utils/trpc'
 
@@ -19,6 +19,7 @@ export const AuthForm = ({ setShowModal }: AuthFormProps) => {
           onSuccess: (data) => {
             utils.refetchQueries(['identity.identityInfo'])
             setShowModal(false)
+            window.localStorage.setItem('accessToken', data.data.accessToken)
           },
           onError: (error) => console.log(error),
         },
@@ -26,6 +27,7 @@ export const AuthForm = ({ setShowModal }: AuthFormProps) => {
     },
     onError: (error) => console.log(error),
   })
+
   return (
     <div className="flex flex-col w-full p-6 bg-[#15151b] font-nunito">
       <div className="text-xl font-semibold text-center text-white">

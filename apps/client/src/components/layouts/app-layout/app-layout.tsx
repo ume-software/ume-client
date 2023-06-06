@@ -1,7 +1,7 @@
-import { SocketContext, socket } from '~/api/socket/socket-booking'
-import Chat from '~/containers/chat/chat.container'
+import { SocketContext, socket, socketTokenContext } from '~/api/socket/socket-booking'
+import { getSocketEnv } from '~/env'
 
-import { ReactElement, ReactNode, createContext, useContext, useState } from 'react'
+import { ReactNode, createContext, useContext, useEffect, useState } from 'react'
 
 import { Header } from '~/components/header/header.component'
 import { Sidebar } from '~/components/sidebar'
@@ -21,25 +21,34 @@ export const drawerContext = createContext<DrawerProps>({
 
 export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const [childrenDrawer, setChildrenDrawer] = useState<ReactNode>()
+  const [socketToken, setSocketToken] = useState(null)
+  const socketInstance = socketToken ? socket(socketToken) : null
+
+  useEffect(() => {
+    if (socketInstance) {
+      socketInstance.on(getSocketEnv().SOCKET_SERVER_EMIT.USER_BOOKING_PROVIDER, (...args) => {
+        console.log(...args)
+      })
+    }
+  }, [])
+
   return (
     <>
-      <SocketContext.Provider
-        value={socket(
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjFiNmM0NzUyLTQzYjEtNGJkOC1iNmFmLWUzMGZlYTU0NGVjNyIsImxvZ2luVHlwZSI6IklOQVBQIiwidHlwZSI6IlVTRVIiLCJpYXQiOjE2ODU2OTY0NzgsImV4cCI6MTY5MDg4MDQ3OH0.VXqkSQvTJ6mXPAD5fPuuvcbkrKtXwpqqk6Xhr9Aq7Y4',
-        )}
-      >
-        <div className="flex flex-col">
-          <div className="fixed flex flex-col w-full z-10">
-            <Header />
-          </div>
-          <drawerContext.Provider value={{ childrenDrawer, setChildrenDrawer }}>
-            <div className="pb-8 bg-umeBackground pt-[90px] pr-[60px] pl-[10px]">{children}</div>
-            <div className="fixed h-full bg-umeHeader top-[65px] right-0">
-              <Sidebar />
+      <socketTokenContext.Provider value={{ socketToken, setSocketToken }}>
+        <SocketContext.Provider value={socketInstance || null}>
+          <div className="flex flex-col">
+            <div className="fixed flex flex-col w-full z-10">
+              <Header />
             </div>
-          </drawerContext.Provider>
-        </div>
-      </SocketContext.Provider>
+            <drawerContext.Provider value={{ childrenDrawer, setChildrenDrawer }}>
+              <div className="pb-8 bg-umeBackground pt-[90px] pr-[60px] pl-[10px]">{children}</div>
+              <div className="fixed h-full bg-umeHeader top-[65px] right-0">
+                <Sidebar />
+              </div>
+            </drawerContext.Provider>
+          </div>
+        </SocketContext.Provider>
+      </socketTokenContext.Provider>
     </>
   )
 }

@@ -54,7 +54,7 @@ export const Promotion = () => {
       <div className="grid gap-6 mt-6 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1">
         {!isFetching &&
           listProvider?.map((provider) => (
-            <Link key={provider?.id} href={`/user/${provider?.slug || provider?.id}`}>
+            <Link key={provider?.id} href={`/player/${provider?.slug || provider?.id}`}>
               <PromoteCard
                 id={provider?.id}
                 image={provider?.avatarurl}

@@ -27,6 +27,6 @@ export const bookingRouter = createRouter()
       voucherIds: z.array(z.string()).optional(),
     }),
     resolve: async ({ ctx, input }) => {
-      return await createBooking(input)
+      return await createBooking(input, ctx)
     },
   })

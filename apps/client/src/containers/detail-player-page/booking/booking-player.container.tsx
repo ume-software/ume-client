@@ -1,13 +1,15 @@
 import { Time } from '@icon-park/react'
 import { FormInput } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
+import { SocketContext, socketTokenContext } from '~/api/socket'
 
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
 import { InputNumber, Select } from 'antd'
 import { ErrorMessage, Field, Form, Formik } from 'formik'
 import Image from 'next/legacy/image'
 import { BookingProviderRequest } from 'ume-booking-service-openapi'
+import * as Yup from 'yup'
 
 import { trpc } from '~/utils/trpc'
 
@@ -18,8 +20,7 @@ const BookingPlayer = (props: { data }) => {
     voucherIds: [],
   })
   const [total, setTotal] = useState(0)
-
-  const { mutate, data, error } = trpc.useMutation('booking.createBooking')
+  const createBooking = trpc.useMutation(['booking.createBooking'])
 
   const handleServiceChange = (value: string) => {
     setBooking((prevBooking) => ({ ...prevBooking, providerSkillId: value }))
@@ -33,20 +34,32 @@ const BookingPlayer = (props: { data }) => {
     setTotal((selectedItem?.defaultCost || 0) * booking.bookingPeriod)
   }, [booking])
 
-  const handleCreateBooking = async (bookingData: BookingProviderRequest) => {
-    const result = await mutate(bookingData)
-    console.log(result)
+  const validationSchema = Yup.object().shape({
+    providerSkillId: Yup.string().required('*Chưa chọn dịch vụ'),
+  })
 
-    if (error) {
-      console.log('Create fail!')
-    } else {
-      console.log('Create success!')
+  const handleCreateBooking = (bookingData: BookingProviderRequest) => {
+    try {
+      createBooking.mutate(bookingData, {
+        onSuccess: (data) => {
+          console.log(data.message)
+
+          setBooking({ providerSkillId: '', bookingPeriod: 1, voucherIds: [] })
+        },
+        onError: (error) => console.error(error),
+      })
+    } catch (error) {
+      console.error('Failed to create booking:', error)
     }
   }
   return (
     <>
       <div className="p-10 overflow-auto">
-        <Formik initialValues={booking} onSubmit={() => handleCreateBooking(booking)}>
+        <Formik
+          initialValues={booking}
+          onSubmit={() => handleCreateBooking(booking)}
+          validationSchema={validationSchema}
+        >
           <Form>
             <div className="flex flex-col gap-10">
               <div className="grid grid-cols-10 border-b-2 border-[#B9B8CC] pb-5">
@@ -63,7 +76,7 @@ const BookingPlayer = (props: { data }) => {
                 </div>
                 <div className="col-span-6">
                   <div className="flex flex-col gap-10">
-                    <p className="text-4xl font-bold font-nunito">Tên người được book</p>
+                    <p className="text-4xl font-bold font-nunito">{props.data?.name}</p>
                     <div className="flex flex-col gap-3">
                       <label htmlFor="providerSkillId" className="text-2xl font-medium font-nunito">
                         Chọn dịch vụ
@@ -86,7 +99,11 @@ const BookingPlayer = (props: { data }) => {
                           }
                         })}
                       />
-                      <ErrorMessage name="providerSkillId" component="div" />
+                      <ErrorMessage
+                        name="providerSkillId"
+                        component="div"
+                        className="font-normal font-nunito text-sm text-red-500"
+                      />
                     </div>
 
                     <div className="flex flex-col gap-3">

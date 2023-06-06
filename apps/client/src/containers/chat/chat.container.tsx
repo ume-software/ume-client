@@ -120,7 +120,6 @@ const Chat = (props) => {
       ],
     },
   ])
-  console.log(props.data)
 
   const handleSelected = (id) => {
     setChannelSelected(id - 1)

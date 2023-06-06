@@ -12,11 +12,13 @@ interface DrawerProps {
   isSearch?: boolean
   customOpenBtn?: string
   openBtn?: ReactNode
+  token?: boolean
   footer?: ReactNode
 }
 export const CustomDrawer = ({
   customOpenBtn,
   openBtn,
+  token,
   footer,
   isSearch,
   children,
@@ -27,7 +29,11 @@ export const CustomDrawer = ({
   const [drawerOpen, setDrawerOpen] = useState(false)
   const onSearch = () => console.log(searchTex)
   const showDrawer = () => {
-    setDrawerOpen(true)
+    if (token == undefined) {
+      setDrawerOpen(true)
+    } else {
+      setDrawerOpen(token.valueOf())
+    }
   }
   const onClose = () => {
     setDrawerOpen(false)

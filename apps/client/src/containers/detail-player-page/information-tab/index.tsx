@@ -1,19 +1,25 @@
 import { Down, Gamepad, People, Right, Star } from '@icon-park/react'
 import { CustomDrawer } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
+import { socketTokenContext } from '~/api/socket'
 import Chat from '~/containers/chat/chat.container'
 
 import { useContext, useState } from 'react'
 
-import Image, { ImageProps, StaticImageData } from 'next/legacy/image'
+import Image from 'next/legacy/image'
 
 import BookingPlayer from '../booking/booking-player.container'
 import GamePlayed from './game'
 import PersonalInformation from './personal-information'
 
+import { Header } from '~/components/header'
+import { AuthForm } from '~/components/header/auth-form.component'
+import { LoginModal } from '~/components/header/login-modal.component'
 import { drawerContext } from '~/components/layouts/app-layout/app-layout'
 
 const InformationTab = (props: { data }) => {
+  const { socketToken, setSocketToken } = useContext(socketTokenContext)
+  const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
   const { childrenDrawer, setChildrenDrawer } = useContext(drawerContext)
   const [gamesToggle, setGamesToggle] = useState(false)
   const [gameSelected, setGameSelected] = useState(-1)
@@ -26,14 +32,25 @@ const InformationTab = (props: { data }) => {
     setGameSelected(index)
   }
   const handleChatOpen = () => {
-    setChildrenDrawer(<Chat data={props.data} />)
+    if (socketToken) {
+      setChildrenDrawer(<Chat data={props.data} />)
+    } else {
+      setIsModalLoginVisible(true)
+    }
   }
   const handleOrderOpen = () => {
-    setChildrenDrawer(<BookingPlayer data={props.data} />)
+    if (socketToken) {
+      setChildrenDrawer(<BookingPlayer data={props.data} />)
+    } else {
+      setIsModalLoginVisible(true)
+    }
   }
 
   return (
     <>
+      <div>
+        <LoginModal isModalLoginVisible={isModalLoginVisible} setIsModalLoginVisible={setIsModalLoginVisible} />
+      </div>
       <div className="w-full grid grid-cols-10 gap-10 px-10">
         <div className="col-span-2">
           <div className="bg-zinc-800 rounded-3xl p-10">
@@ -58,7 +75,7 @@ const InformationTab = (props: { data }) => {
                   )}
                 </div>
                 <div className={`pl-5 gap-3 ${gamesToggle ? 'flex flex-col items-start' : 'hidden'}`}>
-                  {props.data.providerSkills.map((item, index) => (
+                  {props.data.providerSkills?.map((item, index) => (
                     <div
                       key={index}
                       className={`flex lg:flex-row flex-col items-center gap-3 hover:bg-gray-700 p-1 rounded-xl ${
@@ -87,7 +104,7 @@ const InformationTab = (props: { data }) => {
             ) : (
               <div className="bg-zinc-800 rounded-3xl p-10">
                 <div className="flex flex-col gap-10">
-                  <GamePlayed datas={props.data.providerSkills[gameSelected]} />
+                  <GamePlayed data={props.data.providerSkills[gameSelected]} />
                 </div>
               </div>
             )}
@@ -108,6 +125,7 @@ const InformationTab = (props: { data }) => {
               <CustomDrawer
                 customOpenBtn={`rounded-full w-full text-purple-700 border-2 border-purple-700 py-2 font-nunito font-bold text-2xl hover:scale-105 text-center`}
                 openBtn={<div onClick={handleChatOpen}>Chat</div>}
+                token={!!socketToken}
               >
                 {childrenDrawer}
               </CustomDrawer>
@@ -116,6 +134,7 @@ const InformationTab = (props: { data }) => {
                 drawerTitle="Xác nhận đặt"
                 customOpenBtn="rounded-full w-full text-white bg-purple-700 py-2 font-nunito font-bold text-2xl hover:scale-105 text-center"
                 openBtn={<div onClick={handleOrderOpen}>Order</div>}
+                token={!!socketToken}
               >
                 {childrenDrawer}
               </CustomDrawer>

@@ -6,7 +6,7 @@ import { AppLayout } from '~/components/layouts/app-layout/app-layout'
 
 import { trpc } from '~/utils/trpc'
 
-const DetailUser = (props) => {
+const DetailPlayer = (props) => {
   let providerBySlug: GetProfieProviderBySlugResponse | undefined
   const {
     data: provider,
@@ -26,4 +26,4 @@ const DetailUser = (props) => {
     </>
   )
 }
-export default DetailUser
+export default DetailPlayer

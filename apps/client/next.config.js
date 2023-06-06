@@ -11,6 +11,7 @@ module.exports = {
       'picsum.photos',
       'loremflickr.com',
       'static-oss.epal.gg',
+      'cdn.pixabay.com',
     ],
   },
 }
