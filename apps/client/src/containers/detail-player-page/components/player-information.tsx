@@ -205,8 +205,8 @@ const PlayerInformation = (props: { data }) => {
                   actionModal ? 'flex flex-col' : 'hidden'
                 }`}
               >
-                {moreButtonDatas.map((item) => (
-                  <MoreTable>{item.children}</MoreTable>
+                {moreButtonDatas.map((item, index) => (
+                  <MoreTable key={index}>{item.children}</MoreTable>
                 ))}
               </div>
             </div>

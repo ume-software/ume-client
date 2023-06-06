@@ -19,104 +19,6 @@ interface channelProps {
   providerSkills?: { gameImg: any; skill?: { name: string }; cost: number }[]
 }
 
-const channelData: channelProps[] = [
-  {
-    id: 1,
-    nameChannel: 'Channel 1',
-    channelType: 'public',
-    imgSrc: ImgForEmpty,
-    members: [
-      {
-        id: 1,
-        name: 'John',
-        joinAt: new Date('2023-04-15T10:30:00Z'),
-        lastRead: new Date('2023-04-16T15:45:00Z'),
-      },
-      {
-        id: 2,
-        name: 'Alice',
-        joinAt: new Date('2023-04-15T10:30:00Z'),
-        lastRead: new Date('2023-04-17T08:20:00Z'),
-      },
-      {
-        id: 3,
-        name: 'Bob',
-        joinAt: new Date('2023-04-16T09:15:00Z'),
-        lastRead: new Date('2023-04-17T12:10:00Z'),
-      },
-    ],
-    messages: [
-      {
-        id: 1,
-        content: 'Hello everyone!',
-        sendAt: new Date('2023-04-15T11:05:00Z'),
-      },
-      {
-        id: 2,
-        content: 'How are you all?',
-        sendAt: new Date('2023-04-15T11:25:00Z'),
-      },
-      {
-        id: 3,
-        content: 'Any plans for the weekend?',
-        sendAt: new Date('2023-04-16T14:30:00Z'),
-      },
-    ],
-    providerSkills: [
-      { gameImg: ImgForEmpty, skill: { name: 'Valorant' }, cost: 2 },
-      { gameImg: ImgForEmpty, skill: { name: 'Valorant' }, cost: 3 },
-      { gameImg: ImgForEmpty, skill: { name: 'Valorant' }, cost: 4 },
-    ],
-  },
-  {
-    id: 2,
-    nameChannel: 'Channel 2',
-    channelType: 'public',
-    imgSrc: ImgForEmpty,
-    members: [
-      {
-        id: 1,
-        name: 'John',
-        joinAt: new Date('2023-04-17T09:40:00Z'),
-        lastRead: new Date('2023-04-17T11:55:00Z'),
-      },
-      {
-        id: 4,
-        name: 'Sarah',
-        joinAt: new Date('2023-04-17T09:40:00Z'),
-        lastRead: new Date('2023-04-17T13:30:00Z'),
-      },
-      {
-        id: 5,
-        name: 'Michael',
-        joinAt: new Date('2023-04-18T14:20:00Z'),
-        lastRead: new Date('2023-04-18T16:45:00Z'),
-      },
-    ],
-    messages: [
-      {
-        id: 1,
-        content: 'Welcome to Channel 2!',
-        sendAt: new Date('2023-04-17T10:05:00Z'),
-      },
-      {
-        id: 2,
-        content: "Let's discuss the new project.",
-        sendAt: new Date('2023-04-17T11:30:00Z'),
-      },
-      {
-        id: 3,
-        content: 'Any suggestions?',
-        sendAt: new Date('2023-04-18T15:10:00Z'),
-      },
-    ],
-    providerSkills: [
-      { gameImg: ImgForEmpty, skill: { name: 'Valorant' }, cost: 6 },
-      { gameImg: ImgForEmpty, skill: { name: 'Valorant' }, cost: 1 },
-      // { gameImg: ImgForEmpty, skill:{name:'Valorant'} , cost: 5 },
-    ],
-  },
-]
 const Chat = (props) => {
   const [searchTex, setSearchText] = useState('')
   const [channelSelected, setChannelSelected] = useState(0)
@@ -218,16 +120,15 @@ const Chat = (props) => {
       ],
     },
   ])
-  console.log(props.data)
 
   const handleSelected = (id) => {
-    setChannelSelected(id)
+    setChannelSelected(id - 1)
   }
   useEffect(
     () =>
       setChannelData(() => {
         if (props.data == undefined) return [...channelData]
-        return [...channelData, props?.data]
+        return [...channelData, props.data]
       }),
     [props.data],
   )

@@ -1,7 +1,6 @@
 import { ArrowLeft, ArrowRight } from '@icon-park/react'
 import { CustomDrawer } from '@ume/ui'
 import cover from 'public/cover.png'
-import { SocketContext } from '~/api/socket'
 import Chat from '~/containers/chat/chat.container'
 
 import { useContext, useState } from 'react'
@@ -70,8 +69,6 @@ const chatTest: chatProps[] = [
   },
 ]
 export const Sidebar = (props) => {
-  const socket = useContext(SocketContext)
-
   const { childrenDrawer, setChildrenDrawer } = useContext(drawerContext)
   const handleChatOpen = () => {
     setChildrenDrawer(<Chat />)
@@ -87,7 +84,7 @@ export const Sidebar = (props) => {
         </CustomDrawer>
         <div className="flex flex-col gap-3">
           {chatTest.map((item, index) => (
-            <div className="w-[60px] h-[60px] relative">
+            <div key={index} className="w-[60px] h-[60px] relative">
               <Image
                 className="absolute rounded-full"
                 layout="fill"

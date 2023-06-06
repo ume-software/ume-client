@@ -63,11 +63,11 @@ export const PromoteCard = (props: IPromoteCardProps) => {
           <span className="mr-2">{props?.rating}</span>
           <span className="font-bold text-slate-500">{props?.totalVote}</span>
         </div>
-        <p className="font-sans truncate">{props?.description}</p>
+        <div className="font-sans truncate">{props?.description}</div>
         <Github theme="outline" size="16" fill="#7463F0" className="inline-block mr-2" />
-        <p className="inline-block mr-2 font-sans">
+        <div className="inline-block mr-2 font-sans">
           <span className="text-2xl font-bold">{Math.round(props.coin)}</span>.00 /{1} giờ
-        </p>
+        </div>
       </div>
     </div>
   )

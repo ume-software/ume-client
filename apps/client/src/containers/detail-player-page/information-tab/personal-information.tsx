@@ -37,8 +37,8 @@ const PersonalInformation = (props: { data }) => {
               )}
             </div>
           </div>
-          {props.data.reviews?.map((item, index) => (
-            <div key={index} className="flex flex-col border-2 border-gray-600 rounded-lg p-3">
+          {props.data.reviews?.map((item) => (
+            <div key={item.id} className="flex flex-col border-2 border-gray-600 rounded-lg p-3">
               <div className="flex flex-row justify-between">
                 <span className="font-roboto font-bold text-2xl leading-9">{item.name}</span>
                 <div className="flex flex-row items-center gap-1 leading-9">
@@ -47,8 +47,10 @@ const PersonalInformation = (props: { data }) => {
                 </div>
               </div>
               <div className="flex flex-row gap-3 text-gray-600 leading-9 truncate">
-                {item.serviceUsed.map((service) => (
-                  <p className="font-roboto font-normal text-md">{service}</p>
+                {item.serviceUsed.map((service, index) => (
+                  <p key={index} className="font-roboto font-normal text-md">
+                    {service}
+                  </p>
                 ))}
               </div>
               <span className="font-roboto font-normal text-lg leading-9">{item.comment}</span>
