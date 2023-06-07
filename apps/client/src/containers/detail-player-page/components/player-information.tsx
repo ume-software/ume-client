@@ -214,19 +214,17 @@ const PlayerInformation = (props: { data }) => {
 
           <div className="flex flex-row gap-10" style={{ zIndex: 2 }}>
             {tabDatas.map((item, index) => (
-              <>
-                <a
-                  href="#tab"
-                  className={`text-white xl:text-3xl text-xl font-medium p-4 ${
-                    item.label == selectedTab ? 'border-b-4 border-purple-700' : ''
-                  }`}
-                  key={index}
-                  onClick={handleChangeTab}
-                  data-tab={item.label}
-                >
-                  {item.label}
-                </a>
-              </>
+              <a
+                href="#tab"
+                className={`text-white xl:text-3xl text-xl font-medium p-4 ${
+                  item.label == selectedTab ? 'border-b-4 border-purple-700' : ''
+                }`}
+                key={index}
+                onClick={handleChangeTab}
+                data-tab={item.label}
+              >
+                {item.label}
+              </a>
             ))}
           </div>
         </div>

@@ -4,7 +4,7 @@ import { Button, Input, Modal } from '@ume/ui'
 import logo from 'public/ume-logo-2.svg'
 import Notificate from '~/containers/notificate/notificate.container'
 
-import React, { ReactNode, useContext, useEffect, useState } from 'react'
+import React, { ReactElement, ReactNode, useContext, useEffect, useState } from 'react'
 import { Fragment } from 'react'
 
 import { Tabs, TabsProps } from 'antd'
@@ -18,12 +18,19 @@ import { RechargeModal } from './recharge-form.component'
 import { trpc } from '~/utils/trpc'
 
 interface HeaderProps {}
+
+interface tabData {
+  label: string
+  children: ReactElement
+}
+
 export const Header: React.FC = ({}: HeaderProps) => {
   const [showSearh, setShowSearch] = useState(false)
   const [showRechargeModal, setShowRechargeModal] = useState(false)
   const [userInfo, setUserInfo] = useState<any>()
   const { setSocketToken } = useContext(SocketTokenContext)
   const { socketContext } = useContext(SocketContext)
+  const [selectedTab, setSelectedTab] = useState('Chính')
   const [isModalLoginVisible, setIsModalLoginVisible] = React.useState(false)
 
   const { data: dataResponse, isLoading: loading, isFetching: fetching } = trpc.useQuery(['identity.identityInfo'])
@@ -32,11 +39,35 @@ export const Header: React.FC = ({}: HeaderProps) => {
     isLoading: loadingAccountBalance,
     isFetching: fetchingAccountBalance,
   } = trpc.useQuery(['identity.account-balance'])
+
   useEffect(() => {
     if (userInfo) {
       setSocketToken(window.localStorage.getItem('accessToken'))
     }
-  }, [userInfo])
+    if (dataResponse) {
+      setUserInfo(dataResponse.data)
+    }
+  }, [dataResponse, setSocketToken, userInfo])
+
+  const tabDatas: tabData[] = [
+    {
+      label: `Chính`,
+      children: <Notificate />,
+    },
+    {
+      label: `Khác`,
+      children: <div>Khac</div>,
+    },
+  ]
+
+  const handleChangeTab = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+    const target = (e.target as HTMLElement).dataset.tab
+    if (typeof target !== 'string') {
+      return
+    }
+    setSelectedTab(target)
+  }
 
   const handleSignout = (e) => {
     e.preventDefault()
@@ -123,7 +154,30 @@ export const Header: React.FC = ({}: HeaderProps) => {
                   leaveTo="transform opacity-0 scale-95"
                 >
                   <Menu.Items className="absolute w-96 p-5 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg right-0 ring-1 ring-black ring-opacity-5 focus:outline-none">
-                    <Tabs defaultActiveKey="1" items={items} />
+                    <div className="flex flex-row gap-10" style={{ zIndex: 2 }}>
+                      {tabDatas.map((item, index) => (
+                        <a
+                          href="#tab"
+                          className={`xl:text-lg text-md font-medium p-2 ${
+                            item.label == selectedTab ? 'border-b-4 border-purple-700' : ''
+                          }`}
+                          key={index}
+                          onClick={handleChangeTab}
+                          data-tab={item.label}
+                        >
+                          {item.label}
+                        </a>
+                      ))}
+                    </div>
+                    <div className="h-96 p-3 overflow-auto">
+                      {tabDatas.map((item, index) => {
+                        return (
+                          <div key={index} hidden={selectedTab !== item.label}>
+                            {item.children}
+                          </div>
+                        )
+                      })}
+                    </div>
                   </Menu.Items>
                 </Transition>
               </Menu>
@@ -167,7 +221,7 @@ export const Header: React.FC = ({}: HeaderProps) => {
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95"
                   >
-                    <Menu.Items className="absolute w-56 pt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg right-12 ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <Menu.Items className="absolute w-56 pt-2 origin-top-right bg-white divide-y divide-gray-200 rounded-md shadow-lg right-12 ring-1 ring-black ring-opacity-5 focus:outline-none">
                       <Menu.Item as="div">
                         {({ active }) => (
                           <button
