@@ -13,55 +13,30 @@ import Link from 'next/link'
 
 import { SocketContext, SocketTokenContext } from '../layouts/app-layout/app-layout'
 import { LoginModal } from './login-modal.component'
+import { RechargeModal } from './recharge-form.component'
 
 import { trpc } from '~/utils/trpc'
 
 interface HeaderProps {}
 export const Header: React.FC = ({}: HeaderProps) => {
   const [showSearh, setShowSearch] = useState(false)
+  const [showRechargeModal, setShowRechargeModal] = useState(false)
+  const [userInfo, setUserInfo] = useState<any>()
   const { setSocketToken } = useContext(SocketTokenContext)
   const { socketContext } = useContext(SocketContext)
   const [isModalLoginVisible, setIsModalLoginVisible] = React.useState(false)
 
-  const { data: userInfo, isLoading: loading, isFetching: fetching } = trpc.useQuery(['identity.identityInfo'])
-
+  const { data: dataResponse, isLoading: loading, isFetching: fetching } = trpc.useQuery(['identity.identityInfo'])
+  const {
+    data: accountBalance,
+    isLoading: loadingAccountBalance,
+    isFetching: fetchingAccountBalance,
+  } = trpc.useQuery(['identity.account-balance'])
   useEffect(() => {
     if (userInfo) {
       setSocketToken(window.localStorage.getItem('accessToken'))
     }
   }, [userInfo])
-
-  // useEffect(() => {
-  //   setNotificateButton(
-  //     <>
-  //       <Remind theme="filled" size={28} strokeWidth={4} fill="#FFFFFF" />
-  //       <div className="absolute top-0 right-0">
-  //         <Dot size={22} strokeWidth={4} fill="#ff4651" />
-  //       </div>
-  //     </>,
-  //   )
-  // }, [socketContext])
-
-  // const handleNotificateOpen = () => {
-  //   if (socketToken) {
-  //     setChildrenDrawer(<Notificate />)
-  //   } else {
-  //     setIsModalLoginVisible(true)
-  //   }
-  // }
-
-  const items: TabsProps['items'] = [
-    {
-      key: '1',
-      label: `Chính`,
-      children: <Notificate data={socketContext} />,
-    },
-    {
-      key: '2',
-      label: `Khác`,
-      children: <Notificate />,
-    },
-  ]
 
   const handleSignout = (e) => {
     e.preventDefault()
@@ -71,9 +46,11 @@ export const Header: React.FC = ({}: HeaderProps) => {
     e.preventDefault()
     setShowSearch(!showSearh)
   }
+
   return (
     <div className="fixed z-10 flex items-center justify-between w-full h-16 bg-umeHeader ">
       <LoginModal isModalLoginVisible={isModalLoginVisible} setIsModalLoginVisible={setIsModalLoginVisible} />
+      <RechargeModal showRechargeModal={showRechargeModal} setShowRechargeModal={setShowRechargeModal} />
       <div className="flex items-center">
         <span className="pl-2">
           <Link href={'/home'}>
@@ -93,7 +70,7 @@ export const Header: React.FC = ({}: HeaderProps) => {
       <div className="flex items-center">
         <div className="flex flex-1 pr-2 duration-500 hover:ease-in-out">
           <span className="my-auto mr-2">
-            <Link href={'/becomeaume'}>
+            <Link href={'/register-provider'}>
               <Button
                 name="register"
                 customCSS="bg-[#37354F] py-1  hover:bg-slate-700 !rounded-3xl max-h-10 w-[160px] text-[15px] hover:ease-in-out"
@@ -103,12 +80,12 @@ export const Header: React.FC = ({}: HeaderProps) => {
               </Button>
             </Link>
           </span>
-          <span className="self-center my-auto mr-5 rounded-ful hover:scale-110 hover:ease-in-out">
+          <span className="self-center my-auto mr-4 rounded-ful hover:scale-110 hover:ease-in-out">
             <button className="pt-2">
               <Gift size={22} strokeWidth={4} fill="#FFFFFF" />
             </button>
           </span>
-          <span className="flex flex-1 my-auto mr-2">
+          <span className="flex flex-1 my-auto mr-4">
             {showSearh && (
               <Input
                 className="outline-none border-none focus:outline-[#6d3fe0] max-h-8 rounded-2xl"
@@ -120,11 +97,14 @@ export const Header: React.FC = ({}: HeaderProps) => {
               <Search size={22} strokeWidth={4} fill="#FFFFFF" />
             </button>
           </span>
-          {userInfo && (
+          {/* {userInfo && accountBalance && (
             <span className="mr-5 my-auto rounded-full bg-[#37354F] px-2 py-1 self-center text-white">
-              <Link href={'/recharge'}>1000</Link>
+              <button onClick={() => setShowRechargeModal(true)}>{accountBalance?.data?.totalCoinsAvailable}</button>
             </span>
-          )}
+          )} */}
+          <span className="mr-5 my-auto rounded-full bg-[#37354F] px-2 py-1 self-center text-white">
+            <button onClick={() => setShowRechargeModal(true)}>1000</button>
+          </span>
           <span className="my-auto mr-5 duration-300 rounded-full">
             <div className="relative pt-2">
               <Menu>
@@ -173,7 +153,7 @@ export const Header: React.FC = ({}: HeaderProps) => {
                         layout="fixed"
                         height={35}
                         width={35}
-                        src={userInfo?.data?.avatarUrl.toString()}
+                        src={userInfo?.avatarUrl.toString()}
                         alt="avatar"
                       />
                     </Menu.Button>
@@ -226,15 +206,15 @@ export const Header: React.FC = ({}: HeaderProps) => {
                       </Menu.Item>
                       <Menu.Item as="div">
                         {({ active }) => (
-                          <button
-                            onClick={handleSignout}
+                          <Link
+                            href={'/logout'}
                             className={`${
                               active ? 'bg-violet-500 text-white' : 'text-gray-900'
                             } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                           >
                             <Logout className="mr-3" theme="outline" size="20" fill="#333" />
                             Đăng xuất
-                          </button>
+                          </Link>
                         )}
                       </Menu.Item>
                     </Menu.Items>
