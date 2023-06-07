@@ -1,22 +1,28 @@
 import { Menu, Transition } from '@headlessui/react'
 import { CloseSmall, Dot, Gift, Logout, Remind, Search } from '@icon-park/react'
-import { Button, Modal } from '@ume/ui'
+import { Button, CustomDrawer, Modal } from '@ume/ui'
 import logo from 'public/ume-logo-2.svg'
-import { socketTokenContext } from '~/api/socket'
+import Notificate from '~/containers/notificate/notificate.container'
 
-import React, { useContext, useEffect, useState } from 'react'
+import React, { ReactNode, useContext, useEffect, useState } from 'react'
 import { Fragment } from 'react'
 
 import Image from 'next/legacy/image'
 import Link from 'next/link'
 
+import { SocketContext, SocketTokenContext, drawerContext } from '../layouts/app-layout/app-layout'
 import { LoginModal } from './login-modal.component'
 
 import { trpc } from '~/utils/trpc'
 
 interface HeaderProps {}
 export const Header: React.FC = ({}: HeaderProps) => {
-  const { socketToken, setSocketToken } = useContext(socketTokenContext)
+  const { socketToken, setSocketToken } = useContext(SocketTokenContext)
+  const { socketContext } = useContext(SocketContext)
+  const [notificateButton, setNotificateButton] = useState<ReactNode>(
+    <Remind size={28} strokeWidth={4} fill="#FFFFFF" />,
+  )
+  const { childrenDrawer, setChildrenDrawer } = useContext(drawerContext)
   const [isModalLoginVisible, setIsModalLoginVisible] = React.useState(false)
   const { data: userInfo, isLoading: loading, isFetching: fetching } = trpc.useQuery(['identity.identityInfo'])
 
@@ -49,6 +55,27 @@ export const Header: React.FC = ({}: HeaderProps) => {
       setSocketToken(window.localStorage.getItem('accessToken'))
     }
   }, [userInfo])
+
+  console.log({ socketContext })
+
+  useEffect(() => {
+    setNotificateButton(
+      <>
+        <Remind theme="filled" size={28} strokeWidth={4} fill="#FFFFFF" />
+        <div className="absolute top-0 right-0">
+          <Dot size={22} strokeWidth={4} fill="#ff4651" />
+        </div>
+      </>,
+    )
+  }, [socketContext])
+
+  const handleNotificateOpen = () => {
+    if (socketToken) {
+      setChildrenDrawer(<Notificate />)
+    } else {
+      setIsModalLoginVisible(true)
+    }
+  }
 
   const handleSignout = (e) => {
     e.preventDefault()
@@ -93,13 +120,14 @@ export const Header: React.FC = ({}: HeaderProps) => {
               <Gift size={28} strokeWidth={4} fill="#FFFFFF" />
             </button>
           </span>
-          <span className="relative mr-5 rounded-ful hover:scale-110 hover:ease-in-out">
-            <button className="pt-2">
-              <Remind size={28} strokeWidth={4} fill="#FFFFFF" />
-            </button>
-            <div className="absolute top-0 right-0">
-              <Dot size={22} strokeWidth={4} fill="#ff4651" />
-            </div>
+          <span className=" mr-5 rounded-ful hover:scale-110 hover:ease-in-out">
+            <CustomDrawer
+              customOpenBtn="relative pt-2"
+              openBtn={<div onClick={handleNotificateOpen}>{notificateButton}</div>}
+              token={!!socketToken}
+            >
+              {childrenDrawer}
+            </CustomDrawer>
           </span>
           <span className="mr-5">
             {!userInfo ? (

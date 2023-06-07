@@ -1,7 +1,6 @@
-import { Down, Gamepad, People, Right, Star } from '@icon-park/react'
+import { Down, Gamepad, People, Right } from '@icon-park/react'
 import { CustomDrawer } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
-import { socketTokenContext } from '~/api/socket'
 import Chat from '~/containers/chat/chat.container'
 
 import { useContext, useState } from 'react'
@@ -12,13 +11,11 @@ import BookingPlayer from '../booking/booking-player.container'
 import GamePlayed from './game'
 import PersonalInformation from './personal-information'
 
-import { Header } from '~/components/header'
-import { AuthForm } from '~/components/header/auth-form.component'
 import { LoginModal } from '~/components/header/login-modal.component'
-import { drawerContext } from '~/components/layouts/app-layout/app-layout'
+import { SocketTokenContext, drawerContext } from '~/components/layouts/app-layout/app-layout'
 
 const InformationTab = (props: { data }) => {
-  const { socketToken, setSocketToken } = useContext(socketTokenContext)
+  const { socketToken, setSocketToken } = useContext(SocketTokenContext)
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
   const { childrenDrawer, setChildrenDrawer } = useContext(drawerContext)
   const [gamesToggle, setGamesToggle] = useState(false)
