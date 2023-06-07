@@ -83,9 +83,9 @@ const BookingPlayer = (props: { data }) => {
                   </div>
                   <div className="col-span-6">
                     <div className="flex flex-col gap-10">
-                      <p className="text-4xl font-bold font-nunito">{props.data?.name}</p>
+                      <p className="text-4xl font-bold ">{props.data?.name}</p>
                       <div className={`flex flex-col gap-3`}>
-                        <label htmlFor="providerSkillId" className="text-2xl font-medium font-nunito">
+                        <label htmlFor="providerSkillId" className="text-2xl font-medium ">
                           Chọn dịch vụ
                         </label>
                         <Select
@@ -110,14 +110,12 @@ const BookingPlayer = (props: { data }) => {
                           }))}
                         />
                         <ErrorMessage name="providerSkillId">
-                          {(errorMessage) => (
-                            <div className="font-normal font-nunito text-sm text-red-500">{errorMessage}</div>
-                          )}
+                          {(errorMessage) => <div className="font-normal  text-sm text-red-500">{errorMessage}</div>}
                         </ErrorMessage>
                       </div>
 
                       <div className="flex flex-col gap-3">
-                        <label htmlFor="bookingPeriod" className="text-2xl font-medium font-nunito">
+                        <label htmlFor="bookingPeriod" className="text-2xl font-medium ">
                           Chọn thời gian
                         </label>
                         <InputNumber
@@ -141,7 +139,7 @@ const BookingPlayer = (props: { data }) => {
                 </div>
                 <div className="grid grid-cols-10 pt-5 pb-5">
                   <div className="col-span-4">
-                    <label htmlFor="bookingPeriod" className="text-2xl font-medium text-white font-nunito opacity-40">
+                    <label htmlFor="bookingPeriod" className="text-2xl font-medium text-white  opacity-40">
                       Mã giảm giá
                     </label>
                   </div>
@@ -161,14 +159,14 @@ const BookingPlayer = (props: { data }) => {
                   </div>
                 </div>
                 <div className="flex justify-between border-b-2 border-[#B9B8CC] pb-5">
-                  <p className="text-4xl font-bold font-nunito">Thành tiền:</p>
-                  <p className="text-4xl font-bold font-nunito">
+                  <p className="text-4xl font-bold ">Thành tiền:</p>
+                  <p className="text-4xl font-bold ">
                     {values.bookingPeriod}h giá {total}U
                   </p>
                 </div>
                 <button
                   type="submit"
-                  className="py-2 mt-5 text-2xl font-bold text-center text-white bg-purple-700 rounded-full font-nunito hover:scale-105"
+                  className="py-2 mt-5 text-2xl font-bold text-center text-white bg-purple-700 rounded-full  hover:scale-105"
                   disabled={isSubmitting}
                 >
                   Đặt

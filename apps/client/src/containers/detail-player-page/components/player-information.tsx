@@ -201,7 +201,7 @@ const PlayerInformation = (props: { data }) => {
                 onClick={handleMoreButton}
               />
               <div
-                className={`absolute w-max top-10 bottom-auto text-white p-3 pt-5 border border-gray-300 bg-gray-900 rounded-xl gap-3 font-nunito font-medium text-20 ${
+                className={`absolute w-max top-10 bottom-auto text-white p-3 pt-5 border border-gray-300 bg-gray-900 rounded-xl gap-3  font-medium text-20 ${
                   actionModal ? 'flex flex-col' : 'hidden'
                 }`}
               >
