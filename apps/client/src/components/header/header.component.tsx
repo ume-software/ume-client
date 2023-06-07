@@ -18,7 +18,8 @@ import { trpc } from '~/utils/trpc'
 interface HeaderProps {}
 export const Header: React.FC = ({}: HeaderProps) => {
   const [showSearh, setShowSearch] = useState(false)
-  const { socketToken, setSocketToken } = useContext(socketTokenContext)
+  const { socketToken, setSocketToken } = useContext(SocketTokenContext)
+  const { socketContext } = useContext(SocketContext)
   const [isModalLoginVisible, setIsModalLoginVisible] = React.useState(false)
   const { data: userInfo, isLoading: loading, isFetching: fetching } = trpc.useQuery(['identity.identityInfo'])
 
@@ -30,24 +31,24 @@ export const Header: React.FC = ({}: HeaderProps) => {
 
   console.log({ socketContext })
 
-  useEffect(() => {
-    setNotificateButton(
-      <>
-        <Remind theme="filled" size={28} strokeWidth={4} fill="#FFFFFF" />
-        <div className="absolute top-0 right-0">
-          <Dot size={22} strokeWidth={4} fill="#ff4651" />
-        </div>
-      </>,
-    )
-  }, [socketContext])
+  // useEffect(() => {
+  //   setNotificateButton(
+  //     <>
+  //       <Remind theme="filled" size={28} strokeWidth={4} fill="#FFFFFF" />
+  //       <div className="absolute top-0 right-0">
+  //         <Dot size={22} strokeWidth={4} fill="#ff4651" />
+  //       </div>
+  //     </>,
+  //   )
+  // }, [socketContext])
 
-  const handleNotificateOpen = () => {
-    if (socketToken) {
-      setChildrenDrawer(<Notificate />)
-    } else {
-      setIsModalLoginVisible(true)
-    }
-  }
+  // const handleNotificateOpen = () => {
+  //   if (socketToken) {
+  //     setChildrenDrawer(<Notificate />)
+  //   } else {
+  //     setIsModalLoginVisible(true)
+  //   }
+  // }
 
   const handleSignout = (e) => {
     e.preventDefault()
