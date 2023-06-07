@@ -172,7 +172,7 @@ const Chat = (props) => {
                     alt="Avatar"
                   />
                 </div>
-                <p className="w-[200px] h-[28px] font-nunito font-semibold text-xl truncate text-white z-[4]">
+                <p className="w-[200px] h-[28px]  font-semibold text-xl truncate text-white z-[4]">
                   {item?.nameChannel || item?.name}
                 </p>
               </div>

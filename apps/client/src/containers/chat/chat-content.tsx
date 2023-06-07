@@ -41,9 +41,7 @@ const ChatContent = (props: { data }) => {
               alt="Avatar"
             />
           </div>
-          <span className="font-nunito font-bold text-white text-3xl">
-            {props.data?.nameChannel || props.data?.name}
-          </span>
+          <span className=" font-bold text-white text-3xl">{props.data?.nameChannel || props.data?.name}</span>
         </div>
         <div className="flex gap-2">
           {actionButtons.map((item, index) => (
@@ -66,7 +64,7 @@ const ChatContent = (props: { data }) => {
               }`}
               onClick={() => setGameSelected(index)}
             >
-              <p className="font-nunito font-medium text-white text-lg whitespace-nowrap">{providerSkill.skill.name}</p>
+              <p className=" font-medium text-white text-lg whitespace-nowrap">{providerSkill.skill.name}</p>
             </div>
           ))}
         </div>

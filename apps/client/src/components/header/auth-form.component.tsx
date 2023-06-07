@@ -29,7 +29,7 @@ export const AuthForm = ({ setShowModal }: AuthFormProps) => {
   })
 
   return (
-    <div className="flex flex-col w-full p-6 bg-[#15151b] font-nunito">
+    <div className="flex flex-col w-full p-6 bg-[#15151b] ">
       <div className="text-xl font-semibold text-center text-white">
         Đăng nhập vào <span className="font-bold ">Ume</span>
       </div>
@@ -42,7 +42,7 @@ export const AuthForm = ({ setShowModal }: AuthFormProps) => {
                 fill="white"
               />
             </svg>
-            <span className="ml-3 text-white font-nunito">Đăng nhập bằng Google</span>
+            <span className="ml-3 text-white ">Đăng nhập bằng Google</span>
           </div>
         </button>
         <button disabled className="hover:bg-slate-700 bg-[#292734] px-3 py-2 rounded-2xl">
@@ -53,7 +53,7 @@ export const AuthForm = ({ setShowModal }: AuthFormProps) => {
                 fill="white"
               />
             </svg>
-            <span className="ml-3 text-white font-nunito">Đăng nhập bằng Facebook</span>
+            <span className="ml-3 text-white ">Đăng nhập bằng Facebook</span>
           </div>
         </button>
         <button disabled className="hover:bg-slate-700 bg-[#292734] px-3 py-2 rounded-2xl">
@@ -64,7 +64,7 @@ export const AuthForm = ({ setShowModal }: AuthFormProps) => {
                 fill="white"
               />
             </svg>
-            <span className="ml-3 text-white font-nunito">Đăng nhập bằng Twitch</span>
+            <span className="ml-3 text-white ">Đăng nhập bằng Twitch</span>
           </div>
         </button>
       </div>
