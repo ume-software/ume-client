@@ -1,7 +1,13 @@
 import { z } from 'zod'
 
 import { createRouter } from './configurations'
-import { createBooking, getListSkill, getProviderBySlug, getProviders } from './services/booking-service'
+import {
+  createBooking,
+  getBookingProvider,
+  getListSkill,
+  getProviderBySlug,
+  getProviders,
+} from './services/booking-service'
 
 export const bookingRouter = createRouter()
   .query('getListSkill', {
@@ -18,6 +24,11 @@ export const bookingRouter = createRouter()
     input: z.string(),
     resolve: async ({ ctx, input }) => {
       return await getProviderBySlug(input)
+    },
+  })
+  .query('getBookingProvider', {
+    resolve: async ({ ctx }) => {
+      return await getBookingProvider(ctx)
     },
   })
   .mutation('createBooking', {

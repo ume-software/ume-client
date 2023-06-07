@@ -1,5 +1,5 @@
 import { Menu, Transition } from '@headlessui/react'
-import { CloseSmall, Dot, Gift, Logout, Remind, Search, Setting, User, WalletOne } from '@icon-park/react'
+import { Gift, Logout, Remind, Search, Setting, User, WalletOne } from '@icon-park/react'
 import { Button, Input, Modal } from '@ume/ui'
 import logo from 'public/ume-logo-2.svg'
 import Notificate from '~/containers/notificate/notificate.container'
@@ -7,10 +7,11 @@ import Notificate from '~/containers/notificate/notificate.container'
 import React, { ReactNode, useContext, useEffect, useState } from 'react'
 import { Fragment } from 'react'
 
+import { Tabs, TabsProps } from 'antd'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
 
-import { SocketContext, SocketTokenContext, drawerContext } from '../layouts/app-layout/app-layout'
+import { SocketContext, SocketTokenContext } from '../layouts/app-layout/app-layout'
 import { LoginModal } from './login-modal.component'
 
 import { trpc } from '~/utils/trpc'
@@ -18,9 +19,10 @@ import { trpc } from '~/utils/trpc'
 interface HeaderProps {}
 export const Header: React.FC = ({}: HeaderProps) => {
   const [showSearh, setShowSearch] = useState(false)
-  const { socketToken, setSocketToken } = useContext(SocketTokenContext)
+  const { setSocketToken } = useContext(SocketTokenContext)
   const { socketContext } = useContext(SocketContext)
   const [isModalLoginVisible, setIsModalLoginVisible] = React.useState(false)
+
   const { data: userInfo, isLoading: loading, isFetching: fetching } = trpc.useQuery(['identity.identityInfo'])
 
   useEffect(() => {
@@ -28,8 +30,6 @@ export const Header: React.FC = ({}: HeaderProps) => {
       setSocketToken(window.localStorage.getItem('accessToken'))
     }
   }, [userInfo])
-
-  console.log({ socketContext })
 
   // useEffect(() => {
   //   setNotificateButton(
@@ -49,6 +49,19 @@ export const Header: React.FC = ({}: HeaderProps) => {
   //     setIsModalLoginVisible(true)
   //   }
   // }
+
+  const items: TabsProps['items'] = [
+    {
+      key: '1',
+      label: `Chính`,
+      children: <Notificate data={socketContext} />,
+    },
+    {
+      key: '2',
+      label: `Khác`,
+      children: <Notificate />,
+    },
+  ]
 
   const handleSignout = (e) => {
     e.preventDefault()
@@ -112,10 +125,29 @@ export const Header: React.FC = ({}: HeaderProps) => {
               <Link href={'/recharge'}>1000</Link>
             </span>
           )}
-          <span className="my-auto mr-5 duration-300 rounded-ful hover:scale-110 hover:ease-in-out">
-            <button className="pt-2">
-              <Remind size={22} strokeWidth={4} fill="#FFFFFF" />
-            </button>
+          <span className="my-auto mr-5 duration-300 rounded-full">
+            <div className="relative pt-2">
+              <Menu>
+                <div>
+                  <Menu.Button>
+                    <Remind size={22} strokeWidth={4} fill="#FFFFFF" />
+                  </Menu.Button>
+                </div>
+                <Transition
+                  as={Fragment}
+                  enter="transition ease-out duration-400"
+                  enterFrom="transform opacity-0 scale-95"
+                  enterTo="transform opacity-100 scale-100"
+                  leave="transition ease-in duration-400"
+                  leaveFrom="transform opacity-100 scale-100"
+                  leaveTo="transform opacity-0 scale-95"
+                >
+                  <Menu.Items className="absolute w-96 p-5 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg right-0 ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <Tabs defaultActiveKey="1" items={items} />
+                  </Menu.Items>
+                </Transition>
+              </Menu>
+            </div>
           </span>
           <span className="my-auto mr-5">
             {!userInfo ? (

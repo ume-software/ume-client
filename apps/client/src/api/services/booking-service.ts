@@ -63,6 +63,26 @@ export const getProviderBySlug = async (providerId: string) => {
   }
 }
 
+export const getBookingProvider = async (ctx) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie)
+    const respone = await new BookingApi({
+      basePath: getEnv().baseBookingURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).getCurrentBookingForProvider()
+    return {
+      data: respone.data,
+    }
+  } catch (error) {
+    console.log('error at catch', error)
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to create new booking',
+    })
+  }
+}
+
 export const createBooking = async (provider: BookingProviderRequest, ctx) => {
   try {
     const cookies = parse(ctx.req.headers.cookie)
@@ -72,7 +92,7 @@ export const createBooking = async (provider: BookingProviderRequest, ctx) => {
       accessToken: cookies['accessToken'],
     }).createbooking(provider)
     return {
-      data: respone,
+      data: respone.data,
       success: true,
       message: 'Booking success!',
     }
