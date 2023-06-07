@@ -92,14 +92,11 @@ export const Header: React.FC = ({}: HeaderProps) => {
               <Search size={22} strokeWidth={4} fill="#FFFFFF" />
             </button>
           </span>
-          {/* {userInfo && accountBalance && (
+          {userInfo && accountBalance && (
             <span className="mr-5 my-auto rounded-full bg-[#37354F] px-2 py-1 self-center text-white">
               <button onClick={() => setShowRechargeModal(true)}>{accountBalance?.data?.totalCoinsAvailable}</button>
             </span>
-          )} */}
-          <span className="mr-5 my-auto rounded-full bg-[#37354F] px-2 py-1 self-center text-white">
-            <button onClick={() => setShowRechargeModal(true)}>1000</button>
-          </span>
+          )}
           <span className="my-auto mr-5 duration-300 rounded-ful hover:scale-110 hover:ease-in-out">
             <button className="pt-2">
               <Remind size={22} strokeWidth={4} fill="#FFFFFF" />
