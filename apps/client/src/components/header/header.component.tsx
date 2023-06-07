@@ -20,6 +20,7 @@ export const Header: React.FC = ({}: HeaderProps) => {
   const [showSearh, setShowSearch] = useState(false)
   const [showRechargeModal, setShowRechargeModal] = useState(false)
   const [userInfo, setUserInfo] = useState<any>()
+  const [balance, setBalance] = useState<any>()
   const { socketToken, setSocketToken } = useContext(socketTokenContext)
   const [isModalLoginVisible, setIsModalLoginVisible] = React.useState(false)
   const { data: dataResponse, isLoading: loading, isFetching: fetching } = trpc.useQuery(['identity.identityInfo'])
@@ -27,7 +28,13 @@ export const Header: React.FC = ({}: HeaderProps) => {
     data: accountBalance,
     isLoading: loadingAccountBalance,
     isFetching: fetchingAccountBalance,
-  } = trpc.useQuery(['identity.account-balance'])
+  } = trpc.useQuery(['identity.account-balance'], {
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    onSuccess(data) {
+      setBalance(data.data.totalCoinsAvailable)
+    },
+  })
   useEffect(() => {
     if (userInfo) {
       setSocketToken(window.localStorage.getItem('accessToken'))
@@ -56,10 +63,10 @@ export const Header: React.FC = ({}: HeaderProps) => {
           <Link href={'/home'}>Trang chủ</Link>
         </span>
         <span className="px-3 py-2 text-lg font-medium text-white align-middle duration-500 hover:bg-slate-700 rounded-2xl hover:ease-in-out ">
-          <Link href={'/'}>Tạo phòng</Link>
+          <Link href={'/live'}>Trực Tiếp</Link>
         </span>
         <span className="px-3 py-2 text-lg font-medium text-white align-middle duration-500 hover:bg-slate-700 rounded-2xl hover:ease-in-out">
-          <Link href={'/'}>Cộng đồng</Link>
+          <Link href={'/community'}>Cộng đồng</Link>
         </span>
       </div>
       <div className="flex items-center">
@@ -94,7 +101,7 @@ export const Header: React.FC = ({}: HeaderProps) => {
           </span>
           {userInfo && accountBalance && (
             <span className="mr-5 my-auto rounded-full bg-[#37354F] px-2 py-1 self-center text-white">
-              <button onClick={() => setShowRechargeModal(true)}>{accountBalance?.data?.totalCoinsAvailable}</button>
+              <button onClick={() => setShowRechargeModal(true)}>{balance}</button>
             </span>
           )}
           <span className="my-auto mr-5 duration-300 rounded-ful hover:scale-110 hover:ease-in-out">

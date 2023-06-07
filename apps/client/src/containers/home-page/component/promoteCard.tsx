@@ -29,7 +29,7 @@ export const PromoteCard = (props: IPromoteCardProps) => {
   return (
     <div
       id={props.id}
-      className="bg-[#292734] text-white rounded-3xl pl-6 pb-4 mt-6 max-w-72 h-72 group hover:duration-500 hover:ease-in-out block"
+      className="bg-[#292734] text-white rounded-3xl pl-6 pb-4 mt-6 max-w-72 h-70 group hover:duration-500 hover:ease-in-out block"
     >
       <div className="flex flex-row justify-between">
         <Image
@@ -56,7 +56,7 @@ export const PromoteCard = (props: IPromoteCardProps) => {
         </button>
       </div>
       <div>
-        <h3 className="text-xl font-semibold">{props?.name}</h3>
+        <h3 className="text-lg font-semibold">{props?.name}</h3>
         {/* TODO: fix rating */}
         <div className="">
           <Star theme="outline" size="20" fill="#EBFF00" className="inline-block mr-2" />

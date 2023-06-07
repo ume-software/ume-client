@@ -10,7 +10,7 @@ const HomePage = (props) => {
   return (
     <div>
       <Head>
-        <title>UME | Trang chủ</title>
+        <title>UME | Trang Chủ</title>
       </Head>
       <AppLayout {...props}>
         <div className="flex flex-col mx-16">
