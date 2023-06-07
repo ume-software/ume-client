@@ -48,9 +48,9 @@ const InformationTab = (props: { data }) => {
       <div>
         <LoginModal isModalLoginVisible={isModalLoginVisible} setIsModalLoginVisible={setIsModalLoginVisible} />
       </div>
-      <div className="w-full grid grid-cols-10 gap-10 px-10">
+      <div className="grid w-full grid-cols-10 gap-10 px-10">
         <div className="col-span-2">
-          <div className="bg-zinc-800 rounded-3xl p-10">
+          <div className="p-10 bg-zinc-800 rounded-3xl">
             <div className="flex flex-col gap-5">
               <div
                 className={`flex items-center p-3 rounded-xl gap-2 cursor-pointer ${
@@ -59,12 +59,12 @@ const InformationTab = (props: { data }) => {
                 onClick={() => handleSelected(-1)}
               >
                 <People theme="outline" size="18" fill="#fff" />
-                <p className="font-nunito font-semibold text-xl">Đôi chút về tui</p>
+                <p className="text-xl font-semibold ">Đôi chút về tui</p>
               </div>
               <div className="flex flex-col gap-5 cursor-pointer">
-                <div className="flex flex-row items-center p-3 gap-2" onClick={handleGamesToggle}>
+                <div className="flex flex-row items-center gap-2 p-3" onClick={handleGamesToggle}>
                   <Gamepad theme="outline" size="18" fill="#fff" />
-                  <p className="font-nunito font-semibold text-xl">Game tui chơi</p>
+                  <p className="text-xl font-semibold ">Game tui chơi</p>
                   {gamesToggle ? (
                     <Down theme="outline" size="20" fill="#fff" />
                   ) : (
@@ -82,10 +82,8 @@ const InformationTab = (props: { data }) => {
                     >
                       <Image src={item.skill.imageUrl} alt="Game Image" width={60} height={60} />
                       <div className="w-[200px] truncate">
-                        <p className="font-nunito font-semibold text-lg text-white z-[4]">{item.skill.name}</p>
-                        <p className="font-nunito font-semibold text-md text-white opacity-30 z-[4]">
-                          {item.defaultCost}U / 1h
-                        </p>
+                        <p className=" font-semibold text-lg text-white z-[4]">{item.skill.name}</p>
+                        <p className=" font-semibold text-md text-white opacity-30 z-[4]">{item.defaultCost}U / 1h</p>
                       </div>
                     </div>
                   ))}
@@ -99,7 +97,7 @@ const InformationTab = (props: { data }) => {
             {gameSelected < 0 ? (
               <PersonalInformation key={props.data.id} data={props.data} />
             ) : (
-              <div className="bg-zinc-800 rounded-3xl p-10">
+              <div className="p-10 bg-zinc-800 rounded-3xl">
                 <div className="flex flex-col gap-10">
                   <GamePlayed data={props.data.providerSkills[gameSelected]} />
                 </div>
@@ -118,9 +116,9 @@ const InformationTab = (props: { data }) => {
                 alt="Empty Image"
               />
             </div>
-            <div className="my-10 flex flex-col gap-5">
+            <div className="flex flex-col gap-5 my-10">
               <CustomDrawer
-                customOpenBtn={`rounded-full w-full text-purple-700 border-2 border-purple-700 py-2 font-nunito font-bold text-2xl hover:scale-105 text-center`}
+                customOpenBtn={`rounded-full w-full text-purple-700 border-2 border-purple-700 py-2  font-bold text-2xl hover:scale-105 text-center`}
                 openBtn={<div onClick={handleChatOpen}>Chat</div>}
                 token={!!socketToken}
               >
@@ -129,7 +127,7 @@ const InformationTab = (props: { data }) => {
 
               <CustomDrawer
                 drawerTitle="Xác nhận đặt"
-                customOpenBtn="rounded-full w-full text-white bg-purple-700 py-2 font-nunito font-bold text-2xl hover:scale-105 text-center"
+                customOpenBtn="rounded-full w-full text-white bg-purple-700 py-2  font-bold text-2xl hover:scale-105 text-center"
                 openBtn={<div onClick={handleOrderOpen}>Order</div>}
                 token={!!socketToken}
               >

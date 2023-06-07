@@ -1,7 +1,7 @@
 import * as socketio from 'socket.io-client'
 import { socket } from '~/api/socket/socket-booking'
 
-import { Dispatch, ReactNode, SetStateAction, createContext, useContext, useEffect, useState } from 'react'
+import { Dispatch, ReactNode, SetStateAction, createContext, useEffect, useState } from 'react'
 
 import { Header } from '~/components/header/header.component'
 import { Sidebar } from '~/components/sidebar'
@@ -63,7 +63,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       <SocketTokenContext.Provider value={{ socketToken, setSocketToken }}>
         <SocketContext.Provider value={socketContextValue}>
           <div className="flex flex-col">
-            <div className="fixed flex flex-col w-full z-10">
+            <div className="fixed z-10 flex flex-col w-full ">
               <Header />
             </div>
             <drawerContext.Provider value={{ childrenDrawer, setChildrenDrawer }}>

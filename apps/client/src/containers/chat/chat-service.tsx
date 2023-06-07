@@ -15,16 +15,14 @@ const ChatService = (props: { serviceData }) => {
             />
           </div>
           <div className="flex flex-col">
-            <span className="text-white font-nunito text-xl font-semibold">{props.serviceData?.skill?.name}</span>
-            <span className="text-white font-nunito text-xl font-semibold opacity-30">
-              Coin {props.serviceData?.cost} / Game
-            </span>
+            <span className="text-white  text-xl font-semibold">{props.serviceData?.skill?.name}</span>
+            <span className="text-white  text-xl font-semibold opacity-30">Coin {props.serviceData?.cost} / Game</span>
           </div>
         </div>
         <div>
           <button
             type="button"
-            className="rounded-full text-white bg-purple-700 py-1 px-5 font-nunito font-semibold text-lg hover:scale-105"
+            className="rounded-full text-white bg-purple-700 py-1 px-5  font-semibold text-lg hover:scale-105"
           >
             Play
           </button>

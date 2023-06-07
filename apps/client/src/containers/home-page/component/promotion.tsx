@@ -44,7 +44,7 @@ export const Promotion = () => {
       <div className="flex justify-between items-end gap-5 pt-10 pb-5">
         <p className="text-4xl font-semibold text-white">Ume PLayer</p>
         <CustomDrawer
-          customOpenBtn="rounded-xl text-white bg-purple-700 py-1 px-4 font-nunito font-semibold text-2xl hover:scale-105"
+          customOpenBtn="rounded-xl text-white bg-purple-700 py-1 px-4  font-semibold text-2xl hover:scale-105"
           openBtn={<div onClick={handleFilterOpen}>Lọc</div>}
           drawerTitle="Lọc người chơi"
         >

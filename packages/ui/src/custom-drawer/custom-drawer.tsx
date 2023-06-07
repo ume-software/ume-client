@@ -49,14 +49,14 @@ export const CustomDrawer = ({
           <Button
             onClick={onClose}
             name="register"
-            customCSS="bg-[#37354F] py-2 hover:scale-105 rounded-3xl max-h-10 w-[120px] text-[15px] font-nunito"
+            customCSS="bg-[#37354F] py-2 hover:scale-105 rounded-3xl max-h-10 w-[120px] text-[15px] "
             type="button"
           >
             Thoát
           </Button>
           <Button
             name="register"
-            customCSS="bg-[#7463F0] py-2 rounded-3xl max-h-10 w-[120px] hover:scale-105 text-[15px] font-nunito"
+            customCSS="bg-[#7463F0] py-2 rounded-3xl max-h-10 w-[120px] hover:scale-105 text-[15px] "
             type="button"
           >
             Thuê
