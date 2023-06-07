@@ -5,11 +5,11 @@ import Image from 'next/legacy/image'
 
 import { AppLayout } from '~/components/layouts/app-layout/app-layout'
 
-const RegisterProviderPage = (props) => {
+const CommunityPage = (props) => {
   return (
     <div>
       <Head>
-        <title>UME | Become A Ume</title>
+        <title>UME | Phát Trực Tiệp</title>
       </Head>
       <AppLayout {...props}>
         <div className="flex flex-col items-center justify-center w-full h-screen">
@@ -21,4 +21,4 @@ const RegisterProviderPage = (props) => {
   )
 }
 
-export default RegisterProviderPage
+export default CommunityPage

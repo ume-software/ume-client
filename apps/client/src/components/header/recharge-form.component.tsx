@@ -84,7 +84,7 @@ export const RechargeModal = ({ setShowRechargeModal, showRechargeModal }: IRech
                     {({ handleSubmit, handleChange, handleBlur, values, errors, isSubmitting }) => (
                       <form>
                         <div>
-                          <FieldLabel labelName="Nhập số tiền cần nạp" className="text-xs text-slate-400" />
+                          <FieldLabel labelName="Nhập số lượng ume coin cần nạp" className="text-xs text-slate-400" />
                           <FormInput
                             className="text-black"
                             value={values.balance}
