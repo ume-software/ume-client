@@ -1,10 +1,10 @@
-import { Disclosure } from '@headlessui/react'
 import { CloseSmall } from '@icon-park/react'
 import { Button, FieldLabel, FormInput, Modal } from '@ume/ui'
 import momo from 'public/momo-logo.png'
 
 import { useState } from 'react'
 
+import { QRCode } from 'antd'
 import { Formik, FormikErrors } from 'formik'
 import Image from 'next/image'
 
@@ -28,12 +28,15 @@ const validate = (value: IFormValue): FormikErrors<IFormValue> => {
 }
 
 export const RechargeModal = ({ setShowRechargeModal, showRechargeModal }: IRechargeModalProps) => {
-  const [qrContent, setQRContent] = useState<string>('')
+  const [qrContent, setQRContent] = useState<any>()
   const [isSubmiting, setSubmiting] = useState(false)
   const [openTabMomo, setOpenTabMomo] = useState(false)
   const handleClose = () => {
     setShowRechargeModal(false)
+    setTimeout(() => setOpenTabMomo(false), 1000)
+    setTimeout(() => setQRContent(null), 1000)
   }
+
   const requestRecharge = trpc.useMutation(['identity.request-recharge'])
   const RechargeForm = () => {
     return (
@@ -53,53 +56,97 @@ export const RechargeModal = ({ setShowRechargeModal, showRechargeModal }: IRech
           {openTabMomo && (
             <div className="px-4 pb-2">
               <div className="flex flex-col justify-center">
-                <Formik
-                  initialValues={{
-                    balance: '',
-                  }}
-                  onSubmit={(values) => {
-                    setSubmiting(true)
-                    requestRecharge.mutate(
-                      {
-                        total: values.balance,
-                        platform: 'MOMO',
-                      },
-                      {
-                        onSuccess: (data) => {
-                          console.log(data)
+                {!qrContent && (
+                  <Formik
+                    initialValues={{
+                      balance: '',
+                    }}
+                    onSubmit={(values) => {
+                      setSubmiting(true)
+                      requestRecharge.mutate(
+                        {
+                          total: values.balance,
+                          platform: 'MOMO',
                         },
-                        onError: (error) => {
-                          console.log(error)
+                        {
+                          onSuccess: (data) => {
+                            setQRContent(data.data)
+                            setSubmiting(false)
+                          },
+                          onError: (error) => {
+                            console.log(error)
+                          },
                         },
-                      },
-                    )
-                  }}
-                  validate={validate}
-                >
-                  {({ handleSubmit, handleChange, handleBlur, values, errors, isSubmitting }) => (
-                    <form>
-                      <FieldLabel labelName="Nhập số tiền cần nạp" className="text-xs text-slate-400" />
-                      <FormInput
-                        className="text-black"
-                        value={values.balance}
-                        name="balance"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        error={!!errors.balance}
-                        errorMessage={errors.balance}
-                      />
-                      <Button
-                        customCSS="bg-[#37354F] py-1 mt-2 hover:bg-slate-700 !rounded-3xl max-h-10 w-full text-[15px] hover:ease-in-out"
-                        type="button"
-                        onClick={() => {
-                          handleSubmit()
-                        }}
-                      >
-                        Xác nhận
-                      </Button>
-                    </form>
-                  )}
-                </Formik>
+                      )
+                    }}
+                    validate={validate}
+                  >
+                    {({ handleSubmit, handleChange, handleBlur, values, errors, isSubmitting }) => (
+                      <form>
+                        <div>
+                          <FieldLabel labelName="Nhập số tiền cần nạp" className="text-xs text-slate-400" />
+                          <FormInput
+                            className="text-black"
+                            value={values.balance}
+                            name="balance"
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            error={!!errors.balance}
+                            errorMessage={errors.balance}
+                          />
+                          <Button
+                            customCSS="bg-[#37354F] py-1 mt-2 hover:bg-slate-700 !rounded-3xl max-h-10 w-full text-[15px] hover:ease-in-out"
+                            type="button"
+                            onClick={() => {
+                              handleSubmit()
+                            }}
+                          >
+                            Xác nhận
+                          </Button>
+                        </div>
+                      </form>
+                    )}
+                  </Formik>
+                )}
+              </div>
+              <div>
+                {qrContent && (
+                  <div>
+                    <div className="flex justify-between flex-1 gap-3 scale-100">
+                      <div className="text-center">
+                        <div className="text-base font-semibold">Vui lòng quét mã QR</div>
+                        <QRCode bordered={true} value={qrContent?.qrString} color="#FFF" />
+                      </div>
+                      <div className="flex flex-col items-start gap-4 mt-8">
+                        <div>
+                          <span className="font-semibold">Số tiền:</span>
+                          <span className="ml-1">
+                            {qrContent?.amountMoney} <span className="text-xs italic">{qrContent?.unitCurrency}</span>
+                          </span>
+                        </div>
+                        <div>
+                          <span className="font-semibold">Người nhận:</span>
+                          <span className="ml-1">{qrContent?.beneficiary}</span>
+                        </div>
+                        <div className="inline-flex flex-wrap">
+                          <span className="w-20 font-semibold">Nội dung:</span>
+                          <span className="ml-1 truncate">{qrContent?.transactionCode}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mt-3">
+                      <div>
+                        <Button
+                          customCSS="bg-[#37354F] py-1 mt-2 hover:bg-slate-700 !rounded-3xl max-h-10 w-full text-[15px] hover:ease-in-out"
+                          type="button"
+                          onClick={handleClose}
+                        >
+                          Xác nhận đã nạp tiền
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}
