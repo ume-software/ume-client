@@ -1,9 +1,9 @@
-import { ArrowLeft, ArrowRight } from '@icon-park/react'
+import { ArrowLeft } from '@icon-park/react'
 import { CustomDrawer } from '@ume/ui'
 import cover from 'public/cover.png'
 import Chat from '~/containers/chat/chat.container'
 
-import { useContext, useState } from 'react'
+import { useContext } from 'react'
 
 import Image, { StaticImageData } from 'next/legacy/image'
 
@@ -75,16 +75,16 @@ export const Sidebar = (props) => {
   }
   return (
     <>
-      <div className="flex flex-col items-center justify-center gap-8 pt-10">
+      <div className="flex flex-col items-center justify-center gap-8 px-4 pt-10">
         <CustomDrawer
           customOpenBtn={`p-2 bg-gray-700 rounded-full cursor-pointer hover:bg-gray-500 active:bg-gray-400`}
-          openBtn={<ArrowLeft theme="outline" size="40" fill="#fff" onClick={handleChatOpen} />}
+          openBtn={<ArrowLeft theme="outline" size="30" fill="#fff" onClick={handleChatOpen} />}
         >
           {childrenDrawer}
         </CustomDrawer>
         <div className="flex flex-col gap-3">
           {chatTest.map((item, index) => (
-            <div key={index} className="w-[60px] h-[60px] relative">
+            <div key={index} className="relative w-14 h-14">
               <Image
                 className="absolute rounded-full"
                 layout="fill"
