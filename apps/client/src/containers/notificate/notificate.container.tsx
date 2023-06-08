@@ -1,10 +1,12 @@
 import { memo } from 'react'
 
+import { notification } from 'antd'
 import Image from 'next/image'
+import { BookingHandleRequestStatusEnum } from 'ume-booking-service-openapi'
 
 import { trpc } from '~/utils/trpc'
 
-const Notificate = () => {
+const Notificate = (props: { responeBooking }) => {
   const {
     data: bookingProvider,
     isLoading: loadingBookingProvider,
@@ -16,7 +18,63 @@ const Notificate = () => {
   }
   let listBookingProvider: any = bookingProvider?.data?.row
 
-  console.log(listBookingProvider)
+  const handleAcceptBooking = (bookingHistoryId: string, bookerName: string) => {
+    try {
+      props.responeBooking.mutate(
+        { bookingHistoryId: bookingHistoryId, status: BookingHandleRequestStatusEnum.ProviderAccept },
+        {
+          onSuccess: (data) => {
+            if (data.success) {
+              notification.success({
+                message: 'Yêu cầu đã được chấp nhận!',
+                description: `Bạn đã chấp nhận yêu cầu từ ${bookerName}`,
+                placement: 'bottomLeft',
+              })
+            }
+          },
+          onError: (error, data) => {
+            console.error(error)
+            notification.error({
+              message: 'Có lỗi!',
+              description: 'Có lỗi trong quá trình chấp nhận. Vui lòng thử lại!',
+              placement: 'bottomLeft',
+            })
+          },
+        },
+      )
+    } catch (error) {
+      console.error('Failed to accept booking:', error)
+    }
+  }
+
+  const handleUnacceptBooking = (bookingId: string, bookerName: string) => {
+    try {
+      props.responeBooking.mutate(
+        { bookingHistoryId: bookingId, status: BookingHandleRequestStatusEnum.ProviderCancel },
+        {
+          onSuccess: (data) => {
+            if (data.success) {
+              notification.success({
+                message: 'Yêu cầu đã được xóa!',
+                description: `Bạn đã từ chối yêu cầu từ ${bookerName}`,
+                placement: 'bottomLeft',
+              })
+            }
+          },
+          onError: (error, data) => {
+            console.error(error)
+            notification.error({
+              message: 'Có lỗi!',
+              description: 'Có lỗi trong quá trình hủy. Vui lòng thử lại!',
+              placement: 'bottomLeft',
+            })
+          },
+        },
+      )
+    } catch (error) {
+      console.error('Failed to cancel booking:', error)
+    }
+  }
 
   return (
     <>
@@ -46,10 +104,16 @@ const Notificate = () => {
               </div>
             </div>
             <div className="flex justify-around gap-5 pt-3 px-3">
-              <div className="rounded-lg w-full text-white bg-purple-700 py-1 font-normal text-md hover:scale-105 text-center">
+              <div
+                className="rounded-lg w-full text-white bg-purple-700 py-1 font-normal text-md hover:scale-105 text-center cursor-pointer"
+                onClick={() => handleAcceptBooking(item.id, item.booker.name)}
+              >
                 Chấp nhận
               </div>
-              <div className="rounded-lg w-full text-purple-700 border-2 border-purple-700 py-1 font-normal text-md hover:scale-105 text-center">
+              <div
+                className="rounded-lg w-full text-purple-700 border-2 border-purple-700 py-1 font-normal text-md hover:scale-105 text-center cursor-pointer"
+                onClick={() => handleUnacceptBooking(item.id, item.booker.name)}
+              >
                 Từ chối
               </div>
             </div>

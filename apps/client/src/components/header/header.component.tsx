@@ -29,9 +29,10 @@ export const Header: React.FC = ({}: HeaderProps) => {
   const [showRechargeModal, setShowRechargeModal] = useState(false)
   const [userInfo, setUserInfo] = useState<any>()
   const [balance, setBalance] = useState<any>()
-  const { setSocketToken } = useContext(SocketTokenContext)
+  const { socketToken, setSocketToken } = useContext(SocketTokenContext)
   const { socketContext } = useContext(SocketContext)
   const [selectedTab, setSelectedTab] = useState('Chính')
+  const [notificateIcon, setNotificatedIcon] = useState<ReactNode>(<Remind size={22} strokeWidth={4} fill="#FFFFFF" />)
   const [isModalLoginVisible, setIsModalLoginVisible] = React.useState(false)
 
   const { data: dataResponse, isLoading: loading, isFetching: fetching } = trpc.useQuery(['identity.identityInfo'])
@@ -46,6 +47,7 @@ export const Header: React.FC = ({}: HeaderProps) => {
       setBalance(data.data.totalCoinsAvailable)
     },
   })
+  const responeBooking = trpc.useMutation(['booking.putProviderResponeBooking'])
 
   useEffect(() => {
     if (userInfo) {
@@ -56,10 +58,17 @@ export const Header: React.FC = ({}: HeaderProps) => {
     }
   }, [dataResponse, setSocketToken, userInfo])
 
+  useEffect(() => {
+    if (socketContext.length != 0) {
+      setNotificatedIcon(<Remind size={22} strokeWidth={4} fill="#000000" />)
+    }
+    setNotificatedIcon(<Remind size={22} strokeWidth={4} fill="#FFFFFF" />)
+  }, [socketContext])
+
   const tabDatas: tabData[] = [
     {
       label: `Chính`,
-      children: <Notificate />,
+      children: <Notificate responeBooking={responeBooking} />,
     },
     {
       label: `Khác`,
@@ -144,9 +153,7 @@ export const Header: React.FC = ({}: HeaderProps) => {
             <div className="relative pt-2">
               <Menu>
                 <div>
-                  <Menu.Button>
-                    <Remind size={22} strokeWidth={4} fill="#FFFFFF" />
-                  </Menu.Button>
+                  <Menu.Button>{notificateIcon}</Menu.Button>
                 </div>
                 <Transition
                   as={Fragment}

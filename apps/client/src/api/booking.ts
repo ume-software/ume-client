@@ -1,3 +1,4 @@
+import { BookingHandleRequest, BookingHandleRequestStatusEnum } from 'ume-booking-service-openapi'
 import { z } from 'zod'
 
 import { createRouter } from './configurations'
@@ -7,6 +8,7 @@ import {
   getListSkill,
   getProviderBySlug,
   getProviders,
+  putProviderResponeBooking,
 } from './services/booking-service'
 
 export const bookingRouter = createRouter()
@@ -39,5 +41,14 @@ export const bookingRouter = createRouter()
     }),
     resolve: async ({ ctx, input }) => {
       return await createBooking(input, ctx)
+    },
+  })
+  .mutation('putProviderResponeBooking', {
+    input: z.object({
+      bookingHistoryId: z.string(),
+      status: z.string(),
+    }),
+    resolve: async ({ ctx, input }) => {
+      return await putProviderResponeBooking(input, ctx)
     },
   })
