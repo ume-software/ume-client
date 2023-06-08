@@ -8,7 +8,6 @@
     "build": "turbo run build",
     "dev": "turbo run dev --parallel --filter=@ume/client...",
     "dev:client": "turbo run dev --parallel --filter=@ume/client...",
-    "dev:admin": "turbo run dev --parallel --filter=@ume/admin...",
     "test:client": "turbo run test ",
     "lint": "turbo run lint",
     "clean": "turbo run clean",
