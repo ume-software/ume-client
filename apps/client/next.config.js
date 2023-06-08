@@ -12,6 +12,7 @@ module.exports = {
       'loremflickr.com',
       'static-oss.epal.gg',
       'cdn.pixabay.com',
+      'global-oss.epal.gg',
     ],
   },
 }

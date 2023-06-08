@@ -146,7 +146,7 @@ export const Header: React.FC = ({}: HeaderProps) => {
           </span>
           {userInfo && accountBalance && (
             <span className="mr-5 my-auto rounded-full bg-[#37354F] px-2 py-1 self-center text-white">
-              <button onClick={() => setShowRechargeModal(true)}>{balance}</button>
+              <button onClick={() => setShowRechargeModal(true)}>{balance}U</button>
             </span>
           )}
           <span className="my-auto mr-5 duration-300 rounded-full">
