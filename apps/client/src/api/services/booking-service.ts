@@ -2,7 +2,14 @@ import { TRPCError } from '@trpc/server'
 import { getEnv } from '~/env'
 
 import { parse, serialize } from 'cookie'
-import { BookingApi, BookingProviderRequest, ProviderApi, SkillApi } from 'ume-booking-service-openapi'
+import {
+  BookingApi,
+  BookingHandleRequest,
+  BookingHandleRequestStatusEnum,
+  BookingProviderRequest,
+  ProviderApi,
+  SkillApi,
+} from 'ume-booking-service-openapi'
 
 import { socket } from '../socket'
 
@@ -63,6 +70,26 @@ export const getProviderBySlug = async (providerId: string) => {
   }
 }
 
+export const getBookingProvider = async (ctx) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie)
+    const respone = await new BookingApi({
+      basePath: getEnv().baseBookingURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).getCurrentBookingForProvider()
+    return {
+      data: respone.data,
+    }
+  } catch (error) {
+    console.log('error at catch', error)
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to create new booking',
+    })
+  }
+}
+
 export const createBooking = async (provider: BookingProviderRequest, ctx) => {
   try {
     const cookies = parse(ctx.req.headers.cookie)
@@ -72,9 +99,33 @@ export const createBooking = async (provider: BookingProviderRequest, ctx) => {
       accessToken: cookies['accessToken'],
     }).createbooking(provider)
     return {
-      data: respone,
+      data: respone.data,
       success: true,
       message: 'Booking success!',
+    }
+  } catch (error) {
+    console.log('error at catch', error)
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to create new booking',
+    })
+  }
+}
+
+export const putProviderResponeBooking = async ({ bookingHistoryId, status }, ctx) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie)
+    const respone = await new BookingApi({
+      basePath: getEnv().baseBookingURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).bookingHandle({
+      bookingHistoryId: bookingHistoryId,
+      status: status,
+    })
+    return {
+      data: respone.data,
+      success: true,
     }
   } catch (error) {
     console.log('error at catch', error)

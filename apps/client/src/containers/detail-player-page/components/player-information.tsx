@@ -201,7 +201,7 @@ const PlayerInformation = (props: { data }) => {
                 onClick={handleMoreButton}
               />
               <div
-                className={`absolute w-max top-10 bottom-auto text-white p-3 pt-5 border border-gray-300 bg-gray-900 rounded-xl gap-3 font-nunito font-medium text-20 ${
+                className={`absolute w-max top-10 bottom-auto text-white p-3 pt-5 border border-gray-300 bg-gray-900 rounded-xl gap-3  font-medium text-20 ${
                   actionModal ? 'flex flex-col' : 'hidden'
                 }`}
               >
@@ -214,19 +214,17 @@ const PlayerInformation = (props: { data }) => {
 
           <div className="flex flex-row gap-10" style={{ zIndex: 2 }}>
             {tabDatas.map((item, index) => (
-              <>
-                <a
-                  href="#tab"
-                  className={`text-white xl:text-3xl text-xl font-medium p-4 ${
-                    item.label == selectedTab ? 'border-b-4 border-purple-700' : ''
-                  }`}
-                  key={index}
-                  onClick={handleChangeTab}
-                  data-tab={item.label}
-                >
-                  {item.label}
-                </a>
-              </>
+              <a
+                href="#tab"
+                className={`text-white xl:text-3xl text-xl font-medium p-4 ${
+                  item.label == selectedTab ? 'border-b-4 border-purple-700' : ''
+                }`}
+                key={index}
+                onClick={handleChangeTab}
+                data-tab={item.label}
+              >
+                {item.label}
+              </a>
             ))}
           </div>
         </div>

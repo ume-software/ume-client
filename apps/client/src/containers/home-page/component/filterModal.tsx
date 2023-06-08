@@ -47,7 +47,7 @@ export const FilterModal = (props: { handleFilter; data }) => {
       <div className="h-full p-10 flex flex-col justify-between">
         <div className="flex flex-col items-start gap-10">
           <div className="w-full flex justify-between">
-            <label htmlFor="gender" className="font-nunito font-medium text-2xl">
+            <label htmlFor="gender" className=" font-medium text-2xl">
               Chọn giới tính:{' '}
             </label>
             <Select
@@ -65,7 +65,7 @@ export const FilterModal = (props: { handleFilter; data }) => {
             </Select>
           </div>
           <div className="w-full flex justify-between">
-            <label htmlFor="serviceType" className="font-nunito font-medium text-2xl">
+            <label htmlFor="serviceType" className=" font-medium text-2xl">
               Chọn thể loại dịch vụ:{' '}
             </label>
             <Select
@@ -87,7 +87,7 @@ export const FilterModal = (props: { handleFilter; data }) => {
             </Select>
           </div>
           <div className="w-full flex justify-between">
-            <label htmlFor="price" className="font-nunito font-medium text-2xl">
+            <label htmlFor="price" className=" font-medium text-2xl">
               Chọn mức giá:{' '}
             </label>
             <Tooltip
@@ -97,11 +97,11 @@ export const FilterModal = (props: { handleFilter; data }) => {
               trigger="click"
             >
               {priceRange[0] != min || priceRange[1] != max ? (
-                <button className="border border-light-50 font-nunito font-medium text-xl">
+                <button className="border border-light-50  font-medium text-xl">
                   {priceRange[0]}U - {priceRange[1]}U
                 </button>
               ) : (
-                <button className="font-nunito font-medium text-xl">Khoảng giá</button>
+                <button className=" font-medium text-xl">Khoảng giá</button>
               )}
             </Tooltip>
           </div>
@@ -109,7 +109,7 @@ export const FilterModal = (props: { handleFilter; data }) => {
         <div className="flex justify-end items-end">
           <button
             type="button"
-            className="rounded-xl text-white bg-purple-700 py-2 px-5 font-nunito font-semibold text-2xl hover:scale-105"
+            className="rounded-xl text-white bg-purple-700 py-2 px-5  font-semibold text-2xl hover:scale-105"
             onClick={handleFilter}
           >
             Áp dụng

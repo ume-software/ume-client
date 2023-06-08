@@ -1,11 +1,13 @@
 import { Time } from '@icon-park/react'
+import { Context } from '@react-oauth/google'
 import { FormInput } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
-import { SocketContext, socketTokenContext } from '~/api/socket'
 
 import { useContext, useEffect, useState } from 'react'
 
 import { InputNumber, Select } from 'antd'
+import { notification } from 'antd'
+import { NotificationPlacement } from 'antd/es/notification/interface'
 import { ErrorMessage, Field, Form, Formik } from 'formik'
 import Image from 'next/legacy/image'
 import { BookingProviderRequest } from 'ume-booking-service-openapi'
@@ -47,13 +49,24 @@ const BookingPlayer = (props: { data }) => {
     try {
       createBooking.mutate(values, {
         onSuccess: (data) => {
-          console.log(data.message)
-          setSubmitting(false)
-          setBooking({ providerSkillId: '', bookingPeriod: 1, voucherIds: [] })
+          if (data.success) {
+            setSubmitting(false)
+            setBooking({ providerSkillId: '', bookingPeriod: 1, voucherIds: [] })
+            notification.success({
+              message: 'Booking Created',
+              description: 'Your booking has been created successfully.',
+              placement: 'bottomLeft',
+            })
+          }
         },
         onError: (error) => {
           console.error(error)
           setSubmitting(false)
+          notification.error({
+            message: 'Booking Create Fail',
+            description: 'Your booking has been fail. Please check your booking again!',
+            placement: 'bottomLeft',
+          })
         },
       })
     } catch (error) {
@@ -83,9 +96,9 @@ const BookingPlayer = (props: { data }) => {
                   </div>
                   <div className="col-span-6">
                     <div className="flex flex-col gap-10">
-                      <p className="text-4xl font-bold font-nunito">{props.data?.name}</p>
+                      <p className="text-4xl font-bold ">{props.data?.name}</p>
                       <div className={`flex flex-col gap-3`}>
-                        <label htmlFor="providerSkillId" className="text-2xl font-medium font-nunito">
+                        <label htmlFor="providerSkillId" className="text-2xl font-medium ">
                           Chọn dịch vụ
                         </label>
                         <Select
@@ -110,14 +123,12 @@ const BookingPlayer = (props: { data }) => {
                           }))}
                         />
                         <ErrorMessage name="providerSkillId">
-                          {(errorMessage) => (
-                            <div className="font-normal font-nunito text-sm text-red-500">{errorMessage}</div>
-                          )}
+                          {(errorMessage) => <div className="font-normal  text-sm text-red-500">{errorMessage}</div>}
                         </ErrorMessage>
                       </div>
 
                       <div className="flex flex-col gap-3">
-                        <label htmlFor="bookingPeriod" className="text-2xl font-medium font-nunito">
+                        <label htmlFor="bookingPeriod" className="text-2xl font-medium ">
                           Chọn thời gian
                         </label>
                         <InputNumber
@@ -141,7 +152,7 @@ const BookingPlayer = (props: { data }) => {
                 </div>
                 <div className="grid grid-cols-10 pt-5 pb-5">
                   <div className="col-span-4">
-                    <label htmlFor="bookingPeriod" className="text-2xl font-medium text-white font-nunito opacity-40">
+                    <label htmlFor="bookingPeriod" className="text-2xl font-medium text-white  opacity-40">
                       Mã giảm giá
                     </label>
                   </div>
@@ -161,14 +172,14 @@ const BookingPlayer = (props: { data }) => {
                   </div>
                 </div>
                 <div className="flex justify-between border-b-2 border-[#B9B8CC] pb-5">
-                  <p className="text-4xl font-bold font-nunito">Thành tiền:</p>
-                  <p className="text-4xl font-bold font-nunito">
+                  <p className="text-4xl font-bold ">Thành tiền:</p>
+                  <p className="text-4xl font-bold ">
                     {values.bookingPeriod}h giá {total}U
                   </p>
                 </div>
                 <button
                   type="submit"
-                  className="py-2 mt-5 text-2xl font-bold text-center text-white bg-purple-700 rounded-full font-nunito hover:scale-105"
+                  className="py-2 mt-5 text-2xl font-bold text-center text-white bg-purple-700 rounded-full  hover:scale-105"
                   disabled={isSubmitting}
                 >
                   Đặt
