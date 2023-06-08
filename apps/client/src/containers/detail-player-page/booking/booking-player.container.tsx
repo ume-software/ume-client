@@ -1,11 +1,13 @@
 import { Time } from '@icon-park/react'
+import { Context } from '@react-oauth/google'
 import { FormInput } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
-import { SocketContext, socketTokenContext } from '~/api/socket'
 
 import { useContext, useEffect, useState } from 'react'
 
 import { InputNumber, Select } from 'antd'
+import { notification } from 'antd'
+import { NotificationPlacement } from 'antd/es/notification/interface'
 import { ErrorMessage, Field, Form, Formik } from 'formik'
 import Image from 'next/legacy/image'
 import { BookingProviderRequest } from 'ume-booking-service-openapi'
@@ -47,13 +49,24 @@ const BookingPlayer = (props: { data }) => {
     try {
       createBooking.mutate(values, {
         onSuccess: (data) => {
-          console.log(data.message)
-          setSubmitting(false)
-          setBooking({ providerSkillId: '', bookingPeriod: 1, voucherIds: [] })
+          if (data.success) {
+            setSubmitting(false)
+            setBooking({ providerSkillId: '', bookingPeriod: 1, voucherIds: [] })
+            notification.success({
+              message: 'Booking Created',
+              description: 'Your booking has been created successfully.',
+              placement: 'bottomLeft',
+            })
+          }
         },
         onError: (error) => {
           console.error(error)
           setSubmitting(false)
+          notification.error({
+            message: 'Booking Create Fail',
+            description: 'Your booking has been fail. Please check your booking again!',
+            placement: 'bottomLeft',
+          })
         },
       })
     } catch (error) {

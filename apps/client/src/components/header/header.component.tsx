@@ -1,28 +1,40 @@
 import { Menu, Transition } from '@headlessui/react'
-import { CloseSmall, Dot, Gift, Logout, Remind, Search, Setting, User, WalletOne } from '@icon-park/react'
+import { Gift, Logout, Remind, Search, Setting, User, WalletOne } from '@icon-park/react'
 import { Button, Input, Modal } from '@ume/ui'
 import logo from 'public/ume-logo-2.svg'
-import { socketTokenContext } from '~/api/socket'
+import Notificate from '~/containers/notificate/notificate.container'
 
-import React, { useContext, useEffect, useState } from 'react'
+import React, { ReactElement, ReactNode, useContext, useEffect, useState } from 'react'
 import { Fragment } from 'react'
 
+import { Tabs, TabsProps } from 'antd'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
 
+import { SocketContext, SocketTokenContext } from '../layouts/app-layout/app-layout'
 import { LoginModal } from './login-modal.component'
 import { RechargeModal } from './recharge-form.component'
 
 import { trpc } from '~/utils/trpc'
 
 interface HeaderProps {}
+
+interface tabData {
+  label: string
+  children: ReactElement
+}
+
 export const Header: React.FC = ({}: HeaderProps) => {
   const [showSearh, setShowSearch] = useState(false)
   const [showRechargeModal, setShowRechargeModal] = useState(false)
   const [userInfo, setUserInfo] = useState<any>()
   const [balance, setBalance] = useState<any>()
-  const { socketToken, setSocketToken } = useContext(socketTokenContext)
+  const { socketToken, setSocketToken } = useContext(SocketTokenContext)
+  const { socketContext } = useContext(SocketContext)
+  const [selectedTab, setSelectedTab] = useState('Chính')
+  const [notificateIcon, setNotificatedIcon] = useState<ReactNode>(<Remind size={22} strokeWidth={4} fill="#FFFFFF" />)
   const [isModalLoginVisible, setIsModalLoginVisible] = React.useState(false)
+
   const { data: dataResponse, isLoading: loading, isFetching: fetching } = trpc.useQuery(['identity.identityInfo'])
   const {
     data: accountBalance,
@@ -35,6 +47,8 @@ export const Header: React.FC = ({}: HeaderProps) => {
       setBalance(data.data.totalCoinsAvailable)
     },
   })
+  const responeBooking = trpc.useMutation(['booking.putProviderResponeBooking'])
+
   useEffect(() => {
     if (userInfo) {
       setSocketToken(window.localStorage.getItem('accessToken'))
@@ -43,6 +57,37 @@ export const Header: React.FC = ({}: HeaderProps) => {
       setUserInfo(dataResponse.data)
     }
   }, [dataResponse, setSocketToken, userInfo])
+
+  useEffect(() => {
+    if (socketContext.length != 0) {
+      setNotificatedIcon(<Remind size={22} strokeWidth={4} fill="#000000" />)
+    }
+    setNotificatedIcon(<Remind size={22} strokeWidth={4} fill="#FFFFFF" />)
+  }, [socketContext])
+
+  const tabDatas: tabData[] = [
+    {
+      label: `Chính`,
+      children: <Notificate responeBooking={responeBooking} />,
+    },
+    {
+      label: `Khác`,
+      children: <div>Khac</div>,
+    },
+  ]
+
+  const handleChangeTab = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+    const target = (e.target as HTMLElement).dataset.tab
+    if (typeof target !== 'string') {
+      return
+    }
+    setSelectedTab(target)
+  }
+
+  const handleSignout = (e) => {
+    e.preventDefault()
+  }
 
   const handleShowSearch = (e) => {
     e.preventDefault()
@@ -104,10 +149,50 @@ export const Header: React.FC = ({}: HeaderProps) => {
               <button onClick={() => setShowRechargeModal(true)}>{balance}</button>
             </span>
           )}
-          <span className="my-auto mr-5 duration-300 rounded-ful hover:scale-110 hover:ease-in-out">
-            <button className="pt-2">
-              <Remind size={22} strokeWidth={4} fill="#FFFFFF" />
-            </button>
+          <span className="my-auto mr-5 duration-300 rounded-full">
+            <div className="relative pt-2">
+              <Menu>
+                <div>
+                  <Menu.Button>{notificateIcon}</Menu.Button>
+                </div>
+                <Transition
+                  as={Fragment}
+                  enter="transition ease-out duration-400"
+                  enterFrom="transform opacity-0 scale-95"
+                  enterTo="transform opacity-100 scale-100"
+                  leave="transition ease-in duration-400"
+                  leaveFrom="transform opacity-100 scale-100"
+                  leaveTo="transform opacity-0 scale-95"
+                >
+                  <Menu.Items className="absolute w-96 p-5 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg right-0 ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <div className="flex flex-row gap-10" style={{ zIndex: 2 }}>
+                      {tabDatas.map((item, index) => (
+                        <a
+                          href="#tab"
+                          className={`xl:text-lg text-md font-medium p-2 ${
+                            item.label == selectedTab ? 'border-b-4 border-purple-700' : ''
+                          }`}
+                          key={index}
+                          onClick={handleChangeTab}
+                          data-tab={item.label}
+                        >
+                          {item.label}
+                        </a>
+                      ))}
+                    </div>
+                    <div className="h-96 p-3 overflow-auto">
+                      {tabDatas.map((item, index) => {
+                        return (
+                          <div key={index} hidden={selectedTab !== item.label}>
+                            {item.children}
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </Menu.Items>
+                </Transition>
+              </Menu>
+            </div>
           </span>
           <span className="my-auto mr-5">
             {!userInfo ? (
@@ -147,7 +232,7 @@ export const Header: React.FC = ({}: HeaderProps) => {
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95"
                   >
-                    <Menu.Items className="absolute w-56 pt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg right-12 ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <Menu.Items className="absolute w-56 pt-2 origin-top-right bg-white divide-y divide-gray-200 rounded-md shadow-lg right-12 ring-1 ring-black ring-opacity-5 focus:outline-none">
                       <Menu.Item as="div">
                         {({ active }) => (
                           <button
