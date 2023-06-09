@@ -9,7 +9,7 @@ const CommunityPage = (props) => {
   return (
     <div>
       <Head>
-        <title>UME | Phát Trực Tiệp</title>
+        <title>UME | Cộng đồng</title>
       </Head>
       <AppLayout {...props}>
         <div className="flex flex-col items-center justify-center w-full h-screen">

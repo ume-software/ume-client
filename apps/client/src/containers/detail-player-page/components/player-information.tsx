@@ -175,7 +175,7 @@ const PlayerInformation = (props: { data }) => {
               </div>
               <div className="text-white flex flex-col gap-y-2">
                 <p className="text-white text-4xl font-medium">{props.data?.name}</p>
-                <div className="flex flex-row justify-around gap-x-5">
+                <div className="flex flex-row gap-3">
                   <div className="bg-gray-700 p-2 rounded-full flex items-center gap-1">
                     <Male theme="outline" size="24" fill="#1CB3FF" />
                     <p>16</p>

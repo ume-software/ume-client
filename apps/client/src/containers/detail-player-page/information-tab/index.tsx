@@ -97,11 +97,7 @@ const InformationTab = (props: { data }) => {
             {gameSelected < 0 ? (
               <PersonalInformation key={props.data.id} data={props.data} />
             ) : (
-              <div className="p-10 bg-zinc-800 rounded-3xl">
-                <div className="flex flex-col gap-10">
-                  <GamePlayed data={props.data.providerSkills[gameSelected]} />
-                </div>
-              </div>
+              <GamePlayed data={props.data.providerSkills[gameSelected]} />
             )}
           </div>
         </div>

@@ -5,6 +5,7 @@ import { createRouter } from './configurations'
 import {
   createBooking,
   getBookingProvider,
+  getFeedbackSkillById,
   getHotProviders,
   getListSkill,
   getProviderBySlug,
@@ -56,5 +57,11 @@ export const bookingRouter = createRouter()
     }),
     resolve: async ({ ctx, input }) => {
       return await putProviderResponeBooking(input, ctx)
+    },
+  })
+  .query('getFeedbackSkillById', {
+    input: z.string(),
+    resolve: async ({ ctx, input }) => {
+      return await getFeedbackSkillById(input)
     },
   })

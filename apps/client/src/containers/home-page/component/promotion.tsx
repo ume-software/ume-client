@@ -17,6 +17,7 @@ export interface Promotion {}
 
 export const Promotion = () => {
   const { childrenDrawer, setChildrenDrawer } = useContext(drawerContext)
+
   let listProvider: any
 
   const {

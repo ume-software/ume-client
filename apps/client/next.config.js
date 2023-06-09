@@ -13,6 +13,8 @@ module.exports = {
       'static-oss.epal.gg',
       'cdn.pixabay.com',
       'global-oss.epal.gg',
+      'files.playerduo.net',
+      'playerduo.net',
     ],
   },
 }
