@@ -31,8 +31,8 @@ export const FormInput = ({ error, errorMessage, ...props }: FormInputProps) => 
         {...props}
         tabIndex={99}
         className={`${
-          error ? '!border-ume-error !focus:border-ume-error !focus:outline-ume-error  !hover:border-ume-error' : ''
-        } ${props.className}`}
+          error ? '!border-ume-error  !focus:border-ume-error !focus:outline-ume-error  !hover:border-ume-error' : ''
+        } ${props.className} border border-slate-300 `}
       />
       {error ? <span className="block mt-1 text-ume-error text-[14px]">{errorMessage}</span> : null}
     </>
@@ -249,7 +249,7 @@ export const InputWithSecretButton = ({ error, errorMessage, subtitle, ...props 
           className={`${
             error
               ? '!pr-9 !border-ume-error !focus:border-ume-error !focus:outline-ume-error !hover:border-ume-error'
-              : '!pr-9 w-full px-3 py-2 bg-[#FFFFFF] border rounded form-input peer border-slate-300 pr-9 placeholder:text-slate-400/70'
+              : ' w-full px-3 py-2 bg-[#FFFFFF] border rounded form-input peer border-slate-300 pr-9 placeholder:text-slate-400/70'
           }`}
         />
         <div
