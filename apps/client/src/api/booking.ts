@@ -5,6 +5,7 @@ import { createRouter } from './configurations'
 import {
   createBooking,
   getBookingProvider,
+  getHotProviders,
   getListSkill,
   getProviderBySlug,
   getProviders,
@@ -20,6 +21,11 @@ export const bookingRouter = createRouter()
   .query('getProviders', {
     resolve: async ({ ctx }) => {
       return await getProviders()
+    },
+  })
+  .query('getHotProviders', {
+    resolve: async ({ ctx }) => {
+      return await getHotProviders()
     },
   })
   .query('getProviderBySlug', {

@@ -1,7 +1,4 @@
 import { Dot, Male, More, Plus, ShareTwo } from '@icon-park/react'
-import TestImage2 from 'public/16x16/ume-logo-black.png'
-import TestImage1 from 'public/32x32/ume-logo-black.png'
-import TestImage3 from 'public/categories_pic/league_of_legends.jpg'
 import cover from 'public/cover.png'
 import TestImage4 from 'public/cover.png'
 import detailBackground from 'public/detail-cover-background.png'
@@ -68,19 +65,19 @@ const personalImageDatas: personalImageProps[] = [
 const feedData: feedProps[] = [
   {
     feedLink: '/1',
-    imgSrc: TestImage1,
+    imgSrc: ImgForEmpty,
     numberLike: 2,
     numberCom: 1,
   },
   {
     feedLink: '/1',
-    imgSrc: TestImage2,
+    imgSrc: ImgForEmpty,
     numberLike: 25,
     numberCom: 1,
   },
   {
     feedLink: '/1',
-    imgSrc: TestImage3,
+    imgSrc: ImgForEmpty,
   },
   {
     feedLink: '/1',

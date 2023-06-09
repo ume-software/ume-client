@@ -47,7 +47,25 @@ export const getProviders = async () => {
     console.log('error at catch', error)
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
-      message: error.message || 'Failed to get list skill',
+      message: error.message || 'Failed to get list provider',
+    })
+  }
+}
+
+export const getHotProviders = async () => {
+  try {
+    const response = await new ProviderApi({
+      basePath: getEnv().baseBookingURL,
+      isJsonMime: () => true,
+    }).getListHotProvider(7, '8', '1')
+    return {
+      data: response.data,
+    }
+  } catch (error) {
+    console.log('error at catch', error)
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.message || 'Failed to get list hot provider',
     })
   }
 }
