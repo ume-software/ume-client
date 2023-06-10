@@ -1,11 +1,11 @@
 import { Menu, Transition } from '@headlessui/react'
-import { Gift, Logout, Remind, Search, Setting, User, WalletOne } from '@icon-park/react'
+import { Dot, Gift, Logout, Remind, Search, Setting, User, WalletOne } from '@icon-park/react'
 import { Button, Input } from '@ume/ui'
 import coin from 'public/coin-icon.png'
 import logo from 'public/ume-logo-2.svg'
 import Notificate from '~/containers/notificate/notificate.container'
 
-import React, { Fragment, ReactElement, ReactNode, useContext, useEffect, useState } from 'react'
+import React, { Fragment, ReactElement, ReactNode, useContext, useEffect, useRef, useState } from 'react'
 
 import Image from 'next/legacy/image'
 import Link from 'next/link'
@@ -30,6 +30,7 @@ export const Header: React.FC = ({}: HeaderProps) => {
   const [balance, setBalance] = useState<any>()
   const { socketToken, setSocketToken } = useContext(SocketTokenContext)
   const { socketContext } = useContext(SocketContext)
+  const prevSocketContext = useRef<any[]>([])
   const [selectedTab, setSelectedTab] = useState('Chính')
   const [notificateIcon, setNotificatedIcon] = useState<ReactNode>(<Remind size={22} strokeWidth={4} fill="#FFFFFF" />)
   const [isModalLoginVisible, setIsModalLoginVisible] = React.useState(false)
@@ -57,11 +58,21 @@ export const Header: React.FC = ({}: HeaderProps) => {
     }
   }, [dataResponse, setSocketToken, userInfo])
 
+  // console.log(socketContext[0])
+
   useEffect(() => {
-    if (socketContext.length != 0) {
-      setNotificatedIcon(<Remind size={22} strokeWidth={4} fill="#000000" />)
+    if (socketContext[0]?.id !== prevSocketContext.current?.[0]?.id) {
+      console.log('asdsd')
+      setNotificatedIcon(
+        <div onClick={() => setNotificatedIcon(<Remind size={22} strokeWidth={4} fill="#FFFFFF" />)}>
+          <Remind theme="filled" size="22" fill="#FFFFFF" strokeLinejoin="bevel" />
+          <Dot className="absolute top-0 right-0" theme="filled" size="18" fill="#FF0000" strokeLinejoin="bevel" />
+        </div>,
+      )
+    } else {
+      setNotificatedIcon(<Remind size={22} strokeWidth={4} fill="#FFFFFF" />)
     }
-    setNotificatedIcon(<Remind size={22} strokeWidth={4} fill="#FFFFFF" />)
+    prevSocketContext.current = socketContext
   }, [socketContext])
 
   const tabDatas: tabData[] = [

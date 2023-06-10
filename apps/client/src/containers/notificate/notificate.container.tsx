@@ -1,5 +1,3 @@
-import { memo, useState } from 'react'
-
 import { notification } from 'antd'
 import Image from 'next/image'
 import { BookingHandleRequestStatusEnum } from 'ume-booking-service-openapi'
@@ -132,4 +130,4 @@ const Notificate = (props: { responeBooking }) => {
     </>
   )
 }
-export default memo(Notificate)
+export default Notificate

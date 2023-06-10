@@ -45,14 +45,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const [socketContext, setSocketContext] = useState<any[]>([])
   const socketInstance = socketToken ? socket(socketToken) : null
 
-  useEffect(() => {
-    if (socketInstance) {
-      socketInstance.on(getSocket().SOCKET_SERVER_EMIT.USER_BOOKING_PROVIDER, (...args) => {
-        console.log(args)
-        setSocketContext(args)
-      })
-    }
-  }, [socketInstance])
+  if (socketInstance) {
+    socketInstance.on(getSocket().SOCKET_SERVER_EMIT.USER_BOOKING_PROVIDER, (...args) => {
+      console.log(args)
+      setSocketContext(args)
+    })
+  }
 
   const socketContextValue: SocketContext = {
     socketContext,
