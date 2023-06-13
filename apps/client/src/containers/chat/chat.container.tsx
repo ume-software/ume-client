@@ -2,141 +2,38 @@ import { ArrowLeft, FullScreen, Search } from '@icon-park/react'
 import { TextInput } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
 
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
 import Image from 'next/legacy/image'
 
 import ChatContent from './chat-content'
+import { trpc } from '~/utils/trpc'
+import { ChattingChannelReponse, MemberChatChannelResponse, MessageResponse } from 'ume-chatting-service-openapi'
+import { UserContext } from '~/components/layouts/app-layout/app-layout'
 
-interface channelProps {
-  id: number
-  imgSrc?: any
-  nameChannel?: string
-  name?: string
-  channelType: string
-  members: { id: number; name: string; joinAt: Date; lastRead: Date }[]
-  messages: { id: number; content: string; sendAt: Date }[]
-  providerSkills?: { gameImg: any; skill?: { name: string }; cost: number }[]
-}
 
-const Chat = (props) => {
-  const [searchTex, setSearchText] = useState('')
-  const [channelSelected, setChannelSelected] = useState(0)
-  const [channelData, setChannelData] = useState<channelProps[]>([
-    {
-      id: 1,
-      nameChannel: 'Channel 1',
-      channelType: 'public',
-      imgSrc: ImgForEmpty,
-      members: [
-        {
-          id: 1,
-          name: 'John',
-          joinAt: new Date('2023-04-15T10:30:00Z'),
-          lastRead: new Date('2023-04-16T15:45:00Z'),
-        },
-        {
-          id: 2,
-          name: 'Alice',
-          joinAt: new Date('2023-04-15T10:30:00Z'),
-          lastRead: new Date('2023-04-17T08:20:00Z'),
-        },
-        {
-          id: 3,
-          name: 'Bob',
-          joinAt: new Date('2023-04-16T09:15:00Z'),
-          lastRead: new Date('2023-04-17T12:10:00Z'),
-        },
-      ],
-      messages: [
-        {
-          id: 1,
-          content: 'Hello everyone!',
-          sendAt: new Date('2023-04-15T11:05:00Z'),
-        },
-        {
-          id: 2,
-          content: 'How are you all?',
-          sendAt: new Date('2023-04-15T11:25:00Z'),
-        },
-        {
-          id: 3,
-          content: 'Any plans for the weekend?',
-          sendAt: new Date('2023-04-16T14:30:00Z'),
-        },
-      ],
-      providerSkills: [
-        { gameImg: ImgForEmpty, skill: { name: 'Valorant' }, cost: 2 },
-        { gameImg: ImgForEmpty, skill: { name: 'Valorant' }, cost: 3 },
-        { gameImg: ImgForEmpty, skill: { name: 'Valorant' }, cost: 4 },
-      ],
-    },
-    {
-      id: 2,
-      nameChannel: 'Channel 2',
-      channelType: 'public',
-      imgSrc: ImgForEmpty,
-      members: [
-        {
-          id: 1,
-          name: 'John',
-          joinAt: new Date('2023-04-17T09:40:00Z'),
-          lastRead: new Date('2023-04-17T11:55:00Z'),
-        },
-        {
-          id: 4,
-          name: 'Sarah',
-          joinAt: new Date('2023-04-17T09:40:00Z'),
-          lastRead: new Date('2023-04-17T13:30:00Z'),
-        },
-        {
-          id: 5,
-          name: 'Michael',
-          joinAt: new Date('2023-04-18T14:20:00Z'),
-          lastRead: new Date('2023-04-18T16:45:00Z'),
-        },
-      ],
-      messages: [
-        {
-          id: 1,
-          content: 'Welcome to Channel 2!',
-          sendAt: new Date('2023-04-17T10:05:00Z'),
-        },
-        {
-          id: 2,
-          content: "Let's discuss the new project.",
-          sendAt: new Date('2023-04-17T11:30:00Z'),
-        },
-        {
-          id: 3,
-          content: 'Any suggestions?',
-          sendAt: new Date('2023-04-18T15:10:00Z'),
-        },
-      ],
-      providerSkills: [
-        { gameImg: ImgForEmpty, skill: { name: 'Valorant' }, cost: 6 },
-        { gameImg: ImgForEmpty, skill: { name: 'Valorant' }, cost: 1 },
-        // { gameImg: ImgForEmpty, skill:{name:'Valorant'} , cost: 5 },
-      ],
-    },
-  ])
+const Chat = (props: { channelId?: string }) => {
+  const [searchTex, setSearchText] = useState('');
+  const { userContext, setUserContext } = useContext(UserContext)
+  const [channelSelected, setChannelSelected] = useState<ChattingChannelReponse | undefined>({ _id: props.channelId } as any || undefined)
+  const {
+    data: chattingChannels,
+    isLoading: loadingChattingChannels,
+    isFetching,
+  } = trpc.useQuery(['chatting.getListChattingChannels', { limit: "unlimited", page: "1" }])
+  if (loadingChattingChannels) {
+    return <></>
+  }
 
   const handleSelected = (id) => {
-    setChannelSelected(id - 1)
+    setChannelSelected(chattingChannels?.data.row.find(item => item._id == id))
   }
-  useEffect(
-    () =>
-      setChannelData(() => {
-        if (props.data == undefined) return [...channelData]
-        return [...channelData, props.data]
-      }),
-    [props.data],
-  )
+
 
   return (
     <>
       <div className="w-full grid grid-cols-10 pl-5 pr-5">
-        <div className="h-full col-span-3 border-r-2 border-light-700">
+        <div className="h-full col-span-3 border-light-700">
           <div className="flex items-center justify-center mb-5">
             <Search
               theme="outline"
@@ -153,36 +50,59 @@ const Chat = (props) => {
               className="text-white w-full"
             />
           </div>
-          <div className="h-full overflow-y-scroll hide-scrollbar">
-            {channelData.map((item) => (
-              <div
-                key={item.id}
-                tabIndex={item.id}
-                className={`flex flex-row items-center gap-3 hover:bg-gray-700 p-1 rounded-xl ${
-                  channelSelected == item.id ? 'bg-gray-700' : ''
-                }`}
-                onClick={() => handleSelected(item.id)}
-              >
-                <div className="relative w-[60px] h-[60px]">
-                  <Image
-                    className="absolute rounded-full"
-                    layout="fill"
-                    objectFit="cover"
-                    src={item?.imgSrc}
-                    alt="Avatar"
-                  />
+          <div className="h-full hide-scrollbar flex flex-col border-r-2 overflow-y-auto">
+            {chattingChannels?.data.row.map((item, index) => {
+
+              const latestMeassge: MessageResponse | null = item.messages.length ? item.messages[item.messages.length - 1] : null;
+              const otherMemberInfo: Array<MemberChatChannelResponse> = [];
+              let seftMemberInfo: MemberChatChannelResponse | null = null;
+              for (let index = 0; index < item.members.length; index++) {
+                const member = item.members[index]
+                if (member.userId.toString() != userContext?.id.toString()) {
+                  otherMemberInfo.push(member)
+                } else {
+                  seftMemberInfo = member
+                }
+
+              }
+              const isReadedLatestMessage = latestMeassge && latestMeassge.sentAt < seftMemberInfo?.lastReadAt! ? true : false
+              return (
+                <div
+
+                  className={`flex flex-row py-4 px-2 items-center border-b-2 border-gray-700 cursor-pointer 
+                ${channelSelected?._id == item._id ? "border-l-3 border-gray-500" : ""}`}
+                  onClick={() => handleSelected(item._id)}
+                >
+                  <div className="w-1/4">
+                    <div className="relative h-12 w-12">
+                      <Image
+                        className="rounded-full"
+                        layout="fill"
+                        objectFit="cover"
+                        height={600}
+                        width={600}
+                        src={otherMemberInfo[0].userInfomation.avatarUrl}
+                        alt="Avatar"
+                      />
+                    </div>
+                  </div>
+                  <div className="w-full px-2">
+                    <div className="text-lg font-semibold">{otherMemberInfo[0].userInfomation.name}</div>
+                    <span className={`text-gray-500 ${isReadedLatestMessage ? "font-medium" : ""}`}>{latestMeassge?.content}</span>
+                  </div>
                 </div>
-                <p className="w-[200px] h-[28px]  font-semibold text-xl truncate text-white z-[4]">
-                  {item?.nameChannel || item?.name}
-                </p>
-              </div>
-            ))}
+
+              )
+            })}
+
+
           </div>
         </div>
         <div className="col-span-7">
           <div className="flex flex-col gap-8">
             <div className="flex flex-col pl-5 pr-5 gap-5">
-              <ChatContent data={channelData[channelSelected] || props.data} />
+              {channelSelected?._id && <ChatContent channel={channelSelected} />}
+
             </div>
           </div>
         </div>
