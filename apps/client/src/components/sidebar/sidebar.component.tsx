@@ -3,11 +3,12 @@ import { CustomDrawer } from '@ume/ui'
 import cover from 'public/cover.png'
 import Chat from '~/containers/chat/chat.container'
 
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 
 import Image, { StaticImageData } from 'next/legacy/image'
 
-import { drawerContext } from '../layouts/app-layout/app-layout'
+import { UserContext, drawerContext } from '../layouts/app-layout/app-layout'
+import { trpc } from '~/utils/trpc'
 
 interface chatProps {
   imgSrc: string | StaticImageData
@@ -18,83 +19,57 @@ interface chatProps {
   }
 }
 
-const chatTest: chatProps[] = [
-  {
-    imgSrc: cover,
-    name: 'abc',
-    message: {
-      player: [
-        { context: 'Player Message 1', time: new Date() },
-        { context: 'Player Message 2', time: new Date() },
-        { context: 'Player Message 3', time: new Date() },
-      ],
-      me: [
-        { context: 'My Message 1', time: new Date() },
-        { context: 'My Message 2', time: new Date() },
-        { context: 'My Message 3', time: new Date() },
-      ],
-    },
-  },
-  {
-    imgSrc: cover,
-    name: 'abc',
-    message: {
-      player: [
-        { context: 'Player Message 1', time: new Date() },
-        { context: 'Player Message 2', time: new Date() },
-        { context: 'Player Message 3', time: new Date() },
-      ],
-      me: [
-        { context: 'My Message 1', time: new Date() },
-        { context: 'My Message 2', time: new Date() },
-        { context: 'My Message 3', time: new Date() },
-      ],
-    },
-  },
-  {
-    imgSrc: cover,
-    name: 'abc',
-    message: {
-      player: [
-        { context: 'Player Message 1', time: new Date() },
-        { context: 'Player Message 2', time: new Date() },
-        { context: 'Player Message 3', time: new Date() },
-      ],
-      me: [
-        { context: 'My Message 1', time: new Date() },
-        { context: 'My Message 2', time: new Date() },
-        { context: 'My Message 3', time: new Date() },
-      ],
-    },
-  },
-]
+
 export const Sidebar = (props) => {
   const { childrenDrawer, setChildrenDrawer } = useContext(drawerContext)
-  const handleChatOpen = () => {
-    setChildrenDrawer(<Chat />)
+  const { userContext, setUserContext } = useContext(UserContext)
+  const {
+    data: chattingChannels,
+    isLoading: loadingChattingChannels,
+    isFetching,
+  } = trpc.useQuery(['chatting.getListChattingChannels', { limit: "5", page: "1" }])
+  if (loadingChattingChannels) {
+    return <></>
   }
+  const handleChatOpen = (id?: string) => {
+    setChildrenDrawer(<Chat channelId={id} />)
+  }
+
   return (
     <>
       <div className="flex flex-col items-center justify-center gap-8 px-4 pt-10">
         <CustomDrawer
           customOpenBtn={`p-2 bg-gray-700 rounded-full cursor-pointer hover:bg-gray-500 active:bg-gray-400`}
-          openBtn={<ArrowLeft theme="outline" size="30" fill="#fff" onClick={handleChatOpen} />}
+          openBtn={<ArrowLeft theme="outline" size="30" fill="#fff" onClick={() => handleChatOpen()} />}
         >
           {childrenDrawer}
         </CustomDrawer>
         <div className="flex flex-col gap-3">
-          {chatTest.map((item, index) => (
-            <div key={index} className="relative w-14 h-14">
-              <Image
-                className="absolute rounded-full"
-                layout="fill"
-                objectFit="cover"
-                key={index}
-                src={item.imgSrc}
-                alt="avatar"
-              />
-            </div>
-          ))}
+          {chattingChannels?.data.row.map((item, index) => {
+            const images = (item.members.filter(member => {
+              return member.userId.toString() != userContext?.id.toString();
+            }))
+            return (
+
+              <div key={item._id} className="relative w-14 h-14">
+                <CustomDrawer
+                  customOpenBtn={`cursor-pointer`}
+                  openBtn={<Image
+                    className="absolute rounded-full"
+                    layout="fill"
+                    objectFit="cover"
+                    key={item._id}
+                    src={images[0].userInfomation.avatarUrl}
+                    alt="avatar"
+                    onClick={() => handleChatOpen(item._id)}
+                  />}
+                >
+                  {childrenDrawer}
+                </CustomDrawer>
+
+              </div>
+            )
+          })}
         </div>
       </div>
     </>
