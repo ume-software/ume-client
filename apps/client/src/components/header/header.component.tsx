@@ -58,8 +58,6 @@ export const Header: React.FC = ({}: HeaderProps) => {
     }
   }, [dataResponse, setSocketToken, userInfo])
 
-  // console.log(socketContext[0])
-
   useEffect(() => {
     if (socketContext[0]?.id !== prevSocketContext.current?.[0]?.id) {
       console.log('asdsd')

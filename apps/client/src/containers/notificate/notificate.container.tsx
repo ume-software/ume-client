@@ -79,7 +79,7 @@ const Notificate = (props: { responeBooking }) => {
 
   return (
     <>
-      {listBookingProvider.length != 0 ? (
+      {listBookingProvider && listBookingProvider?.length != 0 ? (
         listBookingProvider.map((item) => (
           <div key={item.id} className="p-2 border-b-2 border-gray-200 rounded-lg hover:bg-violet-100">
             <div className="grid grid-cols-10">
