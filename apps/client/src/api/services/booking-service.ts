@@ -1,17 +1,14 @@
 import { TRPCError } from '@trpc/server'
 import { getEnv } from '~/env'
 
-import { parse, serialize } from 'cookie'
+import { parse } from 'cookie'
 import {
   BookingApi,
-  BookingHandleRequest,
-  BookingHandleRequestStatusEnum,
   BookingProviderRequest,
   ProviderApi,
+  ProviderSkillApi,
   SkillApi,
 } from 'ume-booking-service-openapi'
-
-import { socket } from '../socket'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
@@ -47,7 +44,25 @@ export const getProviders = async () => {
     console.log('error at catch', error)
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
-      message: error.message || 'Failed to get list skill',
+      message: error.message || 'Failed to get list provider',
+    })
+  }
+}
+
+export const getHotProviders = async () => {
+  try {
+    const response = await new ProviderApi({
+      basePath: getEnv().baseBookingURL,
+      isJsonMime: () => true,
+    }).getListHotProvider(7, '8', '1')
+    return {
+      data: response.data,
+    }
+  } catch (error) {
+    console.log('error at catch', error)
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.message || 'Failed to get list hot provider',
     })
   }
 }
@@ -123,6 +138,25 @@ export const putProviderResponeBooking = async ({ bookingHistoryId, status }, ct
       bookingHistoryId: bookingHistoryId,
       status: status,
     })
+    return {
+      data: respone.data,
+      success: true,
+    }
+  } catch (error) {
+    console.log('error at catch', error)
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to create new booking',
+    })
+  }
+}
+
+export const getFeedbackSkillById = async (feedbackSkillId) => {
+  try {
+    const respone = await new ProviderSkillApi({
+      basePath: getEnv().baseBookingURL,
+      isJsonMime: () => true,
+    }).getFeedbackByProviderSkill(feedbackSkillId, '1', '1', '["$all"]')
     return {
       data: respone.data,
       success: true,

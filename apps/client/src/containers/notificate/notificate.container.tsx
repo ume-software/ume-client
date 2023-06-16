@@ -1,11 +1,10 @@
-import { memo } from 'react'
-
 import { notification } from 'antd'
 import Image from 'next/image'
 import { BookingHandleRequestStatusEnum } from 'ume-booking-service-openapi'
 
 import { trpc } from '~/utils/trpc'
 
+let result: string
 const Notificate = (props: { responeBooking }) => {
   const {
     data: bookingProvider,
@@ -25,6 +24,7 @@ const Notificate = (props: { responeBooking }) => {
         {
           onSuccess: (data) => {
             if (data.success) {
+              result = bookingHistoryId
               notification.success({
                 message: 'Yêu cầu đã được chấp nhận!',
                 description: `Bạn đã chấp nhận yêu cầu từ ${bookerName}`,
@@ -47,13 +47,14 @@ const Notificate = (props: { responeBooking }) => {
     }
   }
 
-  const handleUnacceptBooking = (bookingId: string, bookerName: string) => {
+  const handleUnacceptBooking = (bookingHistoryId: string, bookerName: string) => {
     try {
       props.responeBooking.mutate(
-        { bookingHistoryId: bookingId, status: BookingHandleRequestStatusEnum.ProviderCancel },
+        { bookingHistoryId: bookingHistoryId, status: BookingHandleRequestStatusEnum.ProviderCancel },
         {
           onSuccess: (data) => {
             if (data.success) {
+              result = bookingHistoryId
               notification.success({
                 message: 'Yêu cầu đã được xóa!',
                 description: `Bạn đã từ chối yêu cầu từ ${bookerName}`,
@@ -78,7 +79,7 @@ const Notificate = (props: { responeBooking }) => {
 
   return (
     <>
-      {listBookingProvider.length != 0 ? (
+      {listBookingProvider && listBookingProvider?.length != 0 ? (
         listBookingProvider.map((item) => (
           <div key={item.id} className="p-2 border-b-2 border-gray-200 rounded-lg hover:bg-violet-100">
             <div className="grid grid-cols-10">
@@ -103,20 +104,24 @@ const Notificate = (props: { responeBooking }) => {
                 </div>
               </div>
             </div>
-            <div className="flex justify-around gap-5 pt-3 px-3">
-              <div
-                className="rounded-lg w-full text-white bg-purple-700 py-1 font-normal text-md hover:scale-105 text-center cursor-pointer"
-                onClick={() => handleAcceptBooking(item.id, item.booker.name)}
-              >
-                Chấp nhận
+            {item.id === result ? (
+              <div>Bạn đã xử lý yêu cầu này!</div>
+            ) : (
+              <div className="flex justify-around gap-5 pt-3 px-3">
+                <div
+                  className="rounded-lg w-full text-white bg-purple-700 py-1 font-normal text-md hover:scale-105 text-center cursor-pointer"
+                  onClick={() => handleAcceptBooking(item.id, item.booker.name)}
+                >
+                  Chấp nhận
+                </div>
+                <div
+                  className="rounded-lg w-full text-purple-700 border-2 border-purple-700 py-1 font-normal text-md hover:scale-105 text-center cursor-pointer"
+                  onClick={() => handleUnacceptBooking(item.id, item.booker.name)}
+                >
+                  Từ chối
+                </div>
               </div>
-              <div
-                className="rounded-lg w-full text-purple-700 border-2 border-purple-700 py-1 font-normal text-md hover:scale-105 text-center cursor-pointer"
-                onClick={() => handleUnacceptBooking(item.id, item.booker.name)}
-              >
-                Từ chối
-              </div>
-            </div>
+            )}
           </div>
         ))
       ) : (
@@ -125,4 +130,4 @@ const Notificate = (props: { responeBooking }) => {
     </>
   )
 }
-export default memo(Notificate)
+export default Notificate

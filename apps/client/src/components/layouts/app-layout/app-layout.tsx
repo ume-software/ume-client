@@ -1,14 +1,15 @@
 import * as socketio from 'socket.io-client'
 import { socket } from '~/api/socket/socket-booking'
+import { socketChatting } from '~/api/socket/socket-chatting'
 
 import { Dispatch, ReactNode, SetStateAction, createContext, useEffect, useState } from 'react'
+
+import { UserInfomationResponse } from 'ume-identity-service-openapi'
 
 import { Header } from '~/components/header/header.component'
 import { Sidebar } from '~/components/sidebar'
 
 import { getSocket } from '~/utils/constants'
-import { UserInfomationResponse } from 'ume-identity-service-openapi'
-import { socketChatting } from '~/api/socket/socket-chatting'
 
 interface AppLayoutProps {
   children: ReactNode
@@ -31,36 +32,33 @@ interface DrawerProps {
 }
 
 interface UserContextValue {
-  userContext: UserInfomationResponse | null,
+  userContext: UserInfomationResponse | null
   setUserContext: Dispatch<SetStateAction<UserInfomationResponse | null>>
 }
 export const SocketTokenContext = createContext<SocketTokenContextValue>({
   socketToken: null,
-  setSocketToken: () => { },
+  setSocketToken: () => {},
 })
 
 export const SocketContext = createContext<SocketContext>({
   socketContext: [],
-  setSocketContext: () => { },
+  setSocketContext: () => {},
 })
-
 
 export const SocketChattingContext = createContext<SocketChattingContext>({
   socketChattingContext: [],
-  setSocketChattingContext: () => { },
+  setSocketChattingContext: () => {},
 })
-
 
 export const drawerContext = createContext<DrawerProps>({
   childrenDrawer: <></>,
-  setChildrenDrawer: () => { },
+  setChildrenDrawer: () => {},
 })
 
 export const UserContext = createContext<UserContextValue>({
   userContext: null,
-  setUserContext: () => { },
+  setUserContext: () => {},
 })
-
 
 export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const [childrenDrawer, setChildrenDrawer] = useState<ReactNode>()
@@ -72,19 +70,24 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const socketChattingInstance = socketToken ? socketChatting(socketToken) : null
   useEffect(() => {
     if (socketInstance) {
-      console.log("socketInstance ====> ", socketInstance)
+      console.log('socketInstance ====> ', socketInstance)
       socketInstance.on(getSocket().SOCKET_SERVER_EMIT.USER_BOOKING_PROVIDER, (...args) => {
         setSocketContext(args)
       })
     }
   }, [socketInstance])
   useEffect(() => {
-    console.log("socketChattingInstance ====> ", socketChattingInstance)
+    console.log('socketChattingInstance ====> ', socketChattingInstance)
     if (socketChattingInstance) {
       socketChattingInstance.on(getSocket().SOCKER_CHATTING_SERVER_EMIT.MESSAGE_FROM_CHANNEL, (...args) => {
+        setSocketChattingContext(args)
 
-        setSocketChattingContext(args);
-
+        if (socketInstance) {
+          socketInstance.on(getSocket().SOCKET_SERVER_EMIT.USER_BOOKING_PROVIDER, (...args) => {
+            console.log(args)
+            setSocketContext(args)
+          })
+        }
       })
     }
   }, [socketChattingInstance])
