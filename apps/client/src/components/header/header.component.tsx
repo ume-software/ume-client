@@ -16,14 +16,14 @@ import { RechargeModal } from './recharge-form.component'
 
 import { trpc } from '~/utils/trpc'
 
-interface HeaderProps { }
+interface HeaderProps {}
 
 interface tabData {
   label: string
   children: ReactElement
 }
 
-export const Header: React.FC = ({ }: HeaderProps) => {
+export const Header: React.FC = ({}: HeaderProps) => {
   const [showSearh, setShowSearch] = useState(false)
   const [showRechargeModal, setShowRechargeModal] = useState(false)
   const [userInfo, setUserInfo] = useState<any>()
@@ -56,14 +56,13 @@ export const Header: React.FC = ({ }: HeaderProps) => {
     }
     if (dataResponse) {
       setUserInfo(dataResponse.data)
-      console.log("dataResponse ===> ", dataResponse)
+      console.log('dataResponse ===> ', dataResponse)
       setUserContext(dataResponse.data)
     }
   }, [dataResponse, setSocketToken, userInfo])
 
   useEffect(() => {
-    if (socketContext[0]?.id !== prevSocketContext.current?.[0]?.id) {
-      console.log('asdsd')
+    if (socketContext.socketNotificateContext[0]?.id !== prevSocketContext.current?.[0]?.id) {
       setNotificatedIcon(
         <div onClick={() => setNotificatedIcon(<Remind size={22} strokeWidth={4} fill="#FFFFFF" />)}>
           <Remind theme="filled" size="22" fill="#FFFFFF" strokeLinejoin="bevel" />
@@ -73,7 +72,7 @@ export const Header: React.FC = ({ }: HeaderProps) => {
     } else {
       setNotificatedIcon(<Remind size={22} strokeWidth={4} fill="#FFFFFF" />)
     }
-    prevSocketContext.current = socketContext
+    prevSocketContext.current = socketContext.socketNotificateContext
   }, [socketContext])
 
   const tabDatas: tabData[] = [
@@ -186,8 +185,9 @@ export const Header: React.FC = ({ }: HeaderProps) => {
                       {tabDatas.map((item, index) => (
                         <a
                           href="#tab"
-                          className={`xl:text-lg text-md font-medium p-2 ${item.label == selectedTab ? 'border-b-4 border-purple-700' : ''
-                            }`}
+                          className={`xl:text-lg text-md font-medium p-2 ${
+                            item.label == selectedTab ? 'border-b-4 border-purple-700' : ''
+                          }`}
                           key={index}
                           onClick={handleChangeTab}
                           data-tab={item.label}
@@ -252,8 +252,9 @@ export const Header: React.FC = ({ }: HeaderProps) => {
                       <Menu.Item as="div">
                         {({ active }) => (
                           <button
-                            className={`${active ? 'bg-violet-500 text-white' : 'text-gray-900'
-                              } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                            className={`${
+                              active ? 'bg-violet-500 text-white' : 'text-gray-900'
+                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                           >
                             <User theme="outline" size="20" fill="#333" className="mr-3" />
                             Tài khoản của bạn
@@ -263,8 +264,9 @@ export const Header: React.FC = ({ }: HeaderProps) => {
                       <Menu.Item as="div">
                         {({ active }) => (
                           <button
-                            className={`${active ? 'bg-violet-500 text-white' : 'text-gray-900'
-                              } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                            className={`${
+                              active ? 'bg-violet-500 text-white' : 'text-gray-900'
+                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                           >
                             <WalletOne theme="outline" size="20" fill="#333" className="mr-3" />
                             Kiểm tra ví tiên
@@ -274,8 +276,9 @@ export const Header: React.FC = ({ }: HeaderProps) => {
                       <Menu.Item as="div">
                         {({ active }) => (
                           <button
-                            className={`${active ? 'bg-violet-500 text-white' : 'text-gray-900'
-                              } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                            className={`${
+                              active ? 'bg-violet-500 text-white' : 'text-gray-900'
+                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                           >
                             <Setting theme="outline" size="20" fill="#333" className="mr-3" />
                             Cài đặt tài khoản
@@ -286,8 +289,9 @@ export const Header: React.FC = ({ }: HeaderProps) => {
                         {({ active }) => (
                           <Link
                             href={'/logout'}
-                            className={`${active ? 'bg-violet-500 text-white' : 'text-gray-900'
-                              } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                            className={`${
+                              active ? 'bg-violet-500 text-white' : 'text-gray-900'
+                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                           >
                             <Logout className="mr-3" theme="outline" size="20" fill="#333" />
                             Đăng xuất

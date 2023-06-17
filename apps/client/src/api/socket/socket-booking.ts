@@ -5,7 +5,7 @@ import { getSocket } from '~/utils/constants'
 
 export const socket = (token: string | null) => {
   if (token != null) {
-    const socketInstance =  {...socketio}
+    const socketInstance = { ...socketio }
       .connect(getEnv().baseBookingURL, {
         transports: ['websocket'],
         reconnection: true,

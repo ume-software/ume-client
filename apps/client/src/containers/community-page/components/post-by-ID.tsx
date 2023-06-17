@@ -7,12 +7,9 @@ import Image from 'next/legacy/image'
 import { TimeFormat } from '~/components/time-format'
 
 const PostByID = (props) => {
-  console.log(props.postData)
-
   const [imageIndex, setImageIndex] = useState(0)
 
   const thumbnailsLength = props.postData?.thumbnails?.length - 1
-  console.log(thumbnailsLength)
 
   const handleNextImage = () => {
     if (imageIndex < thumbnailsLength) {

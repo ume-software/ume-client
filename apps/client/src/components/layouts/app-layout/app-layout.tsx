@@ -19,13 +19,16 @@ interface SocketTokenContextValue {
   setSocketToken: Dispatch<SetStateAction<string | null>>
 }
 interface SocketContext {
-  socketContext: any[]
+  socketContext: {
+    socketNotificateContext: any[]
+    socketChattingContext: any[]
+  }
   setSocketContext: (value: any[]) => void
 }
-interface SocketChattingContext {
-  socketChattingContext: any[]
-  setSocketChattingContext: (value: any[]) => void
-}
+// interface SocketChattingContext {
+//   socketChattingContext: any[]
+//   setSocketChattingContext: (value: any[]) => void
+// }
 interface DrawerProps {
   childrenDrawer: ReactNode
   setChildrenDrawer: (children: ReactNode) => void
@@ -41,14 +44,17 @@ export const SocketTokenContext = createContext<SocketTokenContextValue>({
 })
 
 export const SocketContext = createContext<SocketContext>({
-  socketContext: [],
+  socketContext: {
+    socketNotificateContext: [],
+    socketChattingContext: [],
+  },
   setSocketContext: () => {},
 })
 
-export const SocketChattingContext = createContext<SocketChattingContext>({
-  socketChattingContext: [],
-  setSocketChattingContext: () => {},
-})
+// export const SocketChattingContext = createContext<SocketChattingContext>({
+//   socketChattingContext: [],
+//   setSocketChattingContext: () => {},
+// })
 
 export const drawerContext = createContext<DrawerProps>({
   childrenDrawer: <></>,
@@ -64,59 +70,49 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const [childrenDrawer, setChildrenDrawer] = useState<ReactNode>()
   const [userContext, setUserContext] = useState(null)
   const [socketToken, setSocketToken] = useState(null)
-  const [socketContext, setSocketContext] = useState<any[]>([])
-  const [socketChattingContext, setSocketChattingContext] = useState<any[]>([])
+  const [socketContext, setSocketContext] = useState<any>({
+    socketNotificateContext: [],
+    socketChattingContext: [],
+  })
+
   const socketInstance = socketToken ? socket(socketToken) : null
   const socketChattingInstance = socketToken ? socketChatting(socketToken) : null
-  useEffect(() => {
-    if (socketInstance) {
-      console.log('socketInstance ====> ', socketInstance)
-      socketInstance.on(getSocket().SOCKET_SERVER_EMIT.USER_BOOKING_PROVIDER, (...args) => {
-        setSocketContext(args)
-      })
-    }
-  }, [socketInstance])
-  useEffect(() => {
-    console.log('socketChattingInstance ====> ', socketChattingInstance)
-    if (socketChattingInstance) {
-      socketChattingInstance.on(getSocket().SOCKER_CHATTING_SERVER_EMIT.MESSAGE_FROM_CHANNEL, (...args) => {
-        setSocketChattingContext(args)
 
-        if (socketInstance) {
-          socketInstance.on(getSocket().SOCKET_SERVER_EMIT.USER_BOOKING_PROVIDER, (...args) => {
-            console.log(args)
-            setSocketContext(args)
-          })
-        }
-      })
-    }
-  }, [socketChattingInstance])
+  if (socketInstance) {
+    console.log('socketInstance ====>', socketInstance)
+
+    socketInstance.on(getSocket().SOCKET_SERVER_EMIT.USER_BOOKING_PROVIDER, (...args) => {
+      setSocketContext((prev) => ({ ...prev, socketNotificateContext: args }))
+    })
+  }
+  if (socketChattingInstance) {
+    console.log('socketChattingInstance ====>', socketChattingInstance)
+    socketChattingInstance.on(getSocket().SOCKER_CHATTING_SERVER_EMIT.MESSAGE_FROM_CHANNEL, (...args) => {
+      setSocketContext((prev) => ({ ...prev, socketChattingContext: args }))
+    })
+  }
+
   const socketContextValue: SocketContext = {
     socketContext,
     setSocketContext,
   }
-  const socketChattingContextValue: SocketChattingContext = {
-    socketChattingContext,
-    setSocketChattingContext,
-  }
+
   return (
     <>
       <UserContext.Provider value={{ setUserContext, userContext }}>
         <SocketTokenContext.Provider value={{ socketToken, setSocketToken }}>
           <SocketContext.Provider value={socketContextValue}>
-            <SocketChattingContext.Provider value={socketChattingContextValue}>
-              <div className="flex flex-col">
-                <div className="fixed z-10 flex flex-col w-full ">
-                  <Header />
-                </div>
-                <drawerContext.Provider value={{ childrenDrawer, setChildrenDrawer }}>
-                  <div className="pb-8 bg-umeBackground pt-[90px] pr-[60px] pl-[10px]">{children}</div>
-                  <div className="fixed h-full bg-umeHeader top-[65px] right-0">
-                    <Sidebar />
-                  </div>
-                </drawerContext.Provider>
+            <div className="flex flex-col">
+              <div className="fixed z-10 flex flex-col w-full ">
+                <Header />
               </div>
-            </SocketChattingContext.Provider>
+              <drawerContext.Provider value={{ childrenDrawer, setChildrenDrawer }}>
+                <div className="pb-8 bg-umeBackground pt-[90px] pr-[60px] pl-[10px]">{children}</div>
+                <div className="fixed h-full bg-umeHeader top-[65px] right-0">
+                  <Sidebar />
+                </div>
+              </drawerContext.Provider>
+            </div>
           </SocketContext.Provider>
         </SocketTokenContext.Provider>
       </UserContext.Provider>

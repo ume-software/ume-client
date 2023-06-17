@@ -1,14 +1,12 @@
 import { TRPCError } from '@trpc/server'
 import { getEnv } from '~/env'
-import { parse } from 'cookie'
-import {
-ChatChannelApi
-} from 'ume-chatting-service-openapi'
 
+import { parse } from 'cookie'
+import { ChatChannelApi, CreateChannelRequest } from 'ume-chatting-service-openapi'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
-export const getListChattingChannels = async (query:{limit:string,page:string}, ctx) => {
+export const getListChattingChannels = async (query: { limit: string; page: string }, ctx) => {
   try {
     const cookies = parse(ctx.req.headers.cookie)
     const response = await new ChatChannelApi({
@@ -28,14 +26,14 @@ export const getListChattingChannels = async (query:{limit:string,page:string}, 
     })
   }
 }
-export const getMessagesByChannelId = async (query:{channelId:string,limit:string,page:string}, ctx) => {
+export const getMessagesByChannelId = async (query: { channelId: string; limit: string; page: string }, ctx) => {
   try {
     const cookies = parse(ctx.req.headers.cookie)
     const response = await new ChatChannelApi({
       basePath: getEnv().baseChattingURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).getMessagesByChannelId(query.channelId,query.limit, query.page)
+    }).getMessagesByChannelId(query.channelId, query.limit, query.page)
 
     return {
       data: response.data,
@@ -45,6 +43,27 @@ export const getMessagesByChannelId = async (query:{channelId:string,limit:strin
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
       message: error.message || 'Failed to get message by channel id',
+    })
+  }
+}
+export const createNewChatChannel = async (receiverId: CreateChannelRequest, ctx) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie)
+    const response = await new ChatChannelApi({
+      basePath: getEnv().baseChattingURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).createNewChannel(receiverId)
+
+    return {
+      data: response.data,
+      success: true,
+    }
+  } catch (error) {
+    console.log('error at catch', error)
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.message || 'Failed to create new chat channel',
     })
   }
 }
