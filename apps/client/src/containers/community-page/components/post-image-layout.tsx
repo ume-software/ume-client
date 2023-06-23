@@ -5,7 +5,7 @@ const PostImageLayout = (props) => {
   const remainingImages = props.data?.length - MAX_VISIBLE_IMAGES
   return (
     <>
-      <div className="w-full h-fit">
+      <div key={props.data.id} className="w-full h-fit">
         {props.data?.length === 1 ? (
           <div className="relative w-[760px] h-[500px]">
             <Image

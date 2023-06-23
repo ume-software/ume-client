@@ -1,6 +1,5 @@
 import * as socketio from 'socket.io-client'
-import { socket } from '~/api/socket/socket-booking'
-import { socketChatting } from '~/api/socket/socket-chatting'
+import { socket } from '~/api/socket/socket-connect'
 
 import { Dispatch, ReactNode, SetStateAction, createContext, useEffect, useState } from 'react'
 
@@ -22,13 +21,10 @@ interface SocketContext {
   socketContext: {
     socketNotificateContext: any[]
     socketChattingContext: any[]
+    socketLivestreamContext: any[]
   }
   setSocketContext: (value: any[]) => void
 }
-// interface SocketChattingContext {
-//   socketChattingContext: any[]
-//   setSocketChattingContext: (value: any[]) => void
-// }
 interface DrawerProps {
   childrenDrawer: ReactNode
   setChildrenDrawer: (children: ReactNode) => void
@@ -47,14 +43,10 @@ export const SocketContext = createContext<SocketContext>({
   socketContext: {
     socketNotificateContext: [],
     socketChattingContext: [],
+    socketLivestreamContext: [],
   },
   setSocketContext: () => {},
 })
-
-// export const SocketChattingContext = createContext<SocketChattingContext>({
-//   socketChattingContext: [],
-//   setSocketChattingContext: () => {},
-// })
 
 export const drawerContext = createContext<DrawerProps>({
   childrenDrawer: <></>,
@@ -73,24 +65,41 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const [socketContext, setSocketContext] = useState<any>({
     socketNotificateContext: [],
     socketChattingContext: [],
+    socketLivestreamContext: [],
   })
 
   const socketInstance = socketToken ? socket(socketToken) : null
-  const socketChattingInstance = socketToken ? socketChatting(socketToken) : null
+  useEffect(() => {
+    if (socketInstance?.socketInstance) {
+      console.log('socketInstance ====>', socketInstance.socketInstance)
 
-  if (socketInstance) {
-    console.log('socketInstance ====>', socketInstance)
-
-    socketInstance.on(getSocket().SOCKET_SERVER_EMIT.USER_BOOKING_PROVIDER, (...args) => {
-      setSocketContext((prev) => ({ ...prev, socketNotificateContext: args }))
-    })
-  }
-  if (socketChattingInstance) {
-    console.log('socketChattingInstance ====>', socketChattingInstance)
-    socketChattingInstance.on(getSocket().SOCKER_CHATTING_SERVER_EMIT.MESSAGE_FROM_CHANNEL, (...args) => {
-      setSocketContext((prev) => ({ ...prev, socketChattingContext: args }))
-    })
-  }
+      socketInstance?.socketInstance.on(getSocket().SOCKET_SERVER_EMIT.USER_BOOKING_PROVIDER, (...args) => {
+        setSocketContext((prev) => ({ ...prev, socketNotificateContext: args }))
+      })
+    } else {
+      socketInstance?.socketInstance.close()
+    }
+    if (socketInstance?.socketInstanceChatting) {
+      console.log('socketChattingInstance ====>', socketInstance?.socketInstanceChatting)
+      socketInstance?.socketInstanceChatting.on(
+        getSocket().SOCKER_CHATTING_SERVER_EMIT.MESSAGE_FROM_CHANNEL,
+        (...args) => {
+          setSocketContext((prev) => ({ ...prev, socketChattingContext: args }))
+        },
+      )
+    } else {
+      socketInstance?.socketInstanceChatting.close()
+    }
+  }, [socketInstance?.socketInstance, socketInstance?.socketInstanceChatting])
+  // if (socketInstance?.socketInstanceLivestream) {
+  //   console.log('socketLivestreamInstance ====>', socketInstance?.socketInstanceLivestream)
+  //   socketInstance?.socketInstanceLivestream.on(
+  //     getSocket().SOCKER_CHATTING_SERVER_EMIT.MESSAGE_FROM_CHANNEL,
+  //     (...args) => {
+  //       setSocketContext((prev) => ({ ...prev, socketLivestreamContext: args }))
+  //     },
+  //   )
+  // }
 
   const socketContextValue: SocketContext = {
     socketContext,

@@ -31,9 +31,13 @@ export const Sidebar = (props) => {
     isLoading: loadingChattingChannels,
     isFetching,
   } = trpc.useQuery(['chatting.getListChattingChannels', { limit: '5', page: '1' }])
-  if (loadingChattingChannels) {
-    return <></>
-  }
+
+  useEffect(() => {
+    if (socketToken) {
+      setIsModalLoginVisible(false)
+    }
+  }, [socketToken])
+
   const handleChatOpen = (id?: string) => {
     if (socketToken) {
       setChildrenDrawer(<Chat playerId={id} />)

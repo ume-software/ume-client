@@ -42,9 +42,7 @@ const InformationTab = (props: { data }) => {
           },
           {
             onSuccess: (data) => {
-              if (data.success) {
-                setChildrenDrawer(<Chat playerId={props.data.userId} />)
-              }
+              setChildrenDrawer(<Chat playerId={data.data._id} />)
             },
             onError: (error) => {
               console.error(error)

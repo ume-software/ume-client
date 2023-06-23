@@ -5,44 +5,40 @@ import ImgForEmpty from 'public/img-for-empty.png'
 import { useContext, useEffect, useState } from 'react'
 
 import Image from 'next/legacy/image'
-import { ChattingChannelReponse, MemberChatChannelResponse, MessageResponse } from 'ume-chatting-service-openapi'
+import {
+  ChattingChannelPagingResponse,
+  ChattingChannelReponse,
+  MemberChatChannelResponse,
+  MessageResponse,
+} from 'ume-chatting-service-openapi'
 
 import ChatContent from './chat-content'
 
-import { UserContext } from '~/components/layouts/app-layout/app-layout'
+import { SocketContext, UserContext } from '~/components/layouts/app-layout/app-layout'
 
 import { trpc } from '~/utils/trpc'
 
 const Chat = (props: { playerId?: string }) => {
   const [searchTex, setSearchText] = useState('')
   const { userContext, setUserContext } = useContext(UserContext)
-  const [channelSelected, setChannelSelected] = useState<ChattingChannelReponse | undefined>(undefined)
+  const [channelSelected, setChannelSelected] = useState<ChattingChannelReponse | undefined>(
+    ({ _id: props.playerId } as any) || undefined,
+  )
   const {
     data: chattingChannels,
     isLoading: loadingChattingChannels,
     isFetching,
-  } = trpc.useQuery(['chatting.getListChattingChannels', { limit: 'unlimited', page: '1' }], {
-    onSuccess(data) {
-      setChannelSelected(data?.data.row.find((item) => item.members[1].userId == props.playerId))
-    },
-  })
-  if (loadingChattingChannels) {
-    return <></>
-  }
+  } = trpc.useQuery(['chatting.getListChattingChannels', { limit: 'unlimited', page: '1' }])
 
   const handleSelected = (id) => {
-    setChannelSelected(chattingChannels?.data.row.find((item) => item._id === id))
+    setChannelSelected(chattingChannels?.data.row.find((item) => item._id == id))
   }
-
-  console.log(props.playerId)
-
-  console.log(channelSelected)
 
   return (
     <>
       {chattingChannels && chattingChannels?.data.row.length != 0 ? (
-        <div className="w-full grid grid-cols-10 pl-5 pr-5">
-          <div className="h-full col-span-3 border-light-700">
+        <div className="w-full h-[90vh] grid grid-cols-10 pl-5 pr-5">
+          <div className="h-[90vh] col-span-3 border-light-700">
             <div className="flex items-center justify-center mb-5">
               <Search
                 theme="outline"
@@ -78,6 +74,7 @@ const Chat = (props: { playerId?: string }) => {
                   latestMeassge && latestMeassge.sentAt < seftMemberInfo?.lastReadAt! ? true : false
                 return (
                   <div
+                    key={index}
                     className={`flex flex-row py-4 px-2 items-center border-b-2 border-gray-700 cursor-pointer 
                 ${channelSelected?._id == item._id ? 'border-l-3 border-gray-500' : ''}`}
                     onClick={() => handleSelected(item._id)}
@@ -106,11 +103,9 @@ const Chat = (props: { playerId?: string }) => {
               })}
             </div>
           </div>
-          <div className="col-span-7">
-            <div className="flex flex-col gap-8">
-              <div className="flex flex-col pl-5 pr-5 gap-5">
-                {channelSelected?._id && <ChatContent channel={channelSelected} />}
-              </div>
+          <div className="h-[85vh] col-span-7 overflow-y-auto hide-scrollbar">
+            <div className="h-[85vh] flex flex-col pl-5 pr-5 pb-5 gap-2">
+              {channelSelected?._id && <ChatContent channel={channelSelected} />}
             </div>
           </div>
         </div>

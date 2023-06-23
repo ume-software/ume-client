@@ -155,7 +155,7 @@ const CommunityPost = (props) => {
         <div className="w-full flex flex-col gap-2">
           <p className="font-normal text-lg">{props.data?.content}</p>
           <div className="cursor-pointer" onClick={handleOpenImageModal}>
-            <PostImageLayout key={props.data?.id} data={props.data?.thumbnails} />
+            <PostImageLayout data={props.data?.thumbnails} />
           </div>
         </div>
       </div>

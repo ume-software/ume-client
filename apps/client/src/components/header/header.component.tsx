@@ -56,7 +56,6 @@ export const Header: React.FC = ({}: HeaderProps) => {
     }
     if (dataResponse) {
       setUserInfo(dataResponse.data)
-      console.log('dataResponse ===> ', dataResponse)
       setUserContext(dataResponse.data)
     }
   }, [dataResponse, setSocketToken, userInfo])
