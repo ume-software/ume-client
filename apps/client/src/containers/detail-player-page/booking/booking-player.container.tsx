@@ -119,7 +119,6 @@ const BookingPlayer = (props: { data }) => {
                           options={props.data.providerSkills?.map((service) => ({
                             value: service.id,
                             label: service.skill?.name,
-                            const: service.defaultCost,
                           }))}
                         />
                         <ErrorMessage name="providerSkillId">

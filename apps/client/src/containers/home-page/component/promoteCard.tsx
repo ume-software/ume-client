@@ -32,13 +32,15 @@ export const PromoteCard = (props: IPromoteCardProps) => {
       className="bg-[#292734] text-white rounded-3xl pl-6 pb-4 mt-6 max-w-72 h-70 group hover:duration-500 hover:ease-in-out block"
     >
       <div className="flex flex-row justify-between">
-        <Image
-          className="object-fill duration-500 ease-in-out -translate-y-6 rounded-3xl group-hover:scale-110"
-          src={props.image}
-          alt="image_provider"
-          width={140}
-          height={140}
-        />
+        <div className="w-[140px] h-[140px] relative">
+          <Image
+            className="absolute duration-500 ease-in-out -translate-y-6 rounded-3xl group-hover:scale-110"
+            src={props.image}
+            alt="image_provider"
+            layout="fill"
+            objectFit="cover"
+          />
+        </div>
         <button
           className="bg-[#7463F0] w-16 h-10 rounded-tr-3xl rounded-bl-3xl hover:scale-105 hover:duration-500 hover:ease-in-out"
           onClick={(e) => {

@@ -3,6 +3,8 @@ import { useState } from 'react'
 import { Select, Slider, Tooltip } from 'antd'
 import type { SelectProps } from 'antd'
 
+import { trpc } from '~/utils/trpc'
+
 const { Option } = Select
 
 const selectStyles = {
@@ -15,6 +17,13 @@ const selectStyles = {
 export const FilterModal = (props: { handleFilter; data }) => {
   const [selectedGender, setSelectedGender] = useState<string[]>([])
   const [selectedGameType, setSelectedGameType] = useState<string[]>([])
+
+  let listSkill: any
+  const { data: skills, isLoading: loadingSkill, isFetching } = trpc.useQuery(['booking.getListSkill'])
+  if (loadingSkill) {
+    return <></>
+  }
+  listSkill = skills?.data?.row
 
   const max: number = props.data?.reduce((prevMax, obj) => Math.max(prevMax, obj.cost), -Infinity)
   const min: number = props.data?.reduce((prevMin, obj) => Math.min(prevMin, obj.cost), Infinity)
@@ -75,16 +84,15 @@ export const FilterModal = (props: { handleFilter; data }) => {
               style={{ width: '500px' }}
               size="large"
               placeholder="Select service type"
-              value={selectedGameType}
+              optionFilterProp="children"
+              filterOption={(input, option) => ((option?.label as string) ?? '').toLowerCase().includes(input)}
               onChange={handleGameTypeChange}
-            >
-              <Option value="action">Action</Option>
-              <Option value="adventure">Adventure</Option>
-              <Option value="strategy1">Strategy1</Option>
-              <Option value="strategy2">Strategy2</Option>
-              <Option value="strategy3">Strategy3</Option>
-              <Option value="strategy4">Strategy4</Option>
-            </Select>
+              value={selectedGameType}
+              options={listSkill.map((service) => ({
+                value: service.id,
+                label: service.name,
+              }))}
+            />
           </div>
           <div className="w-full flex justify-between">
             <label htmlFor="price" className=" font-medium text-2xl">
