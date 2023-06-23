@@ -105,7 +105,7 @@ const Chat = (props: { playerId?: string }) => {
           </div>
           <div className="h-[85vh] col-span-7 overflow-y-auto hide-scrollbar">
             <div className="h-[85vh] flex flex-col pl-5 pr-5 pb-5 gap-2">
-              {channelSelected?._id && <ChatContent channel={channelSelected} />}
+              {channelSelected?._id && <ChatContent key={channelSelected?._id} channel={channelSelected} />}
             </div>
           </div>
         </div>

@@ -1,8 +1,6 @@
 import * as socketio from 'socket.io-client'
 import { getEnv } from '~/env'
 
-import { getSocket } from '~/utils/constants'
-
 export const socket = (token: string | null) => {
   if (token != null) {
     const socketInstance = { ...socketio }.connect(getEnv().baseBookingURL, {

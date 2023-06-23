@@ -75,19 +75,24 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
       socketInstance?.socketInstance.on(getSocket().SOCKET_SERVER_EMIT.USER_BOOKING_PROVIDER, (...args) => {
         setSocketContext((prev) => ({ ...prev, socketNotificateContext: args }))
+        socketInstance?.socketInstance.off(getSocket().SOCKET_SERVER_EMIT.USER_BOOKING_PROVIDER)
       })
-    } else {
-      socketInstance?.socketInstance.close()
     }
     if (socketInstance?.socketInstanceChatting) {
       console.log('socketChattingInstance ====>', socketInstance?.socketInstanceChatting)
-      socketInstance?.socketInstanceChatting.on(
+      socketInstance?.socketInstanceChatting.once(
         getSocket().SOCKER_CHATTING_SERVER_EMIT.MESSAGE_FROM_CHANNEL,
         (...args) => {
           setSocketContext((prev) => ({ ...prev, socketChattingContext: args }))
+          socketInstance?.socketInstanceChatting.off(getSocket().SOCKER_CHATTING_SERVER_EMIT.MESSAGE_FROM_CHANNEL)
         },
       )
-    } else {
+    }
+
+    return () => {
+      socketInstance?.socketInstance.off(getSocket().SOCKET_SERVER_EMIT.USER_BOOKING_PROVIDER)
+      socketInstance?.socketInstanceChatting.off(getSocket().SOCKER_CHATTING_SERVER_EMIT.MESSAGE_FROM_CHANNEL)
+      socketInstance?.socketInstance.close()
       socketInstance?.socketInstanceChatting.close()
     }
   }, [socketInstance?.socketInstance, socketInstance?.socketInstanceChatting])
