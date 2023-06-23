@@ -5,7 +5,7 @@ import { getSocket } from '~/utils/constants'
 
 export const socketChatting = (token: string | null) => {
   if (token != null) {
-    const socketInstance = {...socketio}
+    const socketInstance = { ...socketio }
       .connect(getEnv().baseChattingURL, {
         transports: ['websocket'],
         reconnection: true,
@@ -16,9 +16,9 @@ export const socketChatting = (token: string | null) => {
         },
       })
       .on(getSocket().SOCKET_EVENT.CONNECTION, () => console.log('connection'))
-      socketInstance.on('error', (error) => {
-  console.log('WebSocket connection error:', error);
-});
+    socketInstance.on('error', (error) => {
+      console.log('WebSocket connection error:', error)
+    })
     return socketInstance
   } else {
     return null

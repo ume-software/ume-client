@@ -1,0 +1,10 @@
+$ npx eslint --fix "./src/**/*.{ts,tsx,json}"
+
+C:\Users\trieu\Desktop\ume-client\apps\client\src\components\header\header.component.tsx
+  62:6  warning  React Hook useEffect has a missing dependency: 'setUserContext'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\trieu\Desktop\ume-client\apps\client\src\components\layouts\app-layout\app-layout.tsx
+  93:6  warning  React Hook useEffect has a missing dependency: 'socketInstance'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+✖ 2 problems (0 errors, 2 warnings)
+

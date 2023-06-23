@@ -8,6 +8,7 @@ import { useContext, useEffect } from 'react'
 import Image, { StaticImageData } from 'next/legacy/image'
 
 import { UserContext, drawerContext } from '../layouts/app-layout/app-layout'
+
 import { trpc } from '~/utils/trpc'
 
 interface chatProps {
@@ -19,7 +20,6 @@ interface chatProps {
   }
 }
 
-
 export const Sidebar = (props) => {
   const { childrenDrawer, setChildrenDrawer } = useContext(drawerContext)
   const { userContext, setUserContext } = useContext(UserContext)
@@ -27,7 +27,7 @@ export const Sidebar = (props) => {
     data: chattingChannels,
     isLoading: loadingChattingChannels,
     isFetching,
-  } = trpc.useQuery(['chatting.getListChattingChannels', { limit: "5", page: "1" }])
+  } = trpc.useQuery(['chatting.getListChattingChannels', { limit: '5', page: '1' }])
   if (loadingChattingChannels) {
     return <></>
   }
@@ -46,27 +46,27 @@ export const Sidebar = (props) => {
         </CustomDrawer>
         <div className="flex flex-col gap-3">
           {chattingChannels?.data.row.map((item, index) => {
-            const images = (item.members.filter(member => {
-              return member.userId.toString() != userContext?.id.toString();
-            }))
+            const images = item.members.filter((member) => {
+              return member.userId.toString() != userContext?.id.toString()
+            })
             return (
-
               <div key={item._id} className="relative w-14 h-14">
                 <CustomDrawer
                   customOpenBtn={`cursor-pointer`}
-                  openBtn={<Image
-                    className="absolute rounded-full"
-                    layout="fill"
-                    objectFit="cover"
-                    key={item._id}
-                    src={images[0].userInfomation.avatarUrl}
-                    alt="avatar"
-                    onClick={() => handleChatOpen(item._id)}
-                  />}
+                  openBtn={
+                    <Image
+                      className="absolute rounded-full"
+                      layout="fill"
+                      objectFit="cover"
+                      key={item._id}
+                      src={images[0].userInfomation.avatarUrl}
+                      alt="avatar"
+                      onClick={() => handleChatOpen(item._id)}
+                    />
+                  }
                 >
                   {childrenDrawer}
                 </CustomDrawer>
-
               </div>
             )
           })}

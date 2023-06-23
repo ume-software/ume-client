@@ -1,9 +1,7 @@
-
-
 import { z } from 'zod'
-import { createRouter } from './configurations'
-import { getListChattingChannels ,getMessagesByChannelId} from './services/chatting-service'
 
+import { createRouter } from './configurations'
+import { getListChattingChannels, getMessagesByChannelId } from './services/chatting-service'
 
 export const chattingRouter = createRouter()
   .query('getListChattingChannels', {
@@ -12,16 +10,16 @@ export const chattingRouter = createRouter()
       page: z.string(),
     }),
     resolve: async ({ ctx, input }) => {
-      return await getListChattingChannels(input ,ctx)
+      return await getListChattingChannels(input, ctx)
     },
   })
   .query('getMessagesByChannelId', {
     input: z.object({
-      channelId:z.string(),
+      channelId: z.string(),
       limit: z.string(),
       page: z.string(),
     }),
     resolve: async ({ ctx, input }) => {
-      return await getMessagesByChannelId(input ,ctx)
+      return await getMessagesByChannelId(input, ctx)
     },
   })
