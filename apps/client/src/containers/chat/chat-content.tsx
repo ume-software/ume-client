@@ -1,7 +1,6 @@
 import { GrinningFaceWithOpenMouth, MoreOne, PhoneTelephone, Picture, Videocamera } from '@icon-park/react'
 import { channel } from 'diagnostics_channel'
-import useChatScroll from '~/Hook/useChatScroll'
-import { socket } from '~/api/socket'
+import useChatScroll from '~/hook/useChatScroll'
 
 import { ReactNode, useContext, useEffect, useRef, useState } from 'react'
 
