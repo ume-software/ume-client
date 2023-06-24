@@ -76,8 +76,6 @@ const ChatContent = (props: { channel: ChattingChannelReponse }) => {
   })!
 
   const handleSentMessage = () => {
-    console.log(socketClientEmit)
-
     if (socketToken && messageInput != '') {
       socketClientEmit?.socketInstanceChatting?.emit(getSocket().SOCKER_CHATTING_SERVER_ON.SENT_MESSAGE_TO_CHANNEL, {
         channelId: props.channel._id,

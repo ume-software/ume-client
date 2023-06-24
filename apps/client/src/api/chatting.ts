@@ -2,7 +2,7 @@ import { CreateChannelRequest } from 'ume-chatting-service-openapi'
 import { z } from 'zod'
 
 import { createRouter } from './configurations'
-import { createNewChatChannel, getListChattingChannels, getMessagesByChannelId } from './services/chatting-service'
+import { getListChattingChannels, getMessagesByChannelId } from './services/chatting-service'
 
 export const chattingRouter = createRouter()
   .query('getListChattingChannels', {
@@ -22,13 +22,5 @@ export const chattingRouter = createRouter()
     }),
     resolve: async ({ ctx, input }) => {
       return await getMessagesByChannelId(input, ctx)
-    },
-  })
-  .mutation('createNewChatChannel', {
-    input: z.object({
-      receiverId: z.string(),
-    }),
-    resolve: async ({ ctx, input }) => {
-      return await createNewChatChannel(input, ctx)
     },
   })
