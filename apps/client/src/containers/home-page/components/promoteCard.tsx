@@ -34,7 +34,7 @@ export const PromoteCard = (props: IPromoteCardProps) => {
       <div className="flex flex-row justify-between">
         <div className="w-[140px] h-[140px] relative">
           <Image
-            className="absolute duration-500 ease-in-out -translate-y-6 rounded-3xl group-hover:scale-110"
+            className="absolute object-fill duration-500 ease-in-out -translate-y-6 rounded-3xl group-hover:scale-110"
             src={props.image}
             alt="image_provider"
             layout="fill"

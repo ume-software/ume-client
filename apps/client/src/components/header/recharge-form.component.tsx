@@ -121,7 +121,11 @@ export const RechargeModal = ({ setShowRechargeModal, showRechargeModal }: IRech
                         <div>
                           <span className="font-semibold">Số tiền:</span>
                           <span className="ml-1">
-                            {qrContent?.amountMoney} <span className="text-xs italic">{qrContent?.unitCurrency}</span>
+                            {qrContent?.amountMoney?.toLocaleString('en-US', {
+                              style: 'currency',
+                              currency: qrContent?.unitCurrency,
+                            })}
+                            <span className="text-xs italic"> {qrContent?.unitCurrency}</span>
                           </span>
                         </div>
                         <div>

@@ -5,10 +5,10 @@ import React, { useContext } from 'react'
 
 import Image from 'next/image'
 
-import { drawerContext } from '~/components/layouts/app-layout/app-layout'
+import { DrawerContext } from '~/components/layouts/app-layout/app-layout'
 
 function CategoryDrawer({ data }) {
-  const { childrenDrawer, setChildrenDrawer } = useContext(drawerContext)
+  const { childrenDrawer, setChildrenDrawer } = useContext(DrawerContext)
 
   const handleAllServiceOpen = () => {
     setChildrenDrawer(

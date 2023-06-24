@@ -9,14 +9,14 @@ import { FilterModal } from './filterModal'
 import HotProvider from './hotProvider'
 import { PromoteCard } from './promoteCard'
 
-import { drawerContext } from '~/components/layouts/app-layout/app-layout'
+import { DrawerContext } from '~/components/layouts/app-layout/app-layout'
 
 import { trpc } from '~/utils/trpc'
 
 export interface Promotion {}
 
 export const Promotion = () => {
-  const { childrenDrawer, setChildrenDrawer } = useContext(drawerContext)
+  const { childrenDrawer, setChildrenDrawer } = useContext(DrawerContext)
 
   let listProvider: any
 

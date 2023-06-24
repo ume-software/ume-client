@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 import { notification } from 'antd'
 import Image from 'next/image'
 import { BookingHandleRequestStatusEnum } from 'ume-booking-service-openapi'
@@ -6,16 +8,22 @@ import { trpc } from '~/utils/trpc'
 
 let result: string
 const Notificate = (props: { responeBooking }) => {
+  const [listBookingProvider, setListBookingProvider] = useState<any>([])
   const {
     data: bookingProvider,
     isLoading: loadingBookingProvider,
     isFetching: fetching,
-  } = trpc.useQuery(['booking.getBookingProvider'])
+  } = trpc.useQuery(['booking.getBookingProvider'], {
+    refetchOnReconnect: 'always',
+    onSuccess(data) {
+      setListBookingProvider(data?.data?.row)
+    },
+  })
 
   if (loadingBookingProvider) {
     return <></>
   }
-  let listBookingProvider: any = bookingProvider?.data?.row
+  console.log(listBookingProvider)
 
   const handleAcceptBooking = (bookingHistoryId: string, bookerName: string) => {
     try {

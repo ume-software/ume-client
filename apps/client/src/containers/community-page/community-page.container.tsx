@@ -1,10 +1,8 @@
 import { Earth, EveryUser } from '@icon-park/react'
-import featureUpdate from 'public/feature-update.png'
 
 import { useState } from 'react'
 
 import Head from 'next/head'
-import Image from 'next/legacy/image'
 
 import CommunityPost from './components/community-post'
 
