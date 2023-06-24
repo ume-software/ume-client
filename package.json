@@ -6,10 +6,11 @@
   ],
   "scripts": {
     "build": "turbo run build",
+    "build:client": "turbo run build --filter=@ume/client...",
+    "build:admin": "turbo run build --filter=@ume/admin...",
     "dev": "turbo run dev --parallel --filter=@ume/client...",
     "dev:client": "turbo run dev --parallel --filter=@ume/client...",
     "dev:admin": "turbo run dev --parallel --filter=@ume/admin...",
-    "start:client": "turbo run start --filter=@ume/client...",
     "test:client": "turbo run test ",
     "lint": "turbo run lint",
     "clean": "turbo run clean",
