@@ -17,6 +17,7 @@ import { RechargeModal } from './recharge-form.component'
 import { trpc } from '~/utils/trpc'
 
 interface HeaderProps {}
+interface HeaderProps {}
 
 interface tabData {
   label: string
@@ -56,6 +57,7 @@ export const Header: React.FC = ({}: HeaderProps) => {
     }
     if (dataResponse) {
       setUserInfo(dataResponse.data)
+      console.log('dataResponse ===> ', dataResponse)
       setUserContext(dataResponse.data)
     }
   }, [dataResponse, setSocketToken, userInfo])

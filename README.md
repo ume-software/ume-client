@@ -10,7 +10,8 @@ To start the development server:
 yarn global add turbo
 yarn global add tsup
 yarn install
-yarn dev:client ## For portal
+yarn dev:client ## For client page
+yarn dev:admin ## For admin page
 ```
 
 ## Git Conventional

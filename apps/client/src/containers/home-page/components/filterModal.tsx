@@ -1,7 +1,6 @@
 import { useState } from 'react'
 
 import { Select, Slider, Tooltip } from 'antd'
-import type { SelectProps } from 'antd'
 
 import { trpc } from '~/utils/trpc'
 
@@ -28,6 +27,7 @@ export const FilterModal = (props: { handleFilter; data }) => {
   const max: number = props.data?.reduce((prevMax, obj) => Math.max(prevMax, obj.cost), -Infinity)
   const min: number = props.data?.reduce((prevMin, obj) => Math.min(prevMin, obj.cost), Infinity)
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [priceRange, setPriceRange] = useState<[number, number]>([min, max])
 
   const handleGenderChange = (value: string[]) => {
@@ -53,10 +53,10 @@ export const FilterModal = (props: { handleFilter; data }) => {
 
   return (
     <>
-      <div className="h-full p-10 flex flex-col justify-between">
+      <div className="flex flex-col justify-between h-full p-10">
         <div className="flex flex-col items-start gap-10">
-          <div className="w-full flex justify-between">
-            <label htmlFor="gender" className=" font-medium text-2xl">
+          <div className="flex justify-between w-full">
+            <label htmlFor="gender" className="text-2xl font-medium ">
               Chọn giới tính:{' '}
             </label>
             <Select
@@ -73,8 +73,8 @@ export const FilterModal = (props: { handleFilter; data }) => {
               <Option value="female">Female</Option>
             </Select>
           </div>
-          <div className="w-full flex justify-between">
-            <label htmlFor="serviceType" className=" font-medium text-2xl">
+          <div className="flex justify-between w-full">
+            <label htmlFor="serviceType" className="text-2xl font-medium ">
               Chọn thể loại dịch vụ:{' '}
             </label>
             <Select
@@ -94,8 +94,8 @@ export const FilterModal = (props: { handleFilter; data }) => {
               }))}
             />
           </div>
-          <div className="w-full flex justify-between">
-            <label htmlFor="price" className=" font-medium text-2xl">
+          <div className="flex justify-between w-full">
+            <label htmlFor="price" className="text-2xl font-medium ">
               Chọn mức giá:{' '}
             </label>
             <Tooltip
@@ -105,19 +105,19 @@ export const FilterModal = (props: { handleFilter; data }) => {
               trigger="click"
             >
               {priceRange[0] != min || priceRange[1] != max ? (
-                <button className="border border-light-50  font-medium text-xl">
+                <button className="text-xl font-medium border border-light-50">
                   {priceRange[0]}U - {priceRange[1]}U
                 </button>
               ) : (
-                <button className=" font-medium text-xl">Khoảng giá</button>
+                <button className="text-xl font-medium ">Khoảng giá</button>
               )}
             </Tooltip>
           </div>
         </div>
-        <div className="flex justify-end items-end">
+        <div className="flex items-end justify-end">
           <button
             type="button"
-            className="rounded-xl text-white bg-purple-700 py-2 px-5  font-semibold text-2xl hover:scale-105"
+            className="px-5 py-2 text-2xl font-semibold text-white bg-purple-700 rounded-xl hover:scale-105"
             onClick={handleFilter}
           >
             Áp dụng
