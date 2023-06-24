@@ -19,7 +19,6 @@ export const socket = (token: string | null) => {
         authorization: `Bearer ${token}`,
       },
     })
-    console.log('socketInstanceChatting=====>', socketInstanceChatting)
 
     return { socketInstanceBooking, socketInstanceChatting }
   } else {

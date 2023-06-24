@@ -3,12 +3,12 @@ import { CustomDrawer } from '@ume/ui'
 import cover from 'public/cover.png'
 import Chat from '~/containers/chat/chat.container'
 
-import { useContext, useEffect, useState } from 'react'
+import { ReactNode, useContext, useEffect, useState } from 'react'
 
 import Image, { StaticImageData } from 'next/legacy/image'
 
 import { LoginModal } from '../header/login-modal.component'
-import { DrawerContext, SocketTokenContext, UserContext } from '../layouts/app-layout/app-layout'
+import { DrawerContext, SocketContext, SocketTokenContext, UserContext } from '../layouts/app-layout/app-layout'
 
 import { trpc } from '~/utils/trpc'
 
@@ -25,7 +25,9 @@ export const Sidebar = (props) => {
   const { childrenDrawer, setChildrenDrawer } = useContext(DrawerContext)
   const { userContext, setUserContext } = useContext(UserContext)
   const { socketToken } = useContext(SocketTokenContext)
+  const { socketChattingContext } = useContext(SocketContext)
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
+  const [imageChannel, setImageChannel] = useState<ReactNode>(<></>)
   const {
     data: chattingChannels,
     isLoading: loadingChattingChannels,
@@ -45,6 +47,14 @@ export const Sidebar = (props) => {
       setIsModalLoginVisible(true)
     }
   }
+  useEffect(() => {
+    if (socketChattingContext) {
+      console.log(socketChattingContext)
+      const channelId = socketChattingContext[0]?.channelId
+      const message = socketChattingContext[0]?.content
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socketChattingContext, socketToken])
 
   return (
     <>
@@ -65,7 +75,7 @@ export const Sidebar = (props) => {
         </CustomDrawer>
         <div className="flex flex-col gap-3">
           {socketToken &&
-            chattingChannels?.data.row.map((item, index) => {
+            chattingChannels?.data.row.map((item) => {
               const images = item.members.filter((member) => {
                 return member.userId.toString() != userContext?.id.toString()
               })

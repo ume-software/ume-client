@@ -49,7 +49,6 @@ export const Header: React.FC = ({}: HeaderProps) => {
       setBalance(data.data.totalCoinsAvailable)
     },
   })
-  const responeBooking = trpc.useMutation(['booking.putProviderResponeBooking'])
 
   useEffect(() => {
     if (userInfo) {
@@ -74,12 +73,13 @@ export const Header: React.FC = ({}: HeaderProps) => {
       setNotificatedIcon(<Remind size={22} strokeWidth={4} fill="#FFFFFF" />)
     }
     prevSocketContext.current = socketNotificateContext
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socketNotificateContext[0]?.id])
 
   const tabDatas: tabData[] = [
     {
       label: `Chính`,
-      children: <Notificate responeBooking={responeBooking} />,
+      children: <Notificate />,
     },
     {
       label: `Khác`,

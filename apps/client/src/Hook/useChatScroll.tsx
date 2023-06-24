@@ -6,6 +6,7 @@ function useChatScroll(divRef, newMessage) {
       const container = divRef.current
       container.scrollTop = container?.scrollHeight
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [newMessage])
 }
 export default useChatScroll
