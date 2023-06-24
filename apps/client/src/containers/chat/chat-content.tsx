@@ -1,13 +1,10 @@
 import { GrinningFaceWithOpenMouth, MoreOne, PhoneTelephone, Picture, Videocamera } from '@icon-park/react'
-import { channel } from 'diagnostics_channel'
 import useChatScroll from '~/hook/useChatScroll'
 
 import { ReactNode, useContext, useEffect, useRef, useState } from 'react'
 
 import Image from 'next/legacy/image'
 import { ChattingChannelReponse, MemberChatChannelResponse } from 'ume-chatting-service-openapi'
-
-import ChatService from './chat-service'
 
 import {
   SocketClientEmit,
@@ -96,7 +93,7 @@ const ChatContent = (props: { channel: ChattingChannelReponse }) => {
         <CommentSkeletonLoader />
       ) : (
         <>
-          <div className="flex justify-between items-center">
+          <div className="flex items-center justify-between">
             {images && (
               <div className="flex items-center gap-3">
                 <div className="relative w-[60px] h-[60px]">
@@ -108,7 +105,7 @@ const ChatContent = (props: { channel: ChattingChannelReponse }) => {
                     alt="Avatar"
                   />
                 </div>
-                <span className=" font-bold text-white text-3xl">{images[0].userInfomation.name || ''}</span>
+                <span className="text-3xl font-bold text-white ">{images[0].userInfomation.name || ''}</span>
               </div>
             )}
             <div className="flex gap-2">
@@ -122,8 +119,8 @@ const ChatContent = (props: { channel: ChattingChannelReponse }) => {
               ))}
             </div>
           </div>
-          <div className="h-full flex flex-col gap-2">
-            <div className="flex border-b-2 pb-5 gap-2 overflow-auto hide-scrollbar">
+          <div className="flex flex-col h-full gap-2">
+            <div className="flex gap-2 pb-5 overflow-auto border-b-2 hide-scrollbar">
               {/* {props.data?.providerSkills?.map((providerSkill, index) => (
             <div
               key={index}
@@ -131,7 +128,7 @@ const ChatContent = (props: { channel: ChattingChannelReponse }) => {
                 }`}
               onClick={() => setGameSelected(index)}
             >
-              <p className=" font-medium text-white text-lg whitespace-nowrap">{providerSkill.skill.name}</p>
+              <p className="text-lg font-medium text-white whitespace-nowrap">{providerSkill.skill.name}</p>
             </div>
           ))} */}
             </div>
@@ -140,7 +137,7 @@ const ChatContent = (props: { channel: ChattingChannelReponse }) => {
             </div>
             <div className="h-[65vh] flex flex-col justify-end">
               {/* <!-- message --> */}
-              <div ref={divRef} className="w-full overflow-y-scroll hide-scrollbar px-5 flex flex-col justinfy-between">
+              <div ref={divRef} className="flex flex-col w-full px-5 overflow-y-scroll hide-scrollbar justinfy-between">
                 <div className="flex flex-col mt-5 ">
                   {chattingMessageChannel?.data.messages.map((item) => {
                     const sender = mappingMember[item.senderId]
@@ -159,7 +156,7 @@ const ChatContent = (props: { channel: ChattingChannelReponse }) => {
                           {item.content}
                         </div>
 
-                        <div className="relative h-8 w-8 ">
+                        <div className="relative w-8 h-8 ">
                           <Image
                             className="rounded-full"
                             layout="fill"
@@ -193,7 +190,7 @@ const ChatContent = (props: { channel: ChattingChannelReponse }) => {
                   onChange={(e) => setMessageInput(e.target.value)}
                   onKeyPress={handleKeyPress}
                 />
-                <div className="absolute top-1/2 transform -translate-y-1/2 right-3 cursor-pointer z-4 hover:bg-gray-500 active:bg-gray-400 rounded-full">
+                <div className="absolute transform -translate-y-1/2 rounded-full cursor-pointer top-1/2 right-3 z-4 hover:bg-gray-500 active:bg-gray-400">
                   <GrinningFaceWithOpenMouth theme="outline" size="24" fill="#FFFFFF" strokeLinejoin="bevel" />
                 </div>
               </div>
