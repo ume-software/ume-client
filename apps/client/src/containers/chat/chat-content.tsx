@@ -10,7 +10,12 @@ import { ChattingChannelReponse, MemberChatChannelResponse } from 'ume-chatting-
 
 import ChatService from './chat-service'
 
-import { SocketContext, SocketTokenContext, UserContext } from '~/components/layouts/app-layout/app-layout'
+import {
+  SocketClientEmit,
+  SocketContext,
+  SocketTokenContext,
+  UserContext,
+} from '~/components/layouts/app-layout/app-layout'
 import { CommentSkeletonLoader } from '~/components/skeleton-load'
 
 import { getSocket } from '~/utils/constants'
@@ -39,7 +44,8 @@ const ChatContent = (props: { channel: ChattingChannelReponse }) => {
   const [gameSelected, setGameSelected] = useState(0)
   const [messageInput, setMessageInput] = useState('')
   const { userContext, setUserContext } = useContext(UserContext)
-  const { socketContext } = useContext(SocketContext)
+  const { socketClientEmit } = useContext(SocketClientEmit)
+  const { socketChattingContext } = useContext(SocketContext)
   const { socketToken } = useContext(SocketTokenContext)
 
   const utils = trpc.useContext()
@@ -55,10 +61,10 @@ const ChatContent = (props: { channel: ChattingChannelReponse }) => {
   useChatScroll(divRef, chattingMessageChannel)
 
   useEffect(() => {
-    if (socketContext.socketChattingContext) {
+    if (socketChattingContext) {
       utils.invalidateQueries('chatting.getMessagesByChannelId')
     }
-  }, [socketContext.socketChattingContext, socketToken])
+  }, [socketChattingContext, socketToken])
 
   const mappingMember: { [key: string]: MemberChatChannelResponse } = convertArrayObjectToObject(
     chattingMessageChannel?.data.members || [],
@@ -70,12 +76,13 @@ const ChatContent = (props: { channel: ChattingChannelReponse }) => {
   })!
 
   const handleSentMessage = () => {
+    console.log(socketClientEmit)
+
     if (socketToken && messageInput != '') {
-      socket(socketToken)?.socketInstanceChatting.emit(getSocket().SOCKER_CHATTING_SERVER_ON.SENT_MESSAGE_TO_CHANNEL, {
+      socketClientEmit?.socketInstanceChatting?.emit(getSocket().SOCKER_CHATTING_SERVER_ON.SENT_MESSAGE_TO_CHANNEL, {
         channelId: props.channel._id,
         content: messageInput,
       })
-
       setMessageInput('')
     }
   }

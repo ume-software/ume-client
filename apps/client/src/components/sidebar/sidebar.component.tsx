@@ -8,7 +8,7 @@ import { useContext, useEffect, useState } from 'react'
 import Image, { StaticImageData } from 'next/legacy/image'
 
 import { LoginModal } from '../header/login-modal.component'
-import { SocketTokenContext, UserContext, drawerContext } from '../layouts/app-layout/app-layout'
+import { DrawerContext, SocketTokenContext, UserContext } from '../layouts/app-layout/app-layout'
 
 import { trpc } from '~/utils/trpc'
 
@@ -22,7 +22,7 @@ interface chatProps {
 }
 
 export const Sidebar = (props) => {
-  const { childrenDrawer, setChildrenDrawer } = useContext(drawerContext)
+  const { childrenDrawer, setChildrenDrawer } = useContext(DrawerContext)
   const { userContext, setUserContext } = useContext(UserContext)
   const { socketToken } = useContext(SocketTokenContext)
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)

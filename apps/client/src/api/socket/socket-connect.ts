@@ -1,9 +1,11 @@
 import * as socketio from 'socket.io-client'
 import { getEnv } from '~/env'
 
+import { getSocket } from '~/utils/constants'
+
 export const socket = (token: string | null) => {
   if (token != null) {
-    const socketInstance = { ...socketio }.connect(getEnv().baseBookingURL, {
+    const socketInstanceBooking = socketio.connect(getEnv().baseBookingURL, {
       reconnection: true,
       reconnectionDelay: 500,
       reconnectionAttempts: Infinity,
@@ -12,24 +14,14 @@ export const socket = (token: string | null) => {
       },
     })
 
-    const socketInstanceChatting = { ...socketio }.connect(getEnv().baseChattingURL, {
+    const socketInstanceChatting = socketio.connect(getEnv().baseChattingURL, {
       auth: {
         authorization: `Bearer ${token}`,
       },
     })
+    console.log('socketInstanceChatting=====>', socketInstanceChatting)
 
-    // const socketInstanceLivestream = { ...socketio }
-    //   .connect(getEnv().baseLivestreamURL, {
-    //     reconnection: true,
-    //     reconnectionDelay: 500,
-    //     reconnectionAttempts: Infinity,
-    //     auth: {
-    //       authorization: `Bearer ${token}`,
-    //     },
-    //   })
-    //   .on(getSocket().SOCKET_EVENT.CONNECTION, () => console.log('connection'))
-
-    return { socketInstance, socketInstanceChatting }
+    return { socketInstanceBooking, socketInstanceChatting }
   } else {
     return null
   }

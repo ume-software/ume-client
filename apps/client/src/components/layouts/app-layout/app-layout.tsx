@@ -17,13 +17,14 @@ interface SocketTokenContextValue {
   socketToken: string | null
   setSocketToken: Dispatch<SetStateAction<string | null>>
 }
+
+interface socketClientEmit {
+  [key: string]: any
+}
 interface SocketContext {
-  socketContext: {
-    socketNotificateContext: any[]
-    socketChattingContext: any[]
-    socketLivestreamContext: any[]
-  }
-  setSocketContext: (value: any[]) => void
+  socketNotificateContext: any[]
+  socketChattingContext: any[]
+  socketLivestreamContext: any[]
 }
 interface DrawerProps {
   childrenDrawer: ReactNode
@@ -39,16 +40,17 @@ export const SocketTokenContext = createContext<SocketTokenContextValue>({
   setSocketToken: () => {},
 })
 
-export const SocketContext = createContext<SocketContext>({
-  socketContext: {
-    socketNotificateContext: [],
-    socketChattingContext: [],
-    socketLivestreamContext: [],
-  },
-  setSocketContext: () => {},
+export const SocketClientEmit = createContext<socketClientEmit>({
+  socketInstanceChatting: null,
 })
 
-export const drawerContext = createContext<DrawerProps>({
+export const SocketContext = createContext<SocketContext>({
+  socketNotificateContext: [],
+  socketChattingContext: [],
+  socketLivestreamContext: [],
+})
+
+export const DrawerContext = createContext<DrawerProps>({
   childrenDrawer: <></>,
   setChildrenDrawer: () => {},
 })
@@ -62,72 +64,64 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const [childrenDrawer, setChildrenDrawer] = useState<ReactNode>()
   const [userContext, setUserContext] = useState(null)
   const [socketToken, setSocketToken] = useState(null)
-  const [socketContext, setSocketContext] = useState<any>({
+
+  const [socketClientEmit, setSocketClientEmit] = useState<socketClientEmit>({ socketInstanceChatting: null })
+
+  const [socketContext, setSocketContext] = useState<SocketContext>({
     socketNotificateContext: [],
     socketChattingContext: [],
     socketLivestreamContext: [],
   })
 
-  const socketInstance = socketToken ? socket(socketToken) : null
   useEffect(() => {
-    if (socketInstance?.socketInstance) {
-      console.log('socketInstance ====>', socketInstance.socketInstance)
+    if (socketToken) {
+      const socketInstance = socketToken ? socket(socketToken) : null
+      setSocketClientEmit({ socketInstanceChatting: socketInstance?.socketInstanceChatting })
 
-      socketInstance?.socketInstance.on(getSocket().SOCKET_SERVER_EMIT.USER_BOOKING_PROVIDER, (...args) => {
-        setSocketContext((prev) => ({ ...prev, socketNotificateContext: args }))
-        socketInstance?.socketInstance.off(getSocket().SOCKET_SERVER_EMIT.USER_BOOKING_PROVIDER)
-      })
-    }
-    if (socketInstance?.socketInstanceChatting) {
-      console.log('socketChattingInstance ====>', socketInstance?.socketInstanceChatting)
-      socketInstance?.socketInstanceChatting.once(
-        getSocket().SOCKER_CHATTING_SERVER_EMIT.MESSAGE_FROM_CHANNEL,
-        (...args) => {
-          setSocketContext((prev) => ({ ...prev, socketChattingContext: args }))
-          socketInstance?.socketInstanceChatting.off(getSocket().SOCKER_CHATTING_SERVER_EMIT.MESSAGE_FROM_CHANNEL)
-        },
-      )
-    }
+      if (socketInstance?.socketInstanceBooking) {
+        socketInstance.socketInstanceBooking.on(getSocket().SOCKET_SERVER_EMIT.USER_BOOKING_PROVIDER, (...args) => {
+          setSocketContext((prev) => ({ ...prev, socketNotificateContext: args }))
+        })
+      }
+      if (socketInstance?.socketInstanceChatting) {
+        socketInstance.socketInstanceChatting.on(
+          getSocket().SOCKER_CHATTING_SERVER_EMIT.MESSAGE_FROM_CHANNEL,
+          (...args) => {
+            setSocketContext((prev) => ({ ...prev, socketChattingContext: args }))
+          },
+        )
+      }
 
-    return () => {
-      socketInstance?.socketInstance.off(getSocket().SOCKET_SERVER_EMIT.USER_BOOKING_PROVIDER)
-      socketInstance?.socketInstanceChatting.off(getSocket().SOCKER_CHATTING_SERVER_EMIT.MESSAGE_FROM_CHANNEL)
-      socketInstance?.socketInstance.close()
-      socketInstance?.socketInstanceChatting.close()
+      return () => {
+        if (socketInstance?.socketInstanceBooking) {
+          socketInstance.socketInstanceBooking.off(getSocket().SOCKET_SERVER_EMIT.USER_BOOKING_PROVIDER)
+        }
+        if (socketInstance?.socketInstanceChatting) {
+          socketInstance.socketInstanceChatting.off(getSocket().SOCKER_CHATTING_SERVER_EMIT.MESSAGE_FROM_CHANNEL)
+        }
+      }
     }
-  }, [socketInstance?.socketInstance, socketInstance?.socketInstanceChatting])
-  // if (socketInstance?.socketInstanceLivestream) {
-  //   console.log('socketLivestreamInstance ====>', socketInstance?.socketInstanceLivestream)
-  //   socketInstance?.socketInstanceLivestream.on(
-  //     getSocket().SOCKER_CHATTING_SERVER_EMIT.MESSAGE_FROM_CHANNEL,
-  //     (...args) => {
-  //       setSocketContext((prev) => ({ ...prev, socketLivestreamContext: args }))
-  //     },
-  //   )
-  // }
-
-  const socketContextValue: SocketContext = {
-    socketContext,
-    setSocketContext,
-  }
+  }, [socketToken])
 
   return (
     <>
       <UserContext.Provider value={{ setUserContext, userContext }}>
         <SocketTokenContext.Provider value={{ socketToken, setSocketToken }}>
-          <SocketContext.Provider value={socketContextValue}>
-            <div className="flex flex-col">
-              <div className="fixed z-10 flex flex-col w-full ">
-                <Header />
-              </div>
-              <drawerContext.Provider value={{ childrenDrawer, setChildrenDrawer }}>
-                <div className="pb-8 bg-umeBackground pt-[90px] pr-[60px] pl-[10px]">{children}</div>
-                <div className="fixed h-full bg-umeHeader top-[65px] right-0">
-                  <Sidebar />
+          <SocketClientEmit.Provider value={{ socketClientEmit }}>
+            <SocketContext.Provider value={socketContext}>
+              <div className="flex flex-col">
+                <div className="fixed z-10 flex flex-col w-full ">
+                  <Header />
                 </div>
-              </drawerContext.Provider>
-            </div>
-          </SocketContext.Provider>
+                <DrawerContext.Provider value={{ childrenDrawer, setChildrenDrawer }}>
+                  <div className="pb-8 bg-umeBackground pt-[90px] pr-[60px] pl-[10px]">{children}</div>
+                  <div className="fixed h-full bg-umeHeader top-[65px] right-0">
+                    <Sidebar />
+                  </div>
+                </DrawerContext.Provider>
+              </div>
+            </SocketContext.Provider>
+          </SocketClientEmit.Provider>
         </SocketTokenContext.Provider>
       </UserContext.Provider>
     </>

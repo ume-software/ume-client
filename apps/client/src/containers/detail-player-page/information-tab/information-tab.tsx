@@ -13,14 +13,14 @@ import GamePlayed from './game'
 import PersonalInformation from './personal-information'
 
 import { LoginModal } from '~/components/header/login-modal.component'
-import { SocketTokenContext, drawerContext } from '~/components/layouts/app-layout/app-layout'
+import { DrawerContext, SocketTokenContext } from '~/components/layouts/app-layout/app-layout'
 
 import { trpc } from '~/utils/trpc'
 
 const InformationTab = (props: { data }) => {
   const { socketToken, setSocketToken } = useContext(SocketTokenContext)
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
-  const { childrenDrawer, setChildrenDrawer } = useContext(drawerContext)
+  const { childrenDrawer, setChildrenDrawer } = useContext(DrawerContext)
   const [gamesToggle, setGamesToggle] = useState(false)
   const [gameSelected, setGameSelected] = useState(-1)
   const createNewChatChannel = trpc.useMutation(['chatting.createNewChatChannel'])
