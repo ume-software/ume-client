@@ -76,7 +76,7 @@ const InformationTab = (props: { data }) => {
       </div>
       <div className="grid w-full grid-cols-10 gap-10 px-10">
         <div className="col-span-2">
-          <div className="p-10 bg-zinc-800 rounded-3xl sticky top-20">
+          <div className="sticky p-10 bg-zinc-800 rounded-3xl top-20">
             <div className="flex flex-col gap-5">
               <div
                 className={`flex items-center p-3 rounded-xl gap-2 cursor-pointer hover:bg-gray-700 ${
@@ -134,7 +134,7 @@ const InformationTab = (props: { data }) => {
           </div>
         </div>
         <div className="col-span-3">
-          <div className="flex flex-col gap-3 sticky top-20">
+          <div className="sticky flex flex-col gap-3 top-20">
             <div className="relative w-full h-[450px] bg-zinc-800 rounded-3xl p-10">
               <Image
                 className="absolute rounded-xl"
