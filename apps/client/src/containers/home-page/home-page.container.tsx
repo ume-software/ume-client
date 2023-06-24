@@ -1,8 +1,8 @@
 import Head from 'next/head'
 
-import Category from './component/category'
-import Cover from './component/cover'
-import { Promotion } from './component/promotion'
+import Category from './components/category'
+import Cover from './components/cover'
+import { Promotion } from './components/promotion'
 
 import { AppLayout } from '~/components/layouts/app-layout/app-layout'
 

@@ -77,7 +77,7 @@ const BookingPlayer = (props: { data }) => {
 
   return (
     <>
-      <div className="p-10 overflow-auto">
+      <div className="h-[90vh] p-10 overflow-auto">
         <Formik initialValues={booking} validationSchema={validationSchema} onSubmit={handleCreateBooking}>
           {({ values, setFieldValue, errors, touched, isSubmitting }) => (
             <Form>
@@ -178,7 +178,7 @@ const BookingPlayer = (props: { data }) => {
                 </div>
                 <button
                   type="submit"
-                  className="py-2 mt-5 text-2xl font-bold text-center text-white bg-purple-700 rounded-full  hover:scale-105"
+                  className="py-2 mt-2 text-2xl font-bold text-center text-white bg-purple-700 rounded-full  hover:scale-105"
                   disabled={isSubmitting}
                 >
                   Đặt

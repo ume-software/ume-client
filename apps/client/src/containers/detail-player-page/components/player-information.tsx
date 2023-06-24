@@ -10,7 +10,7 @@ import Image, { ImageProps, StaticImageData } from 'next/legacy/image'
 
 import AlbumTab from '../album-tab'
 import FeedsTab from '../feeds-tab'
-import InformationTab from '../information-tab'
+import InformationTab from '../information-tab/information-tab'
 import MoreTable from './more-table'
 
 interface tabData {

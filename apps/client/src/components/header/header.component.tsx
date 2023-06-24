@@ -17,6 +17,7 @@ import { RechargeModal } from './recharge-form.component'
 import { trpc } from '~/utils/trpc'
 
 interface HeaderProps {}
+interface HeaderProps {}
 
 interface tabData {
   label: string
@@ -30,7 +31,7 @@ export const Header: React.FC = ({}: HeaderProps) => {
   const [balance, setBalance] = useState<any>()
   const { socketToken, setSocketToken } = useContext(SocketTokenContext)
   const { userContext, setUserContext } = useContext(UserContext)
-  const { socketContext } = useContext(SocketContext)
+  const { socketChattingContext, socketLivestreamContext, socketNotificateContext } = useContext(SocketContext)
   const prevSocketContext = useRef<any[]>([])
   const [selectedTab, setSelectedTab] = useState('Chính')
   const [notificateIcon, setNotificatedIcon] = useState<ReactNode>(<Remind size={22} strokeWidth={4} fill="#FFFFFF" />)
@@ -56,14 +57,12 @@ export const Header: React.FC = ({}: HeaderProps) => {
     }
     if (dataResponse) {
       setUserInfo(dataResponse.data)
-      console.log('dataResponse ===> ', dataResponse)
       setUserContext(dataResponse.data)
     }
   }, [dataResponse, setSocketToken, userInfo])
 
   useEffect(() => {
-    if (socketContext[0]?.id !== prevSocketContext.current?.[0]?.id) {
-      console.log('asdsd')
+    if (socketNotificateContext[0]?.id !== prevSocketContext.current?.[0]?.id) {
       setNotificatedIcon(
         <div onClick={() => setNotificatedIcon(<Remind size={22} strokeWidth={4} fill="#FFFFFF" />)}>
           <Remind theme="filled" size="22" fill="#FFFFFF" strokeLinejoin="bevel" />
@@ -73,8 +72,8 @@ export const Header: React.FC = ({}: HeaderProps) => {
     } else {
       setNotificatedIcon(<Remind size={22} strokeWidth={4} fill="#FFFFFF" />)
     }
-    prevSocketContext.current = socketContext
-  }, [socketContext])
+    prevSocketContext.current = socketNotificateContext
+  }, [socketNotificateContext[0]?.id])
 
   const tabDatas: tabData[] = [
     {

@@ -1,3 +1,4 @@
+import { CreateChannelRequest } from 'ume-chatting-service-openapi'
 import { z } from 'zod'
 
 import { createRouter } from './configurations'
