@@ -7,7 +7,7 @@ import { BookingHandleRequestStatusEnum } from 'ume-booking-service-openapi'
 import { trpc } from '~/utils/trpc'
 
 let result: string
-const Notificate = (props: { responeBooking }) => {
+const Notificate = () => {
   const [listBookingProvider, setListBookingProvider] = useState<any>([])
   const {
     data: bookingProvider,
@@ -20,14 +20,11 @@ const Notificate = (props: { responeBooking }) => {
     },
   })
 
-  if (loadingBookingProvider) {
-    return <></>
-  }
-  console.log(listBookingProvider)
+  const responeBooking = trpc.useMutation(['booking.putProviderResponeBooking'])
 
   const handleAcceptBooking = (bookingHistoryId: string, bookerName: string) => {
     try {
-      props.responeBooking.mutate(
+      responeBooking.mutate(
         { bookingHistoryId: bookingHistoryId, status: BookingHandleRequestStatusEnum.ProviderAccept },
         {
           onSuccess: (data) => {
@@ -57,7 +54,7 @@ const Notificate = (props: { responeBooking }) => {
 
   const handleUnacceptBooking = (bookingHistoryId: string, bookerName: string) => {
     try {
-      props.responeBooking.mutate(
+      responeBooking.mutate(
         { bookingHistoryId: bookingHistoryId, status: BookingHandleRequestStatusEnum.ProviderCancel },
         {
           onSuccess: (data) => {

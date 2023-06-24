@@ -64,6 +64,7 @@ const ChatContent = (props: { channel: ChattingChannelReponse }) => {
     if (socketChattingContext) {
       utils.invalidateQueries('chatting.getMessagesByChannelId')
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socketChattingContext, socketToken])
 
   const mappingMember: { [key: string]: MemberChatChannelResponse } = convertArrayObjectToObject(
