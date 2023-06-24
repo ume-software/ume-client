@@ -20,25 +20,25 @@ const GamePlayed = (props: { data }) => {
 
   return (
     <>
-      <div className="bg-zinc-800 rounded-3xl p-10">
-        <p className="font-roboto font-bold text-white text-3xl">{props.data.skill.name}</p>
+      <div className="p-10 bg-zinc-800 rounded-3xl">
+        <p className="text-3xl font-bold text-white font-roboto">{props.data.skill.name}</p>
         <Carousel autoplay>
           {props.data.images?.map((item, index) => <Image key={index} src={item} alt="Game Image" />) || (
             <>
               <Image src={ImgForEmpty} alt="Empty" />
-              <p className="font-roboto font-semibold text-white text-2xl text-center leading-9">Chưa có gì ở đây cả</p>
+              <p className="text-2xl font-semibold leading-9 text-center text-white font-roboto">Chưa có gì ở đây cả</p>
             </>
           )}
         </Carousel>
-        <span className="font-roboto font-normal text-lg leading-9">{props.data.description}</span>
+        <span className="text-lg font-normal leading-9 font-roboto">{props.data.description}</span>
       </div>
-      <div className="bg-zinc-800 rounded-3xl p-5">
-        <div className="flex flex-col p-3 gap-5">
-          <p className="font-inter font-bold text-4xl">Đánh giá</p>
+      <div className="p-5 bg-zinc-800 rounded-3xl">
+        <div className="flex flex-col gap-5 p-3">
+          <p className="text-4xl font-bold font-inter">Đánh giá</p>
 
           {feedbackGame.length > 0 ? (
             feedbackGame?.map((feedback) => (
-              <div key={feedback.id} className="grid grid-cols-10 border-2 border-gray-600 rounded-lg p-3">
+              <div key={feedback.id} className="grid grid-cols-10 p-3 border-2 border-gray-600 rounded-lg">
                 <div className="col-span-1">
                   <Image
                     className="object-cover rounded-full"
@@ -50,10 +50,10 @@ const GamePlayed = (props: { data }) => {
                 </div>
                 <div className="col-span-9 gap-3">
                   <div className="flex flex-row justify-between">
-                    <span className="font-roboto font-bold text-2xl leading-9">{feedback.booking.booker.name}</span>
+                    <span className="text-2xl font-bold leading-9 font-roboto">{feedback.booking.booker.name}</span>
 
                     <div className="flex flex-row items-center gap-1">
-                      <p className="font-roboto font-normal text-lg">{feedback.amountStart}</p>
+                      <p className="text-lg font-normal font-roboto">{feedback.amountStart}</p>
                       <Star theme="filled" size="15" fill="#FFDF00" />
                     </div>
                   </div>
@@ -64,7 +64,7 @@ const GamePlayed = (props: { data }) => {
           ) : (
             <>
               <Image src={ImgForEmpty} alt="Empty Image" />
-              <p className="text-center font-inter font-bold text-2xl">Chưa có đánh giá</p>
+              <p className="text-2xl font-bold text-center font-inter">Chưa có đánh giá</p>
             </>
           )}
         </div>

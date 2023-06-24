@@ -7,87 +7,30 @@ warn  - Invalid next.config.js options detected:
 See more info here: https://nextjs.org/docs/messages/invalid-next-config
 info  - Linting and checking validity of types...
 
-./src/api/chatting.ts
-1:1  Warning: Replace `␍⏎␍⏎import·{·z·}·from·'zod'` with `import·{·z·}·from·'zod'␍⏎`  prettier/prettier
-5:33  Warning: Replace `·,getMessagesByChannelId` with `,·getMessagesByChannelId·`  prettier/prettier
-7:1  Warning: Delete `␍⏎`  prettier/prettier
-15:49  Warning: Replace `·,` with `,·`  prettier/prettier
-20:17  Warning: Insert `·`  prettier/prettier
-25:48  Warning: Replace `·,` with `,·`  prettier/prettier
-27:5  Warning: Insert `␍⏎`  prettier/prettier
-
-./src/api/services/chatting-service.ts
-3:1  Warning: Insert `␍⏎`  prettier/prettier
-4:9  Warning: Replace `␍⏎ChatChannelApi␍⏎` with `·ChatChannelApi·`  prettier/prettier
-8:1  Warning: Delete `␍⏎`  prettier/prettier
-11:53  Warning: Replace `{limit:string,page:string` with `·{·limit:·string;·page:·string·`  prettier/prettier
-31:52  Warning: Replace `{channelId:string,limit:string,page:string` with `·{·channelId:·string;·limit:·string;·page:·string·`  prettier/prettier
-38:47  Warning: Insert `·`  prettier/prettier
-
-./src/api/socket/socket-booking.ts
-8:28  Warning: Replace `·{...socketio` with `{·...socketio·`  prettier/prettier
-
-./src/api/socket/socket-chatting.ts
-8:29  Warning: Replace `...socketio` with `·...socketio·`  prettier/prettier
-19:5  Warning: Delete `··`  prettier/prettier
-20:1  Warning: Replace `··console.log('WebSocket·connection·error:',·error);` with `······console.log('WebSocket·connection·error:',·error)`  prettier/prettier
-21:1  Warning: Replace `});` with `····})`  prettier/prettier
-
 ./src/components/header/header.component.tsx
-62:6  Warning: React Hook useEffect has a missing dependency: 'setUserContext'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+77:6  Warning: React Hook useEffect has a missing dependency: 'socketNotificateContext'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+77:7  Warning: React Hook useEffect has a complex expression in the dependency array. Extract it to a separate variable so it can be statically checked.  react-hooks/exhaustive-deps
 
-./src/components/layouts/app-layout/app-layout.tsx
-93:6  Warning: React Hook useEffect has a missing dependency: 'socketInstance'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+./src/containers/chat/chat-content.tsx
+67:6  Warning: React Hook useEffect has a missing dependency: 'utils'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
 
-./src/components/sidebar/sidebar.component.tsx
-11:1  Warning: Insert `␍⏎`  prettier/prettier
-20:2  Warning: Delete `␍⏎`  prettier/prettier
-30:67  Warning: Replace `"5",·page:·"1"` with `'5',·page:·'1'`  prettier/prettier
-49:28  Warning: Replace `(item.members.filter(member` with `item.members.filter((member)`  prettier/prettier
-50:76  Warning: Delete `;`  prettier/prettier
-51:14  Warning: Delete `)`  prettier/prettier
-52:21  Warning: Delete `␍⏎`  prettier/prettier
-57:28  Warning: Insert `␍⏎····················`  prettier/prettier
-58:1  Warning: Insert `··`  prettier/prettier
-59:1  Warning: Insert `··`  prettier/prettier
-60:21  Warning: Insert `··`  prettier/prettier
-61:21  Warning: Insert `··`  prettier/prettier
-62:1  Warning: Replace `····················` with `······················`  prettier/prettier
-63:21  Warning: Insert `··`  prettier/prettier
-64:1  Warning: Insert `··`  prettier/prettier
-65:19  Warning: Replace `/>` with `··/>␍⏎··················`  prettier/prettier
-68:32  Warning: Delete `␍⏎`  prettier/prettier
+./src/Hook/useChatScroll.tsx
+9:6  Warning: React Hook useEffect has a missing dependency: 'divRef'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
 
 info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules
-info  - Creating an optimized production build...
-info  - Compiled successfully
-info  - Collecting page data...
-info  - Generating static pages (0/6)
-info  - Generating static pages (1/6)
-info  - Generating static pages (2/6)
-info  - Generating static pages (4/6)
-info  - Generating static pages (6/6)
-info  - Finalizing page optimization...
+Failed to compile.
 
-Route (pages)                              Size     First Load JS
-┌ λ /                                      257 B          99.4 kB
-├   /_app                                  0 B            99.2 kB
-├ ○ /404 (344 ms)                          6.28 kB         105 kB
-├ λ /api/status                            0 B            99.2 kB
-├ λ /api/trpc/[trpc]                       0 B            99.2 kB
-├ ○ /community                             1.82 kB         101 kB
-├ ○ /home (323 ms)                         1.82 kB         101 kB
-├ ○ /live (303 ms)                         1.81 kB         101 kB
-├ λ /logout                                409 B          99.6 kB
-├ ○ /player/[playerId] (407 ms)            1.88 kB         101 kB
-└ ○ /register-provider (335 ms)            1.82 kB         101 kB
-+ First Load JS shared by all              105 kB
-  ├ chunks/framework-22108eb722d84e59.js   45.4 kB
-  ├ chunks/main-1549b305685c3af3.js        26.7 kB
-  ├ chunks/pages/_app-aae82f905d4d44e6.js  25.1 kB
-  ├ chunks/webpack-abe4d213c4b418b3.js     1.98 kB
-  └ css/195966efb8d19b7b.css               6.29 kB
+./src/containers/detail-player-page/information-tab/information-tab.tsx:26:49
+Type error: Argument of type '["chatting.createNewChatChannel"]' is not assignable to parameter of type '"booking.createBooking" | "booking.putProviderResponeBooking" | "auth.signin" | "identity.request-recharge" | ["booking.createBooking" | "booking.putProviderResponeBooking" | "auth.signin" | "identity.request-recharge"]'.
+  Type '["chatting.createNewChatChannel"]' is not assignable to type '["booking.createBooking" | "booking.putProviderResponeBooking" | "auth.signin" | "identity.request-recharge"]'.
+    Type '"chatting.createNewChatChannel"' is not assignable to type '"booking.createBooking" | "booking.putProviderResponeBooking" | "auth.signin" | "identity.request-recharge"'.
 
-λ  (Server)  server-side renders at runtime (uses getInitialProps or getServerSideProps)
-○  (Static)  automatically rendered as static HTML (uses no initial props)
-
+[0m [90m 24 | [39m  [36mconst[39m [gamesToggle[33m,[39m setGamesToggle] [33m=[39m useState([36mfalse[39m)[0m
+[0m [90m 25 | [39m  [36mconst[39m [gameSelected[33m,[39m setGameSelected] [33m=[39m useState([33m-[39m[35m1[39m)[0m
+[0m[31m[1m>[22m[39m[90m 26 | [39m  [36mconst[39m createNewChatChannel [33m=[39m trpc[33m.[39museMutation([[32m'chatting.createNewChatChannel'[39m])[0m
+[0m [90m    | [39m                                                [31m[1m^[22m[39m[0m
+[0m [90m 27 | [39m[0m
+[0m [90m 28 | [39m  [36mconst[39m handleGamesToggle [33m=[39m () [33m=>[39m {[0m
+[0m [90m 29 | [39m    setGamesToggle([33m![39mgamesToggle)[0m
+error Command failed with exit code 1.
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
