@@ -15,6 +15,8 @@ module.exports = {
       'global-oss.epal.gg',
       'files.playerduo.net',
       'playerduo.net',
+      'cdn.oneesports.vn',
+      'haycafe.vn'
     ],
   },
 }
