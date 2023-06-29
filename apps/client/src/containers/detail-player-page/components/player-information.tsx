@@ -1,17 +1,17 @@
-import { Dot, Male, More, Plus, ShareTwo } from '@icon-park/react'
+import { Menu, Transition } from '@headlessui/react'
+import { Dot, Male, More, Pencil, Plus, ShareTwo } from '@icon-park/react'
 import cover from 'public/cover.png'
 import TestImage4 from 'public/cover.png'
 import detailBackground from 'public/detail-cover-background.png'
 import ImgForEmpty from 'public/img-for-empty.png'
 
-import { ReactElement, useState } from 'react'
+import { Fragment, ReactElement, useState } from 'react'
 
 import Image, { ImageProps, StaticImageData } from 'next/legacy/image'
 
-import AlbumTab from '../album-tab'
+import AlbumTab from '../album-tab/album-tab'
 import FeedsTab from '../feeds-tab'
 import InformationTab from '../information-tab/information-tab'
-import MoreTable from './more-table'
 
 interface tabData {
   label: string
@@ -19,11 +19,8 @@ interface tabData {
 }
 
 interface moreButtonData {
-  className?: string
-  children?: {
-    name: string
-    icon?: ReactElement
-  }
+  label: string
+  icon?: ReactElement
 }
 
 interface personalImageProps {
@@ -88,39 +85,37 @@ const feedData: feedProps[] = [
 
 const moreButtonDatas: moreButtonData[] = [
   {
-    className: 'hover:bg-gray-700 rounded-md pl-2 pr-2',
-    children: { name: 'Chỉnh sửa thông tin' },
+    label: 'Chỉnh sửa thông tin',
+    icon: (
+      <Pencil
+        className={`transition-opacity opacity-0 group-hover:opacity-100 group-hover:translate-x-3 duration-300`}
+        theme="outline"
+        size="20"
+        fill="#fff"
+      />
+    ),
   },
   {
-    className: 'hover:bg-gray-700 rounded-md pl-2 pr-2',
-    children: { name: 'Thay đổi ảnh đại diện' },
-  },
-  { className: 'w-full bg-white h-0.5 rounded-all' },
-  {
-    children: {
-      name: 'Follow',
-      icon: (
-        <Plus
-          className={`transition-opacity opacity-0 group-hover:opacity-100 duration-200`}
-          theme="outline"
-          size="15"
-          fill="#fff"
-        />
-      ),
-    },
+    label: 'Follow',
+    icon: (
+      <Plus
+        className={`transition-opacity opacity-0 group-hover:opacity-100 group-hover:translate-x-3 duration-300`}
+        theme="outline"
+        size="20"
+        fill="#fff"
+      />
+    ),
   },
   {
-    children: {
-      name: 'Chia sẻ đến Facebook',
-      icon: (
-        <ShareTwo
-          className={`transition-opacity opacity-0 group-hover:opacity-100 duration-200`}
-          theme="outline"
-          size="15"
-          fill="#fff"
-        />
-      ),
-    },
+    label: 'Chia sẻ đến Facebook',
+    icon: (
+      <ShareTwo
+        className={`transition-opacity opacity-0 group-hover:opacity-100 group-hover:translate-x-3 duration-300`}
+        theme="outline"
+        size="20"
+        fill="#fff"
+      />
+    ),
   },
 ]
 
@@ -188,24 +183,42 @@ const PlayerInformation = (props: { data }) => {
               </div>
             </div>
 
-            <div className="relative flex flex-col items-center justify-start" style={{ zIndex: 3 }}>
-              <More
-                className="flex flex-row items-center bg-gray-700 rounded-full cursor-pointer"
-                theme="outline"
-                size="30"
-                fill="#FFFFFF"
-                strokeLinejoin="bevel"
-                onClick={handleMoreButton}
-              />
-              <div
-                className={`absolute w-max top-10 bottom-auto text-white p-3 pt-5 border border-gray-300 bg-gray-900 rounded-xl gap-3  font-medium text-20 ${
-                  actionModal ? 'flex flex-col' : 'hidden'
-                }`}
-              >
-                {moreButtonDatas.map((item, index) => (
-                  <MoreTable key={index}>{item.children}</MoreTable>
-                ))}
-              </div>
+            <div className="relative flex flex-col items-center justify-start" style={{ zIndex: 5 }}>
+              <Menu>
+                <div>
+                  <Menu.Button>
+                    <More
+                      className="flex flex-row items-center bg-gray-700 rounded-full cursor-pointer"
+                      theme="filled"
+                      size="25"
+                      fill="#FFFFFF"
+                      strokeLinejoin="bevel"
+                    />
+                  </Menu.Button>
+                </div>
+                <Transition
+                  as={Fragment}
+                  enter="transition ease-out duration-400"
+                  enterFrom="transform opacity-0 scale-95"
+                  enterTo="transform opacity-100 scale-100"
+                  leave="transition ease-in duration-400"
+                  leaveFrom="transform opacity-100 scale-100"
+                  leaveTo="transform opacity-0 scale-95"
+                >
+                  <Menu.Items className="absolute w-fit right-0 p-3 top-7 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <div className="w-max flex flex-col gap-2">
+                      {moreButtonDatas.map((item, index) => (
+                        <div key={index} className="hover:bg-purple-700 hover:text-white group rounded-md pl-2 pr-2 ">
+                          <div className="scale-x-100 group-hover:scale-x-95 flex items-center justify-between gap-2 group-hover:-translate-x-2 duration-300">
+                            <a href="#">{item.label}</a>
+                            {item.icon}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </Menu.Items>
+                </Transition>
+              </Menu>
             </div>
           </div>
 

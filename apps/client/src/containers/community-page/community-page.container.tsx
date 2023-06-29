@@ -1,12 +1,13 @@
 import { Earth, EveryUser } from '@icon-park/react'
 
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 
 import Head from 'next/head'
 
 import CommunityPost from './components/community-post'
 
-import { AppLayout } from '~/components/layouts/app-layout/app-layout'
+import { LoginModal } from '~/components/header/login-modal.component'
+import { AppLayout, SocketTokenContext } from '~/components/layouts/app-layout/app-layout'
 import { PostSkeletonLoader } from '~/components/skeleton-load'
 
 import { trpc } from '~/utils/trpc'
@@ -14,16 +15,33 @@ import { trpc } from '~/utils/trpc'
 const CommunityPage = (props) => {
   const [socialSelected, setSocialSelected] = useState('General')
   const [suggestPostData, setSuggestPostData] = useState<any>([])
+  const accessToken = window.localStorage.getItem('accessToken')
+  const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
   const {
     data: suggestPost,
     isLoading: loadingSuggestPost,
     isFetching: fetchingSuggestPost,
-  } = trpc.useQuery(['community.getSuggestPost'], {
-    refetchOnReconnect: 'always',
-    onSuccess(data) {
-      setSuggestPostData(data?.data?.row)
-    },
-  })
+  } = accessToken
+    ? trpc.useQuery(['community.getSuggestPost'], {
+        refetchOnReconnect: 'always',
+        onSuccess(data) {
+          setSuggestPostData(data?.data?.row)
+        },
+      })
+    : trpc.useQuery(['community.getSuggestPostWithoutCookies'], {
+        refetchOnReconnect: 'always',
+        onSuccess(data) {
+          setSuggestPostData(data?.data?.row)
+        },
+      })
+
+  const handleCreatePost = () => {
+    if (accessToken) {
+      console.log('123')
+    } else {
+      setIsModalLoginVisible(true)
+    }
+  }
 
   return (
     <div>
@@ -31,6 +49,9 @@ const CommunityPage = (props) => {
         <title>UME | Cộng đồng</title>
       </Head>
       <AppLayout {...props}>
+        <div>
+          <LoginModal isModalLoginVisible={isModalLoginVisible} setIsModalLoginVisible={setIsModalLoginVisible} />
+        </div>
         <div style={{ margin: '0 70px' }}>
           <div className="grid grid-cols-10 gap-10 text-white">
             <div className="col-span-2 sticky top-50">
@@ -55,8 +76,11 @@ const CommunityPage = (props) => {
                     </div>
                   </div>
                 </div>
-                <div className="">
-                  <div className="rounded-full w-full text-white bg-purple-700 py-2 font-semibold text-2xl hover:scale-105 text-center">
+                <div>
+                  <div
+                    className="rounded-full w-full text-white bg-purple-700 py-2 font-semibold text-2xl hover:scale-105 text-center cursor-pointer"
+                    onClick={handleCreatePost}
+                  >
                     Create post
                   </div>
                 </div>

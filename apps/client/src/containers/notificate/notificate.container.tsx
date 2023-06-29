@@ -9,12 +9,12 @@ import { trpc } from '~/utils/trpc'
 let result: string
 const Notificate = () => {
   const [listBookingProvider, setListBookingProvider] = useState<any>([])
+  const utils = trpc.useContext()
   const {
     data: bookingProvider,
     isLoading: loadingBookingProvider,
     isFetching: fetching,
   } = trpc.useQuery(['booking.getBookingProvider'], {
-    refetchOnReconnect: 'always',
     onSuccess(data) {
       setListBookingProvider(data?.data?.row)
     },
@@ -35,6 +35,7 @@ const Notificate = () => {
                 description: `Bạn đã chấp nhận yêu cầu từ ${bookerName}`,
                 placement: 'bottomLeft',
               })
+              utils.invalidateQueries('booking.getBookingProvider')
             }
           },
           onError: (error, data) => {
@@ -65,6 +66,7 @@ const Notificate = () => {
                 description: `Bạn đã từ chối yêu cầu từ ${bookerName}`,
                 placement: 'bottomLeft',
               })
+              utils.invalidateQueries('booking.getBookingProvider')
             }
           },
           onError: (error, data) => {

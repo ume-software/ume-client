@@ -1,9 +1,9 @@
-import { ArrowLeft } from '@icon-park/react'
+import { ArrowLeft, Dot } from '@icon-park/react'
 import { CustomDrawer } from '@ume/ui'
 import cover from 'public/cover.png'
 import Chat from '~/containers/chat/chat.container'
 
-import { ReactNode, useContext, useEffect, useState } from 'react'
+import { ReactNode, useContext, useEffect, useRef, useState } from 'react'
 
 import Image, { StaticImageData } from 'next/legacy/image'
 
@@ -25,9 +25,10 @@ export const Sidebar = (props) => {
   const { childrenDrawer, setChildrenDrawer } = useContext(DrawerContext)
   const { userContext, setUserContext } = useContext(UserContext)
   const { socketToken } = useContext(SocketTokenContext)
-  const { socketChattingContext } = useContext(SocketContext)
+  const { socketContext, setSocketContext } = useContext(SocketContext)
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
-  const [imageChannel, setImageChannel] = useState<ReactNode>(<></>)
+  const [showMessage, setShowMessage] = useState(false)
+  const utils = trpc.useContext()
   const {
     data: chattingChannels,
     isLoading: loadingChattingChannels,
@@ -40,21 +41,34 @@ export const Sidebar = (props) => {
     }
   }, [socketToken])
 
-  const handleChatOpen = (id?: string) => {
+  const handleChatOpen = (channelId?: string) => {
     if (socketToken) {
-      setChildrenDrawer(<Chat playerId={id} />)
+      setChildrenDrawer(<Chat playerId={channelId} />)
+      if (channelId) {
+        setSocketContext((prevState) => ({
+          ...prevState,
+          socketContext: {
+            ...prevState,
+            socketChattingContext: [],
+          },
+        }))
+      }
     } else {
       setIsModalLoginVisible(true)
     }
   }
+
   useEffect(() => {
-    if (socketChattingContext) {
-      console.log(socketChattingContext)
-      const channelId = socketChattingContext[0]?.channelId
-      const message = socketChattingContext[0]?.content
+    if (socketContext.socketChattingContext) {
+      utils.invalidateQueries('chatting.getListChattingChannels')
+      setShowMessage(true)
+      const timeout = setTimeout(() => {
+        setShowMessage(false)
+      }, 2000)
+      return () => clearTimeout(timeout)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socketChattingContext, socketToken])
+  }, [socketContext?.socketChattingContext, socketContext?.socketChattingContext[0]?.channelId, socketToken])
 
   return (
     <>
@@ -80,19 +94,44 @@ export const Sidebar = (props) => {
                 return member.userId.toString() != userContext?.id.toString()
               })
               return (
-                <div key={item._id} className="relative w-14 h-14">
+                <div key={item._id} className="relative">
                   <CustomDrawer
                     customOpenBtn={`cursor-pointer`}
                     openBtn={
-                      <Image
-                        className="absolute rounded-full"
-                        layout="fill"
-                        objectFit="cover"
-                        key={item._id}
-                        src={images[0].userInfomation.avatarUrl}
-                        alt="avatar"
-                        onClick={() => handleChatOpen(item._id)}
-                      />
+                      <div>
+                        {item._id === socketContext?.socketChattingContext[0]?.channelId &&
+                        socketContext?.socketChattingContext[0]?.senderId !== userContext?.id ? (
+                          <>
+                            <div className="relative">
+                              <Dot
+                                className="absolute top-0 left-0 z-10"
+                                theme="filled"
+                                size="20"
+                                fill="#FF0000"
+                                strokeLinejoin="bevel"
+                              />
+                            </div>
+                            {showMessage && (
+                              <div className="max-w-xs absolute top-2 bottom-2 right-[60px] p-2 bg-purple-700 rounded-lg text-white">
+                                <p className="truncate">{socketContext?.socketChattingContext[0]?.content}</p>
+                              </div>
+                            )}
+                          </>
+                        ) : (
+                          <></>
+                        )}
+                        <div className={`relative w-14 h-14`}>
+                          <Image
+                            className="absolute rounded-full"
+                            layout="fill"
+                            objectFit="cover"
+                            key={item._id}
+                            src={images[0].userInfomation.avatarUrl}
+                            alt="avatar"
+                            onClick={() => handleChatOpen(item._id)}
+                          />
+                        </div>
+                      </div>
                     }
                   >
                     {childrenDrawer}

@@ -1,9 +1,20 @@
 import { z } from 'zod'
 
 import { createRouter } from './configurations'
-import { getCommentPostByID, getLikePostByID, getPostByID, getSuggestPost } from './services/community-service'
+import {
+  getCommentPostByID,
+  getLikePostByID,
+  getPostByID,
+  getSuggestPost,
+  getSuggestPostWithoutCookies,
+} from './services/community-service'
 
 export const communityRouter = createRouter()
+  .query('getSuggestPostWithoutCookies', {
+    resolve: async () => {
+      return await getSuggestPostWithoutCookies()
+    },
+  })
   .query('getSuggestPost', {
     resolve: async ({ ctx }) => {
       return await getSuggestPost(ctx)

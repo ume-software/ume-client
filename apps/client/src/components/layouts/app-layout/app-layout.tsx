@@ -22,9 +22,14 @@ interface socketClientEmit {
   [key: string]: any
 }
 interface SocketContext {
-  socketNotificateContext: any[]
-  socketChattingContext: any[]
-  socketLivestreamContext: any[]
+  socketContext: {
+    socketNotificateContext: any[]
+    socketChattingContext: any[]
+    socketLivestreamContext: any[]
+  }
+  setSocketContext: Dispatch<
+    SetStateAction<{ socketNotificateContext: any[]; socketChattingContext: any[]; socketLivestreamContext: any[] }>
+  >
 }
 interface DrawerProps {
   childrenDrawer: ReactNode
@@ -45,9 +50,12 @@ export const SocketClientEmit = createContext<socketClientEmit>({
 })
 
 export const SocketContext = createContext<SocketContext>({
-  socketNotificateContext: [],
-  socketChattingContext: [],
-  socketLivestreamContext: [],
+  socketContext: {
+    socketNotificateContext: [],
+    socketChattingContext: [],
+    socketLivestreamContext: [],
+  },
+  setSocketContext: () => {},
 })
 
 export const DrawerContext = createContext<DrawerProps>({
@@ -67,7 +75,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
   const [socketClientEmit, setSocketClientEmit] = useState<socketClientEmit>({ socketInstanceChatting: null })
 
-  const [socketContext, setSocketContext] = useState<SocketContext>({
+  const [socketContext, setSocketContext] = useState<SocketContext['socketContext']>({
     socketNotificateContext: [],
     socketChattingContext: [],
     socketLivestreamContext: [],
@@ -108,7 +116,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       <UserContext.Provider value={{ setUserContext, userContext }}>
         <SocketTokenContext.Provider value={{ socketToken, setSocketToken }}>
           <SocketClientEmit.Provider value={{ socketClientEmit }}>
-            <SocketContext.Provider value={socketContext}>
+            <SocketContext.Provider value={{ socketContext, setSocketContext }}>
               <div className="flex flex-col">
                 <div className="fixed z-10 flex flex-col w-full ">
                   <Header />
