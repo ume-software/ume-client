@@ -1,5 +1,6 @@
 import { Down, Gamepad, People, Right } from '@icon-park/react'
 import { CustomDrawer } from '@ume/ui'
+import coin from 'public/coin-icon.png'
 import ImgForEmpty from 'public/img-for-empty.png'
 import Chat from '~/containers/chat/chat.container'
 
@@ -118,9 +119,12 @@ const InformationTab = (props: { data }) => {
                         <p className="font-semibold text-lg text-white z-[4] truncate group-hover:w-fit">
                           {item.skill.name}
                         </p>
-                        <p className="font-semibold text-md text-white opacity-30 z-[4] truncate group-hover:w-fit">
-                          {item.defaultCost}U / 1h
-                        </p>
+                        <div className="flex items-center">
+                          <Image src={coin} width={20} height={20} alt="coin" />
+                          <p className="font-semibold text-md text-white opacity-30 z-[4] truncate group-hover:w-fit">
+                            {item.defaultCost} / 1h
+                          </p>
+                        </div>
                       </div>
                     </div>
                   ))}
