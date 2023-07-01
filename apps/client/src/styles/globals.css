@@ -40,3 +40,23 @@
   background-color: transparent;
 }
 
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 3px;
+}
+
+/* Track */
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #292734;
+}
+
+/* Handle */
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #7e22ce; 
+}
+
+/* Handle on hover */
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+}
+

@@ -120,7 +120,7 @@ const ChatContent = (props: { channel: ChattingChannelReponse }) => {
             </div>
           </div>
           <div className="flex flex-col h-full gap-2">
-            <div className="flex gap-2 pb-5 overflow-auto border-b-2 hide-scrollbar">
+            <div className="flex gap-2 pb-5 overflow-auto border-b-2 custom-scrollbar">
               {/* {props.data?.providerSkills?.map((providerSkill, index) => (
             <div
               key={index}
@@ -137,7 +137,10 @@ const ChatContent = (props: { channel: ChattingChannelReponse }) => {
             </div>
             <div className="h-[65vh] flex flex-col justify-end">
               {/* <!-- message --> */}
-              <div ref={divRef} className="flex flex-col w-full px-5 overflow-y-scroll hide-scrollbar justinfy-between">
+              <div
+                ref={divRef}
+                className="flex flex-col w-full px-5 overflow-y-scroll custom-scrollbar justinfy-between"
+              >
                 <div className="flex flex-col mt-5 ">
                   {chattingMessageChannel?.data.messages.map((item, index) => {
                     const sender = mappingMember[item.senderId]

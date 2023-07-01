@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 
-import { PostResponse } from 'ume-booking-service-openapi'
+import { PostPagingResponse, PostResponse } from 'ume-booking-service-openapi'
 
 import CommunityPost from './community-post'
 
@@ -51,7 +51,7 @@ const GeneralPost = () => {
       const containerHeight = containerRef?.current?.offsetHeight
       if (scrollPosition > containerHeight * 0.85) {
         refetchSuggestPost().then((data) => {
-          setSuggestPostData((prevData) => [...(prevData || []), ...(data?.data?.row || [])])
+          setSuggestPostData((prevData) => [...(prevData || []), ...((data?.data as PostPagingResponse).row || [])])
         })
       }
     }

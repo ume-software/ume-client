@@ -65,7 +65,7 @@ const Chat = (props: { playerId?: string }) => {
                 className="text-white w-full"
               />
             </div>
-            <div className="h-full hide-scrollbar flex flex-col border-r-2 overflow-y-auto">
+            <div className="h-full custom-scrollbar flex flex-col border-r-2 overflow-y-auto">
               {filterChannel?.map((item, index) => {
                 const latestMeassge: MessageResponse | null = item.messages.length
                   ? item.messages[item.messages.length - 1]
@@ -113,7 +113,7 @@ const Chat = (props: { playerId?: string }) => {
               })}
             </div>
           </div>
-          <div className="h-[85vh] col-span-7 overflow-y-auto hide-scrollbar">
+          <div className="h-[85vh] col-span-7 overflow-y-auto custom-scrollbar">
             <div className="h-[85vh] flex flex-col pl-5 pr-5 pb-5 gap-2">
               {channelSelected?._id && <ChatContent key={channelSelected?._id} channel={channelSelected} />}
             </div>
