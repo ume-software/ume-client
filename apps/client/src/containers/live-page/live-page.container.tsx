@@ -46,8 +46,11 @@ const LivePage = (props) => {
             </div>
           </div>
           <div className="grid grid-cols-4">
-            {streamChannels?.data.row && streamChannels.data.row.map((data, index) => (
-               <Link key={data._id} href={`/live/${data._id}`}>
+            {streamChannels?.data.row && streamChannels.data.row.map((data, index) => 
+         {
+          console.log("datag ? d.host?.userInfomation?.sluata.host?.userInfomation?.slug :  data.host?.user_id => ",data.host.userInfomation.slug||data.host.userId)
+          return    (
+               <Link key={data._id} href={`/live/${data.host.userInfomation.slug||data.host.userId}`}>
                 <div className="col-span-1 cursor-pointer p-5">
                   <div className="relative">
                     <div className="relative w-full h-[200px] bg-zinc-800 rounded-3xl p-10">
@@ -90,7 +93,9 @@ const LivePage = (props) => {
                   </div>
                 </div>
               </Link>
-            ))}
+            )
+         }
+         )}
           </div>
         </div>
       </AppLayout>

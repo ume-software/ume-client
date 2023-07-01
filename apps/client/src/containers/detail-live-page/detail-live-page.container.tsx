@@ -11,24 +11,11 @@ const DetailPlayer = (props) => {
   const videoRef = useRef<any>(null);
   const [channel, setChannel] = useState<LiveStreamChannelResponse | undefined>(undefined);
 
-  useEffect(() => {
-    if (channel && typeof window !== 'undefined') {
-      const player = flvPlayer.createPlayer({
-        type: 'flv',
-        url: `${getEnv().baseLivestreamFlvURL}/live/${slug}.flv`,
-      });
-      player.attachMediaElement(videoRef.current);
-      player.load();
-
-      return () => {
-        player.unload();
-        player.detachMediaElement();
-      };
-    }
-  }, [channel, slug]);
 
   const { data: provider, isLoading: loadingProvider } = trpc.useQuery(['streaming.getLiveStreamChannelById', { channelId: slug as string, limit: '1', page: '1' }]);
-  
+  const streamUrl=`${getEnv().baseLivestreamURL}/api/v1/live/show/${slug}`;
+
+
   useEffect(() => {
     if (!loadingProvider) {
       setChannel(provider?.data);
@@ -45,9 +32,24 @@ const DetailPlayer = (props) => {
         <title>UME | Live</title>
       </Head>
       <AppLayout {...props}>
-        <div className="text-white">
+        <div className="text-white w-full h-full">
           <h1>Live</h1>
-          <video ref={videoRef} style={{ width: '80%' }} controls />
+           <div className='w-3/4 h-fit' >
+            {streamUrl ? (
+              <iframe
+                src={streamUrl}
+              style={{
+                maxWidth:"1280px",
+                minWidth:"100%",
+                maxHeight:"100vh",
+                minHeight:"720px"
+              }}
+              ></iframe>
+            ) : (
+              <p>Loading livestream...</p>
+            )}
+          </div>
+          {/* <video ref={videoRef} style={{ width: '80%' }} controls /> */}
           <h1>{channel?.title}</h1>
           <h5>{channel?.description}</h5>
         </div>
