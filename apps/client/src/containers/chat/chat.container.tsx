@@ -19,7 +19,7 @@ import { SocketContext, UserContext } from '~/components/layouts/app-layout/app-
 import { trpc } from '~/utils/trpc'
 
 const Chat = (props: { playerId?: string }) => {
-  const [searchTex, setSearchText] = useState('')
+  const [searchText, setSearchTextt] = useState('')
   const { userContext, setUserContext } = useContext(UserContext)
   const [channelSelected, setChannelSelected] = useState<ChattingChannelReponse | undefined>(
     ({ _id: props.playerId } as any) || undefined,
@@ -29,10 +29,20 @@ const Chat = (props: { playerId?: string }) => {
     isLoading: loadingChattingChannels,
     isFetching,
   } = trpc.useQuery(['chatting.getListChattingChannels', { limit: 'unlimited', page: '1' }])
+  const [filterChannel, setFilterChannel] = useState<ChattingChannelReponse[] | undefined>([])
 
   const handleSelected = (id) => {
     setChannelSelected(chattingChannels?.data.row.find((item) => item._id == id))
   }
+
+  useEffect(() => {
+    const filtered = chattingChannels?.data.row.filter((data) => {
+      return data.members.some((member) => {
+        return member.userInfomation.name.toLowerCase().includes(searchText.toLowerCase())
+      })
+    })
+    setFilterChannel(filtered)
+  }, [chattingChannels?.data.row, searchText])
 
   return (
     <>
@@ -48,15 +58,15 @@ const Chat = (props: { playerId?: string }) => {
               />
               <TextInput
                 placeholder="Tìm kiếm..."
-                value={searchTex}
+                value={searchText}
                 type="text"
                 name="categorySearch"
-                onChange={(e) => setSearchText(e.target.value)}
+                onChange={(e) => setSearchTextt(e.target.value)}
                 className="text-white w-full"
               />
             </div>
-            <div className="h-full hide-scrollbar flex flex-col border-r-2 overflow-y-auto">
-              {chattingChannels?.data.row.map((item, index) => {
+            <div className="h-full custom-scrollbar flex flex-col border-r-2 overflow-y-auto">
+              {filterChannel?.map((item, index) => {
                 const latestMeassge: MessageResponse | null = item.messages.length
                   ? item.messages[item.messages.length - 1]
                   : null
@@ -103,7 +113,7 @@ const Chat = (props: { playerId?: string }) => {
               })}
             </div>
           </div>
-          <div className="h-[85vh] col-span-7 overflow-y-auto hide-scrollbar">
+          <div className="h-[85vh] col-span-7 overflow-y-auto custom-scrollbar">
             <div className="h-[85vh] flex flex-col pl-5 pr-5 pb-5 gap-2">
               {channelSelected?._id && <ChatContent key={channelSelected?._id} channel={channelSelected} />}
             </div>

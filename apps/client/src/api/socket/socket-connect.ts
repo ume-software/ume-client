@@ -17,6 +17,8 @@ export const socket = (token: string | null) => {
     })
 
     const socketInstanceChatting = socketio.connect(getEnv().baseChattingURL, {
+      secure: true,
+      rejectUnauthorized: false,
       auth: {
         authorization: `Bearer ${token}`,
       },

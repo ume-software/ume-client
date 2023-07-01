@@ -41,7 +41,7 @@ const ChatContent = (props: { channel: ChattingChannelReponse }) => {
   const [messageInput, setMessageInput] = useState('')
   const { userContext, setUserContext } = useContext(UserContext)
   const { socketClientEmit } = useContext(SocketClientEmit)
-  const { socketChattingContext } = useContext(SocketContext)
+  const { socketContext } = useContext(SocketContext)
   const { socketToken } = useContext(SocketTokenContext)
 
   const utils = trpc.useContext()
@@ -57,11 +57,11 @@ const ChatContent = (props: { channel: ChattingChannelReponse }) => {
   useChatScroll(divRef, chattingMessageChannel)
 
   useEffect(() => {
-    if (socketChattingContext) {
+    if (socketContext?.socketChattingContext) {
       utils.invalidateQueries('chatting.getMessagesByChannelId')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socketChattingContext, socketToken])
+  }, [socketContext?.socketChattingContext, socketToken])
 
   const mappingMember: { [key: string]: MemberChatChannelResponse } = convertArrayObjectToObject(
     chattingMessageChannel?.data.members || [],
@@ -120,7 +120,7 @@ const ChatContent = (props: { channel: ChattingChannelReponse }) => {
             </div>
           </div>
           <div className="flex flex-col h-full gap-2">
-            <div className="flex gap-2 pb-5 overflow-auto border-b-2 hide-scrollbar">
+            <div className="flex gap-2 pb-5 overflow-auto border-b-2 custom-scrollbar">
               {/* {props.data?.providerSkills?.map((providerSkill, index) => (
             <div
               key={index}
@@ -137,23 +137,27 @@ const ChatContent = (props: { channel: ChattingChannelReponse }) => {
             </div>
             <div className="h-[65vh] flex flex-col justify-end">
               {/* <!-- message --> */}
-              <div ref={divRef} className="flex flex-col w-full px-5 overflow-y-scroll hide-scrollbar justinfy-between">
+              <div
+                ref={divRef}
+                className="flex flex-col w-full px-5 overflow-y-scroll custom-scrollbar justinfy-between"
+              >
                 <div className="flex flex-col mt-5 ">
-                  {chattingMessageChannel?.data.messages.map((item) => {
+                  {chattingMessageChannel?.data.messages.map((item, index) => {
                     const sender = mappingMember[item.senderId]
                     const isSeftMessage = sender.userId.toString() == userContext?.id.toString() ? true : false
                     return (
-                      <div className={`flex justify-end  ${!isSeftMessage ? 'flex-row-reverse' : ''} mb-4`}>
+                      <div key={index} className={`flex justify-end  ${!isSeftMessage ? 'flex-row-reverse' : ''} mb-4`}>
                         <div
-                          className={`mx-2 py-3 px-4  
+                          className={`max-w-xs mx-2 py-3 px-4 text-white text-lg
                         ${
                           isSeftMessage
-                            ? ' bg-blue-400  rounded-bl-3xl rounded-tl-3xl rounded-tr-xl'
-                            : 'bg-gray-400 rounded-br-3xl rounded-tr-3xl rounded-tl-xl'
+                            ? ' bg-blue-500  rounded-bl-3xl rounded-tl-3xl rounded-tr-xl'
+                            : 'bg-gray-700 rounded-br-3xl rounded-tr-3xl rounded-tl-xl'
                         }
-                       text-white`}
+                       whitespace-pre-wrap 
+                       break-words`}
                         >
-                          {item.content}
+                          <span>{item.content}</span>
                         </div>
 
                         <div className="relative w-8 h-8 ">
@@ -184,7 +188,7 @@ const ChatContent = (props: { channel: ChattingChannelReponse }) => {
               <div className="w-[100%] h-[40px] relative">
                 <input
                   type="text"
-                  className="h-[40px] w-full bg-[#413F4D] text-white text-lg font-medium px-5 border-1 border-solid border-[#B9B8CC] rounded-full"
+                  className="h-[40px] w-full bg-[#413F4D] text-white text-lg font-medium pl-5 pr-10 border-1 border-solid border-[#B9B8CC] rounded-full"
                   placeholder="Nhập tin nhắn"
                   value={messageInput}
                   onChange={(e) => setMessageInput(e.target.value)}

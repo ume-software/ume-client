@@ -1,12 +1,13 @@
 import { Like, Send } from '@icon-park/react'
 import { Input, InputWithAffix, InputWithButton } from '@ume/ui'
 
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 
 import { formatDistanceToNow } from 'date-fns'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
 
+import { SocketTokenContext } from '~/components/layouts/app-layout/app-layout'
 import { CommentSkeletonLoader } from '~/components/skeleton-load'
 import { TimeFormat } from '~/components/time-format'
 
@@ -14,6 +15,7 @@ import { trpc } from '~/utils/trpc'
 
 const CommmentPost = (props) => {
   const [commnetPostData, setCommnetPostData] = useState<any>([])
+  const { socketToken } = useContext(SocketTokenContext)
   const {
     data: commentPostByID,
     isLoading: loadingCommentPostByID,
@@ -30,7 +32,7 @@ const CommmentPost = (props) => {
   return (
     <>
       <div>
-        <div className="h-[500px] text-white overflow-y-scroll hide-scrollbar p-3">
+        <div className="h-[500px] text-white overflow-y-scroll custom-scrollbar p-3">
           {loadingCommentPostByID ? (
             <CommentSkeletonLoader />
           ) : (

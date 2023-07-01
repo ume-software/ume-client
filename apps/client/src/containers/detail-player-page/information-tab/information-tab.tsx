@@ -1,5 +1,6 @@
 import { Down, Gamepad, People, Right } from '@icon-park/react'
 import { CustomDrawer } from '@ume/ui'
+import coin from 'public/coin-icon.png'
 import ImgForEmpty from 'public/img-for-empty.png'
 import Chat from '~/containers/chat/chat.container'
 
@@ -13,12 +14,13 @@ import GamePlayed from './game'
 import PersonalInformation from './personal-information'
 
 import { LoginModal } from '~/components/header/login-modal.component'
-import { DrawerContext, SocketTokenContext } from '~/components/layouts/app-layout/app-layout'
+import { DrawerContext, SocketTokenContext, UserContext } from '~/components/layouts/app-layout/app-layout'
 
 import { trpc } from '~/utils/trpc'
 
 const InformationTab = (props: { data }) => {
   const { socketToken, setSocketToken } = useContext(SocketTokenContext)
+  const { userContext } = useContext(UserContext)
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
   const { childrenDrawer, setChildrenDrawer } = useContext(DrawerContext)
   const [gamesToggle, setGamesToggle] = useState(false)
@@ -107,15 +109,22 @@ const InformationTab = (props: { data }) => {
                   {props.data.providerSkills?.map((item, index) => (
                     <div
                       key={index}
-                      className={`flex lg:flex-row flex-col items-center gap-3 hover:bg-gray-700 p-1 rounded-xl ${
+                      className={`flex lg:flex-row flex-col items-center group gap-3 hover:bg-gray-700 p-1 rounded-xl ${
                         gameSelected === index ? 'bg-gray-700' : ''
                       }`}
                       onClick={() => handleSelected(index)}
                     >
-                      <Image src={item.skill.imageUrl} alt="Game Image" width={60} height={60} />
-                      <div className="w-[150px] truncate">
-                        <p className="font-semibold text-lg text-white z-[4]">{item.skill.name}</p>
-                        <p className="font-semibold text-md text-white opacity-30 z-[4]">{item.defaultCost}U / 1h</p>
+                      <Image src={item.skill.imageUrl} alt="Game Image" width={60} height={80} />
+                      <div className="max-w-[150px] min-w-[150px]">
+                        <p className="font-semibold text-lg text-white z-[4] truncate group-hover:w-fit">
+                          {item.skill.name}
+                        </p>
+                        <div className="flex items-center">
+                          <Image src={coin} width={20} height={20} alt="coin" />
+                          <p className="font-semibold text-md text-white opacity-30 z-[4] truncate group-hover:w-fit">
+                            {item.defaultCost} / 1h
+                          </p>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -144,24 +153,28 @@ const InformationTab = (props: { data }) => {
                 alt="Empty Image"
               />
             </div>
-            <div className="flex flex-col gap-5 my-10">
-              <CustomDrawer
-                customOpenBtn={`rounded-full w-full text-purple-700 border-2 border-purple-700 py-2 font-semibold text-2xl cursor-pointer hover:scale-105 text-center`}
-                openBtn={<div onClick={handleChatOpen}>Chat</div>}
-                token={!!socketToken}
-              >
-                {childrenDrawer}
-              </CustomDrawer>
+            {userContext?.id != props.data.userId ? (
+              <div className="flex flex-col gap-5 my-10">
+                <CustomDrawer
+                  customOpenBtn={`rounded-full w-full text-purple-700 border-2 border-purple-700 py-2 font-semibold text-2xl cursor-pointer hover:scale-105 text-center`}
+                  openBtn={<div onClick={handleChatOpen}>Chat</div>}
+                  token={!!socketToken}
+                >
+                  {childrenDrawer}
+                </CustomDrawer>
 
-              <CustomDrawer
-                drawerTitle="Xác nhận đặt"
-                customOpenBtn="rounded-full w-full text-white bg-purple-700 py-2 font-semibold text-2xl cursor-pointer hover:scale-105 text-center"
-                openBtn={<div onClick={handleOrderOpen}>Order</div>}
-                token={!!socketToken}
-              >
-                {childrenDrawer}
-              </CustomDrawer>
-            </div>
+                <CustomDrawer
+                  drawerTitle="Xác nhận đặt"
+                  customOpenBtn="rounded-full w-full text-white bg-purple-700 py-2 font-semibold text-2xl cursor-pointer hover:scale-105 text-center"
+                  openBtn={<div onClick={handleOrderOpen}>Order</div>}
+                  token={!!socketToken}
+                >
+                  {childrenDrawer}
+                </CustomDrawer>
+              </div>
+            ) : (
+              <></>
+            )}
           </div>
         </div>
       </div>

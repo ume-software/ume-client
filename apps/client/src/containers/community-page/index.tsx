@@ -1,1 +1,1 @@
-export * from './community-page.container'
+export * from './communit-page.container'

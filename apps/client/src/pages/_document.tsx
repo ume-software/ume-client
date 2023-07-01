@@ -34,7 +34,7 @@ class MyDocument extends Document {
           <link rel="shortcut icon" href="/ico/ume-black.ico" />
           <link rel="manifest" href="/site.webmanifest" />
         </Head>
-        <body>
+        <body className="custom-scrollbar">
           <Main />
           <NextScript />
         </body>

@@ -31,7 +31,7 @@ export const Header: React.FC = ({}: HeaderProps) => {
   const [balance, setBalance] = useState<any>()
   const { socketToken, setSocketToken } = useContext(SocketTokenContext)
   const { userContext, setUserContext } = useContext(UserContext)
-  const { socketChattingContext, socketLivestreamContext, socketNotificateContext } = useContext(SocketContext)
+  const { socketContext } = useContext(SocketContext)
   const prevSocketContext = useRef<any[]>([])
   const [selectedTab, setSelectedTab] = useState('Chính')
   const [notificateIcon, setNotificatedIcon] = useState<ReactNode>(<Remind size={22} strokeWidth={4} fill="#FFFFFF" />)
@@ -62,7 +62,7 @@ export const Header: React.FC = ({}: HeaderProps) => {
   }, [dataResponse, setSocketToken, userInfo])
 
   useEffect(() => {
-    if (socketNotificateContext[0]?.id !== prevSocketContext.current?.[0]?.id) {
+    if (socketContext?.socketNotificateContext[0]?.id !== prevSocketContext.current?.[0]?.id) {
       setNotificatedIcon(
         <div onClick={() => setNotificatedIcon(<Remind size={22} strokeWidth={4} fill="#FFFFFF" />)}>
           <Remind theme="filled" size="22" fill="#FFFFFF" strokeLinejoin="bevel" />
@@ -72,9 +72,9 @@ export const Header: React.FC = ({}: HeaderProps) => {
     } else {
       setNotificatedIcon(<Remind size={22} strokeWidth={4} fill="#FFFFFF" />)
     }
-    prevSocketContext.current = socketNotificateContext
+    prevSocketContext.current = socketContext?.socketNotificateContext
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socketNotificateContext[0]?.id])
+  }, [socketContext?.socketNotificateContext[0]?.id])
 
   const tabDatas: tabData[] = [
     {

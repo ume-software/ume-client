@@ -24,7 +24,7 @@ const LikePost = (props) => {
 
   return (
     <>
-      <div className="h-[500px] text-white overflow-y-scroll hide-scrollbar p-3">
+      <div className="h-[500px] text-white overflow-y-scroll custom-scrollbar p-3">
         {loadingLikePostByID ? (
           <CommentSkeletonLoader />
         ) : (

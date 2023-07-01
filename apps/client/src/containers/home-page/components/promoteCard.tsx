@@ -1,4 +1,5 @@
-import { Github, PlayOne, Star, VoiceOne } from '@icon-park/react'
+import { PlayOne, Star, VoiceOne } from '@icon-park/react'
+import coin from 'public/coin-icon.png'
 
 import React from 'react'
 
@@ -65,9 +66,13 @@ export const PromoteCard = (props: IPromoteCardProps) => {
           <span className="font-bold align-top text-slate-300">{props?.totalVote}</span>
         </div>
         <div className="font-sans truncate">{props?.description}</div>
-        <Github theme="outline" size="16" fill="#7463F0" className="inline-block mr-2" />
-        <div className="inline-block mr-2 font-sans">
-          <span className="text-2xl font-bold">{Math.round(props.coin)}</span>.00 /{1} giờ
+
+        <div className="flex items-center mr-2 font-sans gap-1">
+          <div className="flex items-center">
+            <Image src={coin} width={40} height={40} alt="coin" />
+            <p className="text-2xl font-semibold">{props.coin}</p>
+          </div>
+          <p className="text-2xl font-semibold opacity-30">/ 1h</p>
         </div>
       </div>
     </div>
