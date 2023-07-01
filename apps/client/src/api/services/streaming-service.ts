@@ -2,7 +2,7 @@ import { TRPCError } from '@trpc/server'
 import { getEnv } from '~/env'
 
 import { parse } from 'cookie'
-import { LiveStreamChannelApi, CreateLiveStreamChannelRequest } from 'ume-steaming-service-openapi'
+import { CreateLiveStreamChannelRequest, LiveStreamChannelApi } from 'ume-steaming-service-openapi'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
@@ -12,7 +12,7 @@ export const getListStreamChannels = async (query: { limit: string; page: string
     const response = await new LiveStreamChannelApi({
       basePath: getEnv().baseLivestreamURL,
       isJsonMime: () => true,
-    }).getLiveStreamChannels(query.limit, query.page, '{"updatedAt":-1}')
+    }).getLiveStreamChannels(true, query.limit, query.page, '{"updatedAt":-1}')
 
     return {
       data: response.data,

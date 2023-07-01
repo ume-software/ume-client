@@ -1,39 +1,151 @@
 $ npx next build
-info  - Loaded env from C:\Users\trieu\Desktop\ume-client\apps\client\.env.local
-info  - Loaded env from C:\Users\trieu\Desktop\ume-client\apps\client\.env.production
+info  - Loaded env from D:\FPTU\Capstone_Project\ume-client\apps\client\.env.local
+info  - Loaded env from D:\FPTU\Capstone_Project\ume-client\apps\client\.env.production
 warn  - Invalid next.config.js options detected: 
   - The root value has an unexpected property, transpilePackages, which is not in the list of allowed properties (amp, analyticsId, assetPrefix, basePath, cleanDistDir, compiler, compress, crossOrigin, devIndicators, distDir, env, eslint, excludeDefaultMomentLocales, experimental, exportPathMap, generateBuildId, generateEtags, headers, httpAgentOptions, i18n, images, onDemandEntries, optimizeFonts, output, outputFileTracing, pageExtensions, poweredByHeader, productionBrowserSourceMaps, publicRuntimeConfig, reactStrictMode, redirects, rewrites, sassOptions, serverRuntimeConfig, staticPageGenerationTimeout, swcMinify, trailingSlash, typescript, useFileSystemPublicRoutes, webpack).
 
 See more info here: https://nextjs.org/docs/messages/invalid-next-config
 info  - Linting and checking validity of types...
+
+./src/api/streamning.ts
+7:3  Warning: Delete `··`  prettier/prettier
+8:5  Warning: Delete `····`  prettier/prettier
+9:1  Warning: Replace `············` with `······`  prettier/prettier
+10:1  Warning: Replace `············` with `······`  prettier/prettier
+11:5  Warning: Delete `····`  prettier/prettier
+12:1  Warning: Replace `········` with `····`  prettier/prettier
+13:1  Warning: Delete `······`  prettier/prettier
+14:5  Warning: Delete `····`  prettier/prettier
+15:3  Warning: Delete `··`  prettier/prettier
+16:1  Warning: Delete `··`  prettier/prettier
+17:5  Warning: Delete `····`  prettier/prettier
+18:1  Warning: Replace `············` with `······`  prettier/prettier
+19:1  Warning: Delete `······`  prettier/prettier
+20:7  Warning: Delete `······`  prettier/prettier
+21:1  Warning: Replace `········` with `····`  prettier/prettier
+22:1  Warning: Delete `····`  prettier/prettier
+23:1  Warning: Replace `············` with `······`  prettier/prettier
+24:1  Warning: Replace `········` with `····`  prettier/prettier
+25:1  Warning: Delete `··`  prettier/prettier
+26:1  Warning: Delete `··`  prettier/prettier
+27:1  Warning: Replace `········` with `····`  prettier/prettier
+28:1  Warning: Replace `············` with `······`  prettier/prettier
+29:1  Warning: Replace `············` with `······`  prettier/prettier
+30:1  Warning: Replace `············` with `······`  prettier/prettier
+31:5  Warning: Delete `····`  prettier/prettier
+32:1  Warning: Replace `········` with `····`  prettier/prettier
+33:1  Warning: Delete `······`  prettier/prettier
+34:5  Warning: Delete `····`  prettier/prettier
+35:1  Warning: Delete `··`  prettier/prettier
+
+./src/containers/detail-live-page/detail-live-page.container.tsx
+1:8  Warning: Replace `Head·from·'next/head';` with `flvPlayer·from·'flv.js'⏎import·{·getEnv·}·from·'~/env'⏎`  prettier/prettier
+2:52  Warning: Replace `;` with `⏎⏎import·Head·from·'next/head'`  prettier/prettier
+3:73  Warning: Replace `;` with `⏎`  prettier/prettier
+4:71  Warning: Replace `;` with `⏎`  prettier/prettier
+5:36  Warning: Delete `;⏎import·flvPlayer·from·'flv.js';⏎import·{·getEnv·}·from·'~/env';`  prettier/prettier
+10:25  Warning: Delete `;`  prettier/prettier
+11:37  Warning: Delete `;`  prettier/prettier
+12:91  Warning: Delete `;⏎`  prettier/prettier
+15:73  Warning: Replace `'streaming.getLiveStreamChannelById',·{·channelId:·slug·as·string,·limit:·'1',·page:·'1'·}]);` with `⏎····'streaming.getLiveStreamChannelById',⏎····{·channelId:·slug·as·string,·limit:·'1',·page:·'1'·},⏎··])`  prettier/prettier
+16:18  Warning: Replace `=`${getEnv().baseLivestreamURL}/api/v1/live/show/${slug}`;⏎` with `·=·`${getEnv().baseLivestreamURL}/api/v1/live/show/${slug}``  prettier/prettier
+21:33  Warning: Delete `;`  prettier/prettier
+23:34  Warning: Delete `;`  prettier/prettier
+26:17  Warning: Delete `;`  prettier/prettier
+37:11  Warning: Replace `·<div·className='w-3/4·h-fit'·` with `<div·className="w-3/4·h-fit"`  prettier/prettier
+41:15  Warning: Insert `··`  prettier/prettier
+42:1  Warning: Replace `················maxWidth:"1280px"` with `··················maxWidth:·'1280px'`  prettier/prettier
+43:17  Warning: Replace `minWidth:"100%"` with `··minWidth:·'100%'`  prettier/prettier
+44:1  Warning: Replace `················maxHeight:"100vh"` with `··················maxHeight:·'100vh'`  prettier/prettier
+45:1  Warning: Replace `················minHeight:"720px"` with `··················minHeight:·'720px',`  prettier/prettier
+46:1  Warning: Insert `··`  prettier/prettier
+58:4  Warning: Delete `;`  prettier/prettier
+59:2  Warning: Delete `;`  prettier/prettier
+61:28  Warning: Delete `;`  prettier/prettier
+
+./src/containers/live-page/live-page.container.tsx
+1:1  Warning: Delete `import·Link·from·'next/link'⏎`  prettier/prettier
+7:1  Warning: Insert `import·Link·from·'next/link'⏎`  prettier/prettier
+8:71  Warning: Insert `⏎`  prettier/prettier
+21:1  Warning: Delete `··`  prettier/prettier
+49:41  Warning: Replace `·streamChannels.data.row.map((data,·index)·=>·` with `⏎··············streamChannels.data.row.map((data,·index)·=>·{`  prettier/prettier
+50:7  Warning: Replace `···{⏎··········console.log("datag·?·d.host?.userInfomation?.sluata.host?.userInfomation?.slug·:··data.host?.user_id·=>·",data.host.userInfomation.slug||data.host.userId` with `··········console.log(⏎··················'datag·?·d.host?.userInfomation?.sluata.host?.userInfomation?.slug·:··data.host?.user_id·=>·',⏎··················data.host.userInfomation.slug·||·data.host.userId,⏎················`  prettier/prettier
+52:1  Warning: Replace `··········return····(⏎···············<Link·key={data._id}·href={`/live/${data.host.userInfomation.slug||` with `················return·(⏎··················<Link·key={data._id}·href={`/live/${data.host.userInfomation.slug·||·`  prettier/prettier
+54:1  Warning: Replace `················` with `····················`  prettier/prettier
+55:19  Warning: Insert `····`  prettier/prettier
+56:1  Warning: Replace `····················` with `························`  prettier/prettier
+57:23  Warning: Insert `····`  prettier/prettier
+58:1  Warning: Insert `····`  prettier/prettier
+59:1  Warning: Replace `························` with `····························`  prettier/prettier
+60:1  Warning: Insert `····`  prettier/prettier
+61:1  Warning: Insert `····`  prettier/prettier
+62:25  Warning: Insert `····`  prettier/prettier
+63:23  Warning: Insert `····`  prettier/prettier
+64:1  Warning: Replace `····················` with `························`  prettier/prettier
+65:21  Warning: Insert `····`  prettier/prettier
+66:1  Warning: Insert `····`  prettier/prettier
+67:1  Warning: Replace `························'Live'` with `····························'Live'·`  prettier/prettier
+68:23  Warning: Insert `····`  prettier/prettier
+69:1  Warning: Replace `····················` with `························`  prettier/prettier
+70:1  Warning: Insert `····`  prettier/prettier
+71:21  Warning: Insert `····`  prettier/prettier
+72:1  Warning: Replace `··················` with `······················`  prettier/prettier
+73:1  Warning: Insert `····`  prettier/prettier
+74:1  Warning: Replace `····················` with `························`  prettier/prettier
+75:1  Warning: Insert `····`  prettier/prettier
+76:25  Warning: Insert `····`  prettier/prettier
+77:1  Warning: Replace `··························` with `······························`  prettier/prettier
+78:27  Warning: Insert `····`  prettier/prettier
+79:1  Warning: Insert `····`  prettier/prettier
+80:27  Warning: Insert `····`  prettier/prettier
+81:27  Warning: Insert `····`  prettier/prettier
+82:1  Warning: Replace `························` with `····························`  prettier/prettier
+83:1  Warning: Insert `····`  prettier/prettier
+84:1  Warning: Insert `····`  prettier/prettier
+85:21  Warning: Insert `····`  prettier/prettier
+86:23  Warning: Insert `····`  prettier/prettier
+87:1  Warning: Replace `························` with `····························`  prettier/prettier
+88:1  Warning: Insert `····`  prettier/prettier
+89:23  Warning: Insert `····`  prettier/prettier
+90:1  Warning: Replace `························` with `····························`  prettier/prettier
+91:23  Warning: Insert `····`  prettier/prettier
+92:1  Warning: Replace `····················` with `························`  prettier/prettier
+93:1  Warning: Insert `····`  prettier/prettier
+94:17  Warning: Insert `····`  prettier/prettier
+95:1  Warning: Replace `··············` with `··················`  prettier/prettier
+96:1  Warning: Insert `····`  prettier/prettier
+97:10  Warning: Replace `}⏎·········` with `·····}`  prettier/prettier
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules
 info  - Creating an optimized production build...
 info  - Compiled successfully
 info  - Collecting page data...
-info  - Generating static pages (0/6)
-info  - Generating static pages (1/6)
-info  - Generating static pages (2/6)
-info  - Generating static pages (4/6)
-info  - Generating static pages (6/6)
+info  - Generating static pages (0/7)
+info  - Generating static pages (1/7)
+info  - Generating static pages (3/7)
+info  - Generating static pages (5/7)
+info  - Generating static pages (7/7)
 info  - Finalizing page optimization...
 
 Route (pages)                              Size     First Load JS
 ┌ λ /                                      257 B          99.5 kB
 ├   /_app                                  0 B            99.2 kB
-├ ○ /404 (443 ms)                          6.28 kB         106 kB
+├ ○ /404 (301 ms)                          6.28 kB         106 kB
 ├ λ /api/status                            0 B            99.2 kB
 ├ λ /api/trpc/[trpc]                       0 B            99.2 kB
-├ ○ /community (504 ms)                    1.82 kB         101 kB
-├ ○ /home (414 ms)                         1.83 kB         101 kB
-├ ○ /live (483 ms)                         1.82 kB         101 kB
-├ λ /logout                                409 B          99.6 kB
-├ ○ /player/[playerId] (503 ms)            1.88 kB         101 kB
-└ ○ /register-provider (334 ms)            1.82 kB         101 kB
+├ ○ /community                             1.82 kB         101 kB
+├ ○ /home                                  1.83 kB         101 kB
+├ ○ /live                                  1.82 kB         101 kB
+├ ○ /live/[slug] (323 ms)                  1.87 kB         101 kB
+├ λ /logout                                409 B          99.7 kB
+├ ○ /player/[playerId] (313 ms)            1.88 kB         101 kB
+└ ○ /register-provider                     1.82 kB         101 kB
 + First Load JS shared by all              106 kB
   ├ chunks/framework-22108eb722d84e59.js   45.4 kB
   ├ chunks/main-1549b305685c3af3.js        26.7 kB
   ├ chunks/pages/_app-aae82f905d4d44e6.js  25.1 kB
-  ├ chunks/webpack-debeca61f3b9e57e.js     2.02 kB
-  └ css/e572a787a1795de9.css               6.34 kB
+  ├ chunks/webpack-21665c1a3d33a2ca.js     2.03 kB
+  └ css/885df64a57e73b23.css               6.34 kB
 
 λ  (Server)  server-side renders at runtime (uses getInitialProps or getServerSideProps)
 ○  (Static)  automatically rendered as static HTML (uses no initial props)
