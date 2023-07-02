@@ -2,7 +2,7 @@ import { TRPCError } from '@trpc/server'
 import { getEnv } from '~/env'
 
 import { parse } from 'cookie'
-import { PostApi } from 'ume-booking-service-openapi'
+import { CommentPostRequest, PostApi } from 'ume-booking-service-openapi'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
@@ -101,23 +101,67 @@ export const getCommentPostByID = async (input: string) => {
   }
 }
 
-// export const likePost = async (input: string, ctx) => {
-//   const cookies = parse(ctx.req.headers.cookie)
-//   try {
-//     const response = await new PostApi({
-//       basePath: getEnv().baseBookingURL,
-//       isJsonMime: () => true,
-//       accessToken: cookies['accessToken'],
-//     })
-//     return {
-//       data: response.data,
-//       success: true,
-//     }
-//   } catch (error) {
-//     console.log('error at catch', error)
-//     throw new TRPCError({
-//       code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
-//       message: error.message || 'Failed to get list post',
-//     })
-//   }
-// }
+export const likeForPostId = async (input: string, ctx) => {
+  const cookies = parse(ctx.req.headers.cookie)
+  try {
+    const response = await new PostApi({
+      basePath: getEnv().baseBookingURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).likeForPostId(input)
+    return {
+      data: response.data,
+      success: true,
+    }
+  } catch (error) {
+    console.log('error at catch', error)
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.message || 'Failed to get list post',
+    })
+  }
+}
+
+export const unlikeForPostId = async (input: string, ctx) => {
+  const cookies = parse(ctx.req.headers.cookie)
+  try {
+    const response = await new PostApi({
+      basePath: getEnv().baseBookingURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).unlikeForPostId(input)
+    return {
+      data: response.data,
+      success: true,
+    }
+  } catch (error) {
+    console.log('error at catch', error)
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.message || 'Failed to get list post',
+    })
+  }
+}
+
+export const commentForPostId = async (query: { id: string; commentPostRequest: CommentPostRequest }, ctx) => {
+  console.log('query====>', query)
+
+  const cookies = parse(ctx.req.headers.cookie)
+  try {
+    const response = await new PostApi({
+      basePath: getEnv().baseBookingURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).commentForPostId(query.id, query.commentPostRequest)
+    return {
+      data: response.data,
+      success: true,
+    }
+  } catch (error) {
+    console.log('error at catch', error)
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.message || 'Failed to get list post',
+    })
+  }
+}

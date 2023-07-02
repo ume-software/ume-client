@@ -9,7 +9,7 @@ const PostSkeletonLoader = () => {
             <div className="h-6 w-3/12 rounded-md bg-gray-300 "></div>
             <div className="h-6 w-5/12 rounded-md bg-gray-300 "></div>
             <div className="h-6 w-9/12 rounded-md bg-gray-300 "></div>
-            <div className="h-96 w-full rounded-md bg-gray-300 "></div>
+            <div className="h-30 w-full rounded-md bg-gray-300 "></div>
           </div>
         </div>
       </div>
@@ -19,7 +19,7 @@ const PostSkeletonLoader = () => {
             <div className="h-6 w-3/12 rounded-md bg-gray-300 "></div>
             <div className="h-6 w-5/12 rounded-md bg-gray-300 "></div>
             <div className="h-6 w-9/12 rounded-md bg-gray-300 "></div>
-            <div className="h-96 w-full rounded-md bg-gray-300 "></div>
+            <div className="h-30 w-full rounded-md bg-gray-300 "></div>
           </div>
         </div>
       </div>

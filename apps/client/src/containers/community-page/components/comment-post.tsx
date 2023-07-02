@@ -7,6 +7,7 @@ import { formatDistanceToNow } from 'date-fns'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
 
+import { LoginModal } from '~/components/header/login-modal.component'
 import { SocketTokenContext } from '~/components/layouts/app-layout/app-layout'
 import { CommentSkeletonLoader } from '~/components/skeleton-load'
 import { TimeFormat } from '~/components/time-format'
@@ -15,22 +16,59 @@ import { trpc } from '~/utils/trpc'
 
 const CommmentPost = (props) => {
   const [commnetPostData, setCommnetPostData] = useState<any>([])
+  const [comment, setComment] = useState('')
+  const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
   const { socketToken } = useContext(SocketTokenContext)
   const {
     data: commentPostByID,
     isLoading: loadingCommentPostByID,
     isFetching: fetchingCommentPostByID,
+    refetch: refetchCommentPostByID,
   } = trpc.useQuery(['community.getCommentPostByID', props.postID], {
     refetchOnReconnect: 'always',
     onSuccess(data) {
       setCommnetPostData(data?.data?.row)
     },
   })
+  const commentForPostId = trpc.useMutation(['community.commentForPostId'])
 
-  const handleSendComment = () => {}
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSendComment()
+    }
+  }
+
+  const handleSendComment = () => {
+    if (socketToken) {
+      if (comment != '') {
+        try {
+          commentForPostId.mutate(
+            { id: props.postID, commentPostRequest: { content: comment, parentCommentId: '' } },
+            {
+              onSuccess: (data) => {
+                if (data.success) {
+                  refetchCommentPostByID().then((data) => {
+                    setCommnetPostData((prevComment) => [data.data?.data.row, ...prevComment])
+                  })
+                  setComment('')
+                }
+              },
+            },
+          )
+        } catch (error) {
+          console.error('Failed to post comment:', error)
+        }
+      }
+    } else {
+      setIsModalLoginVisible(true)
+    }
+  }
 
   return (
     <>
+      <div>
+        <LoginModal isModalLoginVisible={isModalLoginVisible} setIsModalLoginVisible={setIsModalLoginVisible} />
+      </div>
       <div>
         <div className="h-[500px] text-white overflow-y-scroll custom-scrollbar p-3">
           {loadingCommentPostByID ? (
@@ -75,6 +113,9 @@ const CommmentPost = (props) => {
                 <Send theme="filled" size="25" fill="#FFFFFF" strokeLinejoin="bevel" />
               </div>
             }
+            onKeyPress={handleKeyPress}
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
           />
         </div>
       </div>

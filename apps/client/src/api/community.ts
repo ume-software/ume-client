@@ -2,11 +2,14 @@ import { z } from 'zod'
 
 import { createRouter } from './configurations'
 import {
+  commentForPostId,
   getCommentPostByID,
   getLikePostByID,
   getPostByID,
   getSuggestPost,
   getSuggestPostWithoutCookies,
+  likeForPostId,
+  unlikeForPostId,
 } from './services/community-service'
 
 export const communityRouter = createRouter()
@@ -36,5 +39,26 @@ export const communityRouter = createRouter()
     input: z.string(),
     resolve: async ({ input }) => {
       return await getCommentPostByID(input)
+    },
+  })
+  .query('likeForPostId', {
+    input: z.string(),
+    resolve: async ({ ctx, input }) => {
+      return await likeForPostId(input, ctx)
+    },
+  })
+  .query('unlikeForPostId', {
+    input: z.string(),
+    resolve: async ({ ctx, input }) => {
+      return await unlikeForPostId(input, ctx)
+    },
+  })
+  .mutation('commentForPostId', {
+    input: z.object({
+      id: z.string(),
+      commentPostRequest: z.object({ content: z.string(), parentCommentId: z.string() }),
+    }),
+    resolve: async ({ ctx, input }) => {
+      return await commentForPostId(input, ctx)
     },
   })
