@@ -4,10 +4,12 @@ import { z } from 'zod'
 import { createRouter } from './configurations'
 import {
   createBooking,
+  getAllNotice,
   getBookingProvider,
   getFeedbackSkillById,
   getHotProviders,
   getListSkill,
+  getNoticeAmount,
   getProviderBySlug,
   getProviders,
   putProviderResponeBooking,
@@ -61,7 +63,18 @@ export const bookingRouter = createRouter()
   })
   .query('getFeedbackSkillById', {
     input: z.string(),
-    resolve: async ({ ctx, input }) => {
+    resolve: async ({ input }) => {
       return await getFeedbackSkillById(input)
+    },
+  })
+  .query('getNoticeAmount', {
+    resolve: async ({ ctx }) => {
+      return await getNoticeAmount(ctx)
+    },
+  })
+  .query('getAllNotice', {
+    input: z.string(),
+    resolve: async ({ ctx, input }) => {
+      return await getAllNotice(input, ctx)
     },
   })

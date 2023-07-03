@@ -29,12 +29,12 @@ export const Header: React.FC = ({}: HeaderProps) => {
   const [showRechargeModal, setShowRechargeModal] = useState(false)
   const [userInfo, setUserInfo] = useState<any>()
   const [balance, setBalance] = useState<any>()
+  const [notificatedAmount, setNotificatedAmount] = useState<number>(0)
   const { socketToken, setSocketToken } = useContext(SocketTokenContext)
   const { userContext, setUserContext } = useContext(UserContext)
   const { socketContext } = useContext(SocketContext)
   const prevSocketContext = useRef<any[]>([])
   const [selectedTab, setSelectedTab] = useState('Chính')
-  const [notificateIcon, setNotificatedIcon] = useState<ReactNode>(<Remind size={22} strokeWidth={4} fill="#FFFFFF" />)
   const [isModalLoginVisible, setIsModalLoginVisible] = React.useState(false)
 
   const { data: dataResponse, isLoading: loading, isFetching: fetching } = trpc.useQuery(['identity.identityInfo'])
@@ -47,6 +47,14 @@ export const Header: React.FC = ({}: HeaderProps) => {
     refetchOnMount: true,
     onSuccess(data) {
       setBalance(data.data.totalCoinsAvailable)
+    },
+  })
+
+  const { refetch: refetchNotificateAmount } = trpc.useQuery(['booking.getNoticeAmount'], {
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    onSuccess(data) {
+      setNotificatedAmount(data.data.amount)
     },
   })
 
@@ -63,14 +71,7 @@ export const Header: React.FC = ({}: HeaderProps) => {
 
   useEffect(() => {
     if (socketContext?.socketNotificateContext[0]?.id !== prevSocketContext.current?.[0]?.id) {
-      setNotificatedIcon(
-        <div onClick={() => setNotificatedIcon(<Remind size={22} strokeWidth={4} fill="#FFFFFF" />)}>
-          <Remind theme="filled" size="22" fill="#FFFFFF" strokeLinejoin="bevel" />
-          <Dot className="absolute top-0 right-0" theme="filled" size="18" fill="#FF0000" strokeLinejoin="bevel" />
-        </div>,
-      )
-    } else {
-      setNotificatedIcon(<Remind size={22} strokeWidth={4} fill="#FFFFFF" />)
+      refetchNotificateAmount()
     }
     prevSocketContext.current = socketContext?.socketNotificateContext
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -170,7 +171,22 @@ export const Header: React.FC = ({}: HeaderProps) => {
             <div className="relative pt-2">
               <Menu>
                 <div>
-                  <Menu.Button>{notificateIcon}</Menu.Button>
+                  <Menu.Button>
+                    {notificatedAmount > 0 ? (
+                      <div>
+                        <Remind theme="filled" size="22" fill="#FFFFFF" strokeLinejoin="bevel" />
+                        <Dot
+                          className="absolute top-0 right-0"
+                          theme="filled"
+                          size="18"
+                          fill="#FF0000"
+                          strokeLinejoin="bevel"
+                        />
+                      </div>
+                    ) : (
+                      <Remind size={22} strokeWidth={4} fill="#FFFFFF" />
+                    )}
+                  </Menu.Button>
                 </div>
                 <Transition
                   as={Fragment}

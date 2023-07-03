@@ -96,4 +96,30 @@ const SliderSkeletonLoader = () => (
   </div>
 )
 
-export { PostSkeletonLoader, CommentSkeletonLoader, PlayerSkeletonLoader, SliderSkeletonLoader }
+const NotificateSkeletonLoader = () => (
+  <div className="w-full overflow-hidden">
+    <div className="w-full flex flex-col select-none duration-0 min-w-max">
+      {[...Array(2)].map((_, index) => (
+        <div
+          tabIndex={index}
+          className="w-full h-[150px] mt-3 p-3 duration-500 ease-in-out cursor-pointer bg-gray-100 hover:scale-105"
+          key={index}
+        >
+          <div className="relative w-full h-2/3 bg-gray-300 animate-pulse"></div>
+          <div className="w-full h-1/3 flex justify-around mt-2">
+            <div className="relative w-1/3 h-2/3 bg-gray-300 animate-pulse"></div>
+            <div className="relative w-1/3 h-2/3 bg-gray-300 animate-pulse"></div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+)
+
+export {
+  PostSkeletonLoader,
+  CommentSkeletonLoader,
+  PlayerSkeletonLoader,
+  SliderSkeletonLoader,
+  NotificateSkeletonLoader,
+}
