@@ -6,7 +6,7 @@ const PostImageLayout = (props) => {
   return (
     <div key={props.data.id} className="w-full h-fit">
       {props.data?.length === 1 ? (
-        <div className="relative max-w-[760px] h-[500px]">
+        <div className="relative max-w-[800px] h-[500px]">
           <Image
             className="absolute"
             layout="fill"

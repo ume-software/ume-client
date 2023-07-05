@@ -5,6 +5,7 @@ import { parse } from 'cookie'
 import {
   BookingApi,
   BookingProviderRequest,
+  NoticeApi,
   ProviderApi,
   ProviderSkillApi,
   SkillApi,
@@ -157,6 +158,48 @@ export const getFeedbackSkillById = async (feedbackSkillId) => {
       basePath: getEnv().baseBookingURL,
       isJsonMime: () => true,
     }).getFeedbackByProviderSkill(feedbackSkillId, '1', '1', '["$all"]')
+    return {
+      data: respone.data,
+      success: true,
+    }
+  } catch (error) {
+    console.log('error at catch', error)
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to create new booking',
+    })
+  }
+}
+
+export const getNoticeAmount = async (ctx) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie)
+    const respone = await new NoticeApi({
+      basePath: getEnv().baseBookingURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).amountNewNotice()
+    return {
+      data: respone.data,
+      success: true,
+    }
+  } catch (error) {
+    console.log('error at catch', error)
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to create new booking',
+    })
+  }
+}
+
+export const getAllNotice = async (input: string, ctx) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie)
+    const respone = await new NoticeApi({
+      basePath: getEnv().baseBookingURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).getNotice('10', input, '["$all"]')
     return {
       data: respone.data,
       success: true,

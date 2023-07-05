@@ -373,7 +373,7 @@ const useEditableForm = ({
             <div className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" />
           </Transition.Child>
 
-          <div className="fixed inset-0 z-50 overflow-y-auto top-32">
+          <div className="fixed inset-0 z-50 overflow-y-auto top-32 custom-scrollbar">
             <div className="flex justify-center text-center min-h-fit sm:p-0">
               <Transition.Child
                 as={Fragment}

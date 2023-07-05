@@ -10,7 +10,7 @@ import { PostSkeletonLoader } from '~/components/skeleton-load'
 import { trpc } from '~/utils/trpc'
 
 const GeneralPost = () => {
-  const [suggestPostData, setSuggestPostData] = useState<PostResponse[] | undefined>([])
+  const [suggestPostData, setSuggestPostData] = useState<PostResponse[] | undefined>(undefined)
   const [scrollPosition, setScrollPosition] = useState(0)
   const { socketToken } = useContext(SocketTokenContext)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -21,13 +21,11 @@ const GeneralPost = () => {
     refetch: refetchSuggestPost,
   } = socketToken
     ? trpc.useQuery(['community.getSuggestPost'], {
-        refetchOnReconnect: 'always',
         onSuccess(data) {
           setSuggestPostData((prevData) => [...(prevData || []), ...(data?.data?.row || [])])
         },
       })
     : trpc.useQuery(['community.getSuggestPostWithoutCookies'], {
-        refetchOnReconnect: 'always',
         onSuccess(data) {
           setSuggestPostData((prevData) => [...(prevData || []), ...(data?.data?.row || [])])
         },
@@ -51,7 +49,7 @@ const GeneralPost = () => {
       const containerHeight = containerRef?.current?.offsetHeight
       if (scrollPosition > containerHeight * 0.85) {
         refetchSuggestPost().then((data) => {
-          setSuggestPostData((prevData) => [...(prevData || []), ...((data?.data as PostPagingResponse).row || [])])
+          setSuggestPostData((prevData) => [...(prevData || []), ...(data?.data?.data.row || [])])
         })
       }
     }
@@ -60,7 +58,7 @@ const GeneralPost = () => {
 
   return (
     <>
-      {loadingSuggestPost ? (
+      {loadingSuggestPost && suggestPostData === undefined ? (
         <>
           <PostSkeletonLoader />
         </>
@@ -73,6 +71,7 @@ const GeneralPost = () => {
           ))}
         </div>
       )}
+      {(loadingSuggestPost || fetchingSuggestPost) && <PostSkeletonLoader />}
     </>
   )
 }

@@ -1,5 +1,5 @@
 import { ArrowRight, Search } from '@icon-park/react'
-import { CustomDrawer, TextInput } from '@ume/ui'
+import { CustomDrawer } from '@ume/ui'
 
 import React, { useContext } from 'react'
 

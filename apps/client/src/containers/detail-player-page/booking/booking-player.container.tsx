@@ -53,8 +53,8 @@ const BookingPlayer = (props: { data }) => {
             setSubmitting(false)
             setBooking({ providerSkillId: '', bookingPeriod: 1, voucherIds: [] })
             notification.success({
-              message: 'Booking Created',
-              description: 'Your booking has been created successfully.',
+              message: 'Tạo đơn thành công',
+              description: 'Đơn của bạn đã được tạo thành công.',
               placement: 'bottomLeft',
             })
           }
@@ -63,8 +63,8 @@ const BookingPlayer = (props: { data }) => {
           console.error(error)
           setSubmitting(false)
           notification.error({
-            message: 'Booking Create Fail',
-            description: 'Your booking has been fail. Please check your booking again!',
+            message: 'Tạo đơn thất bại',
+            description: 'Đơn của bạn chưa được tạo thành công!',
             placement: 'bottomLeft',
           })
         },
