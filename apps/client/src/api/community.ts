@@ -1,14 +1,17 @@
+import { CreateNewPostRequest, ThumbnailResponse } from 'ume-booking-service-openapi'
 import { z } from 'zod'
 
 import { createRouter } from './configurations'
 import {
   commentForPostId,
+  createNewPost,
   getCommentPostByID,
   getLikePostByID,
   getPostByID,
   getSuggestPost,
   getSuggestPostWithoutCookies,
   likeForPostId,
+  postWatchedPost,
   unlikeForPostId,
 } from './services/community-service'
 
@@ -21,6 +24,12 @@ export const communityRouter = createRouter()
   .query('getSuggestPost', {
     resolve: async ({ ctx }) => {
       return await getSuggestPost(ctx)
+    },
+  })
+  .mutation('postWatchedPost', {
+    input: z.string(),
+    resolve: async ({ ctx, input }) => {
+      return await postWatchedPost(ctx, input)
     },
   })
   .query('getPostByID', {
@@ -60,5 +69,19 @@ export const communityRouter = createRouter()
     }),
     resolve: async ({ ctx, input }) => {
       return await commentForPostId(input, ctx)
+    },
+  })
+  .mutation('createNewPost', {
+    input: z.object({
+      content: z.string(),
+      thumbnails: z.array(
+        z.object({
+          url: z.string().optional(),
+          type: z.string().optional(),
+        }),
+      ),
+    }),
+    resolve: async ({ ctx, input }) => {
+      return await createNewPost(input as CreateNewPostRequest, ctx)
     },
   })

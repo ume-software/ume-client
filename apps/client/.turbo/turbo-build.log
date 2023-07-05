@@ -32,8 +32,8 @@ Route (pages)                              Size     First Load JS
   ├ chunks/framework-22108eb722d84e59.js   45.4 kB
   ├ chunks/main-1549b305685c3af3.js        26.7 kB
   ├ chunks/pages/_app-aae82f905d4d44e6.js  25.1 kB
-  ├ chunks/webpack-a1ff73ab17da9991.js     2.01 kB
-  └ css/90a12710bc9227c6.css               6.49 kB
+  ├ chunks/webpack-e3f96d9f564d951c.js     2.02 kB
+  └ css/7105bfe66302be20.css               6.52 kB
 
 λ  (Server)  server-side renders at runtime (uses getInitialProps or getServerSideProps)
 ○  (Static)  automatically rendered as static HTML (uses no initial props)

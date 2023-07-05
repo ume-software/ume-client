@@ -2,7 +2,7 @@ import { TRPCError } from '@trpc/server'
 import { getEnv } from '~/env'
 
 import { parse } from 'cookie'
-import { CommentPostRequest, PostApi } from 'ume-booking-service-openapi'
+import { CommentPostRequest, CreateNewPostRequest, PostApi } from 'ume-booking-service-openapi'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
@@ -34,6 +34,27 @@ export const getSuggestPost = async (ctx) => {
     }).suggestPost('10', '1', '["$all"]')
     return {
       data: response.data,
+    }
+  } catch (error) {
+    console.log('error at catch', error)
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.message || 'Failed to get list post',
+    })
+  }
+}
+
+export const postWatchedPost = async (ctx, input: string) => {
+  const cookies = parse(ctx.req.headers.cookie)
+  try {
+    const response = await new PostApi({
+      basePath: getEnv().baseBookingURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).watchedByPostId(input)
+    return {
+      data: response.data,
+      success: true,
     }
   } catch (error) {
     console.log('error at catch', error)
@@ -144,8 +165,6 @@ export const unlikeForPostId = async (input: string, ctx) => {
 }
 
 export const commentForPostId = async (query: { id: string; commentPostRequest: CommentPostRequest }, ctx) => {
-  console.log('query====>', query)
-
   const cookies = parse(ctx.req.headers.cookie)
   try {
     const response = await new PostApi({
@@ -153,6 +172,27 @@ export const commentForPostId = async (query: { id: string; commentPostRequest: 
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
     }).commentForPostId(query.id, query.commentPostRequest)
+    return {
+      data: response.data,
+      success: true,
+    }
+  } catch (error) {
+    console.log('error at catch', error)
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.message || 'Failed to get list post',
+    })
+  }
+}
+
+export const createNewPost = async (input: CreateNewPostRequest, ctx) => {
+  const cookies = parse(ctx.req.headers.cookie)
+  try {
+    const response = await new PostApi({
+      basePath: getEnv().baseBookingURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).createPost(input)
     return {
       data: response.data,
       success: true,

@@ -16,7 +16,7 @@ Route (pages)                              Size     First Load JS
 ├   /_app                                  0 B            74.2 kB
 ├ λ /404                                   334 B          74.5 kB
 ├ λ /api/status                            0 B            74.2 kB
-└ ○ /signin (319 ms)                       1.81 kB          76 kB
+└ ○ /signin                                1.81 kB          76 kB
 + First Load JS shared by all              78 kB
   ├ chunks/framework-22108eb722d84e59.js   45.4 kB
   ├ chunks/main-1549b305685c3af3.js        26.7 kB
