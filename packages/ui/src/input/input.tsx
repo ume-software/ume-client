@@ -19,6 +19,26 @@ export const Input = ({ className, ...props }: InputProps) => {
   )
 }
 
+interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+  className?: string
+}
+export const TextArea = ({ className, ...props }: TextAreaProps) => {
+  const [value, setValue] = useState('')
+
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setValue(e.target.value)
+  }
+
+  return (
+    <textarea
+      className={`form-input w-full rounded px-3 py-2 placeholder:text-slate-400/70 hover:border-ume-blue ${className}`}
+      value={value}
+      onChange={handleChange}
+      {...props}
+    />
+  )
+}
+
 interface FormInputProps extends InputProps {
   error: boolean | undefined
   errorMessage: string | undefined

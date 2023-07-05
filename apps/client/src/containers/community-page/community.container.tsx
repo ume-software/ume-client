@@ -1,15 +1,14 @@
-import { Earth, EveryUser } from '@icon-park/react'
+import { CloseSmall, Earth, EveryUser } from '@icon-park/react'
+import { Modal } from '@ume/ui'
 
 import { ReactNode, useContext, useState } from 'react'
 
-import Head from 'next/head'
-
-import CommunityPost from './components/community-post'
+import CreatePost from './components/create-post'
 import FollowingPost from './components/following-post'
 import GeneralPost from './components/general-post'
 
 import { LoginModal } from '~/components/header/login-modal.component'
-import { AppLayout, SocketTokenContext } from '~/components/layouts/app-layout/app-layout'
+import { SocketTokenContext } from '~/components/layouts/app-layout/app-layout'
 
 interface CommunityProps {
   postTypeName: string
@@ -33,15 +32,42 @@ const postTypeData: CommunityProps[] = [
 const CommunityContainer = () => {
   const { socketToken } = useContext(SocketTokenContext)
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
+  const [isModalVisible, setIsModalVisible] = useState(false)
   const [socialSelected, setSocialSelected] = useState<CommunityProps>({
     postTypeName: 'Chung',
     icon: <Earth theme="outline" size="18" fill="#FFFFFF" strokeLinejoin="bevel" />,
     postTypeChildren: <GeneralPost />,
   })
 
+  const handleClose = () => {
+    setIsModalVisible(false)
+  }
+
+  const CreatePostModal = Modal.useEditableForm({
+    onOK: () => {},
+    onClose: handleClose,
+    title: <p className="text-white">Tạo bài viết</p>,
+    show: isModalVisible,
+    form: <CreatePost handleClose={handleClose} />,
+    backgroundColor: '#15151b',
+    closeButtonOnConner: (
+      <>
+        <CloseSmall
+          onClick={handleClose}
+          onKeyDown={(e) => e.key === 'Enter' && handleClose()}
+          tabIndex={1}
+          className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
+          theme="outline"
+          size="24"
+          fill="#FFFFFF"
+        />
+      </>
+    ),
+  })
+
   const handleCreatePost = () => {
     if (socketToken) {
-      console.log('123')
+      setIsModalVisible(true)
     } else {
       setIsModalLoginVisible(true)
     }
@@ -52,6 +78,7 @@ const CommunityContainer = () => {
       <div>
         <LoginModal isModalLoginVisible={isModalLoginVisible} setIsModalLoginVisible={setIsModalLoginVisible} />
       </div>
+      {isModalVisible && CreatePostModal}
       <div className="min-h-screen" style={{ margin: '0 70px' }}>
         <div className="grid grid-cols-10 gap-10 text-white">
           <div className="col-span-2 sticky top-50">
@@ -76,7 +103,7 @@ const CommunityContainer = () => {
                   className="rounded-full w-full text-white bg-purple-700 py-2 font-semibold text-2xl hover:scale-105 text-center cursor-pointer"
                   onClick={handleCreatePost}
                 >
-                  Create post
+                  Tạo bài viết
                 </div>
               </div>
             </div>
