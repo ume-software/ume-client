@@ -16,13 +16,13 @@ Route (pages)                              Size     First Load JS
 ├   /_app                                  0 B            74.2 kB
 ├ λ /404                                   334 B          74.5 kB
 ├ λ /api/status                            0 B            74.2 kB
-└ ○ /signin (319 ms)                       1.81 kB          76 kB
+└ ○ /signin (563 ms)                       1.81 kB          76 kB
 + First Load JS shared by all              78 kB
   ├ chunks/framework-22108eb722d84e59.js   45.4 kB
   ├ chunks/main-1549b305685c3af3.js        26.7 kB
   ├ chunks/pages/_app-e19f58b656006011.js  308 B
-  ├ chunks/webpack-b4b6070bf87c478b.js     1.79 kB
-  └ css/c7107f137661b298.css               3.79 kB
+  ├ chunks/webpack-b11799a0102ac77c.js     1.79 kB
+  └ css/5dee86e796ebabc4.css               3.79 kB
 
 λ  (Server)  server-side renders at runtime (uses getInitialProps or getServerSideProps)
 ○  (Static)  automatically rendered as static HTML (uses no initial props)
