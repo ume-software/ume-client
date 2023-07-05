@@ -5,36 +5,39 @@ import { useState } from 'react'
 import { FormikErrors, useFormik } from 'formik'
 import Head from 'next/head'
 
-import { MISSING_REQUIRED_FIELD_MESSAGE } from '~/utils/constant'
+import { trpc } from '~/utils/trpc'
 
 interface IFormValues {
-  email: string
+  username: string
   password: string
 }
 
 const validate = (values: IFormValues): FormikErrors<IFormValues> => {
   const errors: FormikErrors<IFormValues> = {}
-  if (!values.email) {
-    errors.email = MISSING_REQUIRED_FIELD_MESSAGE
-  }
-
-  if (!values.password) {
-    errors.password = MISSING_REQUIRED_FIELD_MESSAGE
-  }
   return errors
 }
 
 const SigninPage = () => {
   const [isSubmiting, setSubmiting] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
+  const signin = trpc.useMutation(['auth.signin'])
   const form = useFormik({
     initialValues: {
-      email: '',
+      username: '',
       password: '',
     },
     validate,
     onSubmit: (values) => {
-      console.log(values)
+      setSubmiting(true)
+      signin.mutate(values, {
+        onSuccess: () => {
+          setSubmiting(false)
+        },
+        onError: (error) => {
+          setSubmiting(false)
+          setErrorMessage(error.message)
+        },
+      })
     },
   })
 
@@ -49,16 +52,16 @@ const SigninPage = () => {
           <div>
             <form onSubmit={form.handleSubmit} className="flex flex-col mb-4 gap-y-4">
               <div>
-                <FieldLabel labelName="Email" />
+                <FieldLabel labelName="Username" />
                 <FormInput
-                  name="email"
+                  name="username"
                   disabled={false}
-                  value={form.values.email}
+                  value={form.values.username}
                   onChange={form.handleChange}
                   onBlur={form.handleBlur}
-                  error={!!form.errors.email && form.touched.email}
-                  errorMessage={form.errors.email}
-                  placeholder="Enter Email Address."
+                  error={!!form.errors.username && form.touched.username}
+                  errorMessage={form.errors.username}
+                  placeholder="Enter Username."
                 />
               </div>
               <div>
@@ -82,7 +85,7 @@ const SigninPage = () => {
                   type="submit"
                   customCSS="bg-blue-500 hover:opacoty-90 px-2 py-1
             hover:bg-ume-primary focus:bg-ume-primary active:bg-ume-primary/90"
-                  isDisabled={!(form.values.email || form.values.password) || isSubmiting}
+                  isDisabled={!(form.values.username || form.values.password) || isSubmiting}
                   isLoading={isSubmiting}
                 >
                   Login
