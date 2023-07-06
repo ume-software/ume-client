@@ -37,16 +37,16 @@ const PostByID = (props) => {
 
             <div className="absolute w-full px-10 top-[40%] flex justify-between">
               <div className="p-3 rounded-full hover:bg-gray-400" onClick={handlePreviousImage}>
-                <Left theme="filled" size="30" fill="#FFFFFF" strokeLinejoin="bevel" />
+                <Left theme="filled" size="35" fill="#FFFFFF" strokeLinejoin="bevel" />
               </div>
               <div className="p-3 rounded-full hover:bg-gray-400" onClick={handleNextImage}>
-                <Right theme="filled" size="30" fill="#FFFFFF" strokeLinejoin="bevel" />
+                <Right theme="filled" size="35" fill="#FFFFFF" strokeLinejoin="bevel" />
               </div>
             </div>
           </div>
         </div>
-        <div className="col-span-2 p-5 bg-white">
-          <div className="flex gap-3">
+        <div className="col-span-2 p-5 bg-zinc-800 text-white rounded-t-xl mr-9">
+          <div className="flex gap-3 mb-5">
             <div className="relative w-[70px] h-[70px]">
               <Image
                 className="absolute rounded-full"

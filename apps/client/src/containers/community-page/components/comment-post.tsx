@@ -1,7 +1,7 @@
 import { Like, Send } from '@icon-park/react'
 import { Input, InputWithAffix, InputWithButton } from '@ume/ui'
 
-import { useContext, useState } from 'react'
+import { Dispatch, SetStateAction, useContext, useState } from 'react'
 
 import { formatDistanceToNow } from 'date-fns'
 import Image from 'next/legacy/image'
@@ -14,7 +14,13 @@ import { TimeFormat } from '~/components/time-format'
 
 import { trpc } from '~/utils/trpc'
 
-const CommmentPost = (props) => {
+interface CommentPostProps {
+  postID: string
+  postComment: number
+  setPostComment: Dispatch<SetStateAction<number>>
+}
+
+const CommmentPost = (props: CommentPostProps) => {
   const [commnetPostData, setCommnetPostData] = useState<any>([])
   const [comment, setComment] = useState('')
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
@@ -48,8 +54,9 @@ const CommmentPost = (props) => {
               onSuccess: (data) => {
                 if (data.success) {
                   refetchCommentPostByID().then((data) => {
-                    setCommnetPostData((prevComment) => [data.data?.data.row, ...prevComment])
+                    setCommnetPostData(data.data?.data.row)
                   })
+                  props.setPostComment(props.postComment + 1)
                   setComment('')
                 }
               },
@@ -76,23 +83,25 @@ const CommmentPost = (props) => {
           ) : (
             <>
               {commnetPostData.map((data) => (
-                <Link key={data.id} href={`#${data.user.slug}`}>
+                <Link key={data.id} href={`#${data?.user?.slug}`}>
                   <div className="flex items-start gap-3 m-5 p-1 rounded-xl">
                     <div className="relative min-w-[50px] min-h-[50px]">
                       <Image
                         className="absolute rounded-full"
                         layout="fill"
                         objectFit="cover"
-                        src={data.user.avatarUrl}
+                        src={data?.user?.avatarUrl}
                         alt="Provider Image"
                       />
                     </div>
-                    <div className="flex flex-col items-start justify-start gap-2 p-2 rounded-xl bg-[#47474780]">
-                      <div>
-                        <p className="font-semibold text-lg">{data.user.name}</p>
-                        <p className="font-normal text-md opacity-40">{TimeFormat({ date: data.createdAt })}</p>
+                    <div>
+                      <div className="flex flex-col items-start justify-start gap-2 p-2 rounded-xl bg-[#47474780]">
+                        <p className="font-semibold text-lg">{data?.user?.name}</p>
+                        <div>{data?.content}</div>
                       </div>
-                      <div>{data.content}</div>
+                      <p className="font-normal text-sm opacity-40">
+                        {data?.createdAt ? TimeFormat({ date: data?.createdAt }) : ''}
+                      </p>
                     </div>
                   </div>
                 </Link>
@@ -102,7 +111,7 @@ const CommmentPost = (props) => {
         </div>
         <div className="p-3">
           <InputWithButton
-            className="outline-none border-none focus:outline-[#6d3fe0] max-h-10 rounded-2xl"
+            className="outline-none bg-[#413F4D] text-white border-none focus:outline-[#6d3fe0] max-h-10 rounded-2xl"
             placeholder="Bình luận"
             position={'right'}
             component={

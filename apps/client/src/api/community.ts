@@ -11,8 +11,8 @@ import {
   getSuggestPost,
   getSuggestPostWithoutCookies,
   likeForPostId,
-  postWatchedPost,
   unlikeForPostId,
+  watchedPost,
 } from './services/community-service'
 
 export const communityRouter = createRouter()
@@ -26,10 +26,10 @@ export const communityRouter = createRouter()
       return await getSuggestPost(ctx)
     },
   })
-  .mutation('postWatchedPost', {
+  .mutation('watchedPost', {
     input: z.string(),
     resolve: async ({ ctx, input }) => {
-      return await postWatchedPost(ctx, input)
+      return await watchedPost(ctx, input)
     },
   })
   .query('getPostByID', {
@@ -50,13 +50,13 @@ export const communityRouter = createRouter()
       return await getCommentPostByID(input)
     },
   })
-  .query('likeForPostId', {
+  .mutation('likeForPostId', {
     input: z.string(),
     resolve: async ({ ctx, input }) => {
       return await likeForPostId(input, ctx)
     },
   })
-  .query('unlikeForPostId', {
+  .mutation('unlikeForPostId', {
     input: z.string(),
     resolve: async ({ ctx, input }) => {
       return await unlikeForPostId(input, ctx)

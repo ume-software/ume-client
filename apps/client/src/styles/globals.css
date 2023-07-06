@@ -42,21 +42,20 @@
 
 
 .custom-scrollbar::-webkit-scrollbar {
-  width: 3px;
+  max-width: 8px;
 }
 
-/* Track */
 .custom-scrollbar::-webkit-scrollbar-track {
   background: #15151b;
 }
 
-/* Handle */
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #7e22ce; 
+  background: #7e22ce;
+  border-radius: 8px;
+  min-height: 50px; 
 }
 
-/* Handle on hover */
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #555; 
+  background: #555;
 }
 

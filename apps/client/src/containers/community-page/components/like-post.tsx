@@ -1,6 +1,6 @@
 import { Like } from '@icon-park/react'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import Image from 'next/legacy/image'
 import Link from 'next/link'
@@ -9,7 +9,7 @@ import { CommentSkeletonLoader } from '~/components/skeleton-load'
 
 import { trpc } from '~/utils/trpc'
 
-const LikePost = (props) => {
+const LikePost = (props: { postID: string }) => {
   const [likePostData, setLikePostData] = useState<any>([])
   const {
     data: likePostByID,
@@ -21,6 +21,7 @@ const LikePost = (props) => {
       setLikePostData(data?.data?.row)
     },
   })
+  console.log({ likePostData })
 
   return (
     <>

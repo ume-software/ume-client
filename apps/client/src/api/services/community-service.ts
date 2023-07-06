@@ -44,7 +44,7 @@ export const getSuggestPost = async (ctx) => {
   }
 }
 
-export const postWatchedPost = async (ctx, input: string) => {
+export const watchedPost = async (ctx, input: string) => {
   const cookies = parse(ctx.req.headers.cookie)
   try {
     const response = await new PostApi({
@@ -89,7 +89,7 @@ export const getLikePostByID = async (input: string) => {
     const response = await new PostApi({
       basePath: getEnv().baseBookingURL,
       isJsonMime: () => true,
-    }).getLikeByPostId(input, '10', '1', '["$all"]')
+    }).getLikeByPostId(input, 'unlimited', '1', '["$all"]')
     return {
       data: response.data,
       success: true,
@@ -108,7 +108,7 @@ export const getCommentPostByID = async (input: string) => {
     const response = await new PostApi({
       basePath: getEnv().baseBookingURL,
       isJsonMime: () => true,
-    }).getCommentByPostId(input, '10', '1', '["$all"]')
+    }).getCommentByPostId(input, '10', '1', '["$all"]', undefined, '[{"updatedAt":"desc"}]')
     return {
       data: response.data,
       success: true,

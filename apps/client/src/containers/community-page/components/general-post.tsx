@@ -14,6 +14,7 @@ const GeneralPost = () => {
   const [scrollPosition, setScrollPosition] = useState(0)
   const { socketToken } = useContext(SocketTokenContext)
   const containerRef = useRef<HTMLDivElement>(null)
+  const [idPostArray, setIdPostArray] = useState<string[]>([])
   const {
     data: suggestPost,
     isLoading: loadingSuggestPost,
@@ -30,6 +31,7 @@ const GeneralPost = () => {
           setSuggestPostData((prevData) => [...(prevData || []), ...(data?.data?.row || [])])
         },
       })
+  const watchedPost = trpc.useMutation(['community.watchedPost'])
 
   useEffect(() => {
     window.addEventListener('scroll', onScroll)
@@ -56,6 +58,13 @@ const GeneralPost = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scrollPosition])
 
+  useEffect(() => {
+    if (idPostArray.length > 0) {
+      watchedPost.mutate(idPostArray[idPostArray.length - 1])
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [idPostArray])
+
   return (
     <>
       {loadingSuggestPost && suggestPostData === undefined ? (
@@ -66,7 +75,7 @@ const GeneralPost = () => {
         <div ref={containerRef}>
           {suggestPostData?.map((data, index) => (
             <div key={index}>
-              <CommunityPost data={data} />
+              <CommunityPost data={data} idPostArray={idPostArray} setIdPostArray={setIdPostArray} />
             </div>
           ))}
         </div>
