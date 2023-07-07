@@ -84,12 +84,12 @@ export const getPostByID = async (input: string) => {
   }
 }
 
-export const getLikePostByID = async (input: string) => {
+export const getLikePostByID = async (query: { postId: string; limit: string; page: string }) => {
   try {
     const response = await new PostApi({
       basePath: getEnv().baseBookingURL,
       isJsonMime: () => true,
-    }).getLikeByPostId(input, 'unlimited', '1', '["$all"]')
+    }).getLikeByPostId(query.postId, query.limit, query.page, '["$all"]')
     return {
       data: response.data,
       success: true,
@@ -103,12 +103,12 @@ export const getLikePostByID = async (input: string) => {
   }
 }
 
-export const getCommentPostByID = async (input: string) => {
+export const getCommentPostByID = async (query: { postId: string; limit: string; page: string }) => {
   try {
     const response = await new PostApi({
       basePath: getEnv().baseBookingURL,
       isJsonMime: () => true,
-    }).getCommentByPostId(input, '10', '1', '["$all"]', undefined, '[{"updatedAt":"desc"}]')
+    }).getCommentByPostId(query.postId, query.limit, query.page, '["$all"]', undefined, '[{"updatedAt":"desc"}]')
     return {
       data: response.data,
       success: true,

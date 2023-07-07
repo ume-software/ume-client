@@ -50,16 +50,17 @@ const GeneralPost = () => {
     if (containerRef?.current) {
       const containerHeight = containerRef?.current?.offsetHeight
       if (scrollPosition > containerHeight * 0.85) {
-        refetchSuggestPost().then((data) => {
-          setSuggestPostData((prevData) => [...(prevData || []), ...(data?.data?.data.row || [])])
-        })
+        // refetchSuggestPost().then((data) => {
+        //   setSuggestPostData((prevData) => [...(prevData || []), ...(data?.data?.data.row || [])])
+        // })
+        refetchSuggestPost()
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scrollPosition])
 
   useEffect(() => {
-    if (idPostArray.length > 0) {
+    if (socketToken && idPostArray.length > 0) {
       watchedPost.mutate(idPostArray[idPostArray.length - 1])
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

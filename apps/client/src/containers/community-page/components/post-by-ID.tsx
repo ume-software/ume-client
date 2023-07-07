@@ -45,7 +45,7 @@ const PostByID = (props) => {
             </div>
           </div>
         </div>
-        <div className="col-span-2 p-5 bg-zinc-800 text-white rounded-t-xl mr-9">
+        <div className="col-span-2 p-5 bg-zinc-800 text-white rounded-tl-xl mr-0">
           <div className="flex gap-3 mb-5">
             <div className="relative w-[70px] h-[70px]">
               <Image

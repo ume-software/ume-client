@@ -1,7 +1,7 @@
 import { Like, Send } from '@icon-park/react'
 import { Input, InputWithAffix, InputWithButton } from '@ume/ui'
 
-import { Dispatch, SetStateAction, useContext, useState } from 'react'
+import { Dispatch, SetStateAction, useContext, useEffect, useRef, useState } from 'react'
 
 import { formatDistanceToNow } from 'date-fns'
 import Image from 'next/legacy/image'
@@ -22,6 +22,9 @@ interface CommentPostProps {
 
 const CommmentPost = (props: CommentPostProps) => {
   const [commnetPostData, setCommnetPostData] = useState<any>([])
+  const [page, setPage] = useState<string>('1')
+  const limit = '10'
+  const containerRef = useRef<HTMLDivElement>(null)
   const [comment, setComment] = useState('')
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
   const { socketToken } = useContext(SocketTokenContext)
@@ -30,10 +33,10 @@ const CommmentPost = (props: CommentPostProps) => {
     isLoading: loadingCommentPostByID,
     isFetching: fetchingCommentPostByID,
     refetch: refetchCommentPostByID,
-  } = trpc.useQuery(['community.getCommentPostByID', props.postID], {
+  } = trpc.useQuery(['community.getCommentPostByID', { postId: props.postID, limit: limit, page: page }], {
     refetchOnReconnect: 'always',
     onSuccess(data) {
-      setCommnetPostData(data?.data?.row)
+      setCommnetPostData((prevData) => [...(prevData || []), ...(data?.data?.row || [])])
     },
   })
   const commentForPostId = trpc.useMutation(['community.commentForPostId'])
@@ -43,6 +46,38 @@ const CommmentPost = (props: CommentPostProps) => {
       handleSendComment()
     }
   }
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (containerRef.current) {
+        const { scrollTop, scrollHeight, clientHeight } = containerRef.current
+
+        const isAtEnd = scrollTop + clientHeight >= scrollHeight
+
+        if (isAtEnd && Number(commentPostByID?.data.count) > Number(limit) * Number(page)) {
+          setPage(String(Number(page) + 1))
+        }
+      }
+    }
+
+    if (containerRef.current) {
+      containerRef.current.addEventListener('scroll', handleScroll)
+    }
+
+    return () => {
+      if (containerRef.current) {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        containerRef.current.removeEventListener('scroll', handleScroll)
+      }
+    }
+  })
+
+  useEffect(() => {
+    if (page !== '1') {
+      refetchCommentPostByID()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page])
 
   const handleSendComment = () => {
     if (socketToken) {
@@ -77,7 +112,7 @@ const CommmentPost = (props: CommentPostProps) => {
         <LoginModal isModalLoginVisible={isModalLoginVisible} setIsModalLoginVisible={setIsModalLoginVisible} />
       </div>
       <div>
-        <div className="h-[500px] text-white overflow-y-scroll custom-scrollbar p-3">
+        <div ref={containerRef} className="h-[500px] text-white overflow-y-scroll custom-scrollbar p-3">
           {loadingCommentPostByID ? (
             <CommentSkeletonLoader />
           ) : (
@@ -108,6 +143,7 @@ const CommmentPost = (props: CommentPostProps) => {
               ))}
             </>
           )}
+          {fetchingCommentPostByID ? <CommentSkeletonLoader /> : ''}
         </div>
         <div className="p-3">
           <InputWithButton

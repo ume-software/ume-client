@@ -39,13 +39,21 @@ export const communityRouter = createRouter()
     },
   })
   .query('getLikePostByID', {
-    input: z.string(),
+    input: z.object({
+      postId: z.string(),
+      limit: z.string(),
+      page: z.string(),
+    }),
     resolve: async ({ input }) => {
       return await getLikePostByID(input)
     },
   })
   .query('getCommentPostByID', {
-    input: z.string(),
+    input: z.object({
+      postId: z.string(),
+      limit: z.string(),
+      page: z.string(),
+    }),
     resolve: async ({ input }) => {
       return await getCommentPostByID(input)
     },
