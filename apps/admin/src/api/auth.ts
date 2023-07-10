@@ -8,7 +8,7 @@ export const authRouter = createRouter().mutation('signin', {
     username: z.string(),
     password: z.string(),
   }),
-  resolve: async ({ input }) => {
-    return await signinService(input)
+  resolve: async ({ input, ctx }) => {
+    return await signinService(input, ctx)
   },
 })
