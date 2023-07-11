@@ -1,5 +1,7 @@
 import React from 'react'
 
+import { Shimmer } from 'react-shimmer'
+
 const PostSkeletonLoader = () => {
   return (
     <div className="flex flex-col gap-5">
@@ -116,10 +118,49 @@ const NotificateSkeletonLoader = () => (
   </div>
 )
 
+const TableSkeletonLoader = () => {
+  const skeletonRowCount = 2
+
+  return (
+    <table className="w-full text-center">
+      <thead>
+        <tr>
+          <th className="py-2">Top</th>
+          <th className="py-2">Tên</th>
+          <th className="py-2">Số tiền</th>
+        </tr>
+      </thead>
+      <tbody>
+        {Array.from({ length: skeletonRowCount }, (_, index) => (
+          <tr key={index} className="">
+            <td className="py-2">
+              <Shimmer width={30} height={40} />
+            </td>
+            <td className="py-2">
+              <div className="min-w-[150px] flex justify-center items-center gap-2">
+                <div className="relative w-8 h-8">
+                  <Shimmer width={8} height={8} />
+                </div>
+                <Shimmer width={100} height={10} />
+              </div>
+            </td>
+            <td className="py-2">
+              <div className="flex items-center justify-center">
+                <Shimmer width={40} height={40} />
+              </div>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )
+}
+
 export {
   PostSkeletonLoader,
   CommentSkeletonLoader,
   PlayerSkeletonLoader,
   SliderSkeletonLoader,
   NotificateSkeletonLoader,
+  TableSkeletonLoader,
 }

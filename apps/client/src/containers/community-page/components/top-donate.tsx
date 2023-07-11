@@ -57,9 +57,13 @@ const TopDonate = (props) => {
           </>
         ))}
       </div>
-      <div>
-        <Table data={userDonate} />
-        <Table data={providerDonate} />
+      <div className="flex flex-col gap-5 mt-5">
+        <div>
+          <Table type={'User'} data={userDonate} loadingUserDonate={loadingUserDonate} />
+        </div>
+        <div>
+          <Table type={'Provider'} data={providerDonate} loadingUserDonate={loadingUserDonate} />
+        </div>
       </div>
     </>
   )

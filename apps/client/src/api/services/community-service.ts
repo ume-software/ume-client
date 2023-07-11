@@ -211,7 +211,7 @@ export const donateProviderTop = async (input: string) => {
     const response = await new DonateApi({
       basePath: getEnv().baseBookingURL,
       isJsonMime: () => true,
-    }).topDonateProvider(input as '1Y' | '1M' | '1W', 10)
+    }).topDonateProvider(input as '1Y' | '1M' | '1W', 3)
     return {
       data: response.data,
       success: true,
@@ -230,7 +230,7 @@ export const donateUserTop = async (input) => {
     const response = await new DonateApi({
       basePath: getEnv().baseBookingURL,
       isJsonMime: () => true,
-    }).topUserDonate(input as '1Y' | '1M' | '1W', 10)
+    }).topUserDonate(input as '1Y' | '1M' | '1W', 3)
     return {
       data: response.data,
       success: true,
