@@ -113,7 +113,7 @@ const CommmentPost = (props: CommentPostProps) => {
       </div>
       <div>
         <div ref={containerRef} className="h-[500px] text-white overflow-y-scroll custom-scrollbar p-3">
-          {loadingCommentPostByID ? (
+          {loadingCommentPostByID && !fetchingCommentPostByID ? (
             <CommentSkeletonLoader />
           ) : (
             <>

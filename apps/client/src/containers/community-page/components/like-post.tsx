@@ -60,7 +60,7 @@ const LikePost = (props: { postID: string }) => {
   return (
     <>
       <div ref={containerRef} className="h-[500px] text-white overflow-y-scroll custom-scrollbar p-3">
-        {loadingLikePostByID ? (
+        {loadingLikePostByID && !fetchingLikePostByID ? (
           <CommentSkeletonLoader />
         ) : (
           <>

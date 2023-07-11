@@ -6,6 +6,7 @@ import { ReactNode, useContext, useState } from 'react'
 import CreatePost from './components/create-post'
 import FollowingPost from './components/following-post'
 import GeneralPost from './components/general-post'
+import TopDonate from './components/top-donate'
 
 import { LoginModal } from '~/components/header/login-modal.component'
 import { SocketTokenContext } from '~/components/layouts/app-layout/app-layout'
@@ -109,7 +110,9 @@ const CommunityContainer = () => {
             </div>
           </div>
           <div className="col-span-5">{socialSelected.postTypeChildren}</div>
-          <div className="col-span-3"></div>
+          <div className="col-span-3">
+            <TopDonate />
+          </div>
         </div>
       </div>
     </>

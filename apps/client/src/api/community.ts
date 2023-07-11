@@ -1,3 +1,4 @@
+import { resolve } from 'path'
 import { CreateNewPostRequest, ThumbnailResponse } from 'ume-booking-service-openapi'
 import { z } from 'zod'
 
@@ -5,6 +6,8 @@ import { createRouter } from './configurations'
 import {
   commentForPostId,
   createNewPost,
+  donateProviderTop,
+  donateUserTop,
   getCommentPostByID,
   getLikePostByID,
   getPostByID,
@@ -91,5 +94,17 @@ export const communityRouter = createRouter()
     }),
     resolve: async ({ ctx, input }) => {
       return await createNewPost(input as CreateNewPostRequest, ctx)
+    },
+  })
+  .query('donateProviderTop', {
+    input: z.string(),
+    resolve: async ({ input }) => {
+      return await donateProviderTop(input)
+    },
+  })
+  .query('donateUserTop', {
+    input: z.string(),
+    resolve: async ({ input }) => {
+      return await donateUserTop(input)
     },
   })

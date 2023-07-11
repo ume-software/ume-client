@@ -2,7 +2,7 @@ import { TRPCError } from '@trpc/server'
 import { getEnv } from '~/env'
 
 import { parse } from 'cookie'
-import { CommentPostRequest, CreateNewPostRequest, PostApi } from 'ume-booking-service-openapi'
+import { CommentPostRequest, CreateNewPostRequest, DonateApi, PostApi } from 'ume-booking-service-openapi'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
@@ -193,6 +193,44 @@ export const createNewPost = async (input: CreateNewPostRequest, ctx) => {
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
     }).createPost(input)
+    return {
+      data: response.data,
+      success: true,
+    }
+  } catch (error) {
+    console.log('error at catch', error)
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.message || 'Failed to get list post',
+    })
+  }
+}
+
+export const donateProviderTop = async (input: string) => {
+  try {
+    const response = await new DonateApi({
+      basePath: getEnv().baseBookingURL,
+      isJsonMime: () => true,
+    }).topDonateProvider(input as '1Y' | '1M' | '1W', 10)
+    return {
+      data: response.data,
+      success: true,
+    }
+  } catch (error) {
+    console.log('error at catch', error)
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.message || 'Failed to get list post',
+    })
+  }
+}
+
+export const donateUserTop = async (input) => {
+  try {
+    const response = await new DonateApi({
+      basePath: getEnv().baseBookingURL,
+      isJsonMime: () => true,
+    }).topUserDonate(input as '1Y' | '1M' | '1W', 10)
     return {
       data: response.data,
       success: true,
