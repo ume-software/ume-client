@@ -1,3 +1,4 @@
+import { resolve } from 'path'
 import { CreateNewPostRequest, ThumbnailResponse } from 'ume-booking-service-openapi'
 import { z } from 'zod'
 
@@ -5,14 +6,16 @@ import { createRouter } from './configurations'
 import {
   commentForPostId,
   createNewPost,
+  donateProviderTop,
+  donateUserTop,
   getCommentPostByID,
   getLikePostByID,
   getPostByID,
   getSuggestPost,
   getSuggestPostWithoutCookies,
   likeForPostId,
-  postWatchedPost,
   unlikeForPostId,
+  watchedPost,
 } from './services/community-service'
 
 export const communityRouter = createRouter()
@@ -26,10 +29,10 @@ export const communityRouter = createRouter()
       return await getSuggestPost(ctx)
     },
   })
-  .mutation('postWatchedPost', {
+  .mutation('watchedPost', {
     input: z.string(),
     resolve: async ({ ctx, input }) => {
-      return await postWatchedPost(ctx, input)
+      return await watchedPost(ctx, input)
     },
   })
   .query('getPostByID', {
@@ -39,24 +42,32 @@ export const communityRouter = createRouter()
     },
   })
   .query('getLikePostByID', {
-    input: z.string(),
+    input: z.object({
+      postId: z.string(),
+      limit: z.string(),
+      page: z.string(),
+    }),
     resolve: async ({ input }) => {
       return await getLikePostByID(input)
     },
   })
   .query('getCommentPostByID', {
-    input: z.string(),
+    input: z.object({
+      postId: z.string(),
+      limit: z.string(),
+      page: z.string(),
+    }),
     resolve: async ({ input }) => {
       return await getCommentPostByID(input)
     },
   })
-  .query('likeForPostId', {
+  .mutation('likeForPostId', {
     input: z.string(),
     resolve: async ({ ctx, input }) => {
       return await likeForPostId(input, ctx)
     },
   })
-  .query('unlikeForPostId', {
+  .mutation('unlikeForPostId', {
     input: z.string(),
     resolve: async ({ ctx, input }) => {
       return await unlikeForPostId(input, ctx)
@@ -83,5 +94,17 @@ export const communityRouter = createRouter()
     }),
     resolve: async ({ ctx, input }) => {
       return await createNewPost(input as CreateNewPostRequest, ctx)
+    },
+  })
+  .query('donateProviderTop', {
+    input: z.string(),
+    resolve: async ({ input }) => {
+      return await donateProviderTop(input)
+    },
+  })
+  .query('donateUserTop', {
+    input: z.string(),
+    resolve: async ({ input }) => {
+      return await donateUserTop(input)
     },
   })
