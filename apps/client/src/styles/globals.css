@@ -42,21 +42,77 @@
 
 
 .custom-scrollbar::-webkit-scrollbar {
-  width: 3px;
+  max-width: 8px;
 }
 
-/* Track */
 .custom-scrollbar::-webkit-scrollbar-track {
   background: #15151b;
 }
 
-/* Handle */
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #7e22ce; 
+  background: #7e22ce;
+  border-radius: 8px;
+  min-height: 50px; 
 }
 
-/* Handle on hover */
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #555; 
+  background: #555;
 }
+
+@keyframes running-border {
+  0% {
+    border-image-slice: 1;
+    border-image-source: linear-gradient(to right, red, orange, yellow, green, cyan, blue, indigo, violet, pink, brown, gray);
+  }
+  9% {
+    border-image-slice: 1;
+    border-image-source: linear-gradient(to right, gray, red, orange, yellow, green, cyan, blue, indigo, violet, pink, brown);
+  }
+  18% {
+    border-image-slice: 1;
+    border-image-source: linear-gradient(to right, brown, gray, red, orange, yellow, green, cyan, blue, indigo, violet, pink);
+  }
+  27% {
+    border-image-slice: 1;
+    border-image-source: linear-gradient(to right, pink, brown, gray, red, orange, yellow, green, cyan, blue, indigo, violet);
+  }
+  36% {
+    border-image-slice: 1;
+    border-image-source: linear-gradient(to right, violet, pink, brown, gray, red, orange, yellow, green, cyan, blue, indigo);
+  }
+  45% {
+    border-image-slice: 1;
+    border-image-source: linear-gradient(to right, indigo, violet, pink, brown, gray, red, orange, yellow, green, cyan, blue);
+  }
+  54% {
+    border-image-slice: 1;
+    border-image-source: linear-gradient(to right, blue, indigo, violet, pink, brown, gray, red, orange, yellow, green, cyan);
+  }
+  63% {
+    border-image-slice: 1;
+    border-image-source: linear-gradient(to right, cyan, blue, indigo, violet, pink, brown, gray, red, orange, yellow, green);
+  }
+  72% {
+    border-image-slice: 1;
+    border-image-source: linear-gradient(to right, green, cyan, blue, indigo, violet, pink, brown, gray, red, orange, yellow);
+  }
+  81% {
+    border-image-slice: 1;
+    border-image-source: linear-gradient(to right, yellow, green, cyan, blue, indigo, violet, pink, brown, gray, red, orange);
+  }
+  90% {
+    border-image-slice: 1;
+    border-image-source: linear-gradient(to right, orange, yellow, green, cyan, blue, indigo, violet, pink, brown, gray, red);
+  }
+  100% {
+    border-image-slice: 1;
+    border-image-source: linear-gradient(to right, red, orange, yellow, green, cyan, blue, indigo, violet, pink, brown, gray);
+  }
+}
+
+.animate-running-border {
+  animation: running-border 5s linear infinite;
+  border: 3px solid;
+}
+
 

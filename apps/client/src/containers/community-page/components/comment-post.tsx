@@ -1,7 +1,7 @@
 import { Like, Send } from '@icon-park/react'
 import { Input, InputWithAffix, InputWithButton } from '@ume/ui'
 
-import { useContext, useState } from 'react'
+import { Dispatch, SetStateAction, useContext, useEffect, useRef, useState } from 'react'
 
 import { formatDistanceToNow } from 'date-fns'
 import Image from 'next/legacy/image'
@@ -14,8 +14,17 @@ import { TimeFormat } from '~/components/time-format'
 
 import { trpc } from '~/utils/trpc'
 
-const CommmentPost = (props) => {
+interface CommentPostProps {
+  postID: string
+  postComment: number
+  setPostComment: Dispatch<SetStateAction<number>>
+}
+
+const CommmentPost = (props: CommentPostProps) => {
   const [commnetPostData, setCommnetPostData] = useState<any>([])
+  const [page, setPage] = useState<string>('1')
+  const limit = '10'
+  const containerRef = useRef<HTMLDivElement>(null)
   const [comment, setComment] = useState('')
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
   const { socketToken } = useContext(SocketTokenContext)
@@ -24,10 +33,10 @@ const CommmentPost = (props) => {
     isLoading: loadingCommentPostByID,
     isFetching: fetchingCommentPostByID,
     refetch: refetchCommentPostByID,
-  } = trpc.useQuery(['community.getCommentPostByID', props.postID], {
+  } = trpc.useQuery(['community.getCommentPostByID', { postId: props.postID, limit: limit, page: page }], {
     refetchOnReconnect: 'always',
     onSuccess(data) {
-      setCommnetPostData(data?.data?.row)
+      setCommnetPostData((prevData) => [...(prevData || []), ...(data?.data?.row || [])])
     },
   })
   const commentForPostId = trpc.useMutation(['community.commentForPostId'])
@@ -37,6 +46,38 @@ const CommmentPost = (props) => {
       handleSendComment()
     }
   }
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (containerRef.current) {
+        const { scrollTop, scrollHeight, clientHeight } = containerRef.current
+
+        const isAtEnd = scrollTop + clientHeight >= scrollHeight
+
+        if (isAtEnd && Number(commentPostByID?.data.count) > Number(limit) * Number(page)) {
+          setPage(String(Number(page) + 1))
+        }
+      }
+    }
+
+    if (containerRef.current) {
+      containerRef.current.addEventListener('scroll', handleScroll)
+    }
+
+    return () => {
+      if (containerRef.current) {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        containerRef.current.removeEventListener('scroll', handleScroll)
+      }
+    }
+  })
+
+  useEffect(() => {
+    if (page !== '1') {
+      refetchCommentPostByID()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page])
 
   const handleSendComment = () => {
     if (socketToken) {
@@ -48,8 +89,9 @@ const CommmentPost = (props) => {
               onSuccess: (data) => {
                 if (data.success) {
                   refetchCommentPostByID().then((data) => {
-                    setCommnetPostData((prevComment) => [data.data?.data.row, ...prevComment])
+                    setCommnetPostData(data.data?.data.row)
                   })
+                  props.setPostComment(props.postComment + 1)
                   setComment('')
                 }
               },
@@ -70,39 +112,42 @@ const CommmentPost = (props) => {
         <LoginModal isModalLoginVisible={isModalLoginVisible} setIsModalLoginVisible={setIsModalLoginVisible} />
       </div>
       <div>
-        <div className="h-[500px] text-white overflow-y-scroll custom-scrollbar p-3">
-          {loadingCommentPostByID ? (
+        <div ref={containerRef} className="h-[500px] text-white overflow-y-scroll custom-scrollbar p-3">
+          {loadingCommentPostByID && !fetchingCommentPostByID ? (
             <CommentSkeletonLoader />
           ) : (
             <>
               {commnetPostData.map((data) => (
-                <Link key={data.id} href={`#${data.user.slug}`}>
+                <Link key={data.id} href={`#${data?.user?.slug}`}>
                   <div className="flex items-start gap-3 m-5 p-1 rounded-xl">
                     <div className="relative min-w-[50px] min-h-[50px]">
                       <Image
                         className="absolute rounded-full"
                         layout="fill"
                         objectFit="cover"
-                        src={data.user.avatarUrl}
+                        src={data?.user?.avatarUrl}
                         alt="Provider Image"
                       />
                     </div>
-                    <div className="flex flex-col items-start justify-start gap-2 p-2 rounded-xl bg-[#47474780]">
-                      <div>
-                        <p className="font-semibold text-lg">{data.user.name}</p>
-                        <p className="font-normal text-md opacity-40">{TimeFormat({ date: data.createdAt })}</p>
+                    <div>
+                      <div className="flex flex-col items-start justify-start gap-2 p-2 rounded-xl bg-[#47474780]">
+                        <p className="font-semibold text-lg">{data?.user?.name}</p>
+                        <div>{data?.content}</div>
                       </div>
-                      <div>{data.content}</div>
+                      <p className="font-normal text-sm opacity-40">
+                        {data?.createdAt ? TimeFormat({ date: data?.createdAt }) : ''}
+                      </p>
                     </div>
                   </div>
                 </Link>
               ))}
             </>
           )}
+          {fetchingCommentPostByID ? <CommentSkeletonLoader /> : ''}
         </div>
         <div className="p-3">
           <InputWithButton
-            className="outline-none border-none focus:outline-[#6d3fe0] max-h-10 rounded-2xl"
+            className="outline-none bg-[#413F4D] text-white border-none focus:outline-[#6d3fe0] max-h-10 rounded-2xl"
             placeholder="Bình luận"
             position={'right'}
             component={

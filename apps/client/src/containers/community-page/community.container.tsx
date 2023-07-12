@@ -6,6 +6,7 @@ import { ReactNode, useContext, useState } from 'react'
 import CreatePost from './components/create-post'
 import FollowingPost from './components/following-post'
 import GeneralPost from './components/general-post'
+import TopDonate from './components/top-donate'
 
 import { LoginModal } from '~/components/header/login-modal.component'
 import { SocketTokenContext } from '~/components/layouts/app-layout/app-layout'
@@ -81,7 +82,7 @@ const CommunityContainer = () => {
       {isModalVisible && CreatePostModal}
       <div className="min-h-screen" style={{ margin: '0 70px' }}>
         <div className="grid grid-cols-10 gap-10 text-white">
-          <div className="col-span-2 sticky top-50">
+          <div className="col-span-2">
             <div className="flex flex-col gap-10 sticky top-20">
               <div className="p-10 bg-zinc-800 rounded-3xl">
                 <div className="flex flex-col gap-5">
@@ -109,7 +110,11 @@ const CommunityContainer = () => {
             </div>
           </div>
           <div className="col-span-5">{socialSelected.postTypeChildren}</div>
-          <div className="col-span-3"></div>
+          <div className="col-span-3">
+            <div className="sticky top-20">
+              <TopDonate />
+            </div>
+          </div>
         </div>
       </div>
     </>
