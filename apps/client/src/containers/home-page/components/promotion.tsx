@@ -4,10 +4,11 @@ import { useContext, useState } from 'react'
 
 import { isEmpty } from 'lodash'
 import Link from 'next/link'
+import { FilterProviderPagingResponse } from 'ume-booking-service-openapi'
 
 import { FilterModal } from './filterModal'
 import HotProvider from './hotProvider'
-import { PromoteCard } from './promoteCard'
+import PromoteCard from './promoteCard'
 
 import { DrawerContext } from '~/components/layouts/app-layout/app-layout'
 import { PlayerSkeletonLoader } from '~/components/skeleton-load'
@@ -18,7 +19,7 @@ export interface Promotion {}
 
 export const Promotion = () => {
   const { childrenDrawer, setChildrenDrawer } = useContext(DrawerContext)
-  const [listProvider, setListProvider] = useState<any>([])
+  const [listProvider, setListProvider] = useState<FilterProviderPagingResponse['row']>([])
 
   const {
     data: providers,
@@ -41,6 +42,7 @@ export const Promotion = () => {
   const handleFilter = (filterData) => {
     console.log(filterData)
   }
+
   return (
     <>
       {loadingProvider ? (
@@ -64,15 +66,7 @@ export const Promotion = () => {
             <div className="grid gap-6 mt-2 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1">
               {listProvider?.map((provider) => (
                 <Link key={provider?.id} href={`/player/${provider?.slug || provider?.id}`}>
-                  <PromoteCard
-                    id={provider?.id}
-                    image={provider?.avatarurl}
-                    name={provider?.name}
-                    rating={5}
-                    totalVote={5}
-                    description={provider.description}
-                    coin={provider.cost}
-                  />
+                  <PromoteCard data={provider} />
                 </Link>
               ))}
             </div>

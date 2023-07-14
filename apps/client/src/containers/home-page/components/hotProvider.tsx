@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-import { PromoteCard } from './promoteCard'
+import PromoteCard from './promoteCard'
 
 import { trpc } from '~/utils/trpc'
 
@@ -28,15 +28,7 @@ const HotProvider = () => {
         {!isFetchingHotProviders &&
           listHotProvider?.map((provider) => (
             <Link key={provider?.id} href={`/player/${provider?.slug || provider?.id}`}>
-              <PromoteCard
-                id={provider?.id}
-                image={provider?.avatarurl}
-                name={provider?.name}
-                rating={5}
-                totalVote={5}
-                description={provider.description}
-                coin={provider.cost}
-              />
+              <PromoteCard data={provider} />
             </Link>
           ))}
       </div>
