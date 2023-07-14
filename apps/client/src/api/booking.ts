@@ -5,7 +5,7 @@ import { createRouter } from './configurations'
 import {
   createBooking,
   getAllNotice,
-  getBookingProvider,
+  getCurrentBookingForProvider,
   getFeedbackSkillById,
   getHotProviders,
   getListSkill,
@@ -37,9 +37,9 @@ export const bookingRouter = createRouter()
       return await getProviderBySlug(input)
     },
   })
-  .query('getBookingProvider', {
+  .query('getCurrentBookingForProvider', {
     resolve: async ({ ctx }) => {
-      return await getBookingProvider(ctx)
+      return await getCurrentBookingForProvider(ctx)
     },
   })
   .mutation('createBooking', {
@@ -73,7 +73,7 @@ export const bookingRouter = createRouter()
     },
   })
   .query('getAllNotice', {
-    input: z.string(),
+    input: z.object({ page: z.string(), limit: z.string() }),
     resolve: async ({ ctx, input }) => {
       return await getAllNotice(input, ctx)
     },

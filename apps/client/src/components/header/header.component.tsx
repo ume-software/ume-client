@@ -75,17 +75,16 @@ export const Header: React.FC = ({}: HeaderProps) => {
     }
     prevSocketContext.current = socketContext?.socketNotificateContext
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socketContext?.socketNotificateContext[0]?.id])
+  }, [socketContext?.socketNotificateContext[0]?.id, socketContext?.socketNotificateContext])
 
   const tabDatas: tabData[] = [
     {
       label: `Chính`,
-      children: <Notificate />,
+      children: <Notificate type={'main'} />,
     },
     {
-      label: `Khác`,
-
-      children: <div>Khac</div>,
+      label: `Đơn`,
+      children: <Notificate type={'order'} />,
     },
   ]
 
