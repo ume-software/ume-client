@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic'
 
-const SigninRender = dynamic(() => import('~/containers/signin-page/signin-page'), {
+const SigninRender = dynamic(() => import('~/containers/signin-page'), {
   ssr: false,
 })
 
