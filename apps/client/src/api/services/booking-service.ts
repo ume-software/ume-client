@@ -86,7 +86,7 @@ export const getProviderBySlug = async (providerId: string) => {
   }
 }
 
-export const getBookingProvider = async (ctx) => {
+export const getCurrentBookingForProvider = async (ctx) => {
   try {
     const cookies = parse(ctx.req.headers.cookie)
     const respone = await new BookingApi({
@@ -192,14 +192,14 @@ export const getNoticeAmount = async (ctx) => {
   }
 }
 
-export const getAllNotice = async (input: string, ctx) => {
+export const getAllNotice = async (query: { page: string; limit: string }, ctx) => {
   try {
     const cookies = parse(ctx.req.headers.cookie)
     const respone = await new NoticeApi({
       basePath: getEnv().baseBookingURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).getNotice('10', input, '["$all"]')
+    }).getNotice(query.limit, query.page, '["$all"]')
     return {
       data: respone.data,
       success: true,

@@ -71,7 +71,7 @@ const PlayerSkeletonLoader = () => {
           >
             <div className="flex flex-row justify-between">
               <div className="w-[140px] h-[140px] relative bg-gray-300 animate-pulse"></div>
-              <button className="bg-[#7463F0] w-16 h-10 rounded-tr-3xl rounded-bl-3xl hover:scale-105 hover:duration-500 hover:ease-in-out animate-pulse"></button>
+              <button className="bg-purple-600 w-16 h-10 rounded-tr-3xl rounded-bl-3xl hover:scale-105 hover:duration-500 hover:ease-in-out animate-pulse"></button>
             </div>
             <div>
               <h3 className="text-lg font-semibold bg-gray-300 w-2/3 mt-2 animate-pulse">&nbsp;</h3>
