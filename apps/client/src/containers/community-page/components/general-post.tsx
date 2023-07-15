@@ -22,11 +22,19 @@ const GeneralPost = () => {
     refetch: refetchSuggestPost,
   } = socketToken
     ? trpc.useQuery(['community.getSuggestPost'], {
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: 'always',
+        cacheTime: 0,
+        refetchOnMount: true,
         onSuccess(data) {
           setSuggestPostData((prevData) => [...(prevData || []), ...(data?.data?.row || [])])
         },
       })
     : trpc.useQuery(['community.getSuggestPostWithoutCookies'], {
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: 'always',
+        cacheTime: 0,
+        refetchOnMount: true,
         onSuccess(data) {
           setSuggestPostData((prevData) => [...(prevData || []), ...(data?.data?.row || [])])
         },

@@ -25,6 +25,10 @@ export const Promotion = () => {
     isLoading: loadingHotProvider,
     isFetching: isFetchingHotProviders,
   } = trpc.useQuery(['booking.getHotProviders'], {
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: 'always',
+    cacheTime: 0,
+    refetchOnMount: true,
     onSuccess(data) {
       setListHotProvider(data?.data?.row)
     },
@@ -60,23 +64,22 @@ export const Promotion = () => {
         </>
       ) : (
         <>
-          <div className="container mx-auto my-5">
-            <div>
-              <p className="text-2xl font-semibold text-white">Hot Player</p>
+          <div className="container mx-auto my-10">
+            <div className="flex flex-col gap-5">
+              <p className="text-3xl font-bold text-white">Hot Player</p>
               <div className="grid gap-6 mt-2 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1">
-                {!isFetchingHotProviders &&
-                  listHotProvider?.map((provider) => (
-                    <Link
-                      key={provider?.id}
-                      href={`/player/${provider?.slug || provider?.id}?gameId=${provider.skillid}`}
-                    >
-                      <PromoteCard data={provider} />
-                    </Link>
-                  ))}
+                {listHotProvider?.map((provider) => (
+                  <Link
+                    key={provider?.id}
+                    href={`/player/${provider?.slug || provider?.id}?gameId=${provider.skillid}`}
+                  >
+                    <PromoteCard data={provider} />
+                  </Link>
+                ))}
               </div>
             </div>
             <div className="flex items-end justify-between gap-5 pt-10 pb-5">
-              <p className="text-2xl font-semibold text-white">Ume Player</p>
+              <p className="text-3xl font-bold text-white">Ume Player</p>
               <CustomDrawer
                 customOpenBtn="rounded-xl text-white bg-purple-700 py-1 px-4 font-semibold text-1xl hover:scale-105"
                 openBtn={<div onClick={handleFilterOpen}>Lọc</div>}

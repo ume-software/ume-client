@@ -29,8 +29,8 @@ const Category = () => {
         <>
           {skills && (
             <div className="flex-col items-center w-full ">
-              <div className="grid grid-cols-2 my-8 text-white">
-                <h2 className="block text-3xl font-semibold">Dịch vụ</h2>
+              <div className="grid grid-cols-2 my-5 text-white">
+                <h2 className="block text-3xl font-bold">Dịch vụ</h2>
                 <CategoryDrawer data={listSkils} />
               </div>
               <CategorySlide skills={listSkils} />

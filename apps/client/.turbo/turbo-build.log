@@ -1,7 +1,7 @@
 $ npx next build
-info  - Loaded env from /Users/huyqtrieu/Desktop/Work/ume-client/apps/client/.env.local
-info  - Loaded env from /Users/huyqtrieu/Desktop/Work/ume-client/apps/client/.env.production
-warn  - Invalid next.config.js options detected:
+info  - Loaded env from D:\FPTU\Capstone_Project\ume-client\apps\client\.env.local
+info  - Loaded env from D:\FPTU\Capstone_Project\ume-client\apps\client\.env.production
+warn  - Invalid next.config.js options detected: 
   - The root value has an unexpected property, transpilePackages, which is not in the list of allowed properties (amp, analyticsId, assetPrefix, basePath, cleanDistDir, compiler, compress, crossOrigin, devIndicators, distDir, env, eslint, excludeDefaultMomentLocales, experimental, exportPathMap, generateBuildId, generateEtags, headers, httpAgentOptions, i18n, images, onDemandEntries, optimizeFonts, output, outputFileTracing, pageExtensions, poweredByHeader, productionBrowserSourceMaps, publicRuntimeConfig, reactStrictMode, redirects, rewrites, sassOptions, serverRuntimeConfig, staticPageGenerationTimeout, swcMinify, trailingSlash, typescript, useFileSystemPublicRoutes, webpack).
 
 See more info here: https://nextjs.org/docs/messages/invalid-next-config
@@ -19,21 +19,21 @@ info  - Finalizing page optimization...
 Route (pages)                              Size     First Load JS
 ┌ λ /                                      257 B          99.5 kB
 ├   /_app                                  0 B            99.3 kB
-├ ○ /404                                   6.28 kB         106 kB
+├ ○ /404 (406 ms)                          6.28 kB         106 kB
 ├ λ /api/status                            0 B            99.3 kB
 ├ λ /api/trpc/[trpc]                       0 B            99.3 kB
-├ ○ /community                             1.83 kB         101 kB
-├ ○ /home                                  1.83 kB         101 kB
-├ ○ /live                                  1.82 kB         101 kB
+├ ○ /community (301 ms)                    1.83 kB         101 kB
+├ ○ /home (304 ms)                         1.83 kB         101 kB
+├ ○ /live (327 ms)                         1.82 kB         101 kB
 ├ λ /logout                                409 B          99.7 kB
-├ ○ /player/[playerId]                     1.89 kB         101 kB
-└ ○ /register-provider                     1.83 kB         101 kB
+├ ○ /player/[playerId] (412 ms)            1.89 kB         101 kB
+└ ○ /register-provider (325 ms)            1.83 kB         101 kB
 + First Load JS shared by all              106 kB
   ├ chunks/framework-22108eb722d84e59.js   45.4 kB
   ├ chunks/main-1549b305685c3af3.js        26.7 kB
   ├ chunks/pages/_app-aae82f905d4d44e6.js  25.1 kB
-  ├ chunks/webpack-25383de21fbe30cc.js     2.02 kB
-  └ css/448ef9355c86db73.css               6.53 kB
+  ├ chunks/webpack-809666606577ee6b.js     2.05 kB
+  └ css/86e1138797a18c75.css               6.84 kB
 
 λ  (Server)  server-side renders at runtime (uses getInitialProps or getServerSideProps)
 ○  (Static)  automatically rendered as static HTML (uses no initial props)

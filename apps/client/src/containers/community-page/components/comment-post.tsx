@@ -34,7 +34,10 @@ const CommmentPost = (props: CommentPostProps) => {
     isFetching: fetchingCommentPostByID,
     refetch: refetchCommentPostByID,
   } = trpc.useQuery(['community.getCommentPostByID', { postId: props.postID, limit: limit, page: page }], {
+    refetchOnWindowFocus: false,
     refetchOnReconnect: 'always',
+    cacheTime: 0,
+    refetchOnMount: true,
     onSuccess(data) {
       setCommnetPostData((prevData) => [...(prevData || []), ...(data?.data?.row || [])])
     },
