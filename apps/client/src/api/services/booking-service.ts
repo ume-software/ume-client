@@ -10,6 +10,7 @@ import {
   ProviderSkillApi,
   SkillApi,
 } from 'ume-booking-service-openapi'
+import { optional } from 'zod'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
@@ -32,12 +33,29 @@ export const getListSkill = async () => {
   }
 }
 
-export const getProviders = async () => {
+export const getProviders = async (query?: {
+  startCost?: number
+  endCost?: number
+  skillId?: string
+  limit: string
+  page?: string
+  where?: string
+  order?: string
+}) => {
   try {
     const response = await new ProviderApi({
       basePath: getEnv().baseBookingURL,
       isJsonMime: () => true,
-    }).getListProvider()
+    }).getListProvider(
+      query?.startCost,
+      query?.endCost,
+      query?.skillId,
+      query?.limit,
+      query?.page,
+      '["$all"]',
+      query?.where,
+      query?.order,
+    )
     return {
       data: response.data,
     }

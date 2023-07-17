@@ -8,8 +8,8 @@ import { AuthApi } from 'ume-identity-service-openapi'
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
 export const getIdentityInfo = async (ctx) => {
+  const cookies = parse(ctx.req.headers.cookie)
   try {
-    const cookies = parse(ctx.req.headers.cookie ?? '')
     const response = await new AuthApi({
       basePath: getEnv().baseIdentityURL,
       isJsonMime: () => true,
@@ -30,8 +30,8 @@ export const getIdentityInfo = async (ctx) => {
 }
 
 export const getAccountBalance = async (ctx) => {
+  const cookies = parse(ctx.req.headers.cookie)
   try {
-    const cookies = parse(ctx.req.headers.cookie ?? '')
     const response = await new CoinApi({
       basePath: getEnv().baseBookingURL,
       isJsonMime: () => true,
@@ -51,8 +51,8 @@ export const getAccountBalance = async (ctx) => {
 }
 
 export const requestRecharge = async ({ total, platform }, ctx) => {
+  const cookies = parse(ctx.req.headers.cookie ?? '')
   try {
-    const cookies = parse(ctx.req.headers.cookie ?? '')
     const reponse = await new BuyCoinRequestApi({
       basePath: getEnv().baseBookingURL,
       isJsonMime: () => true,

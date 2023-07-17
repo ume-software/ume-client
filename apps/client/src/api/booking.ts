@@ -1,5 +1,5 @@
 import { BookingHandleRequest, BookingHandleRequestStatusEnum } from 'ume-booking-service-openapi'
-import { z } from 'zod'
+import { optional, z } from 'zod'
 
 import { createRouter } from './configurations'
 import {
@@ -22,8 +22,19 @@ export const bookingRouter = createRouter()
     },
   })
   .query('getProviders', {
-    resolve: async ({ ctx }) => {
-      return await getProviders()
+    input: z.optional(
+      z.object({
+        startCost: z.number(),
+        endCost: z.number(),
+        skillId: z.string(),
+        limit: z.string(),
+        page: z.string(),
+        where: z.string(),
+        order: z.string(),
+      }),
+    ),
+    resolve: async ({ ctx, input }) => {
+      return await getProviders(input)
     },
   })
   .query('getHotProviders', {

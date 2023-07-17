@@ -16,7 +16,7 @@ const CategorySlide = (props: ICategoryProps) => {
         {props?.skills.map((skill) => (
           <SwiperSlide className="!w-[200px]" key={skill.id}>
             <div className={`p-3 duration-500 ease-in-out cursor-pointer hover:scale-105`}>
-              <Link href={`/filter?skillId=${skill.id}`}>
+              <Link href={`/filter-skill/${skill.name}?skillId=${skill.id}`}>
                 <div className="relative w-[170px] h-[260px]">
                   <Image
                     key={skill.id}

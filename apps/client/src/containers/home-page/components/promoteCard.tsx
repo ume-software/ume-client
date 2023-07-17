@@ -10,8 +10,6 @@ const PromoteCard = (props: { data: FilterProviderResponse }) => {
   const [isPlaying, setIsPlaying] = React.useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
-  console.log(props.data)
-
   const handlePlayAudio = (e) => {
     e.preventDefault()
     const audio = audioRef.current
