@@ -15,6 +15,7 @@ import {
   getSuggestPostWithoutCookies,
   likeForPostId,
   unlikeForPostId,
+  uploadImage,
   watchedPost,
 } from './services/community-service'
 
@@ -106,5 +107,11 @@ export const communityRouter = createRouter()
     input: z.string(),
     resolve: async ({ input }) => {
       return await donateUserTop(input)
+    },
+  })
+  .mutation('uploadImage', {
+    input: z.any(),
+    resolve: async ({ ctx, input }) => {
+      return await uploadImage(input, ctx)
     },
   })

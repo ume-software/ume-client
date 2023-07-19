@@ -69,7 +69,7 @@ const Table = (props: {
                   </table>
                 </>
               ) : (
-                <p className="text-lg font-semibold">Chưa có dữ liệu. Chúng tôi sẽ cập nhật lại sau.</p>
+                <p className="text-md font-normal">Chưa có dữ liệu. Chúng tôi sẽ cập nhật lại sau.</p>
               )}
             </div>
           </>

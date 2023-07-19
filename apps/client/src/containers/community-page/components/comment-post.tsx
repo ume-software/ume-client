@@ -3,12 +3,11 @@ import { Input, InputWithAffix, InputWithButton } from '@ume/ui'
 
 import { Dispatch, SetStateAction, useContext, useEffect, useRef, useState } from 'react'
 
-import { formatDistanceToNow } from 'date-fns'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
 
 import { LoginModal } from '~/components/header/login-modal.component'
-import { SocketTokenContext } from '~/components/layouts/app-layout/app-layout'
+import { SocketTokenContext, UserContext } from '~/components/layouts/app-layout/app-layout'
 import { CommentSkeletonLoader } from '~/components/skeleton-load'
 import { TimeFormat } from '~/components/time-format'
 
@@ -23,7 +22,8 @@ interface CommentPostProps {
 const CommmentPost = (props: CommentPostProps) => {
   const [commnetPostData, setCommnetPostData] = useState<any>([])
   const [page, setPage] = useState<string>('1')
-  const limit = '10'
+  const [limit, setLimit] = useState<string>('10')
+  const { userContext } = useContext(UserContext)
   const containerRef = useRef<HTMLDivElement>(null)
   const [comment, setComment] = useState('')
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
@@ -75,12 +75,12 @@ const CommmentPost = (props: CommentPostProps) => {
     }
   })
 
-  useEffect(() => {
-    if (page !== '1') {
-      refetchCommentPostByID()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page])
+  // useEffect(() => {
+  //   if (page !== '1') {
+  //     refetchCommentPostByID()
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [page])
 
   const handleSendComment = () => {
     if (socketToken) {
@@ -91,10 +91,27 @@ const CommmentPost = (props: CommentPostProps) => {
             {
               onSuccess: (data) => {
                 if (data.success) {
-                  refetchCommentPostByID().then((data) => {
-                    setCommnetPostData(data.data?.data.row)
-                  })
+                  // setLimit(String(Number(page) * 10))
+                  // setPage('1')
+                  // refetchCommentPostByID().then((data) => {
+                  //   setCommnetPostData(data.data?.data.row)
+                  // })
+
+                  setCommnetPostData((prevData) => [
+                    {
+                      user: {
+                        slug: '',
+                        avatarUrl: userContext?.avatarUrl,
+                        name: userContext?.name,
+                      },
+                      content: comment,
+                      createdAt: Date.now(),
+                    },
+                    ...(prevData || []),
+                  ])
+
                   props.setPostComment(props.postComment + 1)
+
                   setComment('')
                 }
               },
@@ -120,8 +137,8 @@ const CommmentPost = (props: CommentPostProps) => {
             <CommentSkeletonLoader />
           ) : (
             <>
-              {commnetPostData.map((data) => (
-                <Link key={data.id} href={`#${data?.user?.slug}`}>
+              {commnetPostData.map((data, index) => (
+                <Link key={index} href={`#${data?.user?.slug}`}>
                   <div className="flex items-start gap-3 m-5 p-1 rounded-xl">
                     <div className="relative min-w-[50px] min-h-[50px]">
                       <Image

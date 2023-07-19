@@ -35,6 +35,8 @@ const orderBy: OrderByProps[] = [
 const max: number = 100
 const min: number = 0
 
+const genderData = ['Male', 'Famale', 'Orther', 'Private']
+
 const FilterContainer = (props) => {
   const router = useRouter()
   const skillId = router.query.skillId
@@ -43,6 +45,7 @@ const FilterContainer = (props) => {
   const [listProviderFilter, setListProviderFilter] = useState<FilterProviderPagingResponse['row']>([])
   const [page, setPage] = useState('1')
   const [searchText, setSearchText] = useState<string>('')
+  const [gender, setGender] = useState<string>(genderData[0])
   const [order, setOrder] = useState<OrderByProps>(orderBy[0])
   const [listSkils, setListSkils] = useState<any>([])
   const [priceRange, setPriceRange] = useState<[number, number]>([min, max])
@@ -69,9 +72,10 @@ const FilterContainer = (props) => {
         startCost: priceRange[0],
         endCost: priceRange[1],
         skillId: String(skillId),
+        name: searchText,
+        gender: gender.toLocaleUpperCase(),
         limit: limit,
         page: page,
-        where: `{"name":{"contains":"${searchText}"}}`,
         order: `[{"${order.key}":"asc"}]`,
       },
     ],
@@ -183,6 +187,50 @@ const FilterContainer = (props) => {
               )}
             </Tooltip>
           </div>
+          <div className="relative">
+            <Menu>
+              <Menu.Button>
+                <button className="text-xl font-semibold px-8 py-2 bg-[#292734] hover:bg-gray-700 rounded-xl">
+                  {gender}
+                </button>
+              </Menu.Button>
+              <Transition
+                as={Fragment}
+                enter="transition ease-out duration-400"
+                enterFrom="transform opacity-0 scale-95"
+                enterTo="transform opacity-100 scale-100"
+                leave="transition ease-in duration-400"
+                leaveFrom="transform opacity-100 scale-100"
+                leaveTo="transform opacity-0 scale-95"
+              >
+                <Menu.Items
+                  className="absolute right-0 p-2 mt-2 origin-top-right bg-[#292734] divide-y divide-gray-100 rounded-xl shadow-lg w-fit ring-1 ring-black ring-opacity-5 focus:outline-none"
+                  style={{ zIndex: 5 }}
+                >
+                  <div className="flex flex-col gap-2" style={{ zIndex: 10 }}>
+                    {genderData.map((genData, index) => (
+                      <div
+                        className={`flex gap-5 items-center ${
+                          genData === gender ? 'bg-gray-700' : ''
+                        } hover:bg-gray-700 cursor-pointer p-3 rounded-lg`}
+                        key={index}
+                        onClick={() => setGender(genData)}
+                      >
+                        <p className="text-mg font-semibold">{genData}</p>
+                        <div>
+                          {genData === gender ? (
+                            <Check theme="filled" size="10" fill="#FFFFFF" strokeLinejoin="bevel" />
+                          ) : (
+                            ''
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </Menu.Items>
+              </Transition>
+            </Menu>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           <div>
@@ -238,11 +286,19 @@ const FilterContainer = (props) => {
           </>
         ) : (
           <div className="grid gap-6 mt-2 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1">
-            {listProviderFilter?.map((provider) => (
-              <Link key={provider?.id} href={`/player/${provider?.slug || provider?.id}?gameId=${provider.skillid}`}>
-                <PromoteCard data={provider} />
-              </Link>
-            ))}
+            {listProviderFilter?.length != 0 ? (
+              listProviderFilter?.map((provider) => (
+                <Link key={provider?.id} href={`/player/${provider?.slug || provider?.id}?gameId=${provider.skillid}`}>
+                  <PromoteCard data={provider} />
+                </Link>
+              ))
+            ) : (
+              <div className="col-span-full text-center mt-10">
+                <p className="text-3xl font-bold">
+                  Chưa có người chơi nào phù hợp với tìm kiếm của bạn. Xin hãy thử lại
+                </p>
+              </div>
+            )}
           </div>
         )}
       </div>

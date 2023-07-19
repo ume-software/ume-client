@@ -13,6 +13,7 @@ import { trpc } from '~/utils/trpc'
 const CreatePost = (props) => {
   const [content, setContent] = useState<string>('')
   const createNewPost = trpc.useMutation(['community.createNewPost'])
+  const uploadImage = trpc.useMutation(['community.uploadImage'])
   const [mediaFiles, setMediaFiles] = useState<(string | ArrayBuffer | null)[]>([])
 
   const onMediaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,6 +36,14 @@ const CreatePost = (props) => {
         }
       }
     }
+  }
+
+  const handleUploadImage = async (srcImg: any) => {
+    uploadImage.mutate(srcImg, {
+      onSuccess(data) {
+        return data.data
+      },
+    })
   }
 
   const handleCreateNewPost = () => {

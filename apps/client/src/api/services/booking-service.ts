@@ -5,6 +5,7 @@ import { parse } from 'cookie'
 import {
   BookingApi,
   BookingProviderRequest,
+  ImageApi,
   NoticeApi,
   ProviderApi,
   ProviderSkillApi,
@@ -37,9 +38,10 @@ export const getProviders = async (query?: {
   startCost?: number
   endCost?: number
   skillId?: string
+  name?: string
+  gender?: string
   limit: string
   page?: string
-  where?: string
   order?: string
 }) => {
   try {
@@ -50,10 +52,10 @@ export const getProviders = async (query?: {
       query?.startCost,
       query?.endCost,
       query?.skillId,
+      query?.name,
+      query?.gender as 'MALE' | 'FAMALE' | 'ORTHER' | 'PRIVATE',
       query?.limit,
       query?.page,
-      '["$all"]',
-      query?.where,
       query?.order,
     )
     return {
