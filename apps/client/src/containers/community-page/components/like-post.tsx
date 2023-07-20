@@ -54,12 +54,12 @@ const LikePost = (props: { postID: string }) => {
     }
   })
 
-  useEffect(() => {
-    if (page !== '1') {
-      refetchLikePostByID()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page])
+  // useEffect(() => {
+  //   if (page !== '1') {
+  //     refetchLikePostByID()
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [page])
 
   return (
     <>

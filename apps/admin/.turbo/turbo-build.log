@@ -18,14 +18,14 @@ Route (pages)                              Size     First Load JS
 ├ λ /404                                   334 B          98.5 kB
 ├ λ /api/status                            0 B            98.1 kB
 ├ λ /api/trpc/[trpc]                       0 B            98.1 kB
-├ ○ /dashboard (737 ms)                    1.82 kB        99.9 kB
-└ ○ /signin (758 ms)                       1.82 kB        99.9 kB
+├ ○ /dashboard (1160 ms)                   1.82 kB        99.9 kB
+└ ○ /signin (1163 ms)                      1.82 kB        99.9 kB
 + First Load JS shared by all              102 kB
   ├ chunks/framework-22108eb722d84e59.js   45.4 kB
   ├ chunks/main-1549b305685c3af3.js        26.7 kB
   ├ chunks/pages/_app-e33f0091ba181107.js  24.1 kB
-  ├ chunks/webpack-0474fd8f2251a763.js     1.87 kB
-  └ css/38a09c539f1f7dc6.css               3.87 kB
+  ├ chunks/webpack-53e07275a7dd662a.js     1.87 kB
+  └ css/2eb7c131ae09d951.css               3.88 kB
 
 λ  (Server)  server-side renders at runtime (uses getInitialProps or getServerSideProps)
 ○  (Static)  automatically rendered as static HTML (uses no initial props)

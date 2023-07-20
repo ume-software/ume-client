@@ -40,7 +40,7 @@ export const getProviders = async (query?: {
   skillId?: string
   name?: string
   gender?: string
-  limit: string
+  limit?: string
   page?: string
   order?: string
 }) => {

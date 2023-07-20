@@ -35,7 +35,13 @@ const orderBy: OrderByProps[] = [
 const max: number = 100
 const min: number = 0
 
-const genderData = ['Male', 'Famale', 'Orther', 'Private']
+const genderData = [
+  { key: undefined, name: 'All' },
+  { key: 'MALE', name: 'Male' },
+  { key: 'FEMALE', name: 'Famale' },
+  { key: 'ORTHER', name: 'Orther' },
+  { key: 'PRIVATE', name: 'Private' },
+]
 
 const FilterContainer = (props) => {
   const router = useRouter()
@@ -45,7 +51,7 @@ const FilterContainer = (props) => {
   const [listProviderFilter, setListProviderFilter] = useState<FilterProviderPagingResponse['row']>([])
   const [page, setPage] = useState('1')
   const [searchText, setSearchText] = useState<string>('')
-  const [gender, setGender] = useState<string>(genderData[0])
+  const [gender, setGender] = useState<string | undefined>(genderData[0].key)
   const [order, setOrder] = useState<OrderByProps>(orderBy[0])
   const [listSkils, setListSkils] = useState<any>([])
   const [priceRange, setPriceRange] = useState<[number, number]>([min, max])
@@ -73,7 +79,7 @@ const FilterContainer = (props) => {
         endCost: priceRange[1],
         skillId: String(skillId),
         name: searchText,
-        gender: gender.toLocaleUpperCase(),
+        gender: gender,
         limit: limit,
         page: page,
         order: `[{"${order.key}":"asc"}]`,
@@ -191,7 +197,7 @@ const FilterContainer = (props) => {
             <Menu>
               <Menu.Button>
                 <button className="text-xl font-semibold px-8 py-2 bg-[#292734] hover:bg-gray-700 rounded-xl">
-                  {gender}
+                  {gender ? gender : 'All'}
                 </button>
               </Menu.Button>
               <Transition
@@ -211,14 +217,14 @@ const FilterContainer = (props) => {
                     {genderData.map((genData, index) => (
                       <div
                         className={`flex gap-5 items-center ${
-                          genData === gender ? 'bg-gray-700' : ''
+                          genData.key === gender ? 'bg-gray-700' : ''
                         } hover:bg-gray-700 cursor-pointer p-3 rounded-lg`}
                         key={index}
-                        onClick={() => setGender(genData)}
+                        onClick={() => setGender(genData.key)}
                       >
-                        <p className="text-mg font-semibold">{genData}</p>
+                        <p className="text-mg font-semibold">{genData.name}</p>
                         <div>
-                          {genData === gender ? (
+                          {genData.key === gender ? (
                             <Check theme="filled" size="10" fill="#FFFFFF" strokeLinejoin="bevel" />
                           ) : (
                             ''

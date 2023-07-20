@@ -24,14 +24,14 @@ export const bookingRouter = createRouter()
   .query('getProviders', {
     input: z.optional(
       z.object({
-        startCost: z.number(),
-        endCost: z.number(),
-        skillId: z.string(),
-        name: z.string(),
-        gender: z.string(),
-        limit: z.string(),
-        page: z.string(),
-        order: z.string(),
+        startCost: z.optional(z.number()),
+        endCost: z.optional(z.number()),
+        skillId: z.optional(z.string()),
+        name: z.optional(z.string()),
+        gender: z.optional(z.string()),
+        limit: z.optional(z.string()),
+        page: z.optional(z.string()),
+        order: z.optional(z.string()),
       }),
     ),
     resolve: async ({ ctx, input }) => {
