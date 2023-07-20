@@ -1,11 +1,10 @@
 import { CustomDrawer } from '@ume/ui'
 
-import { useContext, useState } from 'react'
+import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 
 import Link from 'next/link'
 import { FilterProviderPagingResponse } from 'ume-booking-service-openapi'
 
-import { FilterModal } from './filterModal'
 import PromoteCard from './promoteCard'
 
 import { DrawerContext } from '~/components/layouts/app-layout/app-layout'
@@ -17,84 +16,104 @@ export interface Promotion {}
 
 export const Promotion = () => {
   const { childrenDrawer, setChildrenDrawer } = useContext(DrawerContext)
+  const [page, setPage] = useState<string>('1')
   const [listHotProvider, setListHotProvider] = useState<FilterProviderPagingResponse['row']>([])
   const [listProvider, setListProvider] = useState<FilterProviderPagingResponse['row']>([])
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [scrollPosition, setScrollPosition] = useState(0)
 
   const {
     data: hotProviders,
     isLoading: loadingHotProvider,
     isFetching: isFetchingHotProviders,
   } = trpc.useQuery(['booking.getHotProviders'], {
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: 'always',
+    cacheTime: 0,
+    refetchOnMount: true,
     onSuccess(data) {
-      setListHotProvider(data?.data?.row)
+      setListHotProvider((prevData) => [...(prevData || []), ...(data?.data?.row || [])])
     },
   })
 
   const {
     data: providers,
     isLoading: loadingProvider,
-    isFetching,
-  } = trpc.useQuery(['booking.getProviders'], {
+    isFetching: isFetchingProviders,
+  } = trpc.useQuery(['booking.getProviders', { limit: '20', page: page, order: '[]' }], {
     refetchOnWindowFocus: false,
     refetchOnReconnect: 'always',
     cacheTime: 0,
     refetchOnMount: true,
     onSuccess(data) {
-      setListProvider(data?.data?.row)
+      setListProvider((prevData) => [...(prevData || []), ...(data?.data?.row || [])])
     },
   })
 
-  const handleFilterOpen = () => {
-    setChildrenDrawer(<FilterModal handleFilter={handleFilter} data={listProvider} />)
-  }
+  useEffect(() => {
+    window.addEventListener('scroll', onScroll)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
-  const handleFilter = (filterData) => {
-    console.log(filterData)
-  }
+  const onScroll = useCallback(() => {
+    const { scrollY } = window
+    setScrollPosition(scrollY)
+  }, [])
+
+  useEffect(() => {
+    if (containerRef.current) {
+      const { scrollHeight } = containerRef.current
+      const isAtEnd = scrollPosition >= scrollHeight
+
+      if (isAtEnd && Number(providers?.data.count) > 20 * Number(page)) {
+        setPage(String(Number(page) + 1))
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scrollPosition])
 
   return (
     <>
-      {loadingProvider || loadingHotProvider ? (
+      {(loadingProvider || loadingHotProvider) && !isFetchingProviders && !isFetchingHotProviders ? (
         <>
           <PlayerSkeletonLoader />
         </>
       ) : (
         <>
-          <div className="container mx-auto my-5">
-            <div>
-              <p className="text-2xl font-semibold text-white">Hot Player</p>
+          <div ref={containerRef} className="container mx-auto my-10">
+            <div className="flex flex-col gap-5">
+              <p className="text-3xl font-bold text-white">Hot Player</p>
               <div className="grid gap-6 mt-2 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1">
-                {!isFetchingHotProviders &&
-                  listHotProvider?.map((provider) => (
-                    <Link
-                      key={provider?.id}
-                      href={`/player/${provider?.slug || provider?.id}?gameId=${provider.skillid}`}
-                    >
-                      <PromoteCard data={provider} />
-                    </Link>
-                  ))}
+                {listHotProvider?.map((provider) => (
+                  <Link
+                    key={provider?.id}
+                    href={`/player/${provider?.slug || provider?.id}?gameId=${provider.skillid}`}
+                  >
+                    <PromoteCard data={provider} />
+                  </Link>
+                ))}
               </div>
             </div>
-            <div className="flex items-end justify-between gap-5 pt-10 pb-5">
-              <p className="text-2xl font-semibold text-white">Ume Player</p>
-              <CustomDrawer
-                customOpenBtn="rounded-xl text-white bg-purple-700 py-1 px-4 font-semibold text-1xl hover:scale-105"
-                openBtn={<div onClick={handleFilterOpen}>Lọc</div>}
-                drawerTitle="Lọc người chơi"
-              >
-                {childrenDrawer}
-              </CustomDrawer>
-            </div>
-            <div className="grid gap-6 mt-2 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1">
-              {listProvider?.map((provider) => (
-                <Link key={provider?.id} href={`/player/${provider?.slug || provider?.id}?gameId=${provider.skillid}`}>
-                  <PromoteCard data={provider} />
-                </Link>
-              ))}
+            <div className="flex flex-col gap-5 mt-10 pb-5">
+              <p className="text-3xl font-bold text-white">Ume Player</p>
+              <div className="grid gap-6 mt-2 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1">
+                {listProvider?.map((provider) => (
+                  <Link
+                    key={provider?.id}
+                    href={`/player/${provider?.slug || provider?.id}?gameId=${provider.skillid}`}
+                  >
+                    <PromoteCard data={provider} />
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
         </>
       )}
+      {isFetchingProviders && <PlayerSkeletonLoader />}
     </>
   )
 }

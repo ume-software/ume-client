@@ -126,6 +126,8 @@ export const RechargeModal = ({ setShowRechargeModal, showRechargeModal }: IRech
                           <FieldLabel labelName="Nhập số lượng ume coin cần nạp" className="text-sm text-slate-400" />
                           <FormInput
                             className="bg-[#413F4D] text-white"
+                            type="number"
+                            min={1}
                             value={values.balance}
                             name="balance"
                             onChange={handleChange}

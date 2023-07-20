@@ -3,14 +3,12 @@ import coin from 'public/coin-icon.png'
 
 import React, { useEffect, useRef } from 'react'
 
-import Image from 'next/image'
+import Image from 'next/legacy/image'
 import { FilterProviderResponse } from 'ume-booking-service-openapi'
 
 const PromoteCard = (props: { data: FilterProviderResponse }) => {
   const [isPlaying, setIsPlaying] = React.useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
-
-  console.log(props.data)
 
   const handlePlayAudio = (e) => {
     e.preventDefault()
@@ -43,13 +41,13 @@ const PromoteCard = (props: { data: FilterProviderResponse }) => {
   return (
     <div className="bg-[#292734] text-white rounded-3xl pl-6 pb-4 mt-6 max-w-72 h-70 group hover:duration-500 hover:ease-in-out block">
       <div className="flex flex-row justify-between">
-        <div className="w-[140px] h-[140px] relative">
+        <div className="w-[140px] h-[140px] relative -translate-y-6">
           <Image
-            className="absolute object-fill duration-500 ease-in-out -translate-y-6 rounded-3xl group-hover:scale-110"
-            src={props?.data?.avatarurl}
+            className="absolute duration-500 ease-in-out rounded-2xl group-hover:scale-110 object-cover"
+            src={props?.data?.avatarurl || ''}
             alt="image_provider"
             layout="fill"
-            objectFit="cover"
+            loading="lazy"
           />
         </div>
         <button
@@ -73,12 +71,12 @@ const PromoteCard = (props: { data: FilterProviderResponse }) => {
           <Star theme="outline" size="20" fill="#EBFF00" className="inline-block mr-2" />
           <span className="font-bold align-top text-slate-300">{props?.data?.totalVote}</span>
         </div> */}
-        <p className="font-sans truncate">{props?.data?.description}</p>
+        <p className="text-lg truncate">{props?.data?.description}</p>
 
-        <div className="flex items-end mt-5 gap-1">
+        <div className="flex items-end mt-10 gap-1">
           <div className="flex items-end">
             <Image src={coin} width={25} height={25} alt="coin" />
-            <p className="text-2xl font-semibold">{props?.data?.cost.toFixed(0)}</p>
+            <p className="text-2xl font-semibold">{props?.data?.cost?.toFixed(0)}</p>
           </div>
           <p className="text-lg font-semibold opacity-30">.00/ Giờ</p>
         </div>

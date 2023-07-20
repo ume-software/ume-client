@@ -6,7 +6,15 @@ import Table from './table'
 
 import { trpc } from '~/utils/trpc'
 
-const durationArray: string[] = ['1W', '1M', '1Y']
+interface DurationProps {
+  key: string
+  nameVi: string
+}
+
+const durationArray: DurationProps[] = [
+  { key: '1W', nameVi: 'Tuần' },
+  { key: '1M', nameVi: 'Tháng' },
+]
 
 const TopDonate = (props) => {
   const [duration, setDuration] = useState<string>('1W')
@@ -48,11 +56,11 @@ const TopDonate = (props) => {
             <div
               key={index}
               className={`w-[80px] text-center rounded-xl py-2 cursor-pointer ${
-                item == duration ? ' bg-purple-600' : 'bg-zinc-800'
+                item.key == duration ? ' bg-purple-600' : 'bg-zinc-800'
               }`}
-              onClick={() => setDuration(item)}
+              onClick={() => setDuration(item.key)}
             >
-              {item}
+              {item.nameVi}
             </div>
           </>
         ))}

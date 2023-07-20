@@ -156,6 +156,25 @@ const TableSkeletonLoader = () => {
   )
 }
 
+const CategoryGridSkeleton = () => {
+  const skeletonData = Array(5).fill(null) // Replace 5 with the number of grid items
+
+  return (
+    <div className="w-full h-full px-6 overflow-y-auto custom-scrollbar">
+      <div className="grid grid-cols-5 pb-5 place-items-center">
+        {[...Array(5)].map((_, index) => (
+          <div key={index} className="my-8">
+            <div className="relative w-[170px] h-[230px]">
+              <div className="skeleton-image"></div>
+            </div>
+            <div className="skeleton-text"></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export {
   PostSkeletonLoader,
   CommentSkeletonLoader,
@@ -163,4 +182,5 @@ export {
   SliderSkeletonLoader,
   NotificateSkeletonLoader,
   TableSkeletonLoader,
+  CategoryGridSkeleton,
 }

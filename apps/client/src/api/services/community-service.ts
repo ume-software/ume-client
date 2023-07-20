@@ -2,7 +2,7 @@ import { TRPCError } from '@trpc/server'
 import { getEnv } from '~/env'
 
 import { parse } from 'cookie'
-import { CommentPostRequest, CreateNewPostRequest, DonateApi, PostApi } from 'ume-booking-service-openapi'
+import { CommentPostRequest, CreateNewPostRequest, DonateApi, ImageApi, PostApi } from 'ume-booking-service-openapi'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
@@ -240,6 +240,27 @@ export const donateUserTop = async (input) => {
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
       message: error.message || 'Failed to get list post',
+    })
+  }
+}
+
+export const uploadImage = async (input: File[], ctx) => {
+  const cookies = parse(ctx.req.headers.cookie)
+  try {
+    const respone = await new ImageApi({
+      basePath: getEnv().baseBookingURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).uploadImage('vi', input)
+    return {
+      data: respone.data,
+      success: true,
+    }
+  } catch (error) {
+    console.log('error at catch', error)
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to upload image',
     })
   }
 }

@@ -227,9 +227,11 @@ const CommunityPost = (props: CommunityPostProps) => {
         <div className="mt-3">
           <div className="flex justify-between p-2">
             <div className="font-medium text-md opacity-30 cursor-pointer hover:opacity-100" onClick={handleLikeOpen}>
-              {isLikePost
-                ? `Bạn và ${props.data?.likeCount} người khác đã thích`
-                : `${props.data?.likeCount} lượt thích`}
+              {isLikePost ? (
+                <>Bạn{props.data?.likeCount === 0 ? '' : ` và ${props.data?.likeCount} người khác đã thích`}</>
+              ) : (
+                `${props.data?.likeCount} lượt thích`
+              )}
             </div>
             <div
               className="font-medium text-md opacity-30 cursor-pointer hover:opacity-100"

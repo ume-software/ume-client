@@ -26,11 +26,19 @@ const Notificate = (props: { type: string }) => {
     refetch: refetchNotificated,
   } = props.type === 'order'
     ? trpc.useQuery(['booking.getCurrentBookingForProvider'], {
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: 'always',
+        cacheTime: 0,
+        refetchOnMount: true,
         onSuccess(data) {
           setListNotificated(data?.data?.row)
         },
       })
     : trpc.useQuery(['booking.getAllNotice', { page: String(page), limit: limit }], {
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: 'always',
+        cacheTime: 0,
+        refetchOnMount: true,
         onSuccess(data) {
           setListNotificated(data?.data?.row)
         },

@@ -1,4 +1,5 @@
 $ npx next build
+info  - Loaded env from D:\FPTU\Capstone_Project\ume-client\apps\admin\.env.production
 warn  - Invalid next.config.js options detected: 
   - The root value has an unexpected property, transpilePackages, which is not in the list of allowed properties (amp, analyticsId, assetPrefix, basePath, cleanDistDir, compiler, compress, crossOrigin, devIndicators, distDir, env, eslint, excludeDefaultMomentLocales, experimental, exportPathMap, generateBuildId, generateEtags, headers, httpAgentOptions, i18n, images, onDemandEntries, optimizeFonts, output, outputFileTracing, pageExtensions, poweredByHeader, productionBrowserSourceMaps, publicRuntimeConfig, reactStrictMode, redirects, rewrites, sassOptions, serverRuntimeConfig, staticPageGenerationTimeout, swcMinify, trailingSlash, typescript, useFileSystemPublicRoutes, webpack).
 
@@ -7,22 +8,24 @@ info  - Linting and checking validity of types...
 info  - Creating an optimized production build...
 info  - Compiled successfully
 info  - Collecting page data...
-info  - Generating static pages (0/1)
-info  - Generating static pages (1/1)
+info  - Generating static pages (0/2)
+info  - Generating static pages (2/2)
 info  - Finalizing page optimization...
 
 Route (pages)                              Size     First Load JS
-┌ λ /                                      257 B          74.5 kB
-├   /_app                                  0 B            74.2 kB
-├ λ /404                                   334 B          74.5 kB
-├ λ /api/status                            0 B            74.2 kB
-└ ○ /signin (543 ms)                       1.81 kB          76 kB
-+ First Load JS shared by all              78 kB
+┌ λ /                                      257 B          98.4 kB
+├   /_app                                  0 B            98.1 kB
+├ λ /404                                   334 B          98.5 kB
+├ λ /api/status                            0 B            98.1 kB
+├ λ /api/trpc/[trpc]                       0 B            98.1 kB
+├ ○ /dashboard (1160 ms)                   1.82 kB        99.9 kB
+└ ○ /signin (1163 ms)                      1.82 kB        99.9 kB
++ First Load JS shared by all              102 kB
   ├ chunks/framework-22108eb722d84e59.js   45.4 kB
   ├ chunks/main-1549b305685c3af3.js        26.7 kB
-  ├ chunks/pages/_app-e19f58b656006011.js  308 B
-  ├ chunks/webpack-b11799a0102ac77c.js     1.79 kB
-  └ css/5dee86e796ebabc4.css               3.79 kB
+  ├ chunks/pages/_app-e33f0091ba181107.js  24.1 kB
+  ├ chunks/webpack-53e07275a7dd662a.js     1.87 kB
+  └ css/2eb7c131ae09d951.css               3.88 kB
 
 λ  (Server)  server-side renders at runtime (uses getInitialProps or getServerSideProps)
 ○  (Static)  automatically rendered as static HTML (uses no initial props)

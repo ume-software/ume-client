@@ -7,8 +7,8 @@ import { ChatChannelApi, CreateChannelRequest } from 'ume-chatting-service-opena
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
 export const getListChattingChannels = async (query: { limit: string; page: string }, ctx) => {
+  const cookies = parse(ctx.req.headers.cookie)
   try {
-    const cookies = parse(ctx.req.headers.cookie)
     const response = await new ChatChannelApi({
       basePath: getEnv().baseChattingURL,
       isJsonMime: () => true,
@@ -27,8 +27,8 @@ export const getListChattingChannels = async (query: { limit: string; page: stri
   }
 }
 export const getMessagesByChannelId = async (query: { channelId: string; limit: string; page: string }, ctx) => {
+  const cookies = parse(ctx.req.headers.cookie)
   try {
-    const cookies = parse(ctx.req.headers.cookie)
     const response = await new ChatChannelApi({
       basePath: getEnv().baseChattingURL,
       isJsonMime: () => true,
@@ -47,8 +47,8 @@ export const getMessagesByChannelId = async (query: { channelId: string; limit: 
   }
 }
 export const createNewChatChannel = async (receiverId: CreateChannelRequest, ctx) => {
+  const cookies = parse(ctx.req.headers.cookie)
   try {
-    const cookies = parse(ctx.req.headers.cookie)
     const response = await new ChatChannelApi({
       basePath: getEnv().baseChattingURL,
       isJsonMime: () => true,

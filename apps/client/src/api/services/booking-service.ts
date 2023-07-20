@@ -5,11 +5,13 @@ import { parse } from 'cookie'
 import {
   BookingApi,
   BookingProviderRequest,
+  ImageApi,
   NoticeApi,
   ProviderApi,
   ProviderSkillApi,
   SkillApi,
 } from 'ume-booking-service-openapi'
+import { optional } from 'zod'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
@@ -32,12 +34,30 @@ export const getListSkill = async () => {
   }
 }
 
-export const getProviders = async () => {
+export const getProviders = async (query?: {
+  startCost?: number
+  endCost?: number
+  skillId?: string
+  name?: string
+  gender?: string
+  limit?: string
+  page?: string
+  order?: string
+}) => {
   try {
     const response = await new ProviderApi({
       basePath: getEnv().baseBookingURL,
       isJsonMime: () => true,
-    }).getListProvider()
+    }).getListProvider(
+      query?.startCost,
+      query?.endCost,
+      query?.skillId,
+      query?.name,
+      query?.gender as 'MALE' | 'FAMALE' | 'ORTHER' | 'PRIVATE',
+      query?.limit,
+      query?.page,
+      query?.order,
+    )
     return {
       data: response.data,
     }
