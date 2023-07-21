@@ -7,6 +7,7 @@ import Notificate from '~/containers/notificate/notificate.container'
 
 import React, { Fragment, ReactElement, ReactNode, useContext, useEffect, useRef, useState } from 'react'
 
+import { parse } from 'cookie'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
 
@@ -16,7 +17,6 @@ import { RechargeModal } from './recharge-form.component'
 
 import { trpc } from '~/utils/trpc'
 
-interface HeaderProps {}
 interface HeaderProps {}
 
 interface tabData {
@@ -36,6 +36,7 @@ export const Header: React.FC = ({}: HeaderProps) => {
   const prevSocketContext = useRef<any[]>([])
   const [selectedTab, setSelectedTab] = useState('Chính')
   const [isModalLoginVisible, setIsModalLoginVisible] = React.useState(false)
+  const accessToken = parse(document.cookie).accessToken
 
   const { data: dataResponse, isLoading: loading, isFetching: fetching } = trpc.useQuery(['identity.identityInfo'])
   const {
@@ -60,22 +61,24 @@ export const Header: React.FC = ({}: HeaderProps) => {
 
   useEffect(() => {
     if (userInfo) {
-      setSocketToken(window.localStorage.getItem('accessToken'))
+      setSocketToken(accessToken || null)
     }
-    if (dataResponse) {
+    if (dataResponse && accessToken) {
       setUserInfo(dataResponse.data)
       setUserContext(dataResponse.data)
+    } else {
+      setUserContext(null)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dataResponse, setSocketToken, userInfo])
+  }, [dataResponse, setSocketToken, userInfo, accessToken])
 
-  useEffect(() => {
-    if (socketContext?.socketNotificateContext[0]?.id !== prevSocketContext.current?.[0]?.id) {
-      refetchNotificateAmount()
-    }
-    prevSocketContext.current = socketContext?.socketNotificateContext
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socketContext?.socketNotificateContext[0]?.id, socketContext?.socketNotificateContext])
+  // useEffect(() => {
+  //   // if (socketContext?.socketNotificateContext[0]?.id !== prevSocketContext.current?.[0]?.id) {
+  //   //   refetchNotificateAmount()
+  //   // }
+  //   prevSocketContext.current = socketContext?.socketNotificateContext
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [socketContext?.socketNotificateContext[0]?.id, socketContext?.socketNotificateContext])
 
   const tabDatas: tabData[] = [
     {

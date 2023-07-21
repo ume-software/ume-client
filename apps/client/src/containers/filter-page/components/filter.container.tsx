@@ -141,6 +141,7 @@ const FilterContainer = (props) => {
     refetchListProviderFilter().then((data) => {
       setListProviderFilter(data.data?.data.row)
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [priceRange, skillId, searchText, gender])
 
   const handleKeyPress = (e) => {

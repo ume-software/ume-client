@@ -7,7 +7,7 @@ export const LogoutPage = () => {
 
   useEffect(() => {
     util.refetchQueries(['identity.identityInfo'])
-    window.localStorage.removeItem('accessToken')
+    // window.localStorage.removeItem('accessToken')
   }, [util])
   return <></>
 }
