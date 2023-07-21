@@ -5,7 +5,7 @@ import coin from 'public/coin-icon.png'
 import CategoryDrawer from '~/containers/home-page/components/category-drawer'
 import PromoteCard from '~/containers/home-page/components/promoteCard'
 
-import { Fragment, useEffect, useRef, useState } from 'react'
+import { Fragment, useCallback, useEffect, useRef, useState } from 'react'
 
 import { Slider, Tooltip } from 'antd'
 import Image from 'next/image'
@@ -38,7 +38,7 @@ const min: number = 0
 const genderData = [
   { key: undefined, name: 'All' },
   { key: 'MALE', name: 'Male' },
-  { key: 'FEMALE', name: 'Famale' },
+  { key: 'FAMALE', name: 'Female' },
   { key: 'ORTHER', name: 'Orther' },
   { key: 'PRIVATE', name: 'Private' },
 ]
@@ -48,6 +48,7 @@ const FilterContainer = (props) => {
   const skillId = router.query.skillId
   const limit = '20'
   const containerRef = useRef<HTMLDivElement>(null)
+  const [scrollPosition, setScrollPosition] = useState(0)
   const [listProviderFilter, setListProviderFilter] = useState<FilterProviderPagingResponse['row']>([])
   const [page, setPage] = useState('1')
   const [searchText, setSearchText] = useState<string>('')
@@ -91,7 +92,7 @@ const FilterContainer = (props) => {
       cacheTime: 0,
       refetchOnMount: true,
       onSuccess(data) {
-        setListProviderFilter(data?.data?.row)
+        setListProviderFilter((prevData) => [...(prevData || []), ...(data?.data?.row || [])])
       },
     },
   )
@@ -112,38 +113,35 @@ const FilterContainer = (props) => {
   )
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (containerRef.current) {
-        const { scrollTop, scrollHeight, clientHeight } = containerRef.current
-
-        const isAtEnd = scrollTop + clientHeight >= scrollHeight
-
-        console.log(scrollHeight)
-
-        if (isAtEnd && Number(providersFilter?.data.count) > Number(limit) * Number(page)) {
-          setPage(String(Number(page) + 1))
-        }
-      }
-    }
-
-    if (containerRef.current) {
-      containerRef.current.addEventListener('scroll', handleScroll)
-    }
-
+    window.addEventListener('scroll', onScroll)
     return () => {
-      if (containerRef.current) {
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        containerRef.current.removeEventListener('scroll', handleScroll)
-      }
-    }
-  })
-
-  useEffect(() => {
-    if (page !== '1') {
-      refetchListProviderFilter()
+      window.removeEventListener('scroll', onScroll)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page])
+  }, [])
+
+  const onScroll = useCallback(() => {
+    const { scrollY } = window
+    setScrollPosition(scrollY)
+  }, [])
+
+  useEffect(() => {
+    if (containerRef.current) {
+      const { scrollHeight } = containerRef.current
+      const isAtEnd = scrollPosition >= scrollHeight - 500
+      if (isAtEnd && Number(providersFilter?.data.count) > 20 * Number(page)) {
+        setPage(String(Number(page) + 1))
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scrollPosition])
+
+  useEffect(() => {
+    setPage('1')
+    refetchListProviderFilter().then((data) => {
+      setListProviderFilter(data.data?.data.row)
+    })
+  }, [priceRange, skillId, searchText, gender])
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
@@ -152,7 +150,7 @@ const FilterContainer = (props) => {
   }
 
   return (
-    <div ref={containerRef} className="min-h-screen mx-10 text-white">
+    <div className="min-h-screen mx-10 text-white">
       <div className="flex items-center justify-between mx-5 my-5">
         <p className="text-5xl font-bold">{props?.skillName}</p>
         <CategoryDrawer data={listSkils} loadingSkill={loadingSkill} />
@@ -286,12 +284,12 @@ const FilterContainer = (props) => {
         </div>
       </div>
       <div className="container mx-auto my-10">
-        {loadingProviderFilter || isFetchingProviderFilter ? (
+        {loadingProviderFilter && !isFetchingProviderFilter ? (
           <>
             <PlayerSkeletonLoader />
           </>
         ) : (
-          <div className="grid gap-6 mt-2 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1">
+          <div ref={containerRef} className="grid gap-6 mt-2 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1">
             {listProviderFilter?.length != 0 ? (
               listProviderFilter?.map((provider) => (
                 <Link key={provider?.id} href={`/player/${provider?.slug || provider?.id}?gameId=${provider.skillid}`}>
@@ -307,6 +305,7 @@ const FilterContainer = (props) => {
             )}
           </div>
         )}
+        {isFetchingProviderFilter && <PlayerSkeletonLoader />}
       </div>
     </div>
   )

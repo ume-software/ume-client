@@ -19,11 +19,11 @@ info  - Finalizing page optimization...
 Route (pages)                                 Size     First Load JS
 ┌ λ /                                         257 B          99.9 kB
 ├   /_app                                     0 B            99.7 kB
-├ ○ /404 (341 ms)                             6.28 kB         106 kB
+├ ○ /404 (369 ms)                             6.28 kB         106 kB
 ├ λ /api/status                               0 B            99.7 kB
 ├ λ /api/trpc/[trpc]                          0 B            99.7 kB
 ├ ○ /community                                1.83 kB         102 kB
-├ ○ /filter-skill/[filterSkillName] (328 ms)  1.9 kB          102 kB
+├ ○ /filter-skill/[filterSkillName] (357 ms)  1.9 kB          102 kB
 ├ ○ /home                                     1.83 kB         102 kB
 ├ ○ /live                                     1.83 kB         102 kB
 ├ λ /logout                                   409 B           100 kB
@@ -33,7 +33,7 @@ Route (pages)                                 Size     First Load JS
   ├ chunks/framework-22108eb722d84e59.js      45.4 kB
   ├ chunks/main-1549b305685c3af3.js           26.7 kB
   ├ chunks/pages/_app-aae82f905d4d44e6.js     25.1 kB
-  ├ chunks/webpack-b3113e22cab0e744.js        2.46 kB
+  ├ chunks/webpack-2fc3aa46ce399c00.js        2.46 kB
   └ css/a27f71a9cf2a2a56.css                  6.9 kB
 
 λ  (Server)  server-side renders at runtime (uses getInitialProps or getServerSideProps)

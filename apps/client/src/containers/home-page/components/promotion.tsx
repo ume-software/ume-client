@@ -15,7 +15,6 @@ import { trpc } from '~/utils/trpc'
 export interface Promotion {}
 
 export const Promotion = () => {
-  const { childrenDrawer, setChildrenDrawer } = useContext(DrawerContext)
   const [page, setPage] = useState<string>('1')
   const [listHotProvider, setListHotProvider] = useState<FilterProviderPagingResponse['row']>([])
   const [listProvider, setListProvider] = useState<FilterProviderPagingResponse['row']>([])

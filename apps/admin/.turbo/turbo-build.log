@@ -18,8 +18,8 @@ Route (pages)                              Size     First Load JS
 ├ λ /404                                   334 B          98.5 kB
 ├ λ /api/status                            0 B            98.1 kB
 ├ λ /api/trpc/[trpc]                       0 B            98.1 kB
-├ ○ /dashboard (1160 ms)                   1.82 kB        99.9 kB
-└ ○ /signin (1163 ms)                      1.82 kB        99.9 kB
+├ ○ /dashboard (438 ms)                    1.82 kB        99.9 kB
+└ ○ /signin (434 ms)                       1.82 kB        99.9 kB
 + First Load JS shared by all              102 kB
   ├ chunks/framework-22108eb722d84e59.js   45.4 kB
   ├ chunks/main-1549b305685c3af3.js        26.7 kB
