@@ -58,9 +58,6 @@ const GeneralPost = () => {
     if (containerRef?.current) {
       const containerHeight = containerRef?.current?.offsetHeight
       if (scrollPosition > containerHeight * 0.85) {
-        // refetchSuggestPost().then((data) => {
-        //   setSuggestPostData((prevData) => [...(prevData || []), ...(data?.data?.data.row || [])])
-        // })
         refetchSuggestPost()
       }
     }

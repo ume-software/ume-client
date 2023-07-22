@@ -28,7 +28,7 @@ const orderBy: OrderByProps[] = [
     name: 'Giá tiền',
   },
   {
-    key: 'rate',
+    key: 'star',
     name: 'Đánh giá',
   },
 ]
@@ -38,7 +38,7 @@ const min: number = 0
 const genderData = [
   { key: undefined, name: 'All' },
   { key: 'MALE', name: 'Male' },
-  { key: 'FAMALE', name: 'Female' },
+  { key: 'FEMALE', name: 'Female' },
   { key: 'ORTHER', name: 'Orther' },
   { key: 'PRIVATE', name: 'Private' },
 ]

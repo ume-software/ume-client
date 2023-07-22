@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 import { createRouter } from './configurations'
-import { getAccountBalance, getIdentityInfo, requestRecharge } from './services/identity-service'
+import { getAccountBalance, getIdentityInfo, getUserBySlug, requestRecharge } from './services/identity-service'
 
 export const identityRouter = createRouter()
   .query('identityInfo', {
@@ -21,5 +21,11 @@ export const identityRouter = createRouter()
     }),
     resolve: async ({ input, ctx }) => {
       return await requestRecharge(input, ctx)
+    },
+  })
+  .query('getUserBySlug', {
+    input: z.string(),
+    resolve: async ({ input, ctx }) => {
+      return await getUserBySlug(input, ctx)
     },
   })
