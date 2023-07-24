@@ -102,13 +102,13 @@ const FilterContainer = (props) => {
   }
   const tooltipContent = (
     <Slider
-      className="w-[200px] text-white"
+      className="w-[200px] bg-[#292734] text-white"
       range
       min={min}
       max={max}
       marks={{ 0: <p className="text-white">{min}</p>, 100: <p className="text-white">{max}</p> }}
       defaultValue={priceRange}
-      onChange={handlePriceChange}
+      onAfterChange={handlePriceChange}
     />
   )
 
@@ -166,9 +166,6 @@ const FilterContainer = (props) => {
             />
           </div>
           <div className="flex gap-2 items-center">
-            {/* <label htmlFor="price" className="text-xl font-bold">
-              Chọn mức giá:
-            </label> */}
             <Tooltip
               className="bg-[#292734] text-white px-8 py-2 rounded-xl hover:bg-gray-500 cursor-pointer"
               title={tooltipContent}
@@ -293,7 +290,7 @@ const FilterContainer = (props) => {
           <div ref={containerRef} className="grid gap-6 mt-2 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1">
             {listProviderFilter?.length != 0 ? (
               listProviderFilter?.map((provider) => (
-                <Link key={provider?.id} href={`/player/${provider?.slug || provider?.id}?gameId=${provider.skillid}`}>
+                <Link key={provider?.id} href={`/player/${provider?.slug || provider?.id}?service=${provider.skillid}`}>
                   <PromoteCard data={provider} />
                 </Link>
               ))

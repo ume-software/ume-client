@@ -2,7 +2,14 @@ import { TRPCError } from '@trpc/server'
 import { getEnv } from '~/env'
 
 import { parse } from 'cookie'
-import { CommentPostRequest, CreateNewPostRequest, DonateApi, ImageApi, PostApi } from 'ume-booking-service-openapi'
+import {
+  AudioApi,
+  CommentPostRequest,
+  CreateNewPostRequest,
+  DonateApi,
+  ImageApi,
+  PostApi,
+} from 'ume-booking-service-openapi'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
@@ -246,12 +253,22 @@ export const donateUserTop = async (input) => {
 
 export const uploadImage = async (input: File[], ctx) => {
   const cookies = parse(ctx.req.headers.cookie)
+
   try {
     const respone = await new ImageApi({
       basePath: getEnv().baseBookingURL,
-      isJsonMime: () => true,
+      isJsonMime: () => false,
       accessToken: cookies['accessToken'],
-    }).uploadImage('vi', input)
+      baseOptions: {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      },
+    }).uploadImage('vi', input, undefined, undefined, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
     return {
       data: respone.data,
       success: true,
@@ -261,6 +278,27 @@ export const uploadImage = async (input: File[], ctx) => {
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
       message: error.message || 'Fail to upload image',
+    })
+  }
+}
+
+export const uploadAudio = async (input: File[], ctx) => {
+  const cookies = parse(ctx.req.headers.cookie)
+  try {
+    const respone = await new AudioApi({
+      basePath: getEnv().baseBookingURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).uploadAudio('vi', input)
+    return {
+      data: respone.data,
+      success: true,
+    }
+  } catch (error) {
+    console.log('error at catch', error)
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to upload audio',
     })
   }
 }

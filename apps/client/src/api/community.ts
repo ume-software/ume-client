@@ -15,6 +15,7 @@ import {
   getSuggestPostWithoutCookies,
   likeForPostId,
   unlikeForPostId,
+  uploadAudio,
   uploadImage,
   watchedPost,
 } from './services/community-service'
@@ -110,8 +111,14 @@ export const communityRouter = createRouter()
     },
   })
   .mutation('uploadImage', {
-    input: z.any(),
+    input: z.array(z.any()),
     resolve: async ({ ctx, input }) => {
       return await uploadImage(input, ctx)
+    },
+  })
+  .mutation('uploadAudio', {
+    input: z.any(),
+    resolve: async ({ ctx, input }) => {
+      return await uploadAudio(input, ctx)
     },
   })
