@@ -54,7 +54,7 @@ const TopDonate = (props) => {
         {durationArray.map((item, index) => (
           <>
             <div
-              key={index}
+              key={item.key}
               className={`w-[80px] text-center rounded-xl py-2 cursor-pointer ${
                 item.key == duration ? ' bg-purple-600' : 'bg-zinc-800'
               }`}

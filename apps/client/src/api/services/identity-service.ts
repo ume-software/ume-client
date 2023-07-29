@@ -3,7 +3,7 @@ import { getEnv } from '~/env'
 
 import { parse, serialize } from 'cookie'
 import { BuyCoinRequestApi, CoinApi } from 'ume-booking-service-openapi'
-import { AuthApi } from 'ume-identity-service-openapi'
+import { AuthApi, UserApi } from 'ume-identity-service-openapi'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
@@ -66,6 +66,27 @@ export const requestRecharge = async ({ total, platform }, ctx) => {
       data: reponse.data,
       status: 'success',
       message: 'OK',
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to get data recharge',
+    })
+  }
+}
+
+export const getUserBySlug = async (input, ctx) => {
+  const cookies = parse(ctx.req.headers.cookie ?? '')
+  try {
+    const reponse = await new UserApi({
+      basePath: getEnv().baseBookingURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).getUserBySlug(input)
+    return {
+      data: reponse.data,
+      success: true,
+      message: '',
     }
   } catch (error) {
     throw new TRPCError({

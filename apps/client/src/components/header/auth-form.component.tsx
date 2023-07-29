@@ -19,7 +19,6 @@ export const AuthForm = ({ setShowModal }: AuthFormProps) => {
           onSuccess: (data) => {
             utils.refetchQueries(['identity.identityInfo'])
             setShowModal(false)
-            window.localStorage.setItem('accessToken', data.data.accessToken)
           },
           onError: (error) => console.log(error),
         },

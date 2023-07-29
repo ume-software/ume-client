@@ -15,7 +15,6 @@ import { trpc } from '~/utils/trpc'
 export interface Promotion {}
 
 export const Promotion = () => {
-  const { childrenDrawer, setChildrenDrawer } = useContext(DrawerContext)
   const [page, setPage] = useState<string>('1')
   const [listHotProvider, setListHotProvider] = useState<FilterProviderPagingResponse['row']>([])
   const [listProvider, setListProvider] = useState<FilterProviderPagingResponse['row']>([])
@@ -90,7 +89,7 @@ export const Promotion = () => {
                 {listHotProvider?.map((provider) => (
                   <Link
                     key={provider?.id}
-                    href={`/player/${provider?.slug || provider?.id}?gameId=${provider.skillid}`}
+                    href={`/player/${provider?.slug || provider?.id}?service=${provider.skillid}`}
                   >
                     <PromoteCard data={provider} />
                   </Link>
@@ -103,7 +102,7 @@ export const Promotion = () => {
                 {listProvider?.map((provider) => (
                   <Link
                     key={provider?.id}
-                    href={`/player/${provider?.slug || provider?.id}?gameId=${provider.skillid}`}
+                    href={`/player/${provider?.slug || provider?.id}?service=${provider.skillid}`}
                   >
                     <PromoteCard data={provider} />
                   </Link>

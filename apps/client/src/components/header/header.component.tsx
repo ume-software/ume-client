@@ -7,6 +7,7 @@ import Notificate from '~/containers/notificate/notificate.container'
 
 import React, { Fragment, ReactElement, ReactNode, useContext, useEffect, useRef, useState } from 'react'
 
+import { parse } from 'cookie'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
 
@@ -16,7 +17,6 @@ import { RechargeModal } from './recharge-form.component'
 
 import { trpc } from '~/utils/trpc'
 
-interface HeaderProps {}
 interface HeaderProps {}
 
 interface tabData {
@@ -32,10 +32,9 @@ export const Header: React.FC = ({}: HeaderProps) => {
   const [notificatedAmount, setNotificatedAmount] = useState<number>(0)
   const { socketToken, setSocketToken } = useContext(SocketTokenContext)
   const { userContext, setUserContext } = useContext(UserContext)
-  const { socketContext } = useContext(SocketContext)
-  const prevSocketContext = useRef<any[]>([])
   const [selectedTab, setSelectedTab] = useState('Chính')
   const [isModalLoginVisible, setIsModalLoginVisible] = React.useState(false)
+  const accessToken = parse(document.cookie).accessToken
 
   const { data: dataResponse, isLoading: loading, isFetching: fetching } = trpc.useQuery(['identity.identityInfo'])
   const {
@@ -60,22 +59,24 @@ export const Header: React.FC = ({}: HeaderProps) => {
 
   useEffect(() => {
     if (userInfo) {
-      setSocketToken(window.localStorage.getItem('accessToken'))
+      setSocketToken(accessToken || null)
     }
-    if (dataResponse) {
+    if (dataResponse && accessToken) {
       setUserInfo(dataResponse.data)
       setUserContext(dataResponse.data)
+    } else {
+      setUserContext(null)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dataResponse, setSocketToken, userInfo])
+  }, [dataResponse, setSocketToken, userInfo, accessToken])
 
-  useEffect(() => {
-    if (socketContext?.socketNotificateContext[0]?.id !== prevSocketContext.current?.[0]?.id) {
-      refetchNotificateAmount()
-    }
-    prevSocketContext.current = socketContext?.socketNotificateContext
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socketContext?.socketNotificateContext[0]?.id, socketContext?.socketNotificateContext])
+  // useEffect(() => {
+  //   // if (socketContext?.socketNotificateContext[0]?.id !== prevSocketContext.current?.[0]?.id) {
+  //   //   refetchNotificateAmount()
+  //   // }
+  //   prevSocketContext.current = socketContext?.socketNotificateContext
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [socketContext?.socketNotificateContext[0]?.id, socketContext?.socketNotificateContext])
 
   const tabDatas: tabData[] = [
     {
@@ -158,11 +159,9 @@ export const Header: React.FC = ({}: HeaderProps) => {
           </span>
           {userInfo && accountBalance && (
             <button onClick={() => setShowRechargeModal(true)}>
-              <div className="flex flex-1">
-                <span className="rounded-full bg-[#37354F] p-1 self-center text-white"> {balance}</span>
-                <span className="mt-2">
-                  <Image src={coin} width={40} height={40} alt="coin" />
-                </span>
+              <div className="flex items-center justify-end rounded-full bg-[#37354F] px-2 mr-2 self-center text-white">
+                <p className="text-lg font-semibold">{balance}</p>
+                <Image src={coin} width={30} height={30} alt="coin" />
               </div>
             </button>
           )}
@@ -291,14 +290,15 @@ export const Header: React.FC = ({}: HeaderProps) => {
                       </Menu.Item>
                       <Menu.Item as="div">
                         {({ active }) => (
-                          <button
+                          <Link
+                            href={`/account-setting?user=${userContext?.name}`}
                             className={`${
                               active ? 'bg-violet-500 text-white' : 'text-gray-900'
                             } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                           >
                             <Setting theme="outline" size="20" fill="#333" className="mr-3" />
                             Cài đặt tài khoản
-                          </button>
+                          </Link>
                         )}
                       </Menu.Item>
                       <Menu.Item as="div">

@@ -26,7 +26,7 @@ interface IFormValue {
 interface paymentPlatformArrayProps {
   paymentPlatform: string
   imgSrc: StaticImageData | string
-  isChoose: boolean
+  tax: number
 }
 
 // const validate = (value: IFormValue): FormikErrors<IFormValue> => {
@@ -41,11 +41,12 @@ interface paymentPlatformArrayProps {
 // }
 
 const coinRechangeValue: number[] = [10000, 20000, 50000, 100000, 200000, 500000]
-const paymentPlatformArray: paymentPlatformArrayProps[] = [{ paymentPlatform: 'MOMO', imgSrc: momo, isChoose: false }]
+const paymentPlatformArray: paymentPlatformArrayProps[] = [{ paymentPlatform: 'MOMO', imgSrc: momo, tax: 0.01 }]
 
 export const RechargeModal = ({ setShowRechargeModal, showRechargeModal }: IRechargeModalProps) => {
   const [qrContent, setQRContent] = useState<any>()
   const [isSubmiting, setSubmiting] = useState(false)
+  const [platform, setPlatform] = useState<paymentPlatformArrayProps>(paymentPlatformArray[0])
   const handleClose = () => {
     setShowRechargeModal(false)
     // setTimeout(() => setOpenTabMomo(false), 1000)
@@ -54,7 +55,6 @@ export const RechargeModal = ({ setShowRechargeModal, showRechargeModal }: IRech
 
   const validationSchema = Yup.object().shape({
     balance: Yup.string().required('Xin hãy nhập số tiền'),
-    platform: Yup.string().required('Xin hãy chọn phương thức thanh toán'),
   })
 
   const requestRecharge = trpc.useMutation(['identity.request-recharge'])
@@ -64,18 +64,40 @@ export const RechargeModal = ({ setShowRechargeModal, showRechargeModal }: IRech
         <div className="w-full">
           <div className="px-4 pb-2">
             <div className="flex flex-col justify-center">
+              <div>
+                {paymentPlatformArray.map((item, index) => (
+                  <div
+                    key={index}
+                    className={`flex justify-between my-3  hover:bg-[#334155] ${
+                      item.paymentPlatform == platform.paymentPlatform ? 'border-purple-700 border-2' : ''
+                    } w-full px-4 py-2 text-sm font-medium text-left rounded-lg focus:outline-none focus-visible:ring focus-visible:ring-opacity-75 cursor-pointer`}
+                    onClick={() => setPlatform(item)}
+                  >
+                    <div className="flex justify-start gap-2">
+                      <span>
+                        <Image src={item.imgSrc} alt="logo-momo" width={20} height={20} />
+                      </span>
+                      <p>Nạp tiền qua {item.paymentPlatform}</p>
+                    </div>
+                    {item.paymentPlatform == platform.paymentPlatform ? (
+                      <CheckOne theme="filled" size="20" fill="#7e22ce" strokeLinejoin="bevel" />
+                    ) : (
+                      ''
+                    )}
+                  </div>
+                ))}
+              </div>
               {!qrContent && (
                 <Formik
                   initialValues={{
                     balance: '',
-                    platform: '',
                   }}
                   onSubmit={(values) => {
                     setSubmiting(true)
                     requestRecharge.mutate(
                       {
                         total: values.balance,
-                        platform: values.platform,
+                        platform: platform.paymentPlatform,
                       },
                       {
                         onSuccess: (data) => {
@@ -100,9 +122,7 @@ export const RechargeModal = ({ setShowRechargeModal, showRechargeModal }: IRech
                               className={`w-[130px] col-span-6 md:col-span-3 lg:col-span-2 py-1 px-5 mb-3 bg-[#413F4D] ${
                                 Number(values.balance) == price / 1000 ? 'border-purple-700 border-2' : ''
                               } rounded-xl cursor-pointer`}
-                              onClick={() =>
-                                setValues({ balance: (price / 1000).toString(), platform: values.platform }, true)
-                              }
+                              onClick={() => setValues({ balance: (price / 1000).toString() }, true)}
                             >
                               <div className="flex justify-start items-center">
                                 <p>{price / 1000}</p>
@@ -110,8 +130,7 @@ export const RechargeModal = ({ setShowRechargeModal, showRechargeModal }: IRech
                               </div>
                               <div className="flex items-center">
                                 <p>
-                                  {(price + price * 0.001).toLocaleString('en-US', {
-                                    style: 'currency',
+                                  {(price + price * platform.tax).toLocaleString('en-US', {
                                     currency: 'VND',
                                   })}
                                 </p>
@@ -137,40 +156,8 @@ export const RechargeModal = ({ setShowRechargeModal, showRechargeModal }: IRech
                             autoComplete="off"
                           />
                         </div>
-                        <div>
-                          {!!errors.platform ? <div className="text-sm text-red-500">{errors.platform}</div> : ''}
-                          <div
-                            className={`flex ${
-                              errors.platform ? 'border-red-500 border-2 rounded-xl' : ''
-                            } cursor-pointer`}
-                          >
-                            {paymentPlatformArray.map((item, index) => (
-                              <div
-                                key={index}
-                                className={`flex justify-between my-3  hover:bg-[#334155] ${
-                                  item.paymentPlatform == values.platform ? 'border-purple-700 border-2' : ''
-                                } w-full px-4 py-2 text-sm font-medium text-left rounded-lg focus:outline-none focus-visible:ring focus-visible:ring-opacity-75 `}
-                                onClick={() =>
-                                  setValues({ balance: values.balance, platform: item.paymentPlatform }, true)
-                                }
-                              >
-                                <div className="flex justify-start gap-2">
-                                  <span>
-                                    <Image src={item.imgSrc} alt="logo-momo" width={20} height={20} />
-                                  </span>
-                                  <span>Nạp tiền qua {item.paymentPlatform}</span>
-                                </div>
-                                {item.paymentPlatform == values.platform ? (
-                                  <CheckOne theme="filled" size="20" fill="#7e22ce" strokeLinejoin="bevel" />
-                                ) : (
-                                  ''
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        </div>
                         <Button
-                          customCSS="bg-[#37354F] py-1 mt-2 hover:bg-slate-700 !rounded-3xl max-h-10 w-full text-[15px] hover:ease-in-out"
+                          customCSS="bg-[#37354F] py-2 mt-10 hover:bg-slate-700 !rounded-3xl max-h-15 w-full text-[15px] hover:ease-in-out"
                           type="button"
                           onClick={() => {
                             handleSubmit()

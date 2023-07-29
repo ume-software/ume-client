@@ -53,7 +53,7 @@ export const getProviders = async (query?: {
       query?.endCost,
       query?.skillId,
       query?.name,
-      query?.gender as 'MALE' | 'FAMALE' | 'ORTHER' | 'PRIVATE',
+      query?.gender as 'MALE' | 'FEMALE' | 'ORTHER' | 'PRIVATE',
       query?.limit,
       query?.page,
       query?.order,
@@ -133,7 +133,7 @@ export const createBooking = async (provider: BookingProviderRequest, ctx) => {
       basePath: getEnv().baseBookingURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).createbooking(provider)
+    }).createBooking(provider)
     return {
       data: respone.data,
       success: true,
