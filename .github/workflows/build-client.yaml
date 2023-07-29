@@ -20,13 +20,13 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # - name: Build and push
-      #   uses: docker/build-push-action@v3
-      #   with:
-      #     push: true
-      #     tags: hieudan/ume:latest
-      #     file: ./dockers/client.Dockerfile
-      #     context: .
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          push: true
+          tags: hieudan/ume:latest
+          file: ./dockers/client.Dockerfile
+          context: .
 
       - name: ssh key passphrase
         uses: appleboy/ssh-action@master
