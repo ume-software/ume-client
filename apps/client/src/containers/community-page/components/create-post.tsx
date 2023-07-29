@@ -1,9 +1,7 @@
 import { TextArea } from '@ume/ui'
+import { getEnv } from '~/env'
 
-import { useState } from 'react'
-
-import { Form } from 'antd'
-import { ThumbnailResponseTypeEnum } from 'ume-booking-service-openapi'
+import { useRef, useState } from 'react'
 
 import { trpc } from '~/utils/trpc'
 
@@ -17,7 +15,8 @@ const CreatePost = (props) => {
   const createNewPost = trpc.useMutation(['community.createNewPost'])
   const uploadImage = trpc.useMutation(['community.uploadImage'])
   const uploadAudio = trpc.useMutation(['community.uploadAudio'])
-  const [mediaFiles, setMediaFiles] = useState<(File | FileList | ArrayBuffer | null)[]>([])
+  const [mediaFiles, setMediaFiles] = useState<any>()
+  const fileRef = useRef(null)
 
   // const onMediaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   //   const files = e.target.files
@@ -41,42 +40,56 @@ const CreatePost = (props) => {
   //   }
   // }
 
-  const onMediaChange = (e) => {
+  const handleMediaChange = (e) => {
     setMediaFiles((prevData) => [...(prevData || []), e.target.files])
   }
 
-  const handleUploadImage = async (files: any[]) => {
-    const thumbnails: ThumbnailsProps[] = []
+  // const handleUploadImage = async (files: any[]) => {
+  //   const thumbnails: ThumbnailsProps[] = []
 
-    const formData = new FormData()
-    files
-      .filter((file) => typeof file === 'string')
-      .forEach((imageFile, index) => {
-        formData.append(`image${index}`, imageFile)
-      })
-    // Append video files to formData (assuming mediaFiles is an array of ArrayBuffers)
-    files
-      .filter((file) => file instanceof ArrayBuffer)
-      .forEach((videoFile, index) => {
-        const videoBlob = new Blob([videoFile], { type: 'video/*' })
-        formData.append(`video${index}`, videoBlob)
-      })
+  //   const formData = new FormData()
+  //   files
+  //     .filter((file) => typeof file === 'string')
+  //     .forEach((imageFile, index) => {
+  //       formData.append(`image${index}`, imageFile)
+  //     })
+  //   // Append video files to formData (assuming mediaFiles is an array of ArrayBuffers)
+  //   files
+  //     .filter((file) => file instanceof ArrayBuffer)
+  //     .forEach((videoFile, index) => {
+  //       const videoBlob = new Blob([videoFile], { type: 'video/*' })
+  //       formData.append(`video${index}`, videoBlob)
+  //     })
+
+  //   console.log(formData)
+
+  //   try {
+  //     uploadImage.mutate(files, {
+  //       onSuccess(data) {
+  //         thumbnails.push({ url: String(data.data), type: ThumbnailResponseTypeEnum.Image })
+  //       },
+  //     })
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  //   return { thumbnails }
+  // }
+
+  const handleCreateNewPost = async (e) => {
+    // handleUploadImage(mediaFiles).then(({ thumbnails }) => {
+    //   console.log(thumbnails)
+    // })
+    e.preventDefault()
+    const formData = new FormData(e.target)
+    console.log(formData instanceof FormData)
+
     try {
-      uploadImage.mutate(files, {
-        onSuccess(data) {
-          thumbnails.push({ url: String(data.data), type: ThumbnailResponseTypeEnum.Image })
-        },
-      })
+      const responseData = await uploadImage.mutate(formData)
+      console.log(responseData)
     } catch (error) {
-      console.log(error)
+      // Handle error
+      console.log('error at catch', error)
     }
-    return { thumbnails }
-  }
-
-  const handleCreateNewPost = () => {
-    handleUploadImage(mediaFiles).then(({ thumbnails }) => {
-      console.log(thumbnails)
-    })
 
     // if (content != '') {
     //   try {
@@ -123,7 +136,7 @@ const CreatePost = (props) => {
 
   return (
     <>
-      <Form action="community" encType="multipart/form-data" onFinish={handleCreateNewPost}>
+      <form onSubmit={handleCreateNewPost}>
         <div className="max-h-[450px] flex flex-col text-white overflow-y-auto p-5 custom-scrollbar gap-5">
           <div className="flex flex-col gap-3">
             <label>Nội dung</label>
@@ -131,8 +144,8 @@ const CreatePost = (props) => {
           </div>
           <div className="flex flex-col gap-3">
             <label>Hình ảnh</label>
-            <input onChange={onMediaChange} type="file" name="file" multiple />
-            {/* <div className="flex flex-col gap-2">
+            <input ref={fileRef} type="file" name="files" onChange={handleMediaChange} multiple />
+            <div className="flex flex-col gap-2">
               {mediaFiles?.map((link, index) => {
                 if (typeof link === 'string') {
                   // eslint-disable-next-line @next/next/no-img-element
@@ -147,7 +160,7 @@ const CreatePost = (props) => {
                 }
                 return null
               })}
-            </div> */}
+            </div>
           </div>
         </div>
         <div className="mt-3 p-5">
@@ -158,7 +171,7 @@ const CreatePost = (props) => {
             Tạo bài viết
           </button>
         </div>
-      </Form>
+      </form>
     </>
   )
 }

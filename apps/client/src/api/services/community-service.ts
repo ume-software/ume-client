@@ -251,26 +251,24 @@ export const donateUserTop = async (input) => {
   }
 }
 
-export const uploadImage = async (input: File[], ctx) => {
+export const uploadImage = async (input: any, ctx) => {
   const cookies = parse(ctx.req.headers.cookie)
-
   try {
-    const respone = await new ImageApi({
+    const response = await new ImageApi({
       basePath: getEnv().baseBookingURL,
       isJsonMime: () => false,
       accessToken: cookies['accessToken'],
-      baseOptions: {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      },
-    }).uploadImage('vi', input, undefined, undefined, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    })
+    }).uploadImage('vi', input)
+
+    // const response = await fetch('http://www.ume.software:8101/api/image', {
+    //   method: 'POST',
+    //   body: input,
+    // })
+
+    // const responseData = await response.json()
+
     return {
-      data: respone.data,
+      data: response.data,
       success: true,
     }
   } catch (error) {

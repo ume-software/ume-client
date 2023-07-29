@@ -37,7 +37,7 @@ const Table = (props: {
                     </thead>
                     <tbody>
                       {props?.data?.map((data, index) => (
-                        <tr key={data?.id} className="">
+                        <tr key={data.prividerId || data.userId} className="">
                           <td className="py-2">
                             {index == 0 && <Image src={medalTop1} width={30} height={40} alt="coin" />}
                             {index == 1 && <Image src={medalTop2} width={30} height={40} alt="coin" />}

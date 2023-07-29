@@ -4,7 +4,7 @@ const PostImageLayout = (props) => {
   const MAX_VISIBLE_IMAGES = 2
   const remainingImages = props.data?.length - MAX_VISIBLE_IMAGES
   return (
-    <div key={props.data.id} className="w-full h-fit">
+    <div key={props.data.url} className="w-full h-fit">
       {props.data?.length === 1 ? (
         <div className="relative max-w-[800px] h-[500px]">
           <Image
@@ -19,15 +19,8 @@ const PostImageLayout = (props) => {
         <>
           <div className="w-full flex gap-1">
             {props.data?.slice(0, MAX_VISIBLE_IMAGES).map((image, index) => (
-              <div className="relative w-full h-[250px]">
-                <Image
-                  className="absolute"
-                  key={index}
-                  layout="fill"
-                  objectFit="cover"
-                  src={image.url}
-                  alt={image.type}
-                />
+              <div className="relative w-full h-[250px]" key={index}>
+                <Image className="absolute" layout="fill" objectFit="cover" src={image.url} alt={image.type} />
               </div>
             ))}
           </div>

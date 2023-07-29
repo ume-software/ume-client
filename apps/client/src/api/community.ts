@@ -111,7 +111,7 @@ export const communityRouter = createRouter()
     },
   })
   .mutation('uploadImage', {
-    input: z.array(z.any()),
+    input: z.any(),
     resolve: async ({ ctx, input }) => {
       return await uploadImage(input, ctx)
     },
