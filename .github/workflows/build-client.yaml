@@ -2,9 +2,7 @@ name: Deploy Backend
  
 on:
   push:
-    paths:
-      - backend/**
-      - .github/**
+
 jobs:
   deploy-be:
     runs-on: ubuntu-latest
