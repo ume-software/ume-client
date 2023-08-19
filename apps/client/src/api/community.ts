@@ -1,4 +1,3 @@
-import { resolve } from 'path'
 import { CreateNewPostRequest, ThumbnailResponse } from 'ume-booking-service-openapi'
 import { z } from 'zod'
 
@@ -15,8 +14,6 @@ import {
   getSuggestPostWithoutCookies,
   likeForPostId,
   unlikeForPostId,
-  uploadAudio,
-  uploadImage,
   watchedPost,
 } from './services/community-service'
 
@@ -108,17 +105,5 @@ export const communityRouter = createRouter()
     input: z.string(),
     resolve: async ({ input }) => {
       return await donateUserTop(input)
-    },
-  })
-  .mutation('uploadImage', {
-    input: z.any(),
-    resolve: async ({ ctx, input }) => {
-      return await uploadImage(input, ctx)
-    },
-  })
-  .mutation('uploadAudio', {
-    input: z.any(),
-    resolve: async ({ ctx, input }) => {
-      return await uploadAudio(input, ctx)
     },
   })

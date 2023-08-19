@@ -15,6 +15,7 @@ module.exports = {
       'global-oss.epal.gg',
       'files.playerduo.net',
       'playerduo.net',
+      'www.ume.software',
     ],
   },
 }
