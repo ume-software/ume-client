@@ -1,69 +1,45 @@
-name: Build Ume-Client
-
+name: Deploy Backend
+ 
 on:
-  workflow_dispatch:
-    inputs:
-      servicePath:
-        description: "Path of service"
-        required: false
-  registry_package:
-    types: [published]
   push:
-    paths:
-      - "apps/client/**"
-      - "github/workflows/build-client.yaml"
-    branches:
-      - "master"
 
-env:
-  DOCKER_SERVER: ${{ secrets.DOCKER_SERVER }}
 jobs:
-  docker:
-    name: Build Ume Client
-    runs-on: [ 'self-hosted' ]
+  deploy-be:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: git pull
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Login to Docker Hub
+      - name: Login to DockerHub
         uses: docker/login-action@v2
         with:
-          registry: ${{ secrets.DOCKER_SERVER }}
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_TOKEN }}
-
-      - name: Docker get tag release
-        id: docker_tag_release
-        run: echo "docker_tag_release=$(make get-portal-image-tag)" >> $GITHUB_ENV
-        working-directory: "./"
-
-      - name: Docker cache image
-        id: cache_image
-        run: echo "cache_image=$(make get-tag-cache-portal-image)" >> $GITHUB_ENV
-        working-directory: "./"
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
-          context: .
-          file: dockers/client.Dockerfile
           push: true
-          tags: "default"
-#           tags: ${{ env.docker_tag_release }}
-#           cache-from: type=registry,ref=${{ env.cache_image }}
-#           cache-to: type=registry,ref=${{ env.cache_image }}
+          tags: hieudan/ume:latest
+          file: ./dockers/client.Dockerfile
+          context: .
 
-      - name: Get tag release
-        id: tag_release
-        run: echo "tag_release=$(make get-portal-tag-release)" >> $GITHUB_ENV
-        working-directory: "./"
-      - name: Mark tag release
-        uses: EndBug/latest-tag@latest
+      - name: ssh key passphrase
+        uses: appleboy/ssh-action@master
         with:
-#           tag-name: ${{ env.tag_release }}
-          tag-name: "default"
-          description: "release: Ume - Client"
-      
+          continue-on-error: true
+          host: ${{ secrets.AWS_HOST }}
+          username: ${{ secrets.AWS_USERNAME }}
+          key: ${{ secrets.AWS_KEY }}
+          port: ${{ secrets.AWS_PORT }}
+          script: |-
+            sudo docker pull hieudan/ume
+            sudo docker stop backend_server
+            sudo docker rm backend_server
+            sudo docker run --detach --name backend_server -p 3000:3000 hieudan/ume
+#            sudo docker rmi  $(sudo docker images -aq)
+ 
