@@ -38,11 +38,11 @@ const CommunityPost = (props: CommunityPostProps) => {
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [titleForm, setTitleForm] = useState<ReactNode>(<></>)
   const [modalForm, setModalForm] = useState<ReactNode>(<></>)
-  const [isPostModal, setIsPostModal] = useState(false)
-  const [isLikePost, setIsLikePost] = useState(props.data.isLike)
+  const [isPostModal, setIsPostModal] = useState<boolean>(false)
+  const [isLikePost, setIsLikePost] = useState<boolean>(props.data.isLike)
   const [postComment, setPostComment] = useState<number>(0)
   const { socketToken } = useContext(SocketTokenContext)
-  const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
+  const [isModalLoginVisible, setIsModalLoginVisible] = useState<boolean>(false)
   const postRef = useRef<HTMLDivElement>(null)
   const likeForPostId = trpc.useMutation(['community.likeForPostId'])
   const unLikeForPostId = trpc.useMutation(['community.unlikeForPostId'])
@@ -228,7 +228,7 @@ const CommunityPost = (props: CommunityPostProps) => {
           <div className="flex justify-between p-2">
             <div className="font-medium text-md opacity-30 cursor-pointer hover:opacity-100" onClick={handleLikeOpen}>
               {isLikePost ? (
-                <>Bạn{props.data?.likeCount === 0 ? '' : ` và ${props.data?.likeCount} người khác đã thích`}</>
+                <>Bạn{props.data?.likeCount === 0 ? ' đã thích' : ` và ${props.data?.likeCount} người khác đã thích`}</>
               ) : (
                 `${props.data?.likeCount} lượt thích`
               )}

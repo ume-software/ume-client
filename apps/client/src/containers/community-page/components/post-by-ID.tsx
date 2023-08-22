@@ -3,6 +3,7 @@ import { Left, Right } from '@icon-park/react'
 import { useState } from 'react'
 
 import Image from 'next/legacy/image'
+import { ThumbnailResponseTypeEnum } from 'ume-booking-service-openapi'
 
 import { TimeFormat } from '~/components/time-format'
 
@@ -28,12 +29,21 @@ const PostByID = (props) => {
       <div className="grid grid-cols-10">
         <div className="col-span-8">
           <div className="h-screen w-full relative">
-            <Image
-              src={props.postData?.thumbnails[imageIndex]?.url}
-              alt={`${props.postData?.thumbnails[imageIndex]?.type}`}
-              layout="fill"
-              objectFit="contain"
-            />
+            {props.postData?.thumbnails[imageIndex]?.type == ThumbnailResponseTypeEnum.Image ? (
+              <Image
+                src={props.postData?.thumbnails[imageIndex]?.url}
+                alt={`${props.postData?.thumbnails[imageIndex]?.type}`}
+                layout="fill"
+                objectFit="contain"
+              />
+            ) : (
+              <div className="h-[90%] flex justify-center items-center">
+                <video controls autoPlay>
+                  <source src={props.postData?.thumbnails[imageIndex]?.url} type="video/mp4" />
+                  <source src={props.postData?.thumbnails[imageIndex]?.url} type="video/ogg" />
+                </video>
+              </div>
+            )}
 
             <div className="absolute w-full px-10 top-[40%] flex justify-between">
               <div className="p-3 rounded-full hover:bg-gray-400" onClick={handlePreviousImage}>
