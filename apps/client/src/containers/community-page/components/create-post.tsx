@@ -6,7 +6,7 @@ import { getEnv } from '~/env'
 import { ChangeEvent, FormEvent, Key, SetStateAction, useEffect, useRef, useState } from 'react'
 
 import { notification } from 'antd'
-import { ThumbnailResponseTypeEnum } from 'ume-booking-service-openapi'
+import { ThumbnailResponseTypeEnum } from 'ume-openapi-booking'
 
 import { trpc } from '~/utils/trpc'
 

@@ -2,14 +2,7 @@ import { TRPCError } from '@trpc/server'
 import { getEnv } from '~/env'
 
 import { parse } from 'cookie'
-import {
-  AudioApi,
-  CommentPostRequest,
-  CreateNewPostRequest,
-  DonateApi,
-  ImageApi,
-  PostApi,
-} from 'ume-booking-service-openapi'
+import { AudioApi, CommentPostRequest, CreateNewPostRequest, DonateApi, ImageApi, PostApi } from 'ume-openapi-booking'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 

@@ -1,7 +1,5 @@
 import React from 'react'
 
-import { Shimmer } from 'react-shimmer'
-
 const PostSkeletonLoader = () => {
   return (
     <div className="flex flex-col gap-5">
@@ -134,19 +132,19 @@ const TableSkeletonLoader = () => {
         {Array.from({ length: skeletonRowCount }, (_, index) => (
           <tr key={index} className="">
             <td className="py-2">
-              <Shimmer width={30} height={40} />
+              <span className="w-[100px] h-[40px]" />
             </td>
             <td className="py-2">
               <div className="min-w-[150px] flex justify-center items-center gap-2">
                 <div className="relative w-8 h-8">
-                  <Shimmer width={8} height={8} />
+                  <span className="w-[100px] h-[40px]" />
                 </div>
-                <Shimmer width={100} height={10} />
+                <span className="w-[100px] h-[40px]" />
               </div>
             </td>
             <td className="py-2">
               <div className="flex items-center justify-center">
-                <Shimmer width={40} height={40} />
+                <span className="w-[100px] h-[40px]" />
               </div>
             </td>
           </tr>
@@ -157,8 +155,6 @@ const TableSkeletonLoader = () => {
 }
 
 const CategoryGridSkeleton = () => {
-  const skeletonData = Array(5).fill(null) // Replace 5 with the number of grid items
-
   return (
     <div className="w-full h-full px-6 overflow-y-auto custom-scrollbar">
       <div className="grid grid-cols-5 pb-5 place-items-center">
@@ -175,6 +171,38 @@ const CategoryGridSkeleton = () => {
   )
 }
 
+const ChatSkeleton = () => {
+  return (
+    <>
+      <div className="w-full h-full grid grid-cols-10 pl-5 pr-5">
+        <div className="col-span-3">
+          <div className="animate-pulse w-full h-10 bg-gray-300 rounded mb-5"></div>
+          {[...Array(5)].map((_, index) => (
+            <div key={index} className="animate-pulse mb-5">
+              <div className="w-full h-12 bg-gray-300 rounded mb-2"></div>
+              <div className="w-2/3 h-4 bg-gray-300 rounded mb-1"></div>
+            </div>
+          ))}
+        </div>
+        <div className="col-span-7">
+          <div className="flex flex-col pl-5 pr-5 pb-5 gap-2">
+            <CommentSkeletonLoader />
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}
+
+const skeletonForGridLoad = () => {
+  return (
+    <>
+      <div className="w-full"></div>
+      <div className="grid grid-cols-10"></div>
+    </>
+  )
+}
+
 export {
   PostSkeletonLoader,
   CommentSkeletonLoader,
@@ -183,4 +211,5 @@ export {
   NotificateSkeletonLoader,
   TableSkeletonLoader,
   CategoryGridSkeleton,
+  ChatSkeleton,
 }

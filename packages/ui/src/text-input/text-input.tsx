@@ -16,6 +16,7 @@ interface TextInputProps {
   subtitle?: ReactNode
   error?: string
   className?: string
+  classNameInput?: string
   minLength?: number
   maxLength?: number
   required?: boolean
@@ -36,6 +37,7 @@ export const TextInput = ({
   state,
   subtitle,
   className,
+  classNameInput,
   error,
   minLength,
   maxLength,
@@ -62,7 +64,8 @@ export const TextInput = ({
                 ? '!border-ume-error !hover:border-ume-error !focus:border-ume-error !focus:outline-ume-error'
                 : 'border-slate-300 hover:border-ume-blue focus-visible:border-ume-blue focus:border-ume-blue focus:outline-ume-blue dark:hover:border-navy-400 dark:focus:border-accent'
             }
-            ${type === 'password' ? 'pr-9' : ''}`}
+            ${type === 'password' ? 'pr-9' : ''}
+            ${classNameInput}`}
             type={showPassword ? 'text' : type}
             placeholder={placeholder ? placeholder : `Enter your ${title}`}
             name={name}

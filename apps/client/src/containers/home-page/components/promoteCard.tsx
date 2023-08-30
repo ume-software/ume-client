@@ -4,7 +4,7 @@ import coin from 'public/coin-icon.png'
 import React, { useEffect, useRef } from 'react'
 
 import Image from 'next/legacy/image'
-import { FilterProviderResponse } from 'ume-booking-service-openapi'
+import { FilterProviderResponse } from 'ume-openapi-booking'
 
 const PromoteCard = (props: { data: FilterProviderResponse }) => {
   const [isPlaying, setIsPlaying] = React.useState(false)

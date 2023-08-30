@@ -15,7 +15,8 @@ import {
 } from 'react'
 
 import Image from 'next/legacy/image'
-import { PostResponse } from 'ume-booking-service-openapi'
+import Link from 'next/link'
+import { PostResponse } from 'ume-openapi-booking'
 
 import CommmentPost from './comment-post'
 import LikePost from './like-post'
@@ -154,7 +155,7 @@ const CommunityPost = (props: CommunityPostProps) => {
         {isPostModal ? PostModal : InforPostModal}
         <div className="flex justify-between items-center">
           <div className="flex gap-3">
-            <div className="relative w-[70px] h-[70px]">
+            <Link href={`player/${props.data.user.slug}`} className="relative w-[70px] h-[70px] cursor-pointer">
               <Image
                 className="absolute rounded-full"
                 layout="fill"
@@ -162,9 +163,14 @@ const CommunityPost = (props: CommunityPostProps) => {
                 src={props.data?.user.avatarUrl}
                 alt="Provider Image"
               />
-            </div>
+            </Link>
             <div className="flex flex-col">
-              <p className="font-semibold text-xl">{props.data?.user.name}</p>
+              <Link
+                href={`player/${props.data.user.slug}`}
+                className="font-semibold text-xl cursor-pointer hover:underline"
+              >
+                {props.data?.user.name}
+              </Link>
               <p className="font-normal text-lg opacity-40">{TimeFormat({ date: props.data?.createdAt })}</p>
             </div>
           </div>
@@ -225,8 +231,11 @@ const CommunityPost = (props: CommunityPostProps) => {
           </div>
         </div>
         <div className="mt-3">
-          <div className="flex justify-between p-2">
-            <div className="font-medium text-md opacity-30 cursor-pointer hover:opacity-100" onClick={handleLikeOpen}>
+          <div className="flex justify-between p-2 gap-10">
+            <div
+              className="font-medium text-md opacity-30 cursor-pointer hover:opacity-100 truncate"
+              onClick={handleLikeOpen}
+            >
               {isLikePost ? (
                 <>Bạn{props.data?.likeCount === 0 ? ' đã thích' : ` và ${props.data?.likeCount} người khác đã thích`}</>
               ) : (
@@ -234,7 +243,7 @@ const CommunityPost = (props: CommunityPostProps) => {
               )}
             </div>
             <div
-              className="font-medium text-md opacity-30 cursor-pointer hover:opacity-100"
+              className="font-medium text-md opacity-30 cursor-pointer hover:opacity-100 truncate"
               onClick={handleCommentOpen}
             >
               {props.data?.commentCount + postComment} bình luận

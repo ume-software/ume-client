@@ -3,7 +3,7 @@ import { Left, Right } from '@icon-park/react'
 import { useState } from 'react'
 
 import Image from 'next/legacy/image'
-import { ThumbnailResponseTypeEnum } from 'ume-booking-service-openapi'
+import { ThumbnailResponseTypeEnum } from 'ume-openapi-booking'
 
 import { TimeFormat } from '~/components/time-format'
 

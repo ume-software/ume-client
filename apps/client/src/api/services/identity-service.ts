@@ -2,8 +2,8 @@ import { TRPCError } from '@trpc/server'
 import { getEnv } from '~/env'
 
 import { parse, serialize } from 'cookie'
-import { BuyCoinRequestApi, CoinApi } from 'ume-booking-service-openapi'
 import { AuthApi, UserApi } from 'ume-identity-service-openapi'
+import { BuyCoinRequestApi, CoinApi } from 'ume-openapi-booking'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 

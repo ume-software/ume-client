@@ -62,13 +62,17 @@ export const FormInput = ({ error, errorMessage, ...props }: FormInputProps) => 
 interface InputWithAffixProps extends React.InputHTMLAttributes<HTMLInputElement> {
   position: 'left' | 'right'
   component: ReactNode
+  iconStyle?: string
+  styleInput?: string
 }
 
 export const InputWithAffix = ({ position, component, ...props }: InputWithAffixProps) => {
   return (
-    <div className="flex -space-x-px">
+    <div className={`flex -space-x-px ${props.className}`}>
       {position === 'left' ? (
-        <div className="flex items-center justify-center rounded-l border border-slate-300 px-3.5 font-inter dark:border-navy-450">
+        <div
+          className={`flex items-center justify-center rounded-l border border-slate-300 px-3.5 font-inter dark:border-navy-450 ${props.iconStyle}`}
+        >
           {component}
         </div>
       ) : null}
@@ -77,10 +81,12 @@ export const InputWithAffix = ({ position, component, ...props }: InputWithAffix
         {...props}
         className={`form-input w-full border px-3 py-2 placeholder:text-slate-400/70 ${
           position === 'left' ? 'rounded-r' : 'rounded-l'
-        }`}
+        } ${props.styleInput}`}
       />
       {position === 'right' ? (
-        <div className="flex items-center justify-center rounded-r border border-slate-300 px-3.5 font-inter dark:border-navy-450">
+        <div
+          className={`flex items-center justify-center rounded-l border border-slate-300 px-3.5 font-inter dark:border-navy-450 ${props.iconStyle}`}
+        >
           {component}
         </div>
       ) : null}

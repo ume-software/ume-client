@@ -1,9 +1,10 @@
-import { BookingHandleRequest, BookingHandleRequestStatusEnum } from 'ume-booking-service-openapi'
+import { BookingHandleRequest, BookingHandleRequestStatusEnum } from 'ume-openapi-booking'
 import { optional, z } from 'zod'
 
 import { createRouter } from './configurations'
 import {
   createBooking,
+  getAblumByProviderSlug,
   getAllNotice,
   getCurrentBookingForProvider,
   getFeedbackSkillById,
@@ -88,5 +89,11 @@ export const bookingRouter = createRouter()
     input: z.object({ page: z.string(), limit: z.string() }),
     resolve: async ({ ctx, input }) => {
       return await getAllNotice(input, ctx)
+    },
+  })
+  .query('getAblumByProviderSlug', {
+    input: z.object({ slug: z.string(), page: z.optional(z.string()), limit: z.optional(z.string()) }),
+    resolve: async ({ ctx, input }) => {
+      return await getAblumByProviderSlug(input, ctx)
     },
   })

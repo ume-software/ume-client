@@ -1,11 +1,22 @@
 import { Menu, Transition } from '@headlessui/react'
-import { Dot, Male, More, Pencil, Plus, ShareTwo } from '@icon-park/react'
+import {
+  CircleFourLine,
+  Dot,
+  Female,
+  Jump,
+  Male,
+  More,
+  Pencil,
+  PersonalPrivacy,
+  Plus,
+  ShareTwo,
+} from '@icon-park/react'
 import cover from 'public/cover.png'
 import TestImage4 from 'public/cover.png'
 import detailBackground from 'public/detail-cover-background.png'
 import ImgForEmpty from 'public/img-for-empty.png'
 
-import { Fragment, ReactElement, useState } from 'react'
+import { Fragment, ReactElement, ReactNode, useState } from 'react'
 
 import Image, { ImageProps, StaticImageData } from 'next/legacy/image'
 
@@ -32,6 +43,12 @@ interface feedProps {
   numberLike?: number
   numberCom?: number
 }
+
+interface valueGenderProps {
+  value: string
+  icon: ReactNode
+}
+
 const personalImageDatas: personalImageProps[] = [
   {
     src: 'https://www.shelterluv.com/sites/default/files/animal_pics/5789/2023/05/11/07/20230511075451.png',
@@ -119,6 +136,16 @@ const moreButtonDatas: moreButtonData[] = [
   },
 ]
 
+const valueGenders: valueGenderProps[] = [
+  {
+    value: 'MALE',
+    icon: <Male theme="outline" size="20" fill="#3463f9" />,
+  },
+  { value: 'FEMALE', icon: <Female theme="outline" size="20" fill="#f70a34" /> },
+  { value: 'ORTHER', icon: <Jump theme="outline" size="20" fill="#771cac" /> },
+  { value: 'PRIVATE', icon: <PersonalPrivacy theme="outline" size="20" fill="#f7761c" /> },
+]
+
 const PlayerInformation = (props: { data }) => {
   const tabDatas: tabData[] = [
     {
@@ -127,7 +154,7 @@ const PlayerInformation = (props: { data }) => {
     },
     {
       label: `Album`,
-      children: <AlbumTab datas={personalImageDatas} />,
+      children: <AlbumTab id={props.data.userId.toString()} />,
     },
     {
       label: `Khoảnh khắc`,
@@ -172,7 +199,9 @@ const PlayerInformation = (props: { data }) => {
                 <p className="text-white text-4xl font-medium">{props.data?.name}</p>
                 <div className="flex flex-row gap-3">
                   <div className="bg-gray-700 p-2 rounded-full flex items-center gap-1">
-                    <Male theme="outline" size="24" fill="#1CB3FF" />
+                    {valueGenders.map((gender) => (
+                      <>{gender.value == props.data.user.gender && gender.icon}</>
+                    ))}
                     <p>16</p>
                   </div>
                   <div className="bg-gray-700 p-2 rounded-full flex items-center gap-1">

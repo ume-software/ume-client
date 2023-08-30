@@ -1,5 +1,7 @@
+import { useState } from 'react'
+
 import Head from 'next/head'
-import { GetProfieProviderBySlugResponse } from 'ume-booking-service-openapi'
+import { GetProfileProviderBySlugResponse } from 'ume-openapi-booking'
 
 import PlayerInformation from './components/player-information'
 
@@ -8,16 +10,16 @@ import { AppLayout } from '~/components/layouts/app-layout/app-layout'
 import { trpc } from '~/utils/trpc'
 
 const DetailPlayer = (props) => {
-  let providerBySlug: GetProfieProviderBySlugResponse | undefined
+  const [providerBySlug, setProviderBySlug] = useState<GetProfileProviderBySlugResponse | undefined>(undefined)
   const {
     data: provider,
     isLoading: loadingProvider,
     isFetching,
-  } = trpc.useQuery(['booking.getProviderBySlug', props.providerId as string])
-  if (loadingProvider) {
-    return <></>
-  }
-  providerBySlug = provider?.data
+  } = trpc.useQuery(['booking.getProviderBySlug', props.providerId as string], {
+    onSuccess(data) {
+      setProviderBySlug(data.data)
+    },
+  })
 
   return (
     <>
@@ -25,7 +27,7 @@ const DetailPlayer = (props) => {
         <title>UME | Provider</title>
       </Head>
       <AppLayout {...props}>
-        <PlayerInformation key={props.providerId} data={providerBySlug} />
+        {loadingProvider ? <></> : <PlayerInformation key={props.providerId} data={providerBySlug} />}
       </AppLayout>
     </>
   )

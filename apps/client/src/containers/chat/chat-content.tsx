@@ -4,6 +4,7 @@ import useChatScroll from '~/hook/useChatScroll'
 import { ReactNode, useContext, useEffect, useRef, useState } from 'react'
 
 import Image from 'next/legacy/image'
+import Link from 'next/link'
 import { ChattingChannelReponse, MemberChatChannelResponse } from 'ume-chatting-service-openapi'
 
 import {
@@ -92,22 +93,27 @@ const ChatContent = (props: { channel: ChattingChannelReponse }) => {
       {loadingChattingMessageChannel ? (
         <CommentSkeletonLoader />
       ) : (
-        <>
-          <div className="flex items-center justify-between">
-            {images && (
-              <div className="flex items-center gap-3">
-                <div className="relative w-[60px] h-[60px]">
-                  <Image
-                    className="absolute rounded-full"
-                    layout="fill"
-                    objectFit="cover"
-                    src={images[0].userInfomation.avatarUrl!}
-                    alt="Avatar"
-                  />
+        <div className="relative max-h-screen overflow-hidden">
+          <div className="w-full flex items-center justify-between">
+            <Link
+              href={`/player/${images[0].providerInfomation.slug || images[0].providerInfomation.id}`}
+              className="w-3/4 p-2 rounded-lg hover:bg-gray-700"
+            >
+              {images && (
+                <div className="flex items-center gap-3">
+                  <div className="relative min-w-[50px] min-h-[50px] max-w-[50px] max-h-[50px]">
+                    <Image
+                      className="absolute rounded-full"
+                      layout="fill"
+                      objectFit="cover"
+                      src={images[0].userInfomation.avatarUrl!}
+                      alt="Avatar"
+                    />
+                  </div>
+                  <span className="text-2xl font-bold text-white truncate">{images[0].userInfomation.name || ''}</span>
                 </div>
-                <span className="text-3xl font-bold text-white ">{images[0].userInfomation.name || ''}</span>
-              </div>
-            )}
+              )}
+            </Link>
             <div className="flex gap-2">
               {actionButtons.map((item, index) => (
                 <div
@@ -119,8 +125,8 @@ const ChatContent = (props: { channel: ChattingChannelReponse }) => {
               ))}
             </div>
           </div>
-          <div className="flex flex-col h-full gap-2">
-            <div className="flex gap-2 pb-5 overflow-auto border-b-2 custom-scrollbar">
+          <div className="flex flex-col gap-2 h-full overflow-y-auto">
+            <div className="flex gap-2 pb-5 overflow-auto border-b-2 border-[#B9B8CC] custom-scrollbar">
               {/* {props.data?.providerSkills?.map((providerSkill, index) => (
             <div
               key={index}
@@ -130,16 +136,18 @@ const ChatContent = (props: { channel: ChattingChannelReponse }) => {
             >
               <p className="text-lg font-medium text-white whitespace-nowrap">{providerSkill.skill.name}</p>
             </div>
-          ))} */}
+            ))} */}
             </div>
             <div className="bg-[#413F4D] p-2 rounded-3xl">
               {/* <ChatService serviceData={props.data?.providerSkills[gameSelected]} /> */}
             </div>
-            <div className="h-[65vh] flex flex-col justify-end">
+          </div>
+          <div className="relative">
+            <div className="h-[75vh] flex flex-col justify-end">
               {/* <!-- message --> */}
               <div
                 ref={divRef}
-                className="flex flex-col w-full px-5 overflow-y-scroll custom-scrollbar justinfy-between"
+                className="flex flex-col w-full px-5 mb-12 overflow-y-scroll custom-scrollbar justinfy-between"
               >
                 <div className="flex flex-col mt-5 ">
                   {chattingMessageChannel?.data.messages.map((item, index) => {
@@ -178,9 +186,7 @@ const ChatContent = (props: { channel: ChattingChannelReponse }) => {
               </div>
               {/* <!-- end message --> */}
             </div>
-          </div>
-          <div>
-            <div className="flex items-center gap-3">
+            <div className="absolute bottom-2 left-5 right-5  bg-[#15151b] flex items-center gap-3">
               <div className="p-2 content-center bg-[#413F4D] rounded-full cursor-pointer hover:bg-gray-500 active:bg-gray-400">
                 <Picture theme="outline" size="24" fill="#FFFFFF" strokeLinejoin="bevel" />
               </div>
@@ -188,7 +194,7 @@ const ChatContent = (props: { channel: ChattingChannelReponse }) => {
               <div className="w-[100%] h-[40px] relative">
                 <input
                   type="text"
-                  className="h-[40px] w-full bg-[#413F4D] text-white text-lg font-medium pl-5 pr-10 border-1 border-solid border-[#B9B8CC] rounded-full"
+                  className="h-[40px] w-full bg-[#413F4D] text-white text-lg font-medium pl-5 pr-10 rounded-full"
                   placeholder="Nhập tin nhắn"
                   value={messageInput}
                   onChange={(e) => setMessageInput(e.target.value)}
@@ -200,7 +206,7 @@ const ChatContent = (props: { channel: ChattingChannelReponse }) => {
               </div>
             </div>
           </div>
-        </>
+        </div>
       )}
     </>
   )

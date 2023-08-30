@@ -1,4 +1,4 @@
-import { CreateNewPostRequest, ThumbnailResponse } from 'ume-booking-service-openapi'
+import { CreateNewPostRequest, ThumbnailResponse } from 'ume-openapi-booking'
 import { z } from 'zod'
 
 import { createRouter } from './configurations'

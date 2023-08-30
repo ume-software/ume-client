@@ -35,10 +35,10 @@ const InformationTab = (props: { data }) => {
     setGameSelected(index)
   }
 
-  const handleChatOpen = () => {
+  const handleChatOpen = async () => {
     if (socketToken) {
       try {
-        createNewChatChannel.mutate(
+        await createNewChatChannel.mutate(
           {
             receiverId: props.data.userId,
           },
@@ -63,9 +63,9 @@ const InformationTab = (props: { data }) => {
       setIsModalLoginVisible(true)
     }
   }
-  const handleOrderOpen = () => {
+  const handleOrderOpen = async () => {
     if (socketToken) {
-      setChildrenDrawer(<BookingPlayer data={props.data} />)
+      await setChildrenDrawer(<BookingPlayer data={props.data} />)
     } else {
       setIsModalLoginVisible(true)
     }

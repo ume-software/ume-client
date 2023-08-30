@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { TopDonateProviderPagingResponse, TopUserDonatePagingResponse } from 'ume-booking-service-openapi'
+import { TopDonateProviderPagingResponse, TopUserDonatePagingResponse } from 'ume-openapi-booking'
 
 import Table from './table'
 

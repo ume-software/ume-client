@@ -1,6 +1,6 @@
 import { getEnv } from '~/env'
 
-import { AudioApi, FileApi, ImageApi } from 'ume-booking-service-openapi'
+import { AudioApi, FileApi, ImageApi } from 'ume-openapi-booking'
 
 export const uploadImageBooking = async (formData) => {
   try {
