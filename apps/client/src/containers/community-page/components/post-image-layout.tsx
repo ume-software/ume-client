@@ -1,7 +1,10 @@
+import { useId } from 'react'
+
 import Image from 'next/legacy/image'
 import { ThumbnailResponseTypeEnum } from 'ume-booking-service-openapi'
 
 const PostImageLayout = (props) => {
+  const index = useId()
   const MAX_VISIBLE_IMAGES = 2
   const remainingImages = props.data?.length - MAX_VISIBLE_IMAGES
   return (
@@ -26,7 +29,7 @@ const PostImageLayout = (props) => {
       ) : (
         <>
           <div className="w-full flex gap-1">
-            {props.data?.slice(0, MAX_VISIBLE_IMAGES).map((media, index) => (
+            {props.data?.slice(0, MAX_VISIBLE_IMAGES).map((media) => (
               <div className="relative w-full h-[250px]" key={index}>
                 {media.type === ThumbnailResponseTypeEnum.Image ? (
                   <Image className="absolute" layout="fill" objectFit="cover" src={media.url} alt={media.type} />

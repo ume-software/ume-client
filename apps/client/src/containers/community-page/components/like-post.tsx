@@ -18,14 +18,13 @@ const LikePost = (props: { postID: string }) => {
     data: likePostByID,
     isLoading: loadingLikePostByID,
     isFetching: fetchingLikePostByID,
-    refetch: refetchLikePostByID,
   } = trpc.useQuery(['community.getLikePostByID', { postId: props.postID, limit: limit, page: page }], {
     refetchOnWindowFocus: false,
     refetchOnReconnect: 'always',
     cacheTime: 0,
     refetchOnMount: true,
     onSuccess(data) {
-      setLikePostData((prevData) => [...(prevData || []), ...(data?.data?.row || [])])
+      setLikePostData((prevData) => [...(prevData || []), ...(data?.data?.row ?? [])])
     },
   })
 

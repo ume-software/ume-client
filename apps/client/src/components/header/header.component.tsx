@@ -5,13 +5,13 @@ import coin from 'public/coin-icon.png'
 import logo from 'public/ume-logo-2.svg'
 import Notificate from '~/containers/notificate/notificate.container'
 
-import React, { Fragment, ReactElement, ReactNode, useContext, useEffect, useRef, useState } from 'react'
+import React, { Fragment, ReactElement, ReactNode, useContext, useEffect, useId, useRef, useState } from 'react'
 
 import { parse } from 'cookie'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
 
-import { SocketContext, SocketTokenContext, UserContext } from '../layouts/app-layout/app-layout'
+import { SocketTokenContext, UserContext } from '../layouts/app-layout/app-layout'
 import { LoginModal } from './login-modal.component'
 import { RechargeModal } from './recharge-form.component'
 
@@ -19,41 +19,30 @@ import { trpc } from '~/utils/trpc'
 
 interface HeaderProps {}
 
-interface tabData {
+interface TabProps {
   label: string
   children: ReactElement
 }
 
 export const Header: React.FC = ({}: HeaderProps) => {
+  const index = useId()
   const [showSearh, setShowSearch] = useState(false)
   const [showRechargeModal, setShowRechargeModal] = useState(false)
   const [userInfo, setUserInfo] = useState<any>()
   const [balance, setBalance] = useState<any>()
-  const [notificatedAmount, setNotificatedAmount] = useState<number>(0)
-  const { socketToken, setSocketToken } = useContext(SocketTokenContext)
+  const [notificatedAmount] = useState<number>(0)
+  const { setSocketToken } = useContext(SocketTokenContext)
   const { userContext, setUserContext } = useContext(UserContext)
   const [selectedTab, setSelectedTab] = useState('Chính')
   const [isModalLoginVisible, setIsModalLoginVisible] = React.useState(false)
   const accessToken = parse(document.cookie).accessToken
 
-  const { data: dataResponse, isLoading: loading, isFetching: fetching } = trpc.useQuery(['identity.identityInfo'])
-  const {
-    data: accountBalance,
-    isLoading: loadingAccountBalance,
-    isFetching: fetchingAccountBalance,
-  } = trpc.useQuery(['identity.account-balance'], {
+  const { data: dataResponse } = trpc.useQuery(['identity.identityInfo'])
+  const { data: accountBalance } = trpc.useQuery(['identity.account-balance'], {
     refetchOnWindowFocus: true,
     refetchOnMount: true,
     onSuccess(data) {
       setBalance(data.data.totalCoinsAvailable)
-    },
-  })
-
-  const { refetch: refetchNotificateAmount } = trpc.useQuery(['booking.getNoticeAmount'], {
-    refetchOnWindowFocus: true,
-    refetchOnMount: true,
-    onSuccess(data) {
-      setNotificatedAmount(data.data.amount)
     },
   })
 
@@ -70,15 +59,7 @@ export const Header: React.FC = ({}: HeaderProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataResponse, setSocketToken, userInfo, accessToken])
 
-  // useEffect(() => {
-  //   // if (socketContext?.socketNotificateContext[0]?.id !== prevSocketContext.current?.[0]?.id) {
-  //   //   refetchNotificateAmount()
-  //   // }
-  //   prevSocketContext.current = socketContext?.socketNotificateContext
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [socketContext?.socketNotificateContext[0]?.id, socketContext?.socketNotificateContext])
-
-  const tabDatas: tabData[] = [
+  const tabDatas: TabProps[] = [
     {
       label: `Chính`,
       children: <Notificate type={'main'} />,
@@ -96,10 +77,6 @@ export const Header: React.FC = ({}: HeaderProps) => {
       return
     }
     setSelectedTab(target)
-  }
-
-  const handleSignout = (e) => {
-    e.preventDefault()
   }
 
   const handleShowSearch = (e) => {
@@ -197,7 +174,7 @@ export const Header: React.FC = ({}: HeaderProps) => {
                 >
                   <Menu.Items className="absolute right-0 p-5 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg w-96 ring-1 ring-black ring-opacity-5 focus:outline-none">
                     <div className="flex flex-row gap-10" style={{ zIndex: 2 }}>
-                      {tabDatas.map((item, index) => (
+                      {tabDatas.map((item) => (
                         <a
                           href="#tab"
                           className={`xl:text-lg text-md font-medium p-2 ${
@@ -212,7 +189,7 @@ export const Header: React.FC = ({}: HeaderProps) => {
                       ))}
                     </div>
                     <div className="p-3 overflow-auto h-96">
-                      {tabDatas.map((item, index) => {
+                      {tabDatas.map((item) => {
                         return (
                           <div key={index} hidden={selectedTab !== item.label}>
                             {item.children}

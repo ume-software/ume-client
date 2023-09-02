@@ -1,14 +1,11 @@
 import { Time } from '@icon-park/react'
-import { Context } from '@react-oauth/google'
 import { FormInput } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
 
-import { useContext, useEffect, useState } from 'react'
+import { useState } from 'react'
 
-import { InputNumber, Select } from 'antd'
-import { notification } from 'antd'
-import { NotificationPlacement } from 'antd/es/notification/interface'
-import { ErrorMessage, Field, Form, Formik } from 'formik'
+import { InputNumber, Select, notification } from 'antd'
+import { ErrorMessage, Form, Formik } from 'formik'
 import Image from 'next/legacy/image'
 import { BookingProviderRequest } from 'ume-booking-service-openapi'
 import * as Yup from 'yup'
@@ -23,18 +20,6 @@ const BookingPlayer = (props: { data }) => {
   })
   const [total, setTotal] = useState(0)
   const createBooking = trpc.useMutation(['booking.createBooking'])
-
-  // const handleServiceChange = (value: string) => {
-  //   setBooking((prevBooking) => ({ ...prevBooking, providerSkillId: value }))
-  // }
-  // const handlePeriodChange = (value: number) => {
-  //   setBooking((prevBooking) => ({ ...prevBooking, bookingPeriod: value }))
-  // }
-
-  // useEffect(() => {
-  //   const selectedItem = props.data.providerSkills?.find((item) => booking.providerSkillId == item.id)
-  //   setTotal((selectedItem?.defaultCost || 0) * booking.bookingPeriod)
-  // }, [booking])
 
   const handleTotal = (providerSkillId, bookingPeriod) => {
     const selectedItem = props.data.providerSkills?.find((item) => providerSkillId == item.id)

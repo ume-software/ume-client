@@ -1,11 +1,10 @@
 import { Menu, Transition } from '@headlessui/react'
 import { Dot, Male, More, Pencil, Plus, ShareTwo } from '@icon-park/react'
-import cover from 'public/cover.png'
 import TestImage4 from 'public/cover.png'
 import detailBackground from 'public/detail-cover-background.png'
 import ImgForEmpty from 'public/img-for-empty.png'
 
-import { Fragment, ReactElement, useState } from 'react'
+import { Fragment, ReactElement, useId, useState } from 'react'
 
 import Image, { ImageProps, StaticImageData } from 'next/legacy/image'
 
@@ -13,26 +12,26 @@ import AlbumTab from '../album-tab/album-tab'
 import FeedsTab from '../feeds-tab'
 import InformationTab from '../information-tab/information-tab'
 
-interface tabData {
+interface TabDataProps {
   label: string
   children: ReactElement
 }
 
-interface moreButtonData {
+interface MoreButtonDataProps {
   label: string
   icon?: ReactElement
 }
 
-interface personalImageProps {
+interface PersonalImageProps {
   src: string
 }
-interface feedProps {
+interface FeedProps {
   feedLink: string
   imgSrc: string | StaticImageData
   numberLike?: number
   numberCom?: number
 }
-const personalImageDatas: personalImageProps[] = [
+const personalImageDatas: PersonalImageProps[] = [
   {
     src: 'https://www.shelterluv.com/sites/default/files/animal_pics/5789/2023/05/11/07/20230511075451.png',
   },
@@ -59,7 +58,7 @@ const personalImageDatas: personalImageProps[] = [
   },
 ]
 
-const feedData: feedProps[] = [
+const feedData: FeedProps[] = [
   {
     feedLink: '/1',
     imgSrc: ImgForEmpty,
@@ -83,7 +82,7 @@ const feedData: feedProps[] = [
   },
 ]
 
-const moreButtonDatas: moreButtonData[] = [
+const moreButtonDatas: MoreButtonDataProps[] = [
   {
     label: 'Chỉnh sửa thông tin',
     icon: (
@@ -120,7 +119,8 @@ const moreButtonDatas: moreButtonData[] = [
 ]
 
 const PlayerInformation = (props: { data }) => {
-  const tabDatas: tabData[] = [
+  const index = useId()
+  const tabDatas: TabDataProps[] = [
     {
       label: `Thông tin cá nhân`,
       children: <InformationTab data={props.data || ImgForEmpty} />,
@@ -135,7 +135,6 @@ const PlayerInformation = (props: { data }) => {
     },
   ]
   const [selectedTab, setSelectedTab] = useState('Thông tin cá nhân')
-  const [actionModal, setActionModal] = useState(false)
 
   const handleChangeTab = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault()
@@ -144,10 +143,6 @@ const PlayerInformation = (props: { data }) => {
       return
     }
     setSelectedTab(target)
-  }
-
-  const handleMoreButton = () => {
-    setActionModal(!actionModal)
   }
 
   return (
@@ -207,7 +202,7 @@ const PlayerInformation = (props: { data }) => {
                 >
                   <Menu.Items className="absolute w-fit right-0 p-3 top-7 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                     <div className="w-max flex flex-col gap-2">
-                      {moreButtonDatas.map((item, index) => (
+                      {moreButtonDatas.map((item) => (
                         <div key={index} className="hover:bg-purple-700 hover:text-white group rounded-md pl-2 pr-2 ">
                           <div className="scale-x-100 group-hover:scale-x-95 flex items-center justify-between gap-2 group-hover:-translate-x-2 duration-300">
                             <a href="#">{item.label}</a>
@@ -223,7 +218,7 @@ const PlayerInformation = (props: { data }) => {
           </div>
 
           <div className="flex flex-row gap-10" style={{ zIndex: 2 }}>
-            {tabDatas.map((item, index) => (
+            {tabDatas.map((item) => (
               <a
                 href="#tab"
                 className={`text-white xl:text-3xl text-xl font-medium p-4 ${
@@ -240,7 +235,7 @@ const PlayerInformation = (props: { data }) => {
         </div>
       </div>
       <div className="p-5">
-        {tabDatas.map((item, index) => {
+        {tabDatas.map((item) => {
           return (
             <p className="text-white" key={index} hidden={selectedTab !== item.label}>
               <div className="flex justify-center my-10">{item.children}</div>

@@ -1,18 +1,15 @@
-import { CustomDrawer } from '@ume/ui'
-
-import { useCallback, useContext, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import Link from 'next/link'
 import { FilterProviderPagingResponse } from 'ume-booking-service-openapi'
 
 import PromoteCard from './promoteCard'
 
-import { DrawerContext } from '~/components/layouts/app-layout/app-layout'
 import { PlayerSkeletonLoader } from '~/components/skeleton-load'
 
 import { trpc } from '~/utils/trpc'
 
-export interface Promotion {}
+export interface IPromotion {}
 
 export const Promotion = () => {
   const [page, setPage] = useState<string>('1')
@@ -31,7 +28,7 @@ export const Promotion = () => {
     cacheTime: 0,
     refetchOnMount: true,
     onSuccess(data) {
-      setListHotProvider((prevData) => [...(prevData || []), ...(data?.data?.row || [])])
+      setListHotProvider((prevData) => [...(prevData ?? []), ...(data?.data?.row ?? [])])
     },
   })
 
@@ -45,7 +42,7 @@ export const Promotion = () => {
     cacheTime: 0,
     refetchOnMount: true,
     onSuccess(data) {
-      setListProvider((prevData) => [...(prevData || []), ...(data?.data?.row || [])])
+      setListProvider((prevData) => [...(prevData ?? []), ...(data?.data?.row ?? [])])
     },
   })
 
@@ -76,7 +73,7 @@ export const Promotion = () => {
 
   return (
     <>
-      {(loadingProvider || loadingHotProvider) && !isFetchingProviders && !isFetchingHotProviders ? (
+      {(loadingProvider ?? loadingHotProvider) && !isFetchingProviders && !isFetchingHotProviders ? (
         <>
           <PlayerSkeletonLoader />
         </>
@@ -89,7 +86,7 @@ export const Promotion = () => {
                 {listHotProvider?.map((provider) => (
                   <Link
                     key={provider?.id}
-                    href={`/player/${provider?.slug || provider?.id}?service=${provider.skillid}`}
+                    href={`/player/${provider?.slug ?? provider?.id}?service=${provider.skillid}`}
                   >
                     <PromoteCard data={provider} />
                   </Link>
@@ -102,7 +99,7 @@ export const Promotion = () => {
                 {listProvider?.map((provider) => (
                   <Link
                     key={provider?.id}
-                    href={`/player/${provider?.slug || provider?.id}?service=${provider.skillid}`}
+                    href={`/player/${provider?.slug ?? provider?.id}?service=${provider.skillid}`}
                   >
                     <PromoteCard data={provider} />
                   </Link>

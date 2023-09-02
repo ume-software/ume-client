@@ -1,34 +1,28 @@
-import { ArrowLeft, FullScreen, Search } from '@icon-park/react'
+import { Search } from '@icon-park/react'
 import { TextInput } from '@ume/ui'
-import ImgForEmpty from 'public/img-for-empty.png'
 
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useId, useState } from 'react'
 
 import Image from 'next/legacy/image'
-import {
-  ChattingChannelPagingResponse,
-  ChattingChannelReponse,
-  MemberChatChannelResponse,
-  MessageResponse,
-} from 'ume-chatting-service-openapi'
+import { ChattingChannelReponse, MemberChatChannelResponse, MessageResponse } from 'ume-chatting-service-openapi'
 
 import ChatContent from './chat-content'
 
-import { SocketContext, UserContext } from '~/components/layouts/app-layout/app-layout'
+import { UserContext } from '~/components/layouts/app-layout/app-layout'
 
 import { trpc } from '~/utils/trpc'
 
 const Chat = (props: { playerId?: string }) => {
+  const index = useId()
   const [searchText, setSearchTextt] = useState('')
-  const { userContext, setUserContext } = useContext(UserContext)
+  const { userContext } = useContext(UserContext)
   const [channelSelected, setChannelSelected] = useState<ChattingChannelReponse | undefined>(
     ({ _id: props.playerId } as any) || undefined,
   )
-  const {
-    data: chattingChannels,
-    isLoading: loadingChattingChannels,
-    isFetching,
-  } = trpc.useQuery(['chatting.getListChattingChannels', { limit: 'unlimited', page: '1' }])
+  const { data: chattingChannels } = trpc.useQuery([
+    'chatting.getListChattingChannels',
+    { limit: 'unlimited', page: '1' },
+  ])
   const [filterChannel, setFilterChannel] = useState<ChattingChannelReponse[] | undefined>([])
 
   const handleSelected = (id) => {
@@ -66,7 +60,7 @@ const Chat = (props: { playerId?: string }) => {
               />
             </div>
             <div className="h-full custom-scrollbar flex flex-col border-r-2 overflow-y-auto">
-              {filterChannel?.map((item, index) => {
+              {filterChannel?.map((item) => {
                 const latestMeassge: MessageResponse | null = item.messages.length
                   ? item.messages[item.messages.length - 1]
                   : null
@@ -80,12 +74,11 @@ const Chat = (props: { playerId?: string }) => {
                     seftMemberInfo = member
                   }
                 }
-                const isReadedLatestMessage =
-                  latestMeassge && latestMeassge.sentAt < seftMemberInfo?.lastReadAt! ? true : false
+                const isReadedLatestMessage = latestMeassge && latestMeassge.sentAt < seftMemberInfo?.lastReadAt!
                 return (
                   <div
                     key={index}
-                    className={`flex flex-row py-4 px-2 items-center border-b-2 border-gray-700 cursor-pointer 
+                    className={`flex flex-row py-4 px-2 items-center border-b-2 border-gray-700 cursor-pointer
                 ${channelSelected?._id == item._id ? 'border-l-3 border-gray-500' : ''}`}
                     onClick={() => handleSelected(item._id)}
                   >

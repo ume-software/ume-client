@@ -1,9 +1,11 @@
+import { ReactElement } from 'react'
+
 import AlbumImage from './album-image'
 
 const AlbumTab = (props: { datas }) => {
-  const left: JSX.Element[] = []
-  const middle: JSX.Element[] = []
-  const right: JSX.Element[] = []
+  const left: ReactElement[] = []
+  const middle: ReactElement[] = []
+  const right: ReactElement[] = []
 
   props.datas.forEach((data, index) => {
     const imgSrc = <AlbumImage key={index} data={data.src} />

@@ -6,8 +6,7 @@ import momo from 'public/momo-logo.png'
 import { useState } from 'react'
 
 import { QRCode } from 'antd'
-import { Formik, FormikErrors } from 'formik'
-import { values } from 'lodash'
+import { Formik } from 'formik'
 import Image from 'next/image'
 import { StaticImageData } from 'next/legacy/image'
 import * as Yup from 'yup'
@@ -29,17 +28,6 @@ interface paymentPlatformArrayProps {
   tax: number
 }
 
-// const validate = (value: IFormValue): FormikErrors<IFormValue> => {
-//   const errors: FormikErrors<IFormValue> = {}
-//   if (!value.balance) {
-//     errors.balance = 'Xin hãy nhập số tiền'
-//   }
-//   if (!value.platform) {
-//     errors.platform = 'Xin hãy chọn phương thức thanh toán'
-//   }
-//   return errors
-// }
-
 const coinRechangeValue: number[] = [10000, 20000, 50000, 100000, 200000, 500000]
 const paymentPlatformArray: paymentPlatformArrayProps[] = [{ paymentPlatform: 'MOMO', imgSrc: momo, tax: 0.01 }]
 
@@ -49,7 +37,6 @@ export const RechargeModal = ({ setShowRechargeModal, showRechargeModal }: IRech
   const [platform, setPlatform] = useState<paymentPlatformArrayProps>(paymentPlatformArray[0])
   const handleClose = () => {
     setShowRechargeModal(false)
-    // setTimeout(() => setOpenTabMomo(false), 1000)
     setTimeout(() => setQRContent(null), 1000)
   }
 

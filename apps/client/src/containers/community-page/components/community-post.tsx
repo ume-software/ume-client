@@ -2,17 +2,7 @@ import { Menu, Transition } from '@headlessui/react'
 import { CloseSmall, Comment, Like, More, ShareTwo, TipsOne } from '@icon-park/react'
 import { Modal } from '@ume/ui'
 
-import {
-  Dispatch,
-  Fragment,
-  ReactNode,
-  SetStateAction,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react'
+import { Dispatch, Fragment, ReactNode, SetStateAction, useContext, useEffect, useRef, useState } from 'react'
 
 import Image from 'next/legacy/image'
 import { PostResponse } from 'ume-booking-service-openapi'

@@ -4,12 +4,7 @@ import medalTop2 from 'public/second-place-medal.png'
 import medalTop3 from 'public/third-place-medal.png'
 
 import Image from 'next/legacy/image'
-import {
-  TopDonateProviderPagingResponse,
-  TopDonateProviderResponse,
-  TopUserDonatePagingResponse,
-  TopUserDonateResponse,
-} from 'ume-booking-service-openapi'
+import { TopDonateProviderPagingResponse, TopUserDonatePagingResponse } from 'ume-booking-service-openapi'
 
 import { TableSkeletonLoader } from '~/components/skeleton-load'
 
