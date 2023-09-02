@@ -1,4 +1,3 @@
-yarn run v1.22.19
 $ npx tsup-node src/index.tsx --format esm,cjs --dts --external react --treeshake --minify && npx tailwindcss -i ./src/styles.css -o ./dist/styles.css
 CLI Building entry: src/index.tsx
 CLI Using tsconfig: tsconfig.json
@@ -6,17 +5,16 @@ CLI tsup v6.7.0
 CLI Target: es6
 ESM Build start
 CJS Build start
-ESM dist/index.css 73.00 B
 ESM dist/index.mjs 24.40 KB
-ESM ⚡️ Build success in 163ms
+ESM dist/index.css 73.00 B
+ESM ⚡️ Build success in 115ms
 CJS dist/index.js  27.05 KB
 CJS dist/index.css 73.00 B
-CJS ⚡️ Build success in 162ms
+CJS ⚡️ Build success in 169ms
 DTS Build start
-DTS ⚡️ Build success in 2353ms
+DTS ⚡️ Build success in 2573ms
 DTS dist/index.d.ts 6.69 KB
 
 Rebuilding...
 
-Done in 106ms.
-Done in 4.42s.
+Done in 126ms.
