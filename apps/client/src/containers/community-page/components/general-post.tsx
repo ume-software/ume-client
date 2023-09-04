@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 
-import { PostPagingResponse, PostResponse } from 'ume-booking-service-openapi'
+import { PostPagingResponse, PostResponse } from 'ume-service-openapi'
 
 import CommunityPost from './community-post'
 

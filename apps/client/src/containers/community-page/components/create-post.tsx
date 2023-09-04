@@ -6,7 +6,7 @@ import { getEnv } from '~/env'
 import { ChangeEvent, FormEvent, Key, SetStateAction, useEffect, useRef, useState } from 'react'
 
 import { notification } from 'antd'
-import { ThumbnailResponseTypeEnum } from 'ume-booking-service-openapi'
+import { ThumbnailResponseTypeEnum } from 'ume-service-openapi'
 
 import { trpc } from '~/utils/trpc'
 
@@ -82,7 +82,8 @@ const CreatePost = (props: any) => {
   const handleCreateNewPost = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    const fileUpload = handleUploadFiles(e.currentTarget)
+    const fileUpload = await handleUploadFiles(e.currentTarget)
+    console.log(fileUpload)
 
     if (!(content == '' && (await fileUpload).thumbnails.length == 0)) {
       try {

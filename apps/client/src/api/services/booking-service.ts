@@ -10,7 +10,7 @@ import {
   ProviderApi,
   ProviderSkillApi,
   SkillApi,
-} from 'ume-booking-service-openapi'
+} from 'ume-service-openapi'
 import { optional } from 'zod'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
@@ -207,7 +207,7 @@ export const getNoticeAmount = async (ctx) => {
     console.log('error at catch', error)
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
-      message: error.message || 'Fail to create new booking',
+      message: error.message || 'Fail to get notice amount',
     })
   }
 }
@@ -228,7 +228,49 @@ export const getAllNotice = async (query: { page: string; limit: string }, ctx) 
     console.log('error at catch', error)
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
-      message: error.message || 'Fail to create new booking',
+      message: error.message || 'Fail to create get all notification',
+    })
+  }
+}
+
+export const getAblumByProviderSlug = async (query: { slug: string; page?: string; limit?: string }, ctx) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie)
+    const respone = await new ProviderApi({
+      basePath: getEnv().baseBookingURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).getAlbumByProviderSlug(query.slug, query.limit, query.page)
+    return {
+      data: respone.data,
+      success: true,
+    }
+  } catch (error) {
+    console.log('error at catch', error)
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to create get album',
+    })
+  }
+}
+
+export const postFeedback = async (query: { id: string; content?: string; amountStar?: number }, ctx) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie)
+    const respone = await new BookingApi({
+      basePath: getEnv().baseBookingURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).createFeedbackBooking(query.id)
+    return {
+      data: respone.data,
+      success: true,
+    }
+  } catch (error) {
+    console.log('error at catch', error)
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to create get album',
     })
   }
 }

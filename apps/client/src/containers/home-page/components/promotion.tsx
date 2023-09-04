@@ -3,7 +3,7 @@ import { CustomDrawer } from '@ume/ui'
 import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 
 import Link from 'next/link'
-import { FilterProviderPagingResponse } from 'ume-booking-service-openapi'
+import { FilterProviderPagingResponse } from 'ume-service-openapi'
 
 import PromoteCard from './promoteCard'
 

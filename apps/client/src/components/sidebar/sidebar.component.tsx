@@ -96,7 +96,6 @@ export const Sidebar = (props) => {
               return (
                 <div key={item._id} className="relative">
                   <CustomDrawer
-                    customOpenBtn={`cursor-pointer`}
                     openBtn={
                       <div>
                         {item._id === socketContext?.socketChattingContext[0]?.channelId &&

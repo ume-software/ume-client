@@ -1,4 +1,4 @@
-import { Star } from '@icon-park/react'
+import { GrinningFaceWithOpenMouth, Picture, Star } from '@icon-park/react'
 import ImgForEmpty from 'public/img-for-empty.png'
 
 import { Carousel } from 'antd'
@@ -32,8 +32,8 @@ const GamePlayed = (props: { data }) => {
         </Carousel>
         <span className="text-lg font-normal leading-9 font-roboto">{props.data.description}</span>
       </div>
-      <div className="p-5 bg-zinc-800 rounded-3xl">
-        <div className="flex flex-col gap-5 p-3">
+      <div className="relative p-5 bg-zinc-800 rounded-3xl">
+        <div className="h-[600px] flex flex-col gap-5 p-3 overflow-y-auto">
           <p className="text-4xl font-bold font-inter">Đánh giá</p>
 
           {feedbackGame.length > 0 ? (
@@ -67,6 +67,25 @@ const GamePlayed = (props: { data }) => {
               <p className="text-2xl font-bold text-center font-inter">Chưa có đánh giá</p>
             </>
           )}
+        </div>
+        <div className="bg-transparent flex items-center gap-3">
+          <div className="p-2 content-center bg-[#413F4D] rounded-full cursor-pointer hover:bg-gray-500 active:bg-gray-400">
+            <Picture theme="outline" size="24" fill="#FFFFFF" strokeLinejoin="bevel" />
+          </div>
+
+          <div className="w-[100%] h-[40px] relative">
+            <input
+              type="text"
+              className="h-[40px] w-full bg-[#413F4D] text-white text-lg font-medium pl-5 pr-10 rounded-full"
+              placeholder="Nhập bình luận"
+              // value={messageInput}
+              // onChange={(e) => setMessageInput(e.target.value)}
+              // onKeyPress={handleKeyPress}
+            />
+            <div className="absolute transform -translate-y-1/2 rounded-full cursor-pointer top-1/2 right-3 z-4 hover:bg-gray-500 active:bg-gray-400">
+              <GrinningFaceWithOpenMouth theme="outline" size="24" fill="#FFFFFF" strokeLinejoin="bevel" />
+            </div>
+          </div>
         </div>
       </div>
     </>

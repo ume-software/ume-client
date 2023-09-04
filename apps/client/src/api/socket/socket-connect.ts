@@ -5,7 +5,7 @@ import { getSocket } from '~/utils/constants'
 
 export const socket = (token: string | null) => {
   if (token != null) {
-    const socketInstanceBooking = socketio.connect(getEnv().baseBookingURL, {
+    const socketInstanceBooking = socketio.connect(getEnv().baseSocketBookingURL, {
       reconnection: true,
       reconnectionDelay: 500,
       reconnectionAttempts: Infinity,
@@ -14,9 +14,10 @@ export const socket = (token: string | null) => {
       auth: {
         authorization: `Bearer ${token}`,
       },
+      path: '/booking-service/socket/',
     })
 
-    const socketInstanceChatting = socketio.connect(getEnv().baseChattingURL, {
+    const socketInstanceChatting = socketio.connect(getEnv().baseSocketChattingURL, {
       reconnection: true,
       reconnectionDelay: 500,
       reconnectionAttempts: Infinity,
@@ -25,6 +26,7 @@ export const socket = (token: string | null) => {
       auth: {
         authorization: `Bearer ${token}`,
       },
+      path: '/chatting-service/socket/',
     })
 
     return { socketInstanceBooking, socketInstanceChatting }

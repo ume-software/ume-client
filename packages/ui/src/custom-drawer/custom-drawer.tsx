@@ -1,5 +1,6 @@
 import { ArrowRight, Search } from '@icon-park/react'
 import { Button } from '~/button'
+import { InputWithAffix } from '~/input'
 import { TextInput } from '~/text-input'
 
 import React, { ReactNode, useState } from 'react'
@@ -8,16 +9,20 @@ import { Drawer } from 'antd'
 
 interface DrawerProps {
   drawerTitle?: string
-  children?: any
+  children?: ReactNode
   isSearch?: boolean
   customOpenBtn?: string
   openBtn?: ReactNode
+  handleClose?: () => void
+  textInputStyle?: string
   token?: boolean
   footer?: ReactNode
 }
-export const CustomDrawer = ({
+const CustomDrawer = ({
   customOpenBtn,
   openBtn,
+  handleClose,
+  textInputStyle,
   token,
   footer,
   isSearch,
@@ -38,6 +43,10 @@ export const CustomDrawer = ({
   const onClose = () => {
     setDrawerOpen(false)
   }
+  handleClose = () => {
+    onClose()
+  }
+
   const drawerFooter = () => {
     return (
       <div className="flex items-center justify-between px-6 py-4 text-white">
@@ -72,25 +81,27 @@ export const CustomDrawer = ({
           <div className="inline-block p-2 bg-gray-700 rounded-full cursor-pointer hover:bg-gray-500 active:bg-gray-400">
             <ArrowRight onClick={onClose} theme="outline" size="30" fill="#fff" />
           </div>
-          <span className="my-auto text-3xl font-bold">{drawerTitle}</span>
+          <span className="my-auto text-2xl font-bold">{drawerTitle}</span>
         </div>
 
         {isSearch && (
           <div className="flex items-center">
-            <Search
-              theme="outline"
-              size="32"
-              fill="#fff"
-              className="p-2 mt-2 mr-2 rounded-full hover:bg-gray-700 active:bg-gray-500"
-              onClick={onSearch}
-            />
-            <TextInput
+            <InputWithAffix
               placeholder="Tìm kiếm..."
               value={searchTex}
               type="text"
               name="categorySearch"
               onChange={(e: any) => setSearchText(e.target.value)}
-              className="text-black w-[11rem]"
+              position="left"
+              component={
+                <Search
+                  theme="outline"
+                  size="32"
+                  fill="#fff"
+                  // className="p-2 mt-2 mr-2 rounded-full hover:bg-gray-700 active:bg-gray-500"
+                  onClick={onSearch}
+                />
+              }
             />
           </div>
         )}
@@ -99,7 +110,7 @@ export const CustomDrawer = ({
   }
   return (
     <>
-      <div onClick={showDrawer} className={customOpenBtn}>
+      <div onClick={showDrawer} className={`cursor-pointer hover:opacity-60 ${customOpenBtn}`}>
         {openBtn}
       </div>
       <Drawer
@@ -117,3 +128,4 @@ export const CustomDrawer = ({
     </>
   )
 }
+export { CustomDrawer }
