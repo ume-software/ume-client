@@ -1,4 +1,4 @@
-import { BookingHandleRequest, BookingHandleRequestStatusEnum } from 'ume-openapi-booking'
+import { BookingHandleRequest, BookingHandleRequestStatusEnum } from 'ume-service-openapi'
 import { optional, z } from 'zod'
 
 import { createRouter } from './configurations'

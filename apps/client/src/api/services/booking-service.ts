@@ -10,7 +10,7 @@ import {
   ProviderApi,
   ProviderSkillApi,
   SkillApi,
-} from 'ume-openapi-booking'
+} from 'ume-service-openapi'
 import { optional } from 'zod'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
@@ -240,7 +240,7 @@ export const getAblumByProviderSlug = async (query: { slug: string; page?: strin
       basePath: getEnv().baseBookingURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).getAblumByProviderSlug(query.slug, query.limit, query.page)
+    }).getAlbumByProviderSlug(query.slug, query.limit, query.page)
     return {
       data: respone.data,
       success: true,

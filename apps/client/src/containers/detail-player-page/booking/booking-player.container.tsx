@@ -10,7 +10,7 @@ import { notification } from 'antd'
 import { NotificationPlacement } from 'antd/es/notification/interface'
 import { ErrorMessage, Field, Form, Formik } from 'formik'
 import Image from 'next/legacy/image'
-import { BookingProviderRequest } from 'ume-openapi-booking'
+import { BookingProviderRequest } from 'ume-service-openapi'
 import * as Yup from 'yup'
 
 import { trpc } from '~/utils/trpc'

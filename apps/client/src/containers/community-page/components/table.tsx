@@ -9,7 +9,7 @@ import {
   TopDonateProviderResponse,
   TopUserDonatePagingResponse,
   TopUserDonateResponse,
-} from 'ume-openapi-booking'
+} from 'ume-service-openapi'
 
 import { TableSkeletonLoader } from '~/components/skeleton-load'
 

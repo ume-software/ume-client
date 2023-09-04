@@ -16,7 +16,7 @@ import {
 
 import Image from 'next/legacy/image'
 import Link from 'next/link'
-import { PostResponse } from 'ume-openapi-booking'
+import { PostResponse } from 'ume-service-openapi'
 
 import CommmentPost from './comment-post'
 import LikePost from './like-post'

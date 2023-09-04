@@ -11,7 +11,7 @@ import { Slider, Tooltip } from 'antd'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { FilterProviderPagingResponse } from 'ume-openapi-booking'
+import { FilterProviderPagingResponse } from 'ume-service-openapi'
 
 import { PlayerSkeletonLoader } from '~/components/skeleton-load'
 

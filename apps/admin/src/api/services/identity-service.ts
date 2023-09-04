@@ -3,7 +3,7 @@ import { getEnv } from '~/env'
 
 import { parse, serialize } from 'cookie'
 import { AuthApi } from 'ume-identity-service-openapi'
-import { BuyCoinRequestApi, CoinApi } from 'ume-openapi-booking'
+import { BuyCoinRequestApi, CoinApi } from 'ume-service-openapi'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 

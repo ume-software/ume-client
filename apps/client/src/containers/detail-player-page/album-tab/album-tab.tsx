@@ -3,7 +3,7 @@ import ImgForEmpty from 'public/img-for-empty.png'
 import { useEffect, useState } from 'react'
 
 import Image from 'next/legacy/image'
-import { DetailAlbumResponse } from 'ume-openapi-booking'
+import { DetailAlbumResponse } from 'ume-service-openapi'
 
 import AlbumImage from './album-image'
 

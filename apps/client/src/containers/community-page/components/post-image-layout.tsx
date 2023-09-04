@@ -1,5 +1,5 @@
 import Image from 'next/legacy/image'
-import { ThumbnailResponseTypeEnum } from 'ume-openapi-booking'
+import { ThumbnailResponseTypeEnum } from 'ume-service-openapi'
 
 const PostImageLayout = (props) => {
   const MAX_VISIBLE_IMAGES = 2

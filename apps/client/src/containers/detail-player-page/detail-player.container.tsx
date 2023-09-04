@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 import Head from 'next/head'
-import { GetProfileProviderBySlugResponse } from 'ume-openapi-booking'
+import { GetProfileProviderBySlugResponse } from 'ume-service-openapi'
 
 import PlayerInformation from './components/player-information'
 
