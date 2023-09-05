@@ -2,7 +2,7 @@ import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 
 import { notification } from 'antd'
 import Image from 'next/image'
-import { BookingHandleRequestStatusEnum } from 'ume-booking-service-openapi'
+import { BookingHandleRequestStatusEnum } from 'ume-service-openapi'
 
 import { SocketTokenContext } from '~/components/layouts/app-layout/app-layout'
 import { NotificateSkeletonLoader } from '~/components/skeleton-load'

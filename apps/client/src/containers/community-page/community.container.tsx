@@ -85,7 +85,7 @@ const CommunityContainer = () => {
         <div className="grid grid-cols-10 gap-10 text-white">
           <div className="col-span-2">
             <div className="flex flex-col gap-10 sticky top-20">
-              <div className="p-10 bg-zinc-800 rounded-3xl">
+              <div className="p-10 bg-zinc-800 rounded-2xl">
                 <div className="flex flex-col gap-5">
                   {postTypeData.map((item) => (
                     <div

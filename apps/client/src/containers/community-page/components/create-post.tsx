@@ -1,11 +1,12 @@
 import { AddPicture, DeleteFive } from '@icon-park/react'
 import { TextArea } from '@ume/ui'
 import { uploadAudioBooking, uploadImageBooking } from '~/api/upload-media'
+import { getEnv } from '~/env'
 
-import { ChangeEvent, FormEvent, useEffect, useId, useState } from 'react'
+import { ChangeEvent, FormEvent, Key, SetStateAction, useEffect, useRef, useState } from 'react'
 
 import { notification } from 'antd'
-import { ThumbnailResponseTypeEnum } from 'ume-booking-service-openapi'
+import { ThumbnailResponseTypeEnum } from 'ume-service-openapi'
 
 import { trpc } from '~/utils/trpc'
 
@@ -15,7 +16,6 @@ interface ThumbnailsProps {
 }
 
 const CreatePost = (props: any) => {
-  const index = useId()
   const [content, setContent] = useState<string>('')
   const createNewPost = trpc.useMutation(['community.createNewPost'])
   const [mediaFiles, setMediaFiles] = useState<File[] | undefined>()
@@ -28,6 +28,7 @@ const CreatePost = (props: any) => {
       for (let i = 0; i < fileInput.files.length; i++) {
         newFiles.push(fileInput.files[i])
       }
+      // setMediaFiles((prevData) => [...(prevData || []), ...newFiles])
       setMediaFiles(newFiles)
       setRemoveMedia(false)
     }
@@ -81,7 +82,8 @@ const CreatePost = (props: any) => {
   const handleCreateNewPost = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    const fileUpload = handleUploadFiles(e.currentTarget)
+    const fileUpload = await handleUploadFiles(e.currentTarget)
+    console.log(fileUpload)
 
     if (!(content == '' && (await fileUpload).thumbnails.length == 0)) {
       try {
@@ -151,7 +153,7 @@ const CreatePost = (props: any) => {
             </div>
             <div className="flex flex-col gap-2">
               {!removeMedia &&
-                mediaFiles?.map((file: File) => {
+                mediaFiles?.map((file: File, index) => {
                   if (file.type.startsWith('image/')) {
                     // eslint-disable-next-line @next/next/no-img-element
                     return <img key={index} src={URL.createObjectURL(file)} alt="ImageUpload" />
@@ -171,12 +173,12 @@ const CreatePost = (props: any) => {
         <div className="mt-3 p-5">
           <button
             className={`rounded-lg w-full text-white ${
-              content === '' && !mediaFiles
+              content === '' && !!!mediaFiles
                 ? 'bg-gray-600 cursor-not-allowed'
                 : 'bg-purple-700 cursor-pointer hover:scale-105'
             } py-1 font-semibold text-lg  text-center`}
             type="submit"
-            disabled={content === '' && !mediaFiles}
+            disabled={content === '' && !!!mediaFiles}
           >
             Tạo bài viết
           </button>

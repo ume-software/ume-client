@@ -1,22 +1,22 @@
-import { useCallback, useContext, useEffect, useId, useRef, useState } from 'react'
+import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 
-import { PostResponse } from 'ume-booking-service-openapi'
+import { PostPagingResponse, PostResponse } from 'ume-service-openapi'
 
 import CommunityPost from './community-post'
 
-import { SocketTokenContext } from '~/components/layouts/app-layout/app-layout'
+import { AppLayout, SocketContext, SocketTokenContext, UserContext } from '~/components/layouts/app-layout/app-layout'
 import { PostSkeletonLoader } from '~/components/skeleton-load'
 
 import { trpc } from '~/utils/trpc'
 
 const GeneralPost = () => {
-  const index = useId()
   const [suggestPostData, setSuggestPostData] = useState<PostResponse[] | undefined>(undefined)
   const [scrollPosition, setScrollPosition] = useState(0)
   const { socketToken } = useContext(SocketTokenContext)
   const containerRef = useRef<HTMLDivElement>(null)
   const [idPostArray, setIdPostArray] = useState<string[]>([])
   const {
+    data: suggestPost,
     isLoading: loadingSuggestPost,
     isFetching: fetchingSuggestPost,
     refetch: refetchSuggestPost,
@@ -27,7 +27,7 @@ const GeneralPost = () => {
         cacheTime: 0,
         refetchOnMount: true,
         onSuccess(data) {
-          setSuggestPostData((prevData) => [...(prevData ?? []), ...(data?.data?.row ?? [])])
+          setSuggestPostData((prevData) => [...(prevData || []), ...(data?.data?.row || [])])
         },
       })
     : trpc.useQuery(['community.getSuggestPostWithoutCookies'], {
@@ -36,7 +36,7 @@ const GeneralPost = () => {
         cacheTime: 0,
         refetchOnMount: true,
         onSuccess(data) {
-          setSuggestPostData((prevData) => [...(prevData ?? []), ...(data?.data?.row ?? [])])
+          setSuggestPostData((prevData) => [...(prevData || []), ...(data?.data?.row || [])])
         },
       })
   const watchedPost = trpc.useMutation(['community.watchedPost'])
@@ -79,7 +79,7 @@ const GeneralPost = () => {
         </>
       ) : (
         <div ref={containerRef}>
-          {suggestPostData?.map((data) => (
+          {suggestPostData?.map((data, index) => (
             <div key={index}>
               <CommunityPost data={data} idPostArray={idPostArray} setIdPostArray={setIdPostArray} />
             </div>
