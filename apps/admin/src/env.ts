@@ -6,7 +6,5 @@ export const getEnv = () => {
   return {
     baseIdentityURL,
     baseBookingURL,
-    baseChattingURL,
-    baseLivestreamURL,
   }
 }

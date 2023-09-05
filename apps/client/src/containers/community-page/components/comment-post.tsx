@@ -1,7 +1,7 @@
-import { Like, Send } from '@icon-park/react'
-import { Input, InputWithAffix, InputWithButton } from '@ume/ui'
+import { Send } from '@icon-park/react'
+import { InputWithButton } from '@ume/ui'
 
-import { Dispatch, SetStateAction, useContext, useEffect, useRef, useState } from 'react'
+import { Dispatch, SetStateAction, useContext, useEffect, useId, useRef, useState } from 'react'
 
 import Image from 'next/legacy/image'
 import Link from 'next/link'
@@ -20,9 +20,10 @@ interface CommentPostProps {
 }
 
 const CommmentPost = (props: CommentPostProps) => {
+  const index = useId()
   const [commnetPostData, setCommnetPostData] = useState<any>([])
   const [page, setPage] = useState<string>('1')
-  const [limit, setLimit] = useState<string>('10')
+  const [limit] = useState<string>('10')
   const { userContext } = useContext(UserContext)
   const containerRef = useRef<HTMLDivElement>(null)
   const [comment, setComment] = useState('')
@@ -32,14 +33,13 @@ const CommmentPost = (props: CommentPostProps) => {
     data: commentPostByID,
     isLoading: loadingCommentPostByID,
     isFetching: fetchingCommentPostByID,
-    refetch: refetchCommentPostByID,
   } = trpc.useQuery(['community.getCommentPostByID', { postId: props.postID, limit: limit, page: page }], {
     refetchOnWindowFocus: false,
     refetchOnReconnect: 'always',
     cacheTime: 0,
     refetchOnMount: true,
     onSuccess(data) {
-      setCommnetPostData((prevData) => [...(prevData || []), ...(data?.data?.row || [])])
+      setCommnetPostData((prevData) => [...(prevData || []), ...(data?.data?.row ?? [])])
     },
   })
   const commentForPostId = trpc.useMutation(['community.commentForPostId'])
@@ -69,18 +69,10 @@ const CommmentPost = (props: CommentPostProps) => {
 
     return () => {
       if (containerRef.current) {
-        // eslint-disable-next-line react-hooks/exhaustive-deps
         containerRef.current.removeEventListener('scroll', handleScroll)
       }
     }
   })
-
-  // useEffect(() => {
-  //   if (page !== '1') {
-  //     refetchCommentPostByID()
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [page])
 
   const handleSendComment = () => {
     if (socketToken) {
@@ -91,12 +83,6 @@ const CommmentPost = (props: CommentPostProps) => {
             {
               onSuccess: (data) => {
                 if (data.success) {
-                  // setLimit(String(Number(page) * 10))
-                  // setPage('1')
-                  // refetchCommentPostByID().then((data) => {
-                  //   setCommnetPostData(data.data?.data.row)
-                  // })
-
                   setCommnetPostData((prevData) => [
                     {
                       user: {
@@ -137,7 +123,7 @@ const CommmentPost = (props: CommentPostProps) => {
             <CommentSkeletonLoader />
           ) : (
             <>
-              {commnetPostData.map((data, index) => (
+              {commnetPostData.map((data) => (
                 <Link key={index} href={`#${data?.user?.slug}`}>
                   <div className="flex items-start gap-3 m-5 p-1 rounded-xl">
                     <div className="relative min-w-[50px] min-h-[50px]">

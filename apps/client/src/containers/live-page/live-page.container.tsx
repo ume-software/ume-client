@@ -1,5 +1,6 @@
-import featureUpdate from 'public/feature-update.png'
 import ImgForEmpty from 'public/img-for-empty.png'
+
+import { useId } from 'react'
 
 import { Tooltip } from 'antd'
 import Head from 'next/head'
@@ -69,6 +70,7 @@ const livestreamData: livestreamProps[] = [
 ]
 
 const LivePage = (props) => {
+  const index = useId()
   return (
     <div>
       <Head>
@@ -83,7 +85,7 @@ const LivePage = (props) => {
             </div>
           </div>
           <div className="grid grid-cols-4">
-            {livestreamData.map((data, index) => (
+            {livestreamData.map((data) => (
               <>
                 <div key={index} className="col-span-1 cursor-pointer p-5">
                   <div className="relative">

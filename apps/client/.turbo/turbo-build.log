@@ -1,4 +1,3 @@
-yarn run v1.22.19
 $ npx next build
 info  - Loaded env from /Users/huyqtrieu/Desktop/Personal/ume-client/apps/client/.env.local
 info  - Loaded env from /Users/huyqtrieu/Desktop/Personal/ume-client/apps/client/.env.production
@@ -7,6 +6,11 @@ warn  - Invalid next.config.js options detected:
 
 See more info here: https://nextjs.org/docs/messages/invalid-next-config
 info  - Linting and checking validity of types...
+
+./src/containers/community-page/components/comment-post.tsx
+72:22  Warning: The ref value 'containerRef.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'containerRef.current' to a variable inside the effect, and use that variable in the cleanup function.  react-hooks/exhaustive-deps
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules
 Failed to compile.
 
 ./src/components/skeleton-load/skeleton-load.component.tsx:3:25

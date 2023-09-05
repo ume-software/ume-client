@@ -2,15 +2,10 @@ import { ArrowLeft, FullScreen, Search } from '@icon-park/react'
 import { InputWithAffix, TextInput } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
 
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useId, useState } from 'react'
 
 import Image from 'next/legacy/image'
-import {
-  ChattingChannelPagingResponse,
-  ChattingChannelReponse,
-  MemberChatChannelResponse,
-  MessageResponse,
-} from 'ume-chatting-service-openapi'
+import { ChattingChannelReponse, MemberChatChannelResponse, MessageResponse } from 'ume-chatting-service-openapi'
 
 import ChatContent from './chat-content'
 
@@ -20,6 +15,7 @@ import { ChatSkeleton } from '~/components/skeleton-load'
 import { trpc } from '~/utils/trpc'
 
 const Chat = (props: { playerId?: string }) => {
+  const index = useId()
   const [searchText, setSearchTextt] = useState('')
   const { userContext, setUserContext } = useContext(UserContext)
   const {

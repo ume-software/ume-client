@@ -9,11 +9,7 @@ import { trpc } from '~/utils/trpc'
 
 const Category = () => {
   const [listSkils, setListSkils] = useState<any>([])
-  const {
-    data: skills,
-    isLoading: loadingSkill,
-    isFetching,
-  } = trpc.useQuery(['booking.getListSkill'], {
+  const { data: skills, isLoading: loadingSkill } = trpc.useQuery(['booking.getListSkill'], {
     refetchOnWindowFocus: false,
     refetchOnReconnect: 'always',
     cacheTime: 0,

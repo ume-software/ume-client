@@ -1,4 +1,3 @@
-import { ArrowRight, Search } from '@icon-park/react'
 import { CustomDrawer } from '@ume/ui'
 
 import React, { useContext } from 'react'

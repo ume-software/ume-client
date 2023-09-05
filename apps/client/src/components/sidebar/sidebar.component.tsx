@@ -23,17 +23,13 @@ interface chatProps {
 
 export const Sidebar = (props) => {
   const { childrenDrawer, setChildrenDrawer } = useContext(DrawerContext)
-  const { userContext, setUserContext } = useContext(UserContext)
+  const { userContext } = useContext(UserContext)
   const { socketToken } = useContext(SocketTokenContext)
   const { socketContext, setSocketContext } = useContext(SocketContext)
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
   const [showMessage, setShowMessage] = useState(false)
   const utils = trpc.useContext()
-  const {
-    data: chattingChannels,
-    isLoading: loadingChattingChannels,
-    isFetching,
-  } = trpc.useQuery(['chatting.getListChattingChannels', { limit: '5', page: '1' }])
+  const { data: chattingChannels } = trpc.useQuery(['chatting.getListChattingChannels', { limit: '5', page: '1' }])
 
   useEffect(() => {
     if (socketToken) {
