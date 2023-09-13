@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.ant-layout-sider-children {
+    width: 100%;
+    height: 80%;
+}
+
+.ant-menu {
+    overflow-y: auto;
+    width: 100%;
+    height: 92%;
+}
+
+.ant-menu-title-content{
+    font-weight: bold;
+    color: white;
+}
+
+.content-title {
+    font-weight: bold;
+    font-size: x-large;
+}
