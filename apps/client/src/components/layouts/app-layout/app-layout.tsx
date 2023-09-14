@@ -3,7 +3,7 @@ import { socket } from '~/api/socket/socket-connect'
 
 import { Dispatch, ReactNode, SetStateAction, createContext, useEffect, useState } from 'react'
 
-import { UserInfomationResponse } from 'ume-identity-service-openapi'
+import { UserInfomationResponse } from 'ume-service-openapi'
 
 import { Header } from '~/components/header/header.component'
 import { Sidebar } from '~/components/sidebar'

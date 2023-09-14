@@ -41,7 +41,7 @@
     "socket.io-client": "^4.6.2",
     "turbo": "^1.6.3",
     "ume-service-openapi": "latest",
-    "ume-identity-service-openapi": "latest",
+    "ume-service-openapi": "latest",
     "yup": "^1.2.0",
     "zod": "^3.19.1"
   },
