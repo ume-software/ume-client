@@ -1,6 +1,5 @@
 $ npx next build
-info  - Loaded env from /Users/huyqtrieu/Desktop/Personal/ume-client/apps/admin/.env.local
-info  - Loaded env from /Users/huyqtrieu/Desktop/Personal/ume-client/apps/admin/.env.production
+info  - Loaded env from D:\FPTU\Capstone_Project\ume-client\apps\admin\.env.production
 warn  - Invalid next.config.js options detected: 
   - The root value has an unexpected property, transpilePackages, which is not in the list of allowed properties (amp, analyticsId, assetPrefix, basePath, cleanDistDir, compiler, compress, crossOrigin, devIndicators, distDir, env, eslint, excludeDefaultMomentLocales, experimental, exportPathMap, generateBuildId, generateEtags, headers, httpAgentOptions, i18n, images, onDemandEntries, optimizeFonts, output, outputFileTracing, pageExtensions, poweredByHeader, productionBrowserSourceMaps, publicRuntimeConfig, reactStrictMode, redirects, rewrites, sassOptions, serverRuntimeConfig, staticPageGenerationTimeout, swcMinify, trailingSlash, typescript, useFileSystemPublicRoutes, webpack).
 
@@ -19,14 +18,14 @@ Route (pages)                              Size     First Load JS
 ├ λ /404                                   334 B          98.5 kB
 ├ λ /api/status                            0 B            98.1 kB
 ├ λ /api/trpc/[trpc]                       0 B            98.1 kB
-├ ○ /dashboard                             1.82 kB        99.9 kB
-└ ○ /signin                                1.82 kB        99.9 kB
+├ ○ /dashboard (640 ms)                    1.82 kB         100 kB
+└ ○ /signin (642 ms)                       1.82 kB         100 kB
 + First Load JS shared by all              102 kB
   ├ chunks/framework-22108eb722d84e59.js   45.4 kB
   ├ chunks/main-1549b305685c3af3.js        26.7 kB
-  ├ chunks/pages/_app-ddc4c0bd29e23e27.js  24.1 kB
-  ├ chunks/webpack-07ec39162e7220c9.js     1.87 kB
-  └ css/2eb7c131ae09d951.css               3.88 kB
+  ├ chunks/pages/_app-8dfe0826cd7ca939.js  24.2 kB
+  ├ chunks/webpack-d7475278703169e3.js     1.88 kB
+  └ css/a987f8a52eac5b12.css               3.88 kB
 
 λ  (Server)  server-side renders at runtime (uses getInitialProps or getServerSideProps)
 ○  (Static)  automatically rendered as static HTML (uses no initial props)

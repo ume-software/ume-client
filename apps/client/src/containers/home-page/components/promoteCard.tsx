@@ -66,7 +66,8 @@ const PromoteCard = (props: { data: FilterProviderResponse }) => {
         <div className="w-fit flex items-center gap-3 bg-purple-600 p-2 mb-2 rounded-md text-white">
           <p className="text-md font-semibold">{props?.data?.skillname}</p>
           <div className="flex items-center gap-1 text-lg font-bold">
-            <Star theme="filled" size="15" fill="#FFBB00" strokeLinejoin="bevel" /> {props.data.star?.toFixed(1)}
+            <Star theme="filled" size="15" fill="#FFBB00" strokeLinejoin="bevel" />{' '}
+            {(Number(props?.data?.star) || 0).toFixed(1)}
           </div>
         </div>
         <p className="text-xl font-bold">{props?.data?.name}</p>

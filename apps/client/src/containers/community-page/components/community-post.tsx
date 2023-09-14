@@ -1,6 +1,7 @@
 import { Menu, Transition } from '@headlessui/react'
 import { CloseSmall, Comment, Like, More, ShareTwo, TipsOne } from '@icon-park/react'
 import { Modal } from '@ume/ui'
+import ImgForEmpty from 'public/img-for-empty.png'
 
 import {
   Dispatch,
@@ -160,7 +161,7 @@ const CommunityPost = (props: CommunityPostProps) => {
                 className="absolute rounded-full"
                 layout="fill"
                 objectFit="cover"
-                src={props.data?.user.avatarUrl}
+                src={props.data?.user.avatarUrl || ImgForEmpty}
                 alt="Provider Image"
               />
             </Link>
