@@ -3,7 +3,7 @@ import { socket } from '~/api/socket/socket-connect'
 
 import { Dispatch, ReactNode, SetStateAction, createContext, useEffect, useState } from 'react'
 
-import { UserInfomationResponse } from 'ume-service-openapi'
+import { UserInformationResponse } from 'ume-service-openapi'
 
 import { Header } from '~/components/header/header.component'
 import { Sidebar } from '~/components/sidebar'
@@ -37,8 +37,8 @@ interface DrawerProps {
 }
 
 interface UserContextValue {
-  userContext: UserInfomationResponse | null
-  setUserContext: Dispatch<SetStateAction<UserInfomationResponse | null>>
+  userContext: UserInformationResponse | null
+  setUserContext: Dispatch<SetStateAction<UserInformationResponse | null>>
 }
 export const SocketTokenContext = createContext<SocketTokenContextValue>({
   socketToken: null,

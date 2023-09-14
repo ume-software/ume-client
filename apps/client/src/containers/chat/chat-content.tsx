@@ -5,7 +5,7 @@ import { ReactNode, useContext, useEffect, useId, useRef, useState } from 'react
 
 import Image from 'next/legacy/image'
 import Link from 'next/link'
-import { ChattingChannelReponse, MemberChatChannelResponse } from 'ume-chatting-service-openapi'
+import { ChattingChannelResponse, MemberChatChannelResponse } from 'ume-chatting-service-openapi'
 
 import {
   SocketClientEmit,
@@ -37,7 +37,7 @@ const convertArrayObjectToObject = (input: Array<any>, key: string = '_id') => {
     return acc
   }, {})
 }
-const ChatContent = (props: { channel: ChattingChannelReponse }) => {
+const ChatContent = (props: { channel: ChattingChannelResponse }) => {
   const index = useId()
   const [messageInput, setMessageInput] = useState('')
   const { userContext } = useContext(UserContext)
@@ -92,7 +92,7 @@ const ChatContent = (props: { channel: ChattingChannelReponse }) => {
         <div className="relative max-h-screen overflow-hidden">
           <div className="w-full flex items-center justify-between">
             <Link
-              href={`/player/${images[0].providerInfomation.slug || images[0].providerInfomation.id}`}
+              href={`/player/${images[0].providerInformation.slug || images[0].providerInformation.id}`}
               className="w-3/4 p-2 rounded-lg hover:bg-gray-700"
             >
               {images && (
@@ -102,11 +102,11 @@ const ChatContent = (props: { channel: ChattingChannelReponse }) => {
                       className="absolute rounded-full"
                       layout="fill"
                       objectFit="cover"
-                      src={images[0].userInfomation.avatarUrl!}
+                      src={images[0].userInformation.avatarUrl!}
                       alt="Avatar"
                     />
                   </div>
-                  <span className="text-2xl font-bold text-white truncate">{images[0].userInfomation.name || ''}</span>
+                  <span className="text-2xl font-bold text-white truncate">{images[0].userInformation.name || ''}</span>
                 </div>
               )}
             </Link>
@@ -171,7 +171,7 @@ const ChatContent = (props: { channel: ChattingChannelReponse }) => {
                             objectFit="cover"
                             height={600}
                             width={600}
-                            src={sender.userInfomation.avatarUrl}
+                            src={sender.userInformation.avatarUrl}
                             alt="Avatar"
                           />
                         </div>

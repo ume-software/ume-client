@@ -34,9 +34,6 @@ interface MoreButtonDataProps {
   icon?: ReactElement
 }
 
-interface PersonalImageProps {
-  src: string
-}
 interface FeedProps {
   feedLink: string
   imgSrc: string | StaticImageData
@@ -48,33 +45,6 @@ interface valueGenderProps {
   value: string
   icon: ReactNode
 }
-
-const personalImageDatas: personalImageProps[] = [
-  {
-    src: 'https://www.shelterluv.com/sites/default/files/animal_pics/5789/2023/05/11/07/20230511075451.png',
-  },
-  {
-    src: `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSr1OdSY02rL7B8t0vY_OHkQ1y_yadZY9dd5w&usqp=CAU`,
-  },
-  {
-    src: `https://www.shelterluv.com/sites/default/files/animal_pics/5789/2023/05/11/07/20230511075451.png`,
-  },
-  {
-    src: `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSr1OdSY02rL7B8t0vY_OHkQ1y_yadZY9dd5w&usqp=CAU`,
-  },
-  {
-    src: `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSr1OdSY02rL7B8t0vY_OHkQ1y_yadZY9dd5w&usqp=CAU`,
-  },
-  {
-    src: `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSr1OdSY02rL7B8t0vY_OHkQ1y_yadZY9dd5w&usqp=CAU`,
-  },
-  {
-    src: `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSr1OdSY02rL7B8t0vY_OHkQ1y_yadZY9dd5w&usqp=CAU`,
-  },
-  {
-    src: `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS70aQuCJpUvEQn6UEdCUtZ9oWZhviLNDxQ_Q&usqp=CAU`,
-  },
-]
 
 const feedData: FeedProps[] = [
   {
@@ -147,7 +117,6 @@ const valueGenders: valueGenderProps[] = [
 ]
 
 const PlayerInformation = (props: { data }) => {
-  const index = useId()
   const tabDatas: TabDataProps[] = [
     {
       label: `Thông tin cá nhân`,
@@ -232,7 +201,7 @@ const PlayerInformation = (props: { data }) => {
                 >
                   <Menu.Items className="absolute w-fit right-0 p-3 top-7 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                     <div className="w-max flex flex-col gap-2">
-                      {moreButtonDatas.map((item) => (
+                      {moreButtonDatas.map((item, index) => (
                         <div key={index} className="hover:bg-purple-700 hover:text-white group rounded-md pl-2 pr-2 ">
                           <div className="scale-x-100 group-hover:scale-x-95 flex items-center justify-between gap-2 group-hover:-translate-x-2 duration-300">
                             <a href="#">{item.label}</a>
@@ -248,7 +217,7 @@ const PlayerInformation = (props: { data }) => {
           </div>
 
           <div className="flex flex-row gap-10" style={{ zIndex: 2 }}>
-            {tabDatas.map((item) => (
+            {tabDatas.map((item, index) => (
               <a
                 href="#tab"
                 className={`text-white xl:text-3xl text-xl font-medium p-4 ${
@@ -265,7 +234,7 @@ const PlayerInformation = (props: { data }) => {
         </div>
       </div>
       <div className="p-5">
-        {tabDatas.map((item) => {
+        {tabDatas.map((item, index) => {
           return (
             <p className="text-white" key={index} hidden={selectedTab !== item.label}>
               <div className="flex justify-center my-10">{item.children}</div>
