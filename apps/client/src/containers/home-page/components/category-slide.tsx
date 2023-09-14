@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React from 'react'
 
 import Image from 'next/legacy/image'
 import Link from 'next/link'

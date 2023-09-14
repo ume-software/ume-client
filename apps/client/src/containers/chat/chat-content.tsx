@@ -1,7 +1,7 @@
 import { GrinningFaceWithOpenMouth, MoreOne, PhoneTelephone, Picture, Videocamera } from '@icon-park/react'
 import useChatScroll from '~/hook/useChatScroll'
 
-import { ReactNode, useContext, useEffect, useRef, useState } from 'react'
+import { ReactNode, useContext, useEffect, useId, useRef, useState } from 'react'
 
 import Image from 'next/legacy/image'
 import Link from 'next/link'
@@ -38,19 +38,15 @@ const convertArrayObjectToObject = (input: Array<any>, key: string = '_id') => {
   }, {})
 }
 const ChatContent = (props: { channel: ChattingChannelReponse }) => {
-  const [gameSelected, setGameSelected] = useState(0)
+  const index = useId()
   const [messageInput, setMessageInput] = useState('')
-  const { userContext, setUserContext } = useContext(UserContext)
+  const { userContext } = useContext(UserContext)
   const { socketClientEmit } = useContext(SocketClientEmit)
   const { socketContext } = useContext(SocketContext)
   const { socketToken } = useContext(SocketTokenContext)
 
   const utils = trpc.useContext()
-  const {
-    data: chattingMessageChannel,
-    isLoading: loadingChattingMessageChannel,
-    isFetching,
-  } = trpc.useQuery([
+  const { data: chattingMessageChannel, isLoading: loadingChattingMessageChannel } = trpc.useQuery([
     'chatting.getMessagesByChannelId',
     { channelId: props.channel._id, limit: 'unlimited', page: '1' },
   ])
@@ -115,7 +111,7 @@ const ChatContent = (props: { channel: ChattingChannelReponse }) => {
               )}
             </Link>
             <div className="flex gap-2">
-              {actionButtons.map((item, index) => (
+              {actionButtons.map((item) => (
                 <div
                   key={index}
                   className="p-2 bg-[#413F4D] rounded-full cursor-pointer hover:bg-gray-500 active:bg-gray-400"
@@ -152,7 +148,7 @@ const ChatContent = (props: { channel: ChattingChannelReponse }) => {
                 <div className="flex flex-col mt-5 ">
                   {chattingMessageChannel?.data.messages.map((item, index) => {
                     const sender = mappingMember[item.senderId]
-                    const isSeftMessage = sender.userId.toString() == userContext?.id.toString() ? true : false
+                    const isSeftMessage = sender.userId.toString() == userContext?.id.toString()
                     return (
                       <div key={index} className={`flex justify-end  ${!isSeftMessage ? 'flex-row-reverse' : ''} mb-4`}>
                         <div
@@ -162,7 +158,7 @@ const ChatContent = (props: { channel: ChattingChannelReponse }) => {
                             ? ' bg-blue-500  rounded-bl-3xl rounded-tl-3xl rounded-tr-xl'
                             : 'bg-gray-700 rounded-br-3xl rounded-tr-3xl rounded-tl-xl'
                         }
-                       whitespace-pre-wrap 
+                       whitespace-pre-wrap
                        break-words`}
                         >
                           <span>{item.content}</span>
