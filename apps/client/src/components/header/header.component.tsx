@@ -4,8 +4,9 @@ import { Button, Input } from '@ume/ui'
 import coin from 'public/coin-icon.png'
 import logo from 'public/ume-logo-2.svg'
 import Notificate from '~/containers/notificate/notificate.container'
+import { useAuth } from '~/contexts/auth'
 
-import React, { Fragment, ReactElement, ReactNode, useContext, useEffect, useId, useRef, useState } from 'react'
+import React, { Fragment, ReactElement, useContext, useEffect, useId, useState } from 'react'
 
 import { parse } from 'cookie'
 import Image from 'next/legacy/image'
@@ -36,28 +37,23 @@ export const Header: React.FC = ({}: HeaderProps) => {
   const [selectedTab, setSelectedTab] = useState('Chính')
   const [isModalLoginVisible, setIsModalLoginVisible] = React.useState(false)
   const accessToken = parse(document.cookie).accessToken
+  const { isAuthenticated } = useAuth()
 
-  const { data: dataResponse } = trpc.useQuery(['identity.identityInfo'])
-  const { data: accountBalance } = trpc.useQuery(['identity.account-balance'], {
-    refetchOnWindowFocus: true,
-    refetchOnMount: true,
-    onSuccess(data) {
-      setBalance(data.data.totalCoinsAvailable)
-    },
-  })
+  useEffect(() => {
+    if (isAuthenticated) {
+      const getAccountBalance = trpc.useQuery(['identity.account-balance'], {
+        onSuccess(data) {
+          setBalance(data.data.totalCoinsAvailable)
+        },
+      })
+    }
+  }, [isAuthenticated, setUserContext])
 
   useEffect(() => {
     if (userInfo) {
       setSocketToken(accessToken || null)
     }
-    if (dataResponse && accessToken) {
-      setUserInfo(dataResponse.data)
-      setUserContext(dataResponse.data)
-    } else {
-      setUserContext(null)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dataResponse, setSocketToken, userInfo, accessToken])
+  }, [setSocketToken, userInfo, accessToken])
 
   const tabDatas: TabProps[] = [
     {
@@ -134,7 +130,7 @@ export const Header: React.FC = ({}: HeaderProps) => {
               <Search size={22} strokeWidth={4} fill="#FFFFFF" />
             </button>
           </span>
-          {userInfo && accountBalance && (
+          {isAuthenticated && userInfo && balance && (
             <button onClick={() => setShowRechargeModal(true)}>
               <div className="flex items-center justify-end rounded-full bg-[#37354F] px-2 mr-2 self-center text-white">
                 <p className="text-lg font-semibold">{balance}</p>

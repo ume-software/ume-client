@@ -19,7 +19,6 @@ export const getListChattingChannels = async (query: { limit: string; page: stri
       data: response.data,
     }
   } catch (error) {
-    console.log('error at catch', error)
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
       message: error.message || 'Failed to get list chatting channel',
@@ -39,7 +38,6 @@ export const getMessagesByChannelId = async (query: { channelId: string; limit: 
       data: response.data,
     }
   } catch (error) {
-    console.log('error at catch', error)
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
       message: error.message || 'Failed to get message by channel id',
@@ -60,7 +58,6 @@ export const createNewChatChannel = async (receiverId: CreateChannelRequest, ctx
       success: true,
     }
   } catch (error) {
-    console.log('error at catch', error)
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
       message: error.message || 'Failed to create new chat channel',

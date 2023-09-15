@@ -1,17 +1,16 @@
 /* eslint-disable jsx-a11y/alt-text */
 import { Pencil } from '@icon-park/react'
+import ImgForEmpty from 'public/img-for-empty.png'
 
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 
 import Image from 'next/legacy/image'
-import { UserInfomationResponse } from 'ume-chatting-service-openapi'
-
-import { UserContext } from '~/components/layouts/app-layout/app-layout'
+import { UserInformationResponse } from 'ume-service-openapi'
 
 import { trpc } from '~/utils/trpc'
 
 const EditProfile = () => {
-  const [userSettingData, setUserSettingData] = useState<UserInfomationResponse | undefined>(undefined)
+  const [userSettingData, setUserSettingData] = useState<UserInformationResponse | undefined>(undefined)
   const { isLoading: isLoadingUserSettingData, isFetching: isFetchingUserSettingData } = trpc.useQuery(
     ['identity.identityInfo'],
     {
@@ -33,7 +32,7 @@ const EditProfile = () => {
               className="absolute rounded-full"
               layout="fill"
               objectFit="cover"
-              src={userSettingData.avatarUrl}
+              src={userSettingData.avatarUrl || ImgForEmpty}
               alt="Personal Image"
             />
             <div className="absolute right-2 bottom-0 p-2 bg-zinc-800 hover:bg-gray-700 rounded-full">

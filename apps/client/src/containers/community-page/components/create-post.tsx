@@ -1,6 +1,6 @@
 import { AddPicture, DeleteFive } from '@icon-park/react'
 import { TextArea } from '@ume/ui'
-import { uploadAudioBooking, uploadImageBooking } from '~/api/upload-media'
+import { uploadAudioBooking, uploadImageBooking } from '~/apis/upload-media'
 import { getEnv } from '~/env'
 
 import { ChangeEvent, FormEvent, Key, SetStateAction, useEffect, useRef, useState } from 'react'

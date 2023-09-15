@@ -5,7 +5,7 @@ import ImgForEmpty from 'public/img-for-empty.png'
 import { useContext, useEffect, useId, useState } from 'react'
 
 import Image from 'next/legacy/image'
-import { ChattingChannelReponse, MemberChatChannelResponse, MessageResponse } from 'ume-chatting-service-openapi'
+import { ChattingChannelResponse, MemberChatChannelResponse, MessageResponse } from 'ume-chatting-service-openapi'
 
 import ChatContent from './chat-content'
 
@@ -23,9 +23,9 @@ const Chat = (props: { playerId?: string }) => {
     isLoading: loadingChattingChannels,
     isFetching,
   } = trpc.useQuery(['chatting.getListChattingChannels', { limit: 'unlimited', page: '1' }])
-  const [filterChannel, setFilterChannel] = useState<ChattingChannelReponse[] | undefined>([])
+  const [filterChannel, setFilterChannel] = useState<ChattingChannelResponse[] | undefined>([])
 
-  const [channelSelected, setChannelSelected] = useState<ChattingChannelReponse | undefined>({
+  const [channelSelected, setChannelSelected] = useState<ChattingChannelResponse | undefined>({
     _id: props.playerId,
   } as any)
 
@@ -36,7 +36,7 @@ const Chat = (props: { playerId?: string }) => {
   useEffect(() => {
     const filtered = chattingChannels?.data.row.filter((data) => {
       return data.members.some((member) => {
-        return member.userInfomation.name.toLowerCase().includes(searchText.toLowerCase())
+        return member.userInformation.name.toLowerCase().includes(searchText.toLowerCase())
       })
     })
     setFilterChannel(filtered)
@@ -105,14 +105,14 @@ const Chat = (props: { playerId?: string }) => {
                               objectFit="cover"
                               height={600}
                               width={600}
-                              src={otherMemberInfo[0].userInfomation.avatarUrl}
+                              src={otherMemberInfo[0].userInformation.avatarUrl}
                               alt="Avatar"
                             />
                           </div>
                         </div>
                         <div className="w-full px-2">
                           <p className="w-4/5 text-lg font-semibold truncate">
-                            {otherMemberInfo[0].userInfomation.name}
+                            {otherMemberInfo[0].userInformation.name}
                           </p>
                           <p className={`text-gray-500 truncate ${isReadedLatestMessage ? 'font-medium' : ''}`}>
                             {latestMeassge && isMe && 'Bạn: '} {latestMeassge?.content}

@@ -121,7 +121,7 @@ export const Sidebar = (props) => {
                             layout="fill"
                             objectFit="cover"
                             key={item._id}
-                            src={images[0].userInfomation.avatarUrl}
+                            src={images[0].userInformation.avatarUrl}
                             alt="avatar"
                             onClick={() => handleChatOpen(item._id)}
                           />
