@@ -2,6 +2,32 @@
 @tailwind components;
 @tailwind utilities;
 
+
+
+
+/* -------------Start custom CSS for ant ------------------*/
+/* table */
+  .ant-table-thead .ant-table-cell {
+  background-color: #7463F0 !important;
+  border-bottom: unset !important;
+  color: white !important;
+  
+  
+  }
+  .ant-table-cell::before{
+    content: unset !important;
+  }
+  .ant-table-row .ant-table-cell{
+    background-color: #292734 !important;
+    border-bottom: unset !important;
+    color: white;
+  }
+  .ant-table-row .ant-table-cell:hover{
+     background: unset;
+  }
+
+
+  
 .ant-layout-sider-children {
     width: 100%;
     height: 80%;
@@ -17,7 +43,7 @@
     font-weight: bold;
     color: white;
 }
-
+/* -------------and custom for ant ------------------*/
 .content-title {
     font-weight: bold;
     font-size: x-large;
