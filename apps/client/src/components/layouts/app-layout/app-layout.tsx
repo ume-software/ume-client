@@ -1,7 +1,8 @@
 import * as socketio from 'socket.io-client'
-import { socket } from '~/api/socket/socket-connect'
+import { socket } from '~/apis/socket/socket-connect'
+import { AuthProvider } from '~/contexts/auth'
 
-import { Dispatch, ReactNode, SetStateAction, createContext, useEffect, useState } from 'react'
+import { Dispatch, PropsWithChildren, ReactNode, SetStateAction, createContext, useEffect, useState } from 'react'
 
 import { UserInformationResponse } from 'ume-service-openapi'
 
@@ -10,9 +11,7 @@ import { Sidebar } from '~/components/sidebar'
 
 import { getSocket } from '~/utils/constants'
 
-interface AppLayoutProps {
-  children: ReactNode
-}
+type AppLayoutProps = PropsWithChildren
 interface SocketTokenContextValue {
   socketToken: string | null
   setSocketToken: Dispatch<SetStateAction<string | null>>
@@ -113,25 +112,27 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
   return (
     <>
-      <UserContext.Provider value={{ setUserContext, userContext }}>
-        <SocketTokenContext.Provider value={{ socketToken, setSocketToken }}>
-          <SocketClientEmit.Provider value={{ socketClientEmit }}>
-            <SocketContext.Provider value={{ socketContext, setSocketContext }}>
-              <div className="flex flex-col">
-                <div className="fixed z-10 flex flex-col w-full ">
-                  <Header />
-                </div>
-                <DrawerContext.Provider value={{ childrenDrawer, setChildrenDrawer }}>
-                  <div className="pb-8 bg-umeBackground pt-[90px] pr-[60px] pl-[10px]">{children}</div>
-                  <div className="fixed h-full bg-umeHeader top-[65px] right-0">
-                    <Sidebar />
+      <AuthProvider>
+        <UserContext.Provider value={{ setUserContext, userContext }}>
+          <SocketTokenContext.Provider value={{ socketToken, setSocketToken }}>
+            <SocketClientEmit.Provider value={{ socketClientEmit }}>
+              <SocketContext.Provider value={{ socketContext, setSocketContext }}>
+                <div className="flex flex-col">
+                  <div className="fixed z-10 flex flex-col w-full ">
+                    <Header />
                   </div>
-                </DrawerContext.Provider>
-              </div>
-            </SocketContext.Provider>
-          </SocketClientEmit.Provider>
-        </SocketTokenContext.Provider>
-      </UserContext.Provider>
+                  <DrawerContext.Provider value={{ childrenDrawer, setChildrenDrawer }}>
+                    <div className="pb-8 bg-umeBackground pt-[90px] pr-[60px] pl-[10px]">{children}</div>
+                    <div className="fixed h-full bg-umeHeader top-[65px] right-0">
+                      <Sidebar />
+                    </div>
+                  </DrawerContext.Provider>
+                </div>
+              </SocketContext.Provider>
+            </SocketClientEmit.Provider>
+          </SocketTokenContext.Provider>
+        </UserContext.Provider>
+      </AuthProvider>
     </>
   )
 }

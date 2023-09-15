@@ -1,3 +1,3 @@
-import { trpcHandler } from '~/api/configurations'
+import { trpcHandler } from '~/apis/configurations'
 
 export default trpcHandler

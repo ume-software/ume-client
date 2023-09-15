@@ -2,7 +2,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google'
 import { withTRPC } from '@trpc/next'
 // include styles from the ui package
 import '@ume/ui/styles.css'
-import { RootRouterTypes } from '~/api'
+import { RootRouterTypes } from '~/apis'
 import '~/styles/globals.css'
 
 import type { AppProps } from 'next/app'

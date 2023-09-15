@@ -1,5 +1,5 @@
 import { GrinningFaceWithOpenMouth, MoreOne, PhoneTelephone, Picture, Videocamera } from '@icon-park/react'
-import useChatScroll from '~/hook/useChatScroll'
+import useChatScroll from '~/hooks/useChatScroll'
 
 import { ReactNode, useContext, useEffect, useId, useRef, useState } from 'react'
 
