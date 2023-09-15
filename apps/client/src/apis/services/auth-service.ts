@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server'
 import { getEnv } from '~/env'
 
-import { parse, serialize } from 'cookie'
+import { serialize } from 'cookie'
 import { AuthApi } from 'ume-service-openapi'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
@@ -9,7 +9,7 @@ import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 export const signinService = async ({ type, token }, ctx) => {
   try {
     const response = await new AuthApi({
-      basePath: getEnv().baseIdentityURL,
+      basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
     }).loginSNS({
       loginType: type,

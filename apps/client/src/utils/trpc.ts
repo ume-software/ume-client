@@ -1,4 +1,4 @@
 import { createReactQueryHooks } from '@trpc/react'
-import { RootRouterTypes } from '~/api'
+import { RootRouterTypes } from '~/apis'
 
 export const trpc = createReactQueryHooks<RootRouterTypes>()

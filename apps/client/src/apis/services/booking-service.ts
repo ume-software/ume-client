@@ -26,7 +26,6 @@ export const getListSkill = async () => {
       data: response.data,
     }
   } catch (error) {
-    console.log('error at catch', error)
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
       message: error.message || 'Failed to get list skill',
@@ -62,7 +61,6 @@ export const getProviders = async (query?: {
       data: response.data,
     }
   } catch (error) {
-    console.log('error at catch', error)
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
       message: error.message || 'Failed to get list provider',
@@ -80,7 +78,6 @@ export const getHotProviders = async () => {
       data: response.data,
     }
   } catch (error) {
-    console.log('error at catch', error)
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
       message: error.message || 'Failed to get list hot provider',
@@ -98,7 +95,6 @@ export const getProviderBySlug = async (providerId: string) => {
       data: respone.data,
     }
   } catch (error) {
-    console.log('error at catch', error)
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.respone?.status) || 500,
       message: error.message || 'Fail to get list skill',
@@ -118,7 +114,6 @@ export const getCurrentBookingForProvider = async (ctx) => {
       data: respone.data,
     }
   } catch (error) {
-    console.log('error at catch', error)
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
       message: error.message || 'Fail to create new booking',
@@ -140,7 +135,6 @@ export const createBooking = async (provider: BookingProviderRequest, ctx) => {
       message: 'Booking success!',
     }
   } catch (error) {
-    console.log('error at catch', error)
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
       message: error.message || 'Fail to create new booking',
@@ -164,7 +158,6 @@ export const putProviderResponeBooking = async ({ bookingHistoryId, status }, ct
       success: true,
     }
   } catch (error) {
-    console.log('error at catch', error)
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
       message: error.message || 'Fail to create new booking',
@@ -183,7 +176,6 @@ export const getFeedbackSkillById = async (feedbackSkillId) => {
       success: true,
     }
   } catch (error) {
-    console.log('error at catch', error)
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
       message: error.message || 'Fail to create new booking',
@@ -204,7 +196,6 @@ export const getNoticeAmount = async (ctx) => {
       success: true,
     }
   } catch (error) {
-    console.log('error at catch', error)
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
       message: error.message || 'Fail to get notice amount',
@@ -225,7 +216,6 @@ export const getAllNotice = async (query: { page: string; limit: string }, ctx) 
       success: true,
     }
   } catch (error) {
-    console.log('error at catch', error)
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
       message: error.message || 'Fail to create get all notification',
@@ -246,7 +236,6 @@ export const getAblumByProviderSlug = async (query: { slug: string; page?: strin
       success: true,
     }
   } catch (error) {
-    console.log('error at catch', error)
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
       message: error.message || 'Fail to create get album',
@@ -267,7 +256,6 @@ export const postFeedback = async (query: { id: string; content?: string; amount
       success: true,
     }
   } catch (error) {
-    console.log('error at catch', error)
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
       message: error.message || 'Fail to create get album',

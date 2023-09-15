@@ -1,4 +1,5 @@
 import { useGoogleLogin } from '@react-oauth/google'
+import { useAuth } from '~/contexts/auth'
 
 import { Dispatch, SetStateAction, useContext } from 'react'
 
@@ -9,9 +10,9 @@ interface AuthFormProps {
 }
 export const AuthForm = ({ setShowModal }: AuthFormProps) => {
   const utils = trpc.useContext()
-
+  const { isAuthenticated, login } = useAuth()
   const signIn = trpc.useMutation(['auth.signin'])
-  const login = useGoogleLogin({
+  const loginGoogle = useGoogleLogin({
     onSuccess: (response) => {
       signIn.mutate(
         { token: response.access_token, type: 'GOOGLE' },
@@ -33,7 +34,7 @@ export const AuthForm = ({ setShowModal }: AuthFormProps) => {
         Đăng nhập vào <span className="font-bold ">Ume</span>
       </div>
       <div className="flex flex-col justify-center gap-4 my-4">
-        <button onClick={() => login()} className="hover:bg-slate-700 bg-[#292734] px-3 py-2 rounded-2xl">
+        <button onClick={() => loginGoogle()} className="hover:bg-slate-700 bg-[#292734] px-3 py-2 rounded-2xl">
           <div className="flex justify-center flex-1">
             <svg width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path
