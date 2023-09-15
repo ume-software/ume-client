@@ -9,7 +9,7 @@ import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 export const signinService = async ({ username, password }, ctx) => {
   try {
     const response = await new AuthApi({
-      basePath: getEnv().baseIdentityURL,
+      basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
     }).adminLogin({
       username: username,

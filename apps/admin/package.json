@@ -22,6 +22,7 @@
     "@trpc/server": "^9.27.4",
     "@types/lodash": "^4.14.190",
     "@ume/ui": "*",
+    "antd": "^5.9.0",
     "cookie": "^0.5.0",
     "lodash": "^4.17.21",
     "next": "13.0.5",
@@ -32,7 +33,7 @@
     "sharp": "^0.31.2",
     "socket.io-client": "^4.6.2",
     "turbo": "^1.6.3",
-    "ume-service-openapi": "latest",
+    "ume-identity-service-openapi": "latest",
     "ume-service-openapi": "latest",
     "yup": "^1.2.0",
     "zod": "^3.19.1"
