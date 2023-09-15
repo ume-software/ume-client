@@ -7,7 +7,7 @@ import WhiteLogo from '../../../public/ico/ume-white.ico'
 
 export const Header = () => {
   return (
-    <div className="fixed top-0 w-full h-16 bg-gray-800 px-7 shadow-md">
+    <div className="fixed top-0 z-50 w-full h-16 bg-gray-800 shadow-md px-7">
       <div className="flex items-center justify-between flex-1 h-full align-middle">
         <Space>
           <Image width={50} height={50} src={WhiteLogo} alt="logo" />
