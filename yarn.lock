@@ -6598,9 +6598,9 @@ ume-chatting-service-openapi@latest:
     axios "^0.27.2"
 
 ume-service-openapi@latest:
-  version "1.1.33"
-  resolved "https://registry.yarnpkg.com/ume-service-openapi/-/ume-service-openapi-1.1.33.tgz#fa9cfc891b4e130d5b454d8f95e0819d9122a1e1"
-  integrity sha512-qB4jLOctw8wDp79/BI5Hq5W4EwFcadm3jPmsttdHiC3g/3Ioy5daSdvXaoL/UnrlMjtl6w+E4SDsedx9B67rag==
+  version "1.1.32"
+  resolved "https://registry.yarnpkg.com/ume-service-openapi/-/ume-service-openapi-1.1.32.tgz#45902d3e723bca1992d314e85c4b9c615e2101c5"
+  integrity sha512-QvFRxY9oF+grNm0oWBboLq20SzkecDqUofzmBBPzw9R2TvNM0raTTU6YMIM5xAlMNn4gPqMsnuCmmt9HzqS4Og==
   dependencies:
     axios "^0.27.2"
 

@@ -1,4 +1,5 @@
 import { GrinningFaceWithOpenMouth, MoreOne, PhoneTelephone, Picture, Videocamera } from '@icon-park/react'
+import { useAuth } from '~/contexts/auth'
 import useChatScroll from '~/hooks/useChatScroll'
 
 import { ReactNode, useContext, useEffect, useId, useRef, useState } from 'react'
@@ -7,12 +8,7 @@ import Image from 'next/legacy/image'
 import Link from 'next/link'
 import { ChattingChannelResponse, MemberChatChannelResponse } from 'ume-chatting-service-openapi'
 
-import {
-  SocketClientEmit,
-  SocketContext,
-  SocketTokenContext,
-  UserContext,
-} from '~/components/layouts/app-layout/app-layout'
+import { SocketClientEmit, SocketContext, SocketTokenContext } from '~/components/layouts/app-layout/app-layout'
 import { CommentSkeletonLoader } from '~/components/skeleton-load'
 
 import { getSocket } from '~/utils/constants'
@@ -40,11 +36,10 @@ const convertArrayObjectToObject = (input: Array<any>, key: string = '_id') => {
 const ChatContent = (props: { channel: ChattingChannelResponse }) => {
   const index = useId()
   const [messageInput, setMessageInput] = useState('')
-  const { userContext } = useContext(UserContext)
   const { socketClientEmit } = useContext(SocketClientEmit)
   const { socketContext } = useContext(SocketContext)
   const { socketToken } = useContext(SocketTokenContext)
-
+  const { user } = useAuth()
   const utils = trpc.useContext()
   const { data: chattingMessageChannel, isLoading: loadingChattingMessageChannel } = trpc.useQuery([
     'chatting.getMessagesByChannelId',
@@ -66,7 +61,7 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
   )
 
   const images = chattingMessageChannel?.data.members.filter((member) => {
-    return member.userId.toString() != userContext?.id.toString()
+    return member.userId.toString() != user?.id.toString()
   })!
 
   const handleSentMessage = () => {
@@ -122,21 +117,8 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
             </div>
           </div>
           <div className="flex flex-col gap-2 h-full overflow-y-auto">
-            <div className="flex gap-2 pb-5 overflow-auto border-b-2 border-[#B9B8CC] custom-scrollbar">
-              {/* {props.data?.providerSkills?.map((providerSkill, index) => (
-            <div
-              key={index}
-              className={`px-5 text-center rounded-2xl border-2 cursor-pointer ${gameSelected === index ? 'bg-purple-600 border-indigo-900' : 'bg-[#413F4D]'
-                }`}
-              onClick={() => setGameSelected(index)}
-            >
-              <p className="text-lg font-medium text-white whitespace-nowrap">{providerSkill.skill.name}</p>
-            </div>
-            ))} */}
-            </div>
-            <div className="bg-[#413F4D] p-2 rounded-3xl">
-              {/* <ChatService serviceData={props.data?.providerSkills[gameSelected]} /> */}
-            </div>
+            <div className="flex gap-2 pb-5 overflow-auto border-b-2 border-[#B9B8CC] custom-scrollbar"></div>
+            <div className="bg-[#413F4D] p-2 rounded-3xl"></div>
           </div>
           <div className="relative">
             <div className="h-[75vh] flex flex-col justify-end">
@@ -148,7 +130,7 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
                 <div className="flex flex-col mt-5 ">
                   {chattingMessageChannel?.data.messages.map((item, index) => {
                     const sender = mappingMember[item.senderId]
-                    const isSeftMessage = sender.userId.toString() == userContext?.id.toString()
+                    const isSeftMessage = sender.userId.toString() == user?.id.toString()
                     return (
                       <div key={index} className={`flex justify-end  ${!isSeftMessage ? 'flex-row-reverse' : ''} mb-4`}>
                         <div

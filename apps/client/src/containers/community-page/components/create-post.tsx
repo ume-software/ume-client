@@ -3,7 +3,7 @@ import { TextArea } from '@ume/ui'
 import { uploadAudioBooking, uploadImageBooking } from '~/apis/upload-media'
 import { getEnv } from '~/env'
 
-import { ChangeEvent, FormEvent, Key, SetStateAction, useEffect, useRef, useState } from 'react'
+import { ChangeEvent, FormEvent, Key, SetStateAction, useEffect, useId, useRef, useState } from 'react'
 
 import { notification } from 'antd'
 import { ThumbnailResponseTypeEnum } from 'ume-service-openapi'
@@ -16,6 +16,7 @@ interface ThumbnailsProps {
 }
 
 const CreatePost = (props: any) => {
+  const index = useId()
   const [content, setContent] = useState<string>('')
   const createNewPost = trpc.useMutation(['community.createNewPost'])
   const [mediaFiles, setMediaFiles] = useState<File[] | undefined>()
@@ -153,7 +154,7 @@ const CreatePost = (props: any) => {
             </div>
             <div className="flex flex-col gap-2">
               {!removeMedia &&
-                mediaFiles?.map((file: File, index) => {
+                mediaFiles?.map((file: File) => {
                   if (file.type.startsWith('image/')) {
                     // eslint-disable-next-line @next/next/no-img-element
                     return <img key={index} src={URL.createObjectURL(file)} alt="ImageUpload" />

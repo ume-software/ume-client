@@ -1,5 +1,6 @@
 import { Send } from '@icon-park/react'
 import { InputWithButton } from '@ume/ui'
+import { useAuth } from '~/contexts/auth'
 
 import { Dispatch, SetStateAction, useContext, useEffect, useId, useRef, useState } from 'react'
 
@@ -7,7 +8,7 @@ import Image from 'next/legacy/image'
 import Link from 'next/link'
 
 import { LoginModal } from '~/components/header/login-modal.component'
-import { SocketTokenContext, UserContext } from '~/components/layouts/app-layout/app-layout'
+import { SocketTokenContext } from '~/components/layouts/app-layout/app-layout'
 import { CommentSkeletonLoader } from '~/components/skeleton-load'
 import { TimeFormat } from '~/components/time-format'
 
@@ -24,7 +25,7 @@ const CommmentPost = (props: CommentPostProps) => {
   const [commnetPostData, setCommnetPostData] = useState<any>([])
   const [page, setPage] = useState<string>('1')
   const [limit] = useState<string>('10')
-  const { userContext } = useContext(UserContext)
+  const { user } = useAuth()
   const containerRef = useRef<HTMLDivElement>(null)
   const [comment, setComment] = useState('')
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
@@ -87,8 +88,8 @@ const CommmentPost = (props: CommentPostProps) => {
                     {
                       user: {
                         slug: '',
-                        avatarUrl: userContext?.avatarUrl,
-                        name: userContext?.name,
+                        avatarUrl: user?.avatarUrl,
+                        name: user?.name,
                       },
                       content: comment,
                       createdAt: Date.now(),

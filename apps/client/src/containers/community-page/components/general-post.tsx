@@ -1,10 +1,10 @@
 import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 
-import { PostPagingResponse, PostResponse } from 'ume-service-openapi'
+import { PostResponse } from 'ume-service-openapi'
 
 import CommunityPost from './community-post'
 
-import { AppLayout, SocketContext, SocketTokenContext, UserContext } from '~/components/layouts/app-layout/app-layout'
+import { SocketTokenContext } from '~/components/layouts/app-layout/app-layout'
 import { PostSkeletonLoader } from '~/components/skeleton-load'
 
 import { trpc } from '~/utils/trpc'

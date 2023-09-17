@@ -11,7 +11,7 @@ export const getIdentityInfo = async (ctx) => {
   const cookies = parse(ctx.req.headers.cookie)
   try {
     const response = await new AuthApi({
-      basePath: getEnv().baseIdentityURL,
+      basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
     }).getInfo()

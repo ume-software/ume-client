@@ -3,6 +3,7 @@ import { withTRPC } from '@trpc/next'
 // include styles from the ui package
 import '@ume/ui/styles.css'
 import { RootRouterTypes } from '~/apis'
+import { AuthProvider } from '~/contexts/auth'
 import '~/styles/globals.css'
 
 import type { AppProps } from 'next/app'
@@ -10,7 +11,9 @@ import type { AppProps } from 'next/app'
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <GoogleOAuthProvider clientId="539493137887-3d21r0n63uuh66bmd6cog1fkih85h93m.apps.googleusercontent.com">
-      <Component {...pageProps} />
+      <AuthProvider>
+        <Component {...pageProps} />
+      </AuthProvider>
     </GoogleOAuthProvider>
   )
 }

@@ -35,10 +35,6 @@ interface DrawerProps {
   setChildrenDrawer: (children: ReactNode) => void
 }
 
-interface UserContextValue {
-  userContext: UserInformationResponse | null
-  setUserContext: Dispatch<SetStateAction<UserInformationResponse | null>>
-}
 export const SocketTokenContext = createContext<SocketTokenContextValue>({
   socketToken: null,
   setSocketToken: () => {},
@@ -62,14 +58,9 @@ export const DrawerContext = createContext<DrawerProps>({
   setChildrenDrawer: () => {},
 })
 
-export const UserContext = createContext<UserContextValue>({
-  userContext: null,
-  setUserContext: () => {},
-})
-
 export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const [childrenDrawer, setChildrenDrawer] = useState<ReactNode>()
-  const [userContext, setUserContext] = useState(null)
+
   const [socketToken, setSocketToken] = useState(null)
 
   const [socketClientEmit, setSocketClientEmit] = useState<socketClientEmit>({ socketInstanceChatting: null })
@@ -112,27 +103,23 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
   return (
     <>
-      <AuthProvider>
-        <UserContext.Provider value={{ setUserContext, userContext }}>
-          <SocketTokenContext.Provider value={{ socketToken, setSocketToken }}>
-            <SocketClientEmit.Provider value={{ socketClientEmit }}>
-              <SocketContext.Provider value={{ socketContext, setSocketContext }}>
-                <div className="flex flex-col">
-                  <div className="fixed z-10 flex flex-col w-full ">
-                    <Header />
-                  </div>
-                  <DrawerContext.Provider value={{ childrenDrawer, setChildrenDrawer }}>
-                    <div className="pb-8 bg-umeBackground pt-[90px] pr-[60px] pl-[10px]">{children}</div>
-                    <div className="fixed h-full bg-umeHeader top-[65px] right-0">
-                      <Sidebar />
-                    </div>
-                  </DrawerContext.Provider>
+      <SocketTokenContext.Provider value={{ socketToken, setSocketToken }}>
+        <SocketClientEmit.Provider value={{ socketClientEmit }}>
+          <SocketContext.Provider value={{ socketContext, setSocketContext }}>
+            <div className="flex flex-col">
+              <div className="fixed z-10 flex flex-col w-full ">
+                <Header />
+              </div>
+              <DrawerContext.Provider value={{ childrenDrawer, setChildrenDrawer }}>
+                <div className="pb-8 bg-umeBackground pt-[90px] pr-[60px] pl-[10px]">{children}</div>
+                <div className="fixed h-full bg-umeHeader top-[65px] right-0">
+                  <Sidebar />
                 </div>
-              </SocketContext.Provider>
-            </SocketClientEmit.Provider>
-          </SocketTokenContext.Provider>
-        </UserContext.Provider>
-      </AuthProvider>
+              </DrawerContext.Provider>
+            </div>
+          </SocketContext.Provider>
+        </SocketClientEmit.Provider>
+      </SocketTokenContext.Provider>
     </>
   )
 }
