@@ -7,7 +7,7 @@ export const uploadImageBooking = async (formData) => {
 
   try {
     const response = await new ImageApi({
-      basePath: getEnv().baseBookingURL,
+      basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
     }).uploadImage(undefined, formData)
     return {
@@ -21,7 +21,7 @@ export const uploadImageBooking = async (formData) => {
 export const uploadAudioBooking = async (formData) => {
   try {
     const response = await new AudioApi({
-      basePath: getEnv().baseBookingURL,
+      basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
     }).uploadAudio(undefined, formData)
     return {
@@ -35,7 +35,7 @@ export const uploadAudioBooking = async (formData) => {
 export const uploadFileBooking = async (formData) => {
   try {
     const response = await new FileApi({
-      basePath: getEnv().baseBookingURL,
+      basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
     }).uploadFile(formData)
     return {

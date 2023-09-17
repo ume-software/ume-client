@@ -2,27 +2,27 @@ import { FullScreen, Star } from '@icon-park/react'
 import ImgForEmpty from 'public/img-for-empty.png'
 
 import Image from 'next/image'
+import { GetProfileProviderBySlugResponse } from 'ume-service-openapi'
 
-const PersonalInformation = (props: { data }) => {
-  let rate = 0
-  let sumRate = 0
-  const reviews = props.data.reviews || 0
-  if (reviews.length > 0) {
-    for (let index = 0; index < reviews.length; index++) {
-      rate += reviews.rate
-    }
-    sumRate = rate / reviews.length
-  }
-
+const PersonalInformation = (props: { data: GetProfileProviderBySlugResponse }) => {
+  // let rate = 0
+  // let sumRate = 0
+  // const reviews = props.data.reviews || 0
+  // if (reviews.length > 0) {
+  //   for (let index = 0; index < reviews.length; index++) {
+  //     rate += reviews.rate
+  //   }
+  //   sumRate = rate / reviews.length
+  // }
   return (
     <>
       <div className="bg-zinc-800 rounded-3xl p-10">
         <div className="flex flex-col gap-10">
-          <div className="font-inter font-bold text-4xl">{props.data?.title || 'Hello guys!'}</div>
+          {/* <div className="font-inter font-bold text-4xl">{props.data?.title || 'Hello guys!'}</div> */}
           <span className="font-roboto font-normal text-lg leading-9">{props.data?.description}</span>
         </div>
       </div>
-      <div className="bg-zinc-800 rounded-3xl p-5">
+      {/* <div className="bg-zinc-800 rounded-3xl p-5">
         <div className="flex flex-col p-3 gap-5">
           <div className="flex justify-between items-center">
             <div className="font-inter font-bold text-4xl">Đánh giá</div>
@@ -62,7 +62,7 @@ const PersonalInformation = (props: { data }) => {
             </>
           )}
         </div>
-      </div>
+      </div> */}
     </>
   )
 }

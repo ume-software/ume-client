@@ -21,7 +21,7 @@ function CategoryDrawer({ data, loadingSkill }) {
             <div className="grid grid-cols-5 pb-5 place-items-center ">
               {data.map((category, index) => (
                 <div key={category.id} className="my-8">
-                  <Link href={`/filter-skill/${category.name}?skillId=${category.id}`}>
+                  <Link href={`/filter-skill/${category.name}?serviceId=${category.id}`}>
                     <div className="relative w-[170px] h-[230px]">
                       <Image
                         className="mb-4 rounded-lg pointer-events-none object-cover"

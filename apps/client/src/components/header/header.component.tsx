@@ -171,8 +171,7 @@ export const Header: React.FC = ({}: HeaderProps) => {
                   <Menu.Items className="absolute right-0 p-5 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg w-96 ring-1 ring-black ring-opacity-5 focus:outline-none">
                     <div className="flex flex-row gap-10" style={{ zIndex: 2 }}>
                       {tabDatas.map((item) => (
-                        <a
-                          href="#tab"
+                        <span
                           className={`xl:text-lg text-md font-medium p-2 ${
                             item.label == selectedTab ? 'border-b-4 border-purple-700' : ''
                           }`}
@@ -181,7 +180,7 @@ export const Header: React.FC = ({}: HeaderProps) => {
                           data-tab={item.label}
                         >
                           {item.label}
-                        </a>
+                        </span>
                       ))}
                     </div>
                     <div className="p-3 overflow-auto h-96">

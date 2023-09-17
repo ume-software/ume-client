@@ -1,14 +1,10 @@
 import dynamic from 'next/dynamic'
-import { useRouter } from 'next/router'
 
-const DetailPlayer = dynamic(() => import('~/containers/detail-player-page/detail-player.container'), {
+const DetailPlayerRender = dynamic(() => import('~/containers/detail-player-page/detail-player-page.container'), {
   ssr: false,
 })
 
 const DetailPlayerPage = (props) => {
-  const router = useRouter()
-  const providerId = router.query.playerId
-
-  return <DetailPlayer providerId={providerId} />
+  return <DetailPlayerRender />
 }
 export default DetailPlayerPage

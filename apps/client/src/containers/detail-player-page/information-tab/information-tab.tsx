@@ -8,6 +8,8 @@ import { useContext, useState } from 'react'
 
 import { notification } from 'antd'
 import Image from 'next/legacy/image'
+import { useRouter } from 'next/router'
+import { GetProfileProviderBySlugResponse } from 'ume-service-openapi'
 
 import BookingPlayer from '../booking/booking-player.container'
 import GamePlayed from './game'
@@ -18,21 +20,42 @@ import { DrawerContext, SocketTokenContext, UserContext } from '~/components/lay
 
 import { trpc } from '~/utils/trpc'
 
-const InformationTab = (props: { data }) => {
+const InformationTab = (props: { data: GetProfileProviderBySlugResponse }) => {
+  const router = useRouter()
+  const basePath = router.asPath.split('?')[0]
+  const slug = router.query
+
   const { socketToken, setSocketToken } = useContext(SocketTokenContext)
   const { userContext } = useContext(UserContext)
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
   const { childrenDrawer, setChildrenDrawer } = useContext(DrawerContext)
-  const [gamesToggle, setGamesToggle] = useState(false)
-  const [gameSelected, setGameSelected] = useState(-1)
+  const [gamesToggle, setGamesToggle] = useState(true)
+  const [gameSelected, setGameSelected] = useState<string | undefined>(slug.serviceId?.toString() ?? undefined)
+
   const createNewChatChannel = trpc.useMutation(['chatting.createNewChatChannel'])
+
+  const selectedSkill = props.data.providerSkills!.find(
+    (providerSkill) => gameSelected == providerSkill.skillId || gameSelected == providerSkill.skill?.slug,
+  )!
 
   const handleGamesToggle = () => {
     setGamesToggle(!gamesToggle)
   }
 
-  const handleSelected = (index) => {
-    setGameSelected(index)
+  const handleSelected = (skillId: string | undefined) => {
+    router.replace(
+      {
+        pathname: basePath,
+        query: { tab: slug.tab, serviceId: skillId },
+        ...router.query,
+      },
+      undefined,
+      {
+        shallow: true,
+      },
+    )
+
+    setGameSelected(skillId)
   }
 
   const handleChatOpen = async () => {
@@ -63,9 +86,9 @@ const InformationTab = (props: { data }) => {
       setIsModalLoginVisible(true)
     }
   }
-  const handleOrderOpen = async () => {
+  const handleOrderOpen = () => {
     if (socketToken) {
-      await setChildrenDrawer(<BookingPlayer data={props.data} />)
+      setChildrenDrawer(<BookingPlayer data={props.data} />)
     } else {
       setIsModalLoginVisible(true)
     }
@@ -82,9 +105,9 @@ const InformationTab = (props: { data }) => {
             <div className="flex flex-col gap-5">
               <div
                 className={`flex items-center p-3 rounded-xl gap-2 cursor-pointer hover:bg-gray-700 ${
-                  gameSelected < 0 ? 'bg-gray-700' : ''
+                  !gameSelected ? 'bg-gray-700' : ''
                 }`}
-                onClick={() => handleSelected(-1)}
+                onClick={() => handleSelected(undefined)}
               >
                 <People theme="outline" size="18" fill="#fff" />
                 <p className="text-xl font-semibold ">Đôi chút về tui</p>
@@ -106,18 +129,18 @@ const InformationTab = (props: { data }) => {
                       : 'hidden'
                   }`}
                 >
-                  {props.data.providerSkills?.map((item, index) => (
+                  {props.data?.providerSkills?.map((item) => (
                     <div
-                      key={index}
+                      key={item.id}
                       className={`flex lg:flex-row flex-col items-center group gap-3 hover:bg-gray-700 p-1 rounded-xl ${
-                        gameSelected === index ? 'bg-gray-700' : ''
+                        gameSelected == item.skillId || gameSelected == item.skill?.slug ? 'bg-gray-700' : ''
                       }`}
-                      onClick={() => handleSelected(index)}
+                      onClick={() => handleSelected(item.skillId)}
                     >
-                      <Image src={item.skill.imageUrl} alt="Game Image" width={60} height={80} />
+                      <Image src={item?.skill?.imageUrl || ImgForEmpty} alt="Game Image" width={60} height={80} />
                       <div className="max-w-[150px] min-w-[150px]">
                         <p className="font-semibold text-lg text-white z-[4] truncate group-hover:w-fit">
-                          {item.skill.name}
+                          {item?.skill?.name}
                         </p>
                         <div className="flex items-center">
                           <Image src={coin} width={20} height={20} alt="coin" />
@@ -135,10 +158,10 @@ const InformationTab = (props: { data }) => {
         </div>
         <div className="col-span-5">
           <div className="flex flex-col gap-8">
-            {gameSelected < 0 ? (
-              <PersonalInformation key={props.data.id} data={props.data} />
+            {selectedSkill && gameSelected ? (
+              <GamePlayed data={selectedSkill} />
             ) : (
-              <GamePlayed data={props.data.providerSkills[gameSelected]} />
+              <PersonalInformation key={props.data?.id} data={props.data} />
             )}
           </div>
         </div>
@@ -153,7 +176,7 @@ const InformationTab = (props: { data }) => {
                 alt="Empty Image"
               />
             </div>
-            {userContext?.id != props.data.userId ? (
+            {userContext?.id != props.data?.userId ? (
               <div className="flex flex-col gap-5 my-10">
                 <CustomDrawer
                   customOpenBtn={`rounded-full w-full text-purple-700 border-2 border-purple-700 py-2 font-semibold text-2xl cursor-pointer hover:scale-105 text-center`}

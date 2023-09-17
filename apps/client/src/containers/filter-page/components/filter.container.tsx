@@ -45,7 +45,7 @@ const genderData = [
 
 const FilterContainer = (props) => {
   const router = useRouter()
-  const skillId = router.query.skillId
+  const skillId = router.query.serviceId
   const limit = '20'
   const containerRef = useRef<HTMLDivElement>(null)
   const [scrollPosition, setScrollPosition] = useState(0)
@@ -290,7 +290,10 @@ const FilterContainer = (props) => {
           <div ref={containerRef} className="grid gap-6 mt-2 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1">
             {listProviderFilter?.length != 0 ? (
               listProviderFilter?.map((provider) => (
-                <Link key={provider?.id} href={`/player/${provider?.slug || provider?.id}?service=${provider.skillid}`}>
+                <Link
+                  key={provider?.id}
+                  href={`/player/${provider?.slug ?? provider?.id}?tab=information&serviceId=${provider.skillid}`}
+                >
                   <PromoteCard data={provider} />
                 </Link>
               ))

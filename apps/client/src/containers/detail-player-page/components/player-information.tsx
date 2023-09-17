@@ -19,12 +19,15 @@ import ImgForEmpty from 'public/img-for-empty.png'
 import { Fragment, ReactElement, ReactNode, useState } from 'react'
 
 import Image, { ImageProps, StaticImageData } from 'next/legacy/image'
+import { useRouter } from 'next/router'
+import { GetProfileProviderBySlugResponse } from 'ume-service-openapi'
 
 import AlbumTab from '../album-tab/album-tab'
 import FeedsTab from '../feeds-tab'
 import InformationTab from '../information-tab/information-tab'
 
 interface TabDataProps {
+  key: string
   label: string
   children: ReactElement
 }
@@ -116,30 +119,44 @@ const valueGenders: valueGenderProps[] = [
   { value: 'PRIVATE', icon: <PersonalPrivacy theme="outline" size="20" fill="#f7761c" /> },
 ]
 
-const PlayerInformation = (props: { data }) => {
+const PlayerInformation = (props: { data: GetProfileProviderBySlugResponse }) => {
+  const router = useRouter()
+  const basePath = router.asPath.split('?')[0]
+  const slug = router.query
+
   const tabDatas: TabDataProps[] = [
     {
+      key: 'Information',
       label: `Thông tin cá nhân`,
-      children: <InformationTab data={props.data || ImgForEmpty} />,
+      children: <InformationTab data={props.data} />,
     },
     {
+      key: 'Album',
       label: `Album`,
-      children: <AlbumTab id={props.data.userId.toString()} />,
+      children: <AlbumTab id={props.data?.userId?.toString()} />,
     },
     {
+      key: 'Feeds',
       label: `Khoảnh khắc`,
       children: <FeedsTab datas={feedData} />,
     },
   ]
-  const [selectedTab, setSelectedTab] = useState('Thông tin cá nhân')
+  const [selectedTab, setSelectedTab] = useState<TabDataProps>(
+    tabDatas.find((tab) => {
+      return tab.key.toString() == slug.tab?.toString()
+    }) || tabDatas[0],
+  )
 
-  const handleChangeTab = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault()
-    const target = (e.target as HTMLElement).dataset.tab
-    if (typeof target !== 'string') {
-      return
-    }
-    setSelectedTab(target)
+  const handleChangeTab = (item: TabDataProps) => {
+    router.replace(
+      {
+        pathname: basePath,
+        query: { tab: item.key },
+      },
+      undefined,
+      { shallow: true },
+    )
+    setSelectedTab(item)
   }
 
   return (
@@ -156,7 +173,7 @@ const PlayerInformation = (props: { data }) => {
                   className="absolute rounded-full"
                   layout="fill"
                   objectFit="cover"
-                  src={props.data?.avatarUrl}
+                  src={props.data?.avatarUrl || ImgForEmpty}
                   alt="avatar"
                 />
               </div>
@@ -165,7 +182,7 @@ const PlayerInformation = (props: { data }) => {
                 <div className="flex flex-row gap-3">
                   <div className="bg-gray-700 p-2 rounded-full flex items-center gap-1">
                     {valueGenders.map((gender) => (
-                      <>{gender.value == props.data.user.gender && gender.icon}</>
+                      <>{gender.value == props.data?.user?.gender && gender.icon}</>
                     ))}
                     <p>16</p>
                   </div>
@@ -217,30 +234,25 @@ const PlayerInformation = (props: { data }) => {
           </div>
 
           <div className="flex flex-row gap-10" style={{ zIndex: 2 }}>
-            {tabDatas.map((item, index) => (
-              <a
-                href="#tab"
-                className={`text-white xl:text-3xl text-xl font-medium p-4 ${
-                  item.label == selectedTab ? 'border-b-4 border-purple-700' : ''
+            {tabDatas.map((item) => (
+              <span
+                className={`text-white xl:text-3xl text-xl font-medium p-4 cursor-pointer ${
+                  item.key == selectedTab.key ? 'border-b-4 border-purple-700' : ''
                 }`}
-                key={index}
-                onClick={handleChangeTab}
+                key={item.key}
+                onClick={() => handleChangeTab(item)}
                 data-tab={item.label}
               >
                 {item.label}
-              </a>
+              </span>
             ))}
           </div>
         </div>
       </div>
       <div className="p-5">
-        {tabDatas.map((item, index) => {
-          return (
-            <p className="text-white" key={index} hidden={selectedTab !== item.label}>
-              <div className="flex justify-center my-10">{item.children}</div>
-            </p>
-          )
-        })}
+        <span className="text-white">
+          <div className="flex justify-center my-10">{selectedTab.children}</div>
+        </span>
       </div>
     </>
   )

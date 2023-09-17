@@ -1,35 +1,27 @@
 import { useState } from 'react'
 
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 import { GetProfileProviderBySlugResponse } from 'ume-service-openapi'
 
 import PlayerInformation from './components/player-information'
 
-import { AppLayout } from '~/components/layouts/app-layout/app-layout'
-
 import { trpc } from '~/utils/trpc'
 
-const DetailPlayer = (props) => {
-  const [providerBySlug, setProviderBySlug] = useState<GetProfileProviderBySlugResponse | undefined>(undefined)
-  const {
-    data: provider,
-    isLoading: loadingProvider,
-    isFetching,
-  } = trpc.useQuery(['booking.getProviderBySlug', props.providerId as string], {
-    onSuccess(data) {
-      setProviderBySlug(data.data)
-    },
-  })
+const DetailPlayerContainer = () => {
+  const router = useRouter()
+  const slug = router.query
 
-  return (
-    <>
-      <Head>
-        <title>UME | Provider</title>
-      </Head>
-      <AppLayout {...props}>
-        {loadingProvider ? <></> : <PlayerInformation key={props.providerId} data={providerBySlug} />}
-      </AppLayout>
-    </>
+  const [providerBySlug, setProviderBySlug] = useState<GetProfileProviderBySlugResponse | undefined>(undefined)
+  const { isLoading: loadingProvider, isFetching } = trpc.useQuery(
+    ['booking.getProviderBySlug', slug.playerId!.toString()],
+    {
+      onSuccess(data) {
+        setProviderBySlug(data.data)
+      },
+    },
   )
+
+  return <>{loadingProvider ? <></> : <PlayerInformation data={providerBySlug!} />}</>
 }
-export default DetailPlayer
+export default DetailPlayerContainer
