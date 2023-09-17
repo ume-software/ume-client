@@ -11,7 +11,7 @@ export const getIdentityInfo = async (ctx) => {
   const cookies = parse(ctx.req.headers.cookie)
   try {
     const response = await new AuthApi({
-      basePath: getEnv().baseIdentityURL,
+      basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
     }).getInfo()
@@ -33,7 +33,7 @@ export const getAccountBalance = async (ctx) => {
   const cookies = parse(ctx.req.headers.cookie)
   try {
     const response = await new CoinApi({
-      basePath: getEnv().baseBookingURL,
+      basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
     }).getTotalCoin()
@@ -54,7 +54,7 @@ export const requestRecharge = async ({ total, platform }, ctx) => {
   const cookies = parse(ctx.req.headers.cookie ?? '')
   try {
     const reponse = await new BuyCoinRequestApi({
-      basePath: getEnv().baseBookingURL,
+      basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
     }).createBuyCoinRequest({
@@ -79,7 +79,7 @@ export const getUserBySlug = async (input, ctx) => {
   const cookies = parse(ctx.req.headers.cookie ?? '')
   try {
     const reponse = await new UserApi({
-      basePath: getEnv().baseBookingURL,
+      basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
     }).getUserBySlug(input)

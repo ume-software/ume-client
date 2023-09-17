@@ -9,8 +9,7 @@ interface AuthFormProps {
   setShowModal: Dispatch<SetStateAction<boolean>>
 }
 export const AuthForm = ({ setShowModal }: AuthFormProps) => {
-  const utils = trpc.useContext()
-  const { isAuthenticated, login } = useAuth()
+  const { login } = useAuth()
   const signIn = trpc.useMutation(['auth.signin'])
   const loginGoogle = useGoogleLogin({
     onSuccess: (response) => {
@@ -18,8 +17,8 @@ export const AuthForm = ({ setShowModal }: AuthFormProps) => {
         { token: response.access_token, type: 'GOOGLE' },
         {
           onSuccess: (data) => {
-            utils.refetchQueries(['identity.identityInfo'])
             setShowModal(false)
+            login({ ...data.data.user })
           },
           onError: (error) => console.log(error),
         },

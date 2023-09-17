@@ -1,4 +1,4 @@
-import { FC, PropsWithChildren, createContext, useContext, useState } from 'react'
+import { PropsWithChildren, createContext, useContext, useState } from 'react'
 
 import { UserInformationResponse } from 'ume-service-openapi'
 

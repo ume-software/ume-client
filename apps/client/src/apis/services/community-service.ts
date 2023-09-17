@@ -9,7 +9,7 @@ import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 export const getSuggestPostWithoutCookies = async () => {
   try {
     const response = await new PostApi({
-      basePath: getEnv().baseBookingURL,
+      basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
     }).suggestPost('10', '1', '["$all"]')
     return {
@@ -27,7 +27,7 @@ export const getSuggestPost = async (ctx) => {
   const cookies = parse(ctx.req.headers.cookie)
   try {
     const response = await new PostApi({
-      basePath: getEnv().baseBookingURL,
+      basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
     }).suggestPost('10', '1', '["$all"]')
@@ -46,7 +46,7 @@ export const watchedPost = async (ctx, input: string) => {
   const cookies = parse(ctx.req.headers.cookie)
   try {
     const response = await new PostApi({
-      basePath: getEnv().baseBookingURL,
+      basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
     }).watchedByPostId(input)
@@ -65,7 +65,7 @@ export const watchedPost = async (ctx, input: string) => {
 export const getPostByID = async (input: string) => {
   try {
     const response = await new PostApi({
-      basePath: getEnv().baseBookingURL,
+      basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
     }).getPostById(input, '10', '1', '["$all"]')
     return {
@@ -83,7 +83,7 @@ export const getPostByID = async (input: string) => {
 export const getLikePostByID = async (query: { postId: string; limit: string; page: string }) => {
   try {
     const response = await new PostApi({
-      basePath: getEnv().baseBookingURL,
+      basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
     }).getLikeByPostId(query.postId, query.limit, query.page, '["$all"]')
     return {
@@ -101,7 +101,7 @@ export const getLikePostByID = async (query: { postId: string; limit: string; pa
 export const getCommentPostByID = async (query: { postId: string; limit: string; page: string }) => {
   try {
     const response = await new PostApi({
-      basePath: getEnv().baseBookingURL,
+      basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
     }).getCommentByPostId(query.postId, query.limit, query.page, '["$all"]', undefined, '[{"updatedAt":"desc"}]')
     return {
@@ -120,7 +120,7 @@ export const likeForPostId = async (input: string, ctx) => {
   const cookies = parse(ctx.req.headers.cookie)
   try {
     const response = await new PostApi({
-      basePath: getEnv().baseBookingURL,
+      basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
     }).likeForPostId(input)
@@ -140,7 +140,7 @@ export const unlikeForPostId = async (input: string, ctx) => {
   const cookies = parse(ctx.req.headers.cookie)
   try {
     const response = await new PostApi({
-      basePath: getEnv().baseBookingURL,
+      basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
     }).unlikeForPostId(input)
@@ -160,7 +160,7 @@ export const commentForPostId = async (query: { id: string; commentPostRequest: 
   const cookies = parse(ctx.req.headers.cookie)
   try {
     const response = await new PostApi({
-      basePath: getEnv().baseBookingURL,
+      basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
     }).commentForPostId(query.id, query.commentPostRequest)
@@ -180,7 +180,7 @@ export const createNewPost = async (input: CreateNewPostRequest, ctx) => {
   const cookies = parse(ctx.req.headers.cookie)
   try {
     const response = await new PostApi({
-      basePath: getEnv().baseBookingURL,
+      basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
     }).createPost(input)
@@ -199,7 +199,7 @@ export const createNewPost = async (input: CreateNewPostRequest, ctx) => {
 export const donateProviderTop = async (input: string) => {
   try {
     const response = await new DonateApi({
-      basePath: getEnv().baseBookingURL,
+      basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
     }).topDonateProvider(input as '1Y' | '1M' | '1W', 3)
     return {
@@ -217,7 +217,7 @@ export const donateProviderTop = async (input: string) => {
 export const donateUserTop = async (input) => {
   try {
     const response = await new DonateApi({
-      basePath: getEnv().baseBookingURL,
+      basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
     }).topUserDonate(input as '1Y' | '1M' | '1W', 3)
     return {

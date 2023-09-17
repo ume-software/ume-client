@@ -27,7 +27,6 @@ interface TabProps {
 
 export const Header: React.FC = ({}: HeaderProps) => {
   const index = useId()
-  const [showSearh, setShowSearch] = useState(false)
   const [showRechargeModal, setShowRechargeModal] = useState(false)
   const [userInfo, setUserInfo] = useState<any>()
   const [balance, setBalance] = useState<any>()
@@ -39,15 +38,12 @@ export const Header: React.FC = ({}: HeaderProps) => {
   const accessToken = parse(document.cookie).accessToken
   const { isAuthenticated } = useAuth()
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      const getAccountBalance = trpc.useQuery(['identity.account-balance'], {
-        onSuccess(data) {
-          setBalance(data.data.totalCoinsAvailable)
-        },
-      })
-    }
-  }, [isAuthenticated, setUserContext])
+  const { isLoading: loadingBalance } = trpc.useQuery(['identity.account-balance'], {
+    onSuccess(data) {
+      setBalance(data.data.totalCoinsAvailable)
+    },
+    enabled: isAuthenticated,
+  })
 
   useEffect(() => {
     if (userInfo) {
@@ -73,11 +69,6 @@ export const Header: React.FC = ({}: HeaderProps) => {
       return
     }
     setSelectedTab(target)
-  }
-
-  const handleShowSearch = (e) => {
-    e.preventDefault()
-    setShowSearch(!showSearh)
   }
 
   return (
@@ -118,19 +109,8 @@ export const Header: React.FC = ({}: HeaderProps) => {
               <Gift size={22} strokeWidth={4} fill="#FFFFFF" />
             </button>
           </span>
-          <span className="flex flex-1 my-auto mr-4">
-            {showSearh && (
-              <Input
-                className="outline-none border-none focus:outline-[#6d3fe0] max-h-8 rounded-2xl"
-                placeholder="Search"
-                onBlur={(e) => handleShowSearch(e)}
-              />
-            )}
-            <button className={showSearh ? `hidden` : ``} onClick={(e) => handleShowSearch(e)}>
-              <Search size={22} strokeWidth={4} fill="#FFFFFF" />
-            </button>
-          </span>
-          {isAuthenticated && userInfo && balance && (
+
+          {isAuthenticated && balance && !loadingBalance && (
             <button onClick={() => setShowRechargeModal(true)}>
               <div className="flex items-center justify-end rounded-full bg-[#37354F] px-2 mr-2 self-center text-white">
                 <p className="text-lg font-semibold">{balance}</p>
@@ -199,7 +179,7 @@ export const Header: React.FC = ({}: HeaderProps) => {
             </div>
           </span>
           <span className="my-auto mr-5">
-            {!userInfo ? (
+            {!isAuthenticated ? (
               <>
                 <Button
                   name="register"
