@@ -7,8 +7,6 @@ import EditNotificated from './components/edit-notificated'
 import EditProfile from './components/edit-profile'
 import Privacy from './components/privacy'
 
-import { UserContext } from '~/components/layouts/app-layout/app-layout'
-
 import { trpc } from '~/utils/trpc'
 
 interface SettingTypeProps {

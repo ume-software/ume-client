@@ -35,10 +35,6 @@ interface DrawerProps {
   setChildrenDrawer: (children: ReactNode) => void
 }
 
-interface UserContextValue {
-  userContext: UserInformationResponse | null
-  setUserContext: Dispatch<SetStateAction<UserInformationResponse | null>>
-}
 export const SocketTokenContext = createContext<SocketTokenContextValue>({
   socketToken: null,
   setSocketToken: () => {},
