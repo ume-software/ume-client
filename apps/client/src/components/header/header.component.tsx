@@ -12,7 +12,7 @@ import { parse } from 'cookie'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
 
-import { SocketTokenContext, UserContext } from '../layouts/app-layout/app-layout'
+import { SocketTokenContext } from '../layouts/app-layout/app-layout'
 import { LoginModal } from './login-modal.component'
 import { RechargeModal } from './recharge-form.component'
 
@@ -27,27 +27,22 @@ interface TabProps {
 
 export const Header: React.FC = ({}: HeaderProps) => {
   const index = useId()
-  const [showSearh, setShowSearch] = useState(false)
   const [showRechargeModal, setShowRechargeModal] = useState(false)
   const [userInfo, setUserInfo] = useState<any>()
   const [balance, setBalance] = useState<any>()
   const [notificatedAmount] = useState<number>(0)
   const { setSocketToken } = useContext(SocketTokenContext)
-  const { userContext, setUserContext } = useContext(UserContext)
   const [selectedTab, setSelectedTab] = useState('Chính')
   const [isModalLoginVisible, setIsModalLoginVisible] = React.useState(false)
   const accessToken = parse(document.cookie).accessToken
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, user } = useAuth()
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      const getAccountBalance = trpc.useQuery(['identity.account-balance'], {
-        onSuccess(data) {
-          setBalance(data.data.totalCoinsAvailable)
-        },
-      })
-    }
-  }, [isAuthenticated, setUserContext])
+  const { isLoading: loadingBalance } = trpc.useQuery(['identity.account-balance'], {
+    onSuccess(data) {
+      setBalance(data.data.totalCoinsAvailable)
+    },
+    enabled: isAuthenticated,
+  })
 
   useEffect(() => {
     if (userInfo) {
@@ -73,11 +68,6 @@ export const Header: React.FC = ({}: HeaderProps) => {
       return
     }
     setSelectedTab(target)
-  }
-
-  const handleShowSearch = (e) => {
-    e.preventDefault()
-    setShowSearch(!showSearh)
   }
 
   return (
@@ -118,19 +108,8 @@ export const Header: React.FC = ({}: HeaderProps) => {
               <Gift size={22} strokeWidth={4} fill="#FFFFFF" />
             </button>
           </span>
-          <span className="flex flex-1 my-auto mr-4">
-            {showSearh && (
-              <Input
-                className="outline-none border-none focus:outline-[#6d3fe0] max-h-8 rounded-2xl"
-                placeholder="Search"
-                onBlur={(e) => handleShowSearch(e)}
-              />
-            )}
-            <button className={showSearh ? `hidden` : ``} onClick={(e) => handleShowSearch(e)}>
-              <Search size={22} strokeWidth={4} fill="#FFFFFF" />
-            </button>
-          </span>
-          {isAuthenticated && userInfo && balance && (
+
+          {isAuthenticated && (
             <button onClick={() => setShowRechargeModal(true)}>
               <div className="flex items-center justify-end rounded-full bg-[#37354F] px-2 mr-2 self-center text-white">
                 <p className="text-lg font-semibold">{balance}</p>
@@ -138,6 +117,7 @@ export const Header: React.FC = ({}: HeaderProps) => {
               </div>
             </button>
           )}
+
           <span className="my-auto mr-5 duration-300 rounded-full">
             <div className="relative pt-2">
               <Menu>
@@ -199,7 +179,7 @@ export const Header: React.FC = ({}: HeaderProps) => {
             </div>
           </span>
           <span className="my-auto mr-5">
-            {!userInfo ? (
+            {!isAuthenticated ? (
               <>
                 <Button
                   name="register"
@@ -222,7 +202,7 @@ export const Header: React.FC = ({}: HeaderProps) => {
                         layout="fixed"
                         height={35}
                         width={35}
-                        src={userInfo?.avatarUrl.toString()}
+                        src={user?.avatarUrl?.toString() || ''}
                         alt="avatar"
                       />
                     </Menu.Button>
@@ -264,7 +244,7 @@ export const Header: React.FC = ({}: HeaderProps) => {
                       <Menu.Item as="div">
                         {({ active }) => (
                           <Link
-                            href={`/account-setting?user=${userContext?.name}`}
+                            href={`/account-setting?user=${user?.name}`}
                             className={`${
                               active ? 'bg-violet-500 text-white' : 'text-gray-900'
                             } group flex w-full items-center rounded-md px-2 py-2 text-sm`}

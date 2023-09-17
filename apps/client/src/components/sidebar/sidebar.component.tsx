@@ -2,13 +2,14 @@ import { ArrowLeft, Dot } from '@icon-park/react'
 import { CustomDrawer } from '@ume/ui'
 import cover from 'public/cover.png'
 import Chat from '~/containers/chat/chat.container'
+import { useAuth } from '~/contexts/auth'
 
 import { ReactNode, useContext, useEffect, useRef, useState } from 'react'
 
 import Image, { StaticImageData } from 'next/legacy/image'
 
 import { LoginModal } from '../header/login-modal.component'
-import { DrawerContext, SocketContext, SocketTokenContext, UserContext } from '../layouts/app-layout/app-layout'
+import { DrawerContext, SocketContext, SocketTokenContext } from '../layouts/app-layout/app-layout'
 
 import { trpc } from '~/utils/trpc'
 
@@ -23,14 +24,14 @@ interface chatProps {
 
 export const Sidebar = (props) => {
   const { childrenDrawer, setChildrenDrawer } = useContext(DrawerContext)
-  const { userContext } = useContext(UserContext)
+
   const { socketToken } = useContext(SocketTokenContext)
   const { socketContext, setSocketContext } = useContext(SocketContext)
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
   const [showMessage, setShowMessage] = useState(false)
   const utils = trpc.useContext()
   const { data: chattingChannels } = trpc.useQuery(['chatting.getListChattingChannels', { limit: '5', page: '1' }])
-
+  const { user } = useAuth()
   useEffect(() => {
     if (socketToken) {
       setIsModalLoginVisible(false)
@@ -87,7 +88,7 @@ export const Sidebar = (props) => {
           {socketToken &&
             chattingChannels?.data.row.map((item) => {
               const images = item.members.filter((member) => {
-                return member.userId.toString() != userContext?.id.toString()
+                return member.userId.toString() != user?.id.toString()
               })
               return (
                 <div key={item._id} className="relative">
@@ -95,7 +96,7 @@ export const Sidebar = (props) => {
                     openBtn={
                       <div>
                         {item._id === socketContext?.socketChattingContext[0]?.channelId &&
-                        socketContext?.socketChattingContext[0]?.senderId !== userContext?.id ? (
+                        socketContext?.socketChattingContext[0]?.senderId !== user?.id ? (
                           <>
                             <div className="relative">
                               <Dot
