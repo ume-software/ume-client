@@ -103,11 +103,13 @@ export const Header: React.FC = ({}: HeaderProps) => {
               </Button>
             </Link>
           </span>
-          <span className="self-center my-auto mr-4 rounded-ful hover:scale-110 hover:ease-in-out">
-            <button className="pt-2">
-              <Gift size={22} strokeWidth={4} fill="#FFFFFF" />
-            </button>
-          </span>
+          {isAuthenticated && (
+            <span className="self-center my-auto mr-4 rounded-ful hover:scale-110 hover:ease-in-out">
+              <button className="pt-2">
+                <Gift size={22} strokeWidth={4} fill="#FFFFFF" />
+              </button>
+            </span>
+          )}
 
           {isAuthenticated && (
             <button onClick={() => setShowRechargeModal(true)}>
@@ -118,66 +120,68 @@ export const Header: React.FC = ({}: HeaderProps) => {
             </button>
           )}
 
-          <span className="my-auto mr-5 duration-300 rounded-full">
-            <div className="relative pt-2">
-              <Menu>
-                <div>
-                  <Menu.Button>
-                    {notificatedAmount > 0 ? (
-                      <div>
-                        <Remind theme="filled" size="22" fill="#FFFFFF" strokeLinejoin="bevel" />
-                        <Dot
-                          className="absolute top-0 right-0"
-                          theme="filled"
-                          size="18"
-                          fill="#FF0000"
-                          strokeLinejoin="bevel"
-                        />
+          {isAuthenticated && (
+            <span className="my-auto mr-5 duration-300 rounded-full">
+              <div className="relative pt-2">
+                <Menu>
+                  <div>
+                    <Menu.Button>
+                      {notificatedAmount > 0 ? (
+                        <div>
+                          <Remind theme="filled" size="22" fill="#FFFFFF" strokeLinejoin="bevel" />
+                          <Dot
+                            className="absolute top-0 right-0"
+                            theme="filled"
+                            size="18"
+                            fill="#FF0000"
+                            strokeLinejoin="bevel"
+                          />
+                        </div>
+                      ) : (
+                        <Remind size={22} strokeWidth={4} fill="#FFFFFF" />
+                      )}
+                    </Menu.Button>
+                  </div>
+                  <Transition
+                    as={Fragment}
+                    enter="transition ease-out duration-400"
+                    enterFrom="transform opacity-0 scale-95"
+                    enterTo="transform opacity-100 scale-100"
+                    leave="transition ease-in duration-400"
+                    leaveFrom="transform opacity-100 scale-100"
+                    leaveTo="transform opacity-0 scale-95"
+                  >
+                    <Menu.Items className="absolute right-0 p-5 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg w-96 ring-1 ring-black ring-opacity-5 focus:outline-none">
+                      <div className="flex flex-row gap-10" style={{ zIndex: 2 }}>
+                        {tabDatas.map((item) => (
+                          <a
+                            href="#tab"
+                            className={`xl:text-lg text-md font-medium p-2 ${
+                              item.label == selectedTab ? 'border-b-4 border-purple-700' : ''
+                            }`}
+                            key={index}
+                            onClick={handleChangeTab}
+                            data-tab={item.label}
+                          >
+                            {item.label}
+                          </a>
+                        ))}
                       </div>
-                    ) : (
-                      <Remind size={22} strokeWidth={4} fill="#FFFFFF" />
-                    )}
-                  </Menu.Button>
-                </div>
-                <Transition
-                  as={Fragment}
-                  enter="transition ease-out duration-400"
-                  enterFrom="transform opacity-0 scale-95"
-                  enterTo="transform opacity-100 scale-100"
-                  leave="transition ease-in duration-400"
-                  leaveFrom="transform opacity-100 scale-100"
-                  leaveTo="transform opacity-0 scale-95"
-                >
-                  <Menu.Items className="absolute right-0 p-5 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg w-96 ring-1 ring-black ring-opacity-5 focus:outline-none">
-                    <div className="flex flex-row gap-10" style={{ zIndex: 2 }}>
-                      {tabDatas.map((item) => (
-                        <a
-                          href="#tab"
-                          className={`xl:text-lg text-md font-medium p-2 ${
-                            item.label == selectedTab ? 'border-b-4 border-purple-700' : ''
-                          }`}
-                          key={index}
-                          onClick={handleChangeTab}
-                          data-tab={item.label}
-                        >
-                          {item.label}
-                        </a>
-                      ))}
-                    </div>
-                    <div className="p-3 overflow-auto h-96">
-                      {tabDatas.map((item) => {
-                        return (
-                          <div key={index} hidden={selectedTab !== item.label}>
-                            {item.children}
-                          </div>
-                        )
-                      })}
-                    </div>
-                  </Menu.Items>
-                </Transition>
-              </Menu>
-            </div>
-          </span>
+                      <div className="p-3 overflow-auto h-96">
+                        {tabDatas.map((item) => {
+                          return (
+                            <div key={index} hidden={selectedTab !== item.label}>
+                              {item.children}
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </Menu.Items>
+                  </Transition>
+                </Menu>
+              </div>
+            </span>
+          )}
           <span className="my-auto mr-5">
             {!isAuthenticated ? (
               <>

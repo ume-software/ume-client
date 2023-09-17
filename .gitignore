@@ -120,3 +120,5 @@ dist
 .tern-port
 
 .idea
+packages/ui/.turbo/turbo-build.log
+apps/client/.turbo/turbo-build.log
