@@ -12,7 +12,7 @@ import { parse } from 'cookie'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
 
-import { SocketTokenContext, UserContext } from '../layouts/app-layout/app-layout'
+import { SocketTokenContext } from '../layouts/app-layout/app-layout'
 import { LoginModal } from './login-modal.component'
 import { RechargeModal } from './recharge-form.component'
 
@@ -32,11 +32,10 @@ export const Header: React.FC = ({}: HeaderProps) => {
   const [balance, setBalance] = useState<any>()
   const [notificatedAmount] = useState<number>(0)
   const { setSocketToken } = useContext(SocketTokenContext)
-  const { userContext, setUserContext } = useContext(UserContext)
   const [selectedTab, setSelectedTab] = useState('Chính')
   const [isModalLoginVisible, setIsModalLoginVisible] = React.useState(false)
   const accessToken = parse(document.cookie).accessToken
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, user } = useAuth()
 
   const { isLoading: loadingBalance } = trpc.useQuery(['identity.account-balance'], {
     onSuccess(data) {
@@ -110,7 +109,7 @@ export const Header: React.FC = ({}: HeaderProps) => {
             </button>
           </span>
 
-          {isAuthenticated && balance && !loadingBalance && (
+          {isAuthenticated && (
             <button onClick={() => setShowRechargeModal(true)}>
               <div className="flex items-center justify-end rounded-full bg-[#37354F] px-2 mr-2 self-center text-white">
                 <p className="text-lg font-semibold">{balance}</p>
@@ -118,6 +117,7 @@ export const Header: React.FC = ({}: HeaderProps) => {
               </div>
             </button>
           )}
+
           <span className="my-auto mr-5 duration-300 rounded-full">
             <div className="relative pt-2">
               <Menu>
@@ -202,7 +202,7 @@ export const Header: React.FC = ({}: HeaderProps) => {
                         layout="fixed"
                         height={35}
                         width={35}
-                        src={userInfo?.avatarUrl.toString()}
+                        src={user?.avatarUrl?.toString() || ''}
                         alt="avatar"
                       />
                     </Menu.Button>
@@ -244,7 +244,7 @@ export const Header: React.FC = ({}: HeaderProps) => {
                       <Menu.Item as="div">
                         {({ active }) => (
                           <Link
-                            href={`/account-setting?user=${userContext?.name}`}
+                            href={`/account-setting?user=${user?.name}`}
                             className={`${
                               active ? 'bg-violet-500 text-white' : 'text-gray-900'
                             } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
