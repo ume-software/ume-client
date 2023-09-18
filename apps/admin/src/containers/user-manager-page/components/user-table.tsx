@@ -1,72 +1,54 @@
-import { CloseSmall, Eyes, H, ReduceOne } from '@icon-park/react'
+import { CloseSmall, Eyes, H, Left, ReduceOne, Right } from '@icon-park/react'
 import { Modal } from '@ume/ui'
 
 import React, { useState } from 'react'
 
-import { Badge, Space, Table, Tag } from 'antd'
+import { Badge, Pagination, Space, Table, Tag } from 'antd'
+import Image from 'next/image'
+import { UserInformationPagingResponse } from 'ume-service-openapi'
+import { string } from 'zod'
 
-const data = [
-  {
-    key: '1',
-    name: 'John Brown',
-    gmail: 'johnbrownkasdgkjabsjhádgasfdh123@gmail.com',
-    phoneNumber: '0987654312',
-    gender: 'Nam',
-    status: 'Hoạt động',
-    joinDate: '20/11/2022',
-  },
-  {
-    key: '2',
-    name: 'John Brown',
-    gmail: 'johnbrown123@gmail.com',
-    phoneNumber: '0987654312',
-    gender: 'Nữ',
-    status: 'Hoạt động',
-    joinDate: '20/11/2022',
-  },
-  {
-    key: '3',
-    name: 'John Brown',
-    gmail: 'johnbrown123@gmail.com',
-    phoneNumber: '0987654312',
-    gender: 'Nam',
-    status: 'Tạm dừng',
-    joinDate: '20/11/2022',
-  },
-  {
-    key: '4',
-    name: 'John Brown',
-    gmail: 'johnbrownkasdgkjabsjhádgasfdh123@gmail.com',
-    phoneNumber: '0987654312',
-    gender: 'Nam',
-    status: 'Hoạt động',
-    joinDate: '20/11/2022',
-  },
-  {
-    key: '5',
-    name: 'John Brown',
-    gmail: 'johnbrownkasdgkjabsjhádgasfdh123@gmail.com',
-    phoneNumber: '0987654312',
-    gender: 'Nam',
-    status: 'Hoạt động',
-    joinDate: '20/11/2022',
-  },
-]
+import EmptyErrorPic from '../../../../public/empty_error.png'
 
-const UserTable = () => {
+// const tableDataMapping = (data) => {
+//   const list: {
+//     key: any
+//     name: any
+//     email: any
+//     phone: any
+//     gender: any
+//     status: string
+//     createdAt: any
+//   }[] = []
+//   data.map((item) => {
+//     const rowItem = {
+//       key: item.id,
+//       name: item.name,
+//       email: item.email,
+//       phone: item.phone,
+//       gender: item.gender,
+//       status: 'Hoạt động',
+//       createdAt: item.createdAt,
+//     }
+//     list.push(rowItem)
+//   })
+// }
+
+const UserTable = ({ userList }) => {
   const [isModalVisible, setIsModalVisible] = useState(true)
+
   const handleOpen = () => {
     setIsModalVisible(true)
   }
   const handleClose = () => {
     setIsModalVisible(false)
   }
-  const UserInfoModal = Modal.useEditableForm({
+  const UserInfoModal = Modal.useDisplayPost({
     onOK: () => {},
     onClose: handleClose,
-    title: <p className="text-white">Tạo bài viết</p>,
+    title: <p className="text-white">Thông tin người dùng</p>,
     show: isModalVisible,
-    form: <>Modal</>,
+    form: <div className="w-[40%]">Modal</div>,
     backgroundColor: '#292734',
     closeButtonOnConner: (
       <>
@@ -90,26 +72,31 @@ const UserTable = () => {
     },
     {
       title: 'Gmail',
-      dataIndex: 'gmail',
-      key: 'gmail',
+      dataIndex: 'email',
+      key: 'email',
     },
     {
       title: 'Số điện thoại',
-      dataIndex: 'phoneNumber',
-      key: 'phoneNumber',
+      dataIndex: 'phone',
+      key: 'phone',
     },
     {
       title: 'Giới tính',
       dataIndex: 'gender',
       key: 'gender',
+      render: (text) => (
+        <div className="w-14 flex justify-center">
+          {text == 'FEMALE' ? <>Nữ</> : text == 'MALE' ? <>Nam</> : <>Khác</>}
+        </div>
+      ),
     },
     {
       title: 'Trạng thái',
-      key: 'status',
-      dataIndex: 'status',
+      key: 'isBaned',
+      dataIndex: 'isBaned',
       render: (text) => (
         <div className="flex justify-center items-center">
-          {text == 'Hoạt động' ? (
+          {!text ? (
             <Tag className="bg-green-500 rounded-lg text-white px-3 py-2">Hoạt động</Tag>
           ) : (
             <Tag className="bg-red-500 rounded-lg text-white px-3 py-2">Tạm dừng</Tag>
@@ -119,8 +106,9 @@ const UserTable = () => {
     },
     {
       title: 'Ngày tham gia',
-      key: 'joinDate',
-      dataIndex: 'joinDate',
+      key: 'createdAt',
+      dataIndex: 'createdAt',
+      render: (date) => <div className="flex justify-center">{new Date(date).toLocaleDateString('en-GB')}</div>,
     },
     {
       title: '',
@@ -145,10 +133,20 @@ const UserTable = () => {
       },
     },
   ]
+
+  let locale = {
+    emptyText: (
+      <div className="w-full h-full flex justify-center items-center">
+        <Image height={600} alt="empty data" src={EmptyErrorPic} />
+      </div>
+    ),
+  }
+
   return (
     <div className=" mt-5">
-      <Table columns={columns} dataSource={data} />
-      {isModalVisible && UserInfoModal}
+      <Table locale={locale} pagination={false} columns={columns} dataSource={userList?.row} />
+
+      {/* {isModalVisible && UserInfoModal} */}
     </div>
   )
 }

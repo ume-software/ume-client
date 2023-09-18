@@ -1,51 +1,138 @@
-import { Female, Male, More, Search } from '@icon-park/react'
+import { Female, Left, Male, More, Right, Search } from '@icon-park/react'
 import { Button, Input } from '@ume/ui'
 
-import React, { ReactNode } from 'react'
+import React, { ReactNode, useState } from 'react'
 
-import { Badge, Dropdown, Space, Tag } from 'antd'
+import { Badge, Dropdown, Pagination, Space, Tag } from 'antd'
 import Head from 'next/head'
+import { UserInformationPagingResponse } from 'ume-service-openapi'
 
-import CustomDropdown from './components/custom-dropdown'
 import UserTable from './components/user-table'
+
+import FilterDropdown from '~/components/filter-dropdown'
+
+import { trpc } from '~/utils/trpc'
+
+interface LooseObject {
+  [key: string]: any
+}
 
 const statusFilterItems = [
   {
-    key: '1',
-    label: <Tag className="bg-green-500 hover:bg-green-600 rounded-lg text-white px-3 py-2">Hoạt động</Tag>,
+    key: 'all',
+    label: (
+      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white px-3 py-2 w-full flex justify-center">
+        Tất cả
+      </Tag>
+    ),
   },
   {
-    key: '2',
-    label: <Tag className="bg-red-500 hover:bg-red-600 rounded-lg text-white px-3 py-2">Tạm dừng</Tag>,
+    key: 'false',
+    label: (
+      <Tag className="bg-green-500 hover:bg-green-600 rounded-lg text-white px-3 py-2 w-full flex justify-center">
+        Hoạt động
+      </Tag>
+    ),
+  },
+  {
+    key: 'true',
+    label: (
+      <Tag className="bg-red-500 hover:bg-red-600 rounded-lg text-white px-3 py-2 w-full flex justify-center">
+        Tạm dừng
+      </Tag>
+    ),
   },
 ]
 
 const genderFilterItems = [
   {
-    key: '1',
+    key: 'all',
     label: (
-      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white px-3 py-2">
-        <div className="flex justify-center items-center">
-          <Male className="mr-2" theme="outline" size="18" fill="#15151b" />
-          <span className="w-10">Nam</span>
-        </div>
+      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white px-3 py-2 w-full flex justify-center">
+        <div className="flex justify-center items-center w-10">Tất cả</div>
       </Tag>
     ),
   },
   {
-    key: '2',
+    key: 'male',
     label: (
-      <Tag className="hover:bg-gray-500 hover:text-white bg-white rounded-lg px-3 py-2">
-        <div className="flex justify-center items-center">
-          <Female className="mr-2" theme="outline" size="18" fill="#15151b" />
-          <span className="w-10">Nữ</span>
-        </div>
+      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white px-3 py-2 w-full flex justify-center">
+        <div className="flex justify-center items-center w-10">Nam</div>
+      </Tag>
+    ),
+  },
+  {
+    key: 'female',
+    label: (
+      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white px-3 py-2 w-full flex justify-center">
+        <div className="flex justify-center items-center w-10">Nữ</div>
+      </Tag>
+    ),
+  },
+  {
+    key: 'orther',
+    label: (
+      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white px-3 py-2 w-full flex justify-center">
+        <div className="flex justify-center items-center w-10">Khác</div>
       </Tag>
     ),
   },
 ]
 
 const UserManager = () => {
+  const [userList, setUserList] = useState<UserInformationPagingResponse | undefined>()
+  const [page, setPage] = useState(1)
+  const [filter, setFilter] = useState({
+    gender: 'all',
+    isBanned: 'all',
+    search: 'all',
+  })
+  const [searchChange, setSearchChange] = useState('')
+
+  const generateQuery = () => {
+    let query: LooseObject = {}
+    if (filter.search !== 'all') {
+      query.name = {
+        contains: filter.search,
+        mode: 'insensitive',
+      }
+    }
+    if (filter.gender !== 'all') {
+      query.gender = filter.gender.toUpperCase()
+    }
+    if (filter.isBanned !== 'all') {
+      filter.isBanned == 'true' ? (query.isBanned = true) : (query.isBanned = false)
+    }
+    // console.log(query)
+
+    return query
+  }
+
+  const { isLoading: isUserListLoading, isFetching: isUserListFetching } = trpc.useQuery(
+    ['user.getUserList', { page: page.toString(), where: JSON.stringify(generateQuery()), order: undefined }],
+    {
+      onSuccess(data) {
+        setUserList(data.data)
+      },
+    },
+  )
+
+  const handleSearchChange = (e) => {
+    setSearchChange(e.target.value)
+  }
+
+  const handlePageChange = (currentPage) => {
+    setPage(currentPage)
+  }
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      setFilter({
+        ...filter,
+        search: searchChange,
+      })
+    }
+  }
   return (
     <div>
       <Head>
@@ -56,18 +143,46 @@ const UserManager = () => {
         <div className="flex flex-col my-10">
           <div className="flex justify-between items-center">
             <div className="flex">
-              <CustomDropdown title="Giới tính" items={genderFilterItems} />
-              <CustomDropdown title="Trạng thái" items={statusFilterItems} />
+              <FilterDropdown title="Giới tính" items={genderFilterItems} filter={filter} setFilter={setFilter} />
+              <FilterDropdown title="Trạng thái" items={statusFilterItems} filter={filter} setFilter={setFilter} />
             </div>
 
-            <div className="flex items-center rounded-lg pl-2 bg-gray-800 border-2 border-white">
+            <div className="flex items-center rounded-lg pl-2 bg-umeHeader border-2 border-white">
               <Search className=" active:bg-gray-700 p-2 rounded-full mr-3" theme="outline" size="24" fill="#fff" />
-              <Input className="bg-gray-800" type="text" />
+              <Input
+                placeholder="Tìm kiếm người dùng"
+                onKeyPress={handleKeyPress}
+                value={searchChange}
+                onChange={handleSearchChange}
+                className="bg-umeHeader"
+                type="text"
+              />
             </div>
           </div>
         </div>
         <span className="text-gray-500">1-10 trên 250 user</span>
-        <UserTable />
+        <UserTable userList={userList} />
+        <div className="flex w-full justify-center">
+          <Pagination
+            itemRender={(page, type, originalElement) => (
+              <div className="text-white">
+                {type == 'prev' ? (
+                  <Left theme="outline" size="24" fill="#fff" />
+                ) : type == 'next' ? (
+                  <Right theme="outline" size="24" fill="#fff" />
+                ) : (
+                  page
+                )}
+              </div>
+            )}
+            pageSize={10}
+            current={page}
+            total={userList?.count}
+            onChange={(page) => {
+              handlePageChange(page)
+            }}
+          />
+        </div>
       </div>
     </div>
   )

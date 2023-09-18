@@ -2,19 +2,18 @@ import { TRPCError } from '@trpc/server'
 import { getEnv } from '~/env'
 
 import { parse, serialize } from 'cookie'
-import { AuthApi } from 'ume-service-openapi'
-import { BuyCoinRequestApi, CoinApi } from 'ume-service-openapi'
+import { AdminApi, AdminManageUserApi, UserApi } from 'ume-service-openapi'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
-export const getIdentityInfo = async (ctx) => {
+export const getUserList = async (ctx, query: { page: string; where?: string; order?: string }) => {
   try {
     const cookies = parse(ctx.req.headers.cookie ?? '')
-    const response = await new AuthApi({
+    const response = await new AdminManageUserApi({
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).getAdminInfo()
+    }).adminGetListUser('10', query.page, '["$all"]', query.where, query.order)
 
     return {
       data: response.data,
