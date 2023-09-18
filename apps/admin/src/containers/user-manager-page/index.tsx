@@ -162,7 +162,7 @@ const UserManager = () => {
         </div>
         <span className="text-gray-500">1-10 trên 250 user</span>
         <UserTable userList={userList} />
-        <div className="flex w-full justify-center">
+        <div className="flex w-full justify-center pb-[200px] mt-5">
           <Pagination
             itemRender={(page, type, originalElement) => (
               <div className="text-white">

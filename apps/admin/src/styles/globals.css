@@ -2,6 +2,72 @@
 @tailwind components;
 @tailwind utilities;
 
+
+
+
+/* -------------Start custom CSS for ant ------------------*/
+/* modal */
+.ant-modal-content {
+    padding: 0 !important;
+    background-color: #15151B !important;
+}
+.ant-modal{
+    height: fit-content !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    background-color: #15151B !important;
+    border-radius: 1rem !important;
+    padding: 6px !important;
+}
+.ant-modal-header{
+  height: fit-content !important;
+  padding: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  background-color: #15151B !important;
+}
+.ant-modal-body{
+  height: fit-content !important;
+  padding: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  background-color: #15151B !important;
+}
+.ant-modal-close{
+  background-color: #413F4D !important;
+  border-radius: 100% !important;
+}
+.ant-modal-close-icon{
+  color: white !important;
+  font-size: small !important;
+}
+.ant-modal-mask{
+    opacity: 40% !important;
+    background: rgb(114, 112, 112) !important;
+}
+
+/* table */
+  .ant-table-thead .ant-table-cell {
+  background-color: #7463F0 !important;
+  border-bottom: unset !important;
+  color: white !important;
+  
+  
+  }
+  .ant-table-cell::before{
+    content: unset !important;
+  }
+  .ant-table-row .ant-table-cell{
+    background-color: #292734 !important;
+    border-bottom: unset !important;
+    color: white;
+  }
+  .ant-table-row .ant-table-cell:hover{
+     background: unset;
+  }
+
+
+
 .ant-layout-sider-children {
     width: 100%;
     height: 80%;
@@ -31,62 +97,6 @@
 .ant-dropdown-menu-item-only-child {
     background-color: #1f2937 !important;
 }
-
-/* .ant-table-thead tr .ant-table-cell {
-    align-items: center !important;
-    background-color: #7463f0 !important;
-    color: white !important;
-}
-
-.ant-table-tbody tr .ant-table-cell {
-    background-color: #292734 !important;
-    color: white;
-    border: 1px solid rgb(68, 68, 68) !important;
-} */
-
-.ant-table-content {
-  min-height: 500px !important;
-  background-color: #292734 !important;
-  
-}
-/* 
-.ant-table-content table {
-  padding-bottom: 500px !important;
-} */
-
-.ant-table-placeholder .ant-table-cell {
-  background-color: #292734 !important;
-}
-
-.ant-table-tbody {
-  background-color: #292734 !important;
-}
-
-.ant-table-thead .ant-table-cell {
-  background-color: #7463F0 !important;
-  border-bottom: unset !important;
-  color: white !important;
-  }
-
-  .ant-table-cell::before{
-    content: unset !important;
-  }
-
-  .ant-table-row .ant-table-cell{
-    background-color: #292734 !important;
-    border-bottom: unset !important;
-    color: white;
-    border: 1px solid rgb(26, 22, 42) !important;
-  }
-
-  .ant-table-row .ant-table-cell:hover{
-     background: unset;
-  }
-
-  .ant-empty {
-    min-height: 500px;
-    padding-top: 10rem !important;
-  }
 
   /* Pagination css */
 
