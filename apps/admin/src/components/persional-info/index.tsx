@@ -6,15 +6,14 @@ import Image from 'next/image'
 
 import avataProviderTest from '../../../public/anh.jpg'
 import ProviderServiceTable from '../custom-table/table-provider-service'
+import TransactionTable from '../custom-table/transaction-histories'
 
 export interface IPersionalInfoProps {
-  name: any
-  joinedDate: any
-  gmail: any
-  phone: any
+  data: any
 }
 
 export default function PersionalInfo(props: IPersionalInfoProps) {
+  const data = { props }
   //Call API from id to get Infomation or truyen zo
   const name = 'ABC'
   const joinedDate = '20/07/2023'
@@ -23,6 +22,17 @@ export default function PersionalInfo(props: IPersionalInfoProps) {
   const rating = 'abc'
   const servicedTime = 'ABC'
   const balance = 'Abc'
+  const status = 'Bị Chặn'
+  const [switchTable, setSwitchTable] = React.useState(true)
+
+  function handleSwitchTable() {
+    if (switchTable === true) {
+      setSwitchTable(false)
+    } else {
+      setSwitchTable(true)
+    }
+  }
+
   return (
     <div className="flex-col w-auto bg-[#15151B] mt-5 px-4">
       <div className="flex w-auto px-4 pb-2 border-b-2 border-[#FFFFFF80]  ">
@@ -59,16 +69,21 @@ export default function PersionalInfo(props: IPersionalInfoProps) {
       </div>
       <div className="flex h-10 mt-4">
         <div className="flex flex-col">
-          <Button customCSS="hover:text-gray-400">Dịch vụ cung cấp</Button>
-          <div className="border-b-2 border-[#7463F0] mx-4 mr-6"></div>
+          <Button onClick={handleSwitchTable} customCSS="hover:text-gray-400">
+            Dịch vụ cung cấp
+          </Button>
+          {switchTable && <div className="border-b-2 border-[#7463F0] mx-4 mr-6"></div>}
         </div>
         <div className="flex flex-col w-40 ">
-          <Button customCSS="hover:text-gray-400">Lịch sử giao dịch</Button>
-          <div className="border-b-2 border-[#7463F0] mx-4"></div>
+          <Button onClick={handleSwitchTable} customCSS="hover:text-gray-400">
+            Lịch sử giao dịch
+          </Button>
+          {!switchTable && <div className="border-b-2 border-[#7463F0] mx-4"></div>}
         </div>
       </div>
       <div>
-        <ProviderServiceTable />
+        {switchTable && <ProviderServiceTable />}
+        {!switchTable && <TransactionTable />}
       </div>
     </div>
   )

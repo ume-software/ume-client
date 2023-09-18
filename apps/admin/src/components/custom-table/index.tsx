@@ -6,20 +6,32 @@ import { useState } from 'react'
 
 import { Space, Table, Tag, Tooltip } from 'antd'
 
+import ModalBase from '../modal-base'
+import BanModal from '../modal-base/ban'
 import ProviderDetail from '../provider-detail'
 
 export default function TableProviders({ data }) {
   const [openProviderDetail, setOpenProviderDetail] = useState(false)
   const [providerId, setProviderId] = useState(null)
+  const [providerName, setProviderName] = useState(null)
+  const [openBanProvider, setOpenBanProvider] = useState(false)
 
   function openProviderDetailHandle(providerId) {
-    setOpenProviderDetail(true)
+    console.log(providerId)
     setProviderId(providerId)
+    setOpenProviderDetail(true)
   }
   function closeProviderDetailHandle() {
     setOpenProviderDetail(false)
   }
-  function banProviderHandle() {}
+  function closeBanProviderHandle() {
+    setOpenBanProvider(false)
+  }
+  function banProviderHandle(providerId, providerName) {
+    setProviderId(providerId)
+    setProviderName(providerName)
+    setOpenBanProvider(true)
+  }
   const [arrow, setArrow] = useState('Show')
   const mergedArrow = React.useMemo(() => {
     if (arrow === 'Hide') {
@@ -83,12 +95,20 @@ export default function TableProviders({ data }) {
       render: (_, record) => (
         <Space size="middle">
           <Tooltip placement="top" title="Xem Chi Tiết" arrow={mergedArrow}>
-            <Button onClick={openProviderDetailHandle}>
+            <Button
+              onClick={(e) => {
+                openProviderDetailHandle(record.id)
+              }}
+            >
               <Eyes theme="outline" size="24" fill="#fff" />
             </Button>
           </Tooltip>
           <Tooltip placement="top" title="Chặn" arrow={mergedArrow}>
-            <Button onClick={banProviderHandle}>
+            <Button
+              onClick={(e) => {
+                banProviderHandle(record.id, record.name)
+              }}
+            >
               <ReduceOne theme="outline" size="24" fill="#ff0000" />
             </Button>
           </Tooltip>
@@ -104,6 +124,12 @@ export default function TableProviders({ data }) {
         providerId={providerId}
         openValue={openProviderDetail}
         closeFunction={closeProviderDetailHandle}
+      />
+      <BanModal
+        providerId={providerId}
+        name={providerName}
+        closeFunction={closeBanProviderHandle}
+        openValue={openBanProvider}
       />
     </div>
   )

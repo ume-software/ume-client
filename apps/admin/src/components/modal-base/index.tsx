@@ -8,9 +8,10 @@ export interface IModalBaseProps {
   children?: React.ReactNode
   titleValue?: string
   className?: any
+  width?: any
 }
 
-export default function ModalBase({ titleValue, openValue, closeFunction, children }: IModalBaseProps) {
+export default function ModalBase({ titleValue, openValue, closeFunction, width, children }: IModalBaseProps) {
   const title = () => {
     return (
       <div className="bg-[#15151B] pt-4 pb-2">
@@ -23,7 +24,7 @@ export default function ModalBase({ titleValue, openValue, closeFunction, childr
 
   return (
     <>
-      <Modal title={title()} open={openValue} onCancel={closeFunction} footer={null} width={900}>
+      <Modal title={title()} open={openValue} onCancel={closeFunction} footer={null} width={width ? width : 1000}>
         {children}
       </Modal>
     </>
