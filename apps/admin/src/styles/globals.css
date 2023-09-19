@@ -65,6 +65,9 @@
   .ant-table-row .ant-table-cell:hover{
      background: unset;
   }
+  .ant-table-placeholder .ant-table-cell {
+    background-color: #292734 !important;
+  }
 
 
 

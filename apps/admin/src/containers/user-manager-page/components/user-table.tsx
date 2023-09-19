@@ -9,61 +9,65 @@ import { UserInformationPagingResponse } from 'ume-service-openapi'
 import { string } from 'zod'
 
 import EmptyErrorPic from '../../../../public/empty_error.png'
+import UserDetails from './user-details'
 
-// const tableDataMapping = (data) => {
-//   const list: {
-//     key: any
-//     name: any
-//     email: any
-//     phone: any
-//     gender: any
-//     status: string
-//     createdAt: any
-//   }[] = []
-//   data.map((item) => {
-//     const rowItem = {
-//       key: item.id,
-//       name: item.name,
-//       email: item.email,
-//       phone: item.phone,
-//       gender: item.gender,
-//       status: 'Hoạt động',
-//       createdAt: item.createdAt,
-//     }
-//     list.push(rowItem)
-//   })
-// }
+import BanModal from '~/components/modal-base/ban'
+
+const tableDataMapping = (data) => {
+  const list: {
+    key: any
+    avatarUrl: ''
+    createdAt: ''
+    dob: ''
+    email: ''
+    gender: ''
+    isBanned: false
+    name: ''
+    phone: ''
+    slug: ''
+  }[] = []
+  if (data) {
+    data.map((item) => {
+      const rowItem = {
+        key: item.id,
+        name: item.name,
+        slug: item.slug,
+        email: item.email,
+        phone: item.phone,
+        gender: item.gender,
+        dob: item.dob,
+        avatarUrl: item.avatarUrl,
+        isBanned: item.isBanned,
+        createdAt: item.createdAt,
+      }
+      list.push(rowItem)
+    })
+  }
+  return list
+}
 
 const UserTable = ({ userList }) => {
-  const [isModalVisible, setIsModalVisible] = useState(true)
+  const [openUserDetail, setOpenUserDetail] = useState(false)
+  const [openBanUser, setOpenBanUser] = useState(false)
+  const [userDetails, setUserDetails] = useState<{}>()
 
-  const handleOpen = () => {
-    setIsModalVisible(true)
+  const listData = tableDataMapping(userList?.row)
+  const handleOpenUserDetails = (record) => {
+    setUserDetails(record)
+
+    setOpenUserDetail(true)
   }
-  const handleClose = () => {
-    setIsModalVisible(false)
+  const handlecloseUserDetails = () => {
+    setOpenUserDetail(false)
   }
-  const UserInfoModal = Modal.useDisplayPost({
-    onOK: () => {},
-    onClose: handleClose,
-    title: <p className="text-white">Thông tin người dùng</p>,
-    show: isModalVisible,
-    form: <div className="w-[40%]">Modal</div>,
-    backgroundColor: '#292734',
-    closeButtonOnConner: (
-      <>
-        <CloseSmall
-          onClick={handleClose}
-          onKeyDown={(e) => e.key === 'Enter' && handleClose()}
-          tabIndex={1}
-          className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
-          theme="outline"
-          size="24"
-          fill="#FFFFFF"
-        />
-      </>
-    ),
-  })
+
+  const handleOpenBan = (record) => {
+    setOpenBanUser(true)
+  }
+  const handlecloseBan = () => {
+    setOpenBanUser(false)
+  }
+
   const columns = [
     {
       title: 'Tên',
@@ -120,13 +124,19 @@ const UserTable = ({ userList }) => {
           <>
             <div className="flex">
               <Eyes
-                onClick={handleOpen}
+                onClick={() => handleOpenUserDetails(record)}
                 className="mr-2 rounded-full hover:bg-gray-500 p-2"
                 theme="outline"
                 size="24"
                 fill="#fff"
               />
-              <ReduceOne className="rounded-full hover:bg-gray-500 p-2" theme="outline" size="24" fill="#fff" />
+              <ReduceOne
+                onClick={() => handleOpenBan(record)}
+                className="rounded-full hover:bg-gray-500 p-2"
+                theme="outline"
+                size="24"
+                fill="#ff0000"
+              />
             </div>
           </>
         )
@@ -144,9 +154,10 @@ const UserTable = ({ userList }) => {
 
   return (
     <div className=" mt-5">
-      <Table locale={locale} pagination={false} columns={columns} dataSource={userList?.row} />
+      <Table locale={locale} pagination={false} columns={columns} dataSource={listData} />
 
-      {/* {isModalVisible && UserInfoModal} */}
+      <UserDetails data={userDetails} openValue={openUserDetail} closeFunction={handlecloseUserDetails} />
+      <BanModal name={'Que'} closeFunction={handlecloseBan} openValue={openBanUser} />
     </div>
   )
 }

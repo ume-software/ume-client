@@ -127,6 +127,7 @@ const UserManager = () => {
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
+      setPage(1)
       setFilter({
         ...filter,
         search: searchChange,
@@ -150,11 +151,11 @@ const UserManager = () => {
             <div className="flex items-center rounded-lg pl-2 bg-umeHeader border-2 border-white">
               <Search className=" active:bg-gray-700 p-2 rounded-full mr-3" theme="outline" size="24" fill="#fff" />
               <Input
-                placeholder="Tìm kiếm người dùng"
+                placeholder="Tìm kiếm tên người dùng"
                 onKeyPress={handleKeyPress}
                 value={searchChange}
                 onChange={handleSearchChange}
-                className="bg-umeHeader"
+                className="bg-umeHeader focus:outline-none"
                 type="text"
               />
             </div>

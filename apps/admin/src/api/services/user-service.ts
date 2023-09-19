@@ -27,3 +27,30 @@ export const getUserList = async (ctx, query: { page: string; where?: string; or
     })
   }
 }
+
+export const getUserCoinHistories = async (
+  ctx,
+  query: { slug: string; page: string; where?: string; order?: string },
+) => {
+  // console.log('======================' + query.slug)
+
+  try {
+    const cookies = parse(ctx.req.headers.cookie ?? '')
+    const response = await new AdminManageUserApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).adminGetUserCoinHistoryBySlug(query.slug, '10', query.page, '["$all"]', query.where, query.order)
+
+    return {
+      data: response.data,
+      success: true,
+      message: 'Success',
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.message || 'Authentication failed',
+    })
+  }
+}

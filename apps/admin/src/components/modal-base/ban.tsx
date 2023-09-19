@@ -6,8 +6,8 @@ import ModalBase from '.'
 import ComfirmModal from './comfirm'
 
 export interface IBanModalProps {
-  providerId: any
-  name: any
+  providerId?: any
+  name?: any
   closeFunction: any | undefined
   openValue: boolean
   className?: any

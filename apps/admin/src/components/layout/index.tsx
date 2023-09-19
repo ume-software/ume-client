@@ -29,9 +29,11 @@ const Layout = ({ children }: ILayout) => {
     <>
       <div className="max-w-full max-h-full">
         <Header />
-        <Sidebar />
       </div>
-      <div className="mt-16 pl-[23%] w-full px-20 py-5 h-full bg-[#15151b] text-white">{children}</div>
+      <div>
+        <Sidebar />
+        <div className="mt-16 pl-[23%] w-full px-20 py-5 h-full bg-[#15151b] text-white">{children}</div>
+      </div>
     </>
   )
 }
