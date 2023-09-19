@@ -1,9 +1,10 @@
 import * as socketio from 'socket.io-client'
 import { socket } from '~/apis/socket/socket-connect'
-import { AuthProvider } from '~/contexts/auth'
+import { AuthProvider, useAuth } from '~/contexts/auth'
 
 import { Dispatch, PropsWithChildren, ReactNode, SetStateAction, createContext, useEffect, useState } from 'react'
 
+import { parse } from 'cookie'
 import { UserInformationResponse } from 'ume-service-openapi'
 
 import { Header } from '~/components/header/header.component'
@@ -12,10 +13,6 @@ import { Sidebar } from '~/components/sidebar'
 import { getSocket } from '~/utils/constants'
 
 type AppLayoutProps = PropsWithChildren
-interface SocketTokenContextValue {
-  socketToken: string | null
-  setSocketToken: Dispatch<SetStateAction<string | null>>
-}
 
 interface socketClientEmit {
   [key: string]: any
@@ -34,11 +31,6 @@ interface DrawerProps {
   childrenDrawer: ReactNode
   setChildrenDrawer: (children: ReactNode) => void
 }
-
-export const SocketTokenContext = createContext<SocketTokenContextValue>({
-  socketToken: null,
-  setSocketToken: () => {},
-})
 
 export const SocketClientEmit = createContext<socketClientEmit>({
   socketInstanceChatting: null,
@@ -59,9 +51,10 @@ export const DrawerContext = createContext<DrawerProps>({
 })
 
 export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
-  const [childrenDrawer, setChildrenDrawer] = useState<ReactNode>()
+  const { isAuthenticated, user } = useAuth()
+  const accessToken = parse(document.cookie).accessToken
 
-  const [socketToken, setSocketToken] = useState(null)
+  const [childrenDrawer, setChildrenDrawer] = useState<ReactNode>()
 
   const [socketClientEmit, setSocketClientEmit] = useState<socketClientEmit>({ socketInstanceChatting: null })
 
@@ -72,8 +65,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   })
 
   useEffect(() => {
-    if (socketToken) {
-      const socketInstance = socketToken ? socket(socketToken) : null
+    if (isAuthenticated) {
+      const socketInstance = isAuthenticated ? socket(accessToken) : null
       setSocketClientEmit({ socketInstanceChatting: socketInstance?.socketInstanceChatting })
 
       if (socketInstance?.socketInstanceBooking) {
@@ -99,27 +92,25 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         }
       }
     }
-  }, [socketToken])
+  }, [accessToken, isAuthenticated])
 
   return (
     <>
-      <SocketTokenContext.Provider value={{ socketToken, setSocketToken }}>
-        <SocketClientEmit.Provider value={{ socketClientEmit }}>
-          <SocketContext.Provider value={{ socketContext, setSocketContext }}>
-            <div className="flex flex-col">
-              <div className="fixed z-10 flex flex-col w-full ">
-                <Header />
-              </div>
-              <DrawerContext.Provider value={{ childrenDrawer, setChildrenDrawer }}>
-                <div className="pb-8 bg-umeBackground pt-[90px] pr-[60px] pl-[10px]">{children}</div>
-                <div className="fixed h-full bg-umeHeader top-[65px] right-0">
-                  <Sidebar />
-                </div>
-              </DrawerContext.Provider>
+      <SocketClientEmit.Provider value={{ socketClientEmit }}>
+        <SocketContext.Provider value={{ socketContext, setSocketContext }}>
+          <div className="flex flex-col">
+            <div className="fixed z-10 flex flex-col w-full ">
+              <Header />
             </div>
-          </SocketContext.Provider>
-        </SocketClientEmit.Provider>
-      </SocketTokenContext.Provider>
+            <DrawerContext.Provider value={{ childrenDrawer, setChildrenDrawer }}>
+              <div className="pb-8 bg-umeBackground pt-[90px] pr-[60px] pl-[10px]">{children}</div>
+              <div className="fixed h-full bg-umeHeader top-[65px] right-0">
+                <Sidebar />
+              </div>
+            </DrawerContext.Provider>
+          </div>
+        </SocketContext.Provider>
+      </SocketClientEmit.Provider>
     </>
   )
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 
 import { TopDonateProviderPagingResponse, TopUserDonatePagingResponse } from 'ume-service-openapi'
 
@@ -17,6 +17,7 @@ const durationArray: DurationProps[] = [
 ]
 
 const TopDonate = (props) => {
+  const index = useId()
   const [duration, setDuration] = useState<string>('1W')
   const [userDonate, setUserDonate] = useState<TopUserDonatePagingResponse['row'] | undefined>(undefined)
   const [providerDonate, setProviderDonate] = useState<TopDonateProviderPagingResponse['row'] | undefined>(undefined)
@@ -51,10 +52,10 @@ const TopDonate = (props) => {
   return (
     <>
       <div className="flex gap-3">
-        {durationArray.map((item, index) => (
+        {durationArray.map((item) => (
           <>
             <div
-              key={item.key}
+              key={index}
               className={`w-[80px] text-center rounded-xl py-2 cursor-pointer ${
                 item.key == duration ? ' bg-purple-600' : 'bg-zinc-800'
               }`}

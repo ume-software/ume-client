@@ -5,6 +5,7 @@ import { parse } from 'cookie'
 import {
   BookingApi,
   BookingProviderRequest,
+  FeedbackBookingRequest,
   ImageApi,
   NoticeApi,
   ProviderApi,
@@ -243,14 +244,17 @@ export const getAblumByProviderSlug = async (query: { slug: string; page?: strin
   }
 }
 
-export const postFeedback = async (query: { id: string; content?: string; amountStar?: number }, ctx) => {
+export const postFeedback = async (
+  query: { id: string; feedback?: { content?: string; amountStar?: number } },
+  ctx,
+) => {
   try {
     const cookies = parse(ctx.req.headers.cookie)
     const respone = await new BookingApi({
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).createFeedbackBooking(query.id)
+    }).createFeedbackBooking(query.id, query.feedback as any)
     return {
       data: respone.data,
       success: true,

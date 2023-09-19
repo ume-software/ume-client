@@ -1,8 +1,4 @@
-import { useState } from 'react'
-
-import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { GetProfileProviderBySlugResponse } from 'ume-service-openapi'
 
 import PlayerInformation from './components/player-information'
 
@@ -12,16 +8,10 @@ const DetailPlayerContainer = () => {
   const router = useRouter()
   const slug = router.query
 
-  const [providerBySlug, setProviderBySlug] = useState<GetProfileProviderBySlugResponse | undefined>(undefined)
-  const { isLoading: loadingProvider, isFetching } = trpc.useQuery(
-    ['booking.getProviderBySlug', slug.playerId!.toString()],
-    {
-      onSuccess(data) {
-        setProviderBySlug(data.data)
-      },
-    },
-  )
+  const providerBySlug = trpc.useQuery(['booking.getProviderBySlug', slug.playerId!.toString()]) || undefined
 
-  return <>{loadingProvider ? <></> : <PlayerInformation data={providerBySlug!} />}</>
+  return (
+    <>{providerBySlug && providerBySlug.isLoading ? <></> : <PlayerInformation data={providerBySlug.data?.data!} />}</>
+  )
 }
 export default DetailPlayerContainer

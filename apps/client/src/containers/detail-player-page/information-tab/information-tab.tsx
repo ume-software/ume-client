@@ -5,19 +5,19 @@ import ImgForEmpty from 'public/img-for-empty.png'
 import Chat from '~/containers/chat/chat.container'
 import { useAuth } from '~/contexts/auth'
 
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
 import { notification } from 'antd'
 import Image from 'next/legacy/image'
 import { useRouter } from 'next/router'
-import { GetProfileProviderBySlugResponse } from 'ume-service-openapi'
+import { GetProfileProviderBySlugResponse, ProviderSkillResponse } from 'ume-service-openapi'
 
 import BookingPlayer from '../booking/booking-player.container'
 import GamePlayed from './game'
 import PersonalInformation from './personal-information'
 
 import { LoginModal } from '~/components/header/login-modal.component'
-import { DrawerContext, SocketTokenContext } from '~/components/layouts/app-layout/app-layout'
+import { DrawerContext } from '~/components/layouts/app-layout/app-layout'
 
 import { trpc } from '~/utils/trpc'
 
@@ -26,7 +26,7 @@ const InformationTab = (props: { data: GetProfileProviderBySlugResponse }) => {
   const basePath = router.asPath.split('?')[0]
   const slug = router.query
 
-  const { socketToken, setSocketToken } = useContext(SocketTokenContext)
+  const { isAuthenticated } = useAuth()
   const { user } = useAuth()
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
   const { childrenDrawer, setChildrenDrawer } = useContext(DrawerContext)
@@ -35,7 +35,7 @@ const InformationTab = (props: { data: GetProfileProviderBySlugResponse }) => {
 
   const createNewChatChannel = trpc.useMutation(['chatting.createNewChatChannel'])
 
-  const selectedSkill = props.data.providerSkills!.find(
+  const selectedSkill = props.data?.providerSkills!.find(
     (providerSkill) => gameSelected == providerSkill.skillId || gameSelected == providerSkill.skill?.slug,
   )!
 
@@ -48,7 +48,6 @@ const InformationTab = (props: { data: GetProfileProviderBySlugResponse }) => {
       {
         pathname: basePath,
         query: { tab: slug.tab, serviceId: skillId },
-        ...router.query,
       },
       undefined,
       {
@@ -60,7 +59,7 @@ const InformationTab = (props: { data: GetProfileProviderBySlugResponse }) => {
   }
 
   const handleChatOpen = async () => {
-    if (socketToken) {
+    if (isAuthenticated) {
       try {
         await createNewChatChannel.mutate(
           {
@@ -88,7 +87,7 @@ const InformationTab = (props: { data: GetProfileProviderBySlugResponse }) => {
     }
   }
   const handleOrderOpen = () => {
-    if (socketToken) {
+    if (isAuthenticated) {
       setChildrenDrawer(<BookingPlayer data={props.data} />)
     } else {
       setIsModalLoginVisible(true)
@@ -177,12 +176,12 @@ const InformationTab = (props: { data: GetProfileProviderBySlugResponse }) => {
                 alt="Empty Image"
               />
             </div>
-            {user?.id != props.data.userId ? (
+            {user?.id != props.data?.userId ? (
               <div className="flex flex-col gap-5 my-10">
                 <CustomDrawer
                   customOpenBtn={`rounded-full w-full text-purple-700 border-2 border-purple-700 py-2 font-semibold text-2xl cursor-pointer hover:scale-105 text-center`}
                   openBtn={<div onClick={handleChatOpen}>Chat</div>}
-                  token={!!socketToken}
+                  token={isAuthenticated}
                 >
                   {childrenDrawer}
                 </CustomDrawer>
@@ -191,7 +190,7 @@ const InformationTab = (props: { data: GetProfileProviderBySlugResponse }) => {
                   drawerTitle="Xác nhận đặt"
                   customOpenBtn="rounded-full w-full text-white bg-purple-700 py-2 font-semibold text-2xl cursor-pointer hover:scale-105 text-center"
                   openBtn={<div onClick={handleOrderOpen}>Order</div>}
-                  token={!!socketToken}
+                  token={isAuthenticated}
                 >
                   {childrenDrawer}
                 </CustomDrawer>

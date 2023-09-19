@@ -1,25 +1,44 @@
 import { GrinningFaceWithOpenMouth, Picture, Send, Star } from '@icon-park/react'
-import { InputWithButton } from '@ume/ui'
+import { Button, InputWithButton } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
 
 import { useEffect, useState } from 'react'
 
-import { Carousel } from 'antd'
+import { Carousel, Rate } from 'antd'
 import Image from 'next/legacy/image'
 import { FeedbackPagingResponse, ProviderSkillResponse } from 'ume-service-openapi'
 
 import { trpc } from '~/utils/trpc'
 
+interface PostFeedbackProps {
+  rate: number
+  content?: string
+}
+
 const GamePlayed = (props: { data: ProviderSkillResponse }) => {
-  const [feedbackGame, setFeedbackGame] = useState<FeedbackPagingResponse['row'] | undefined>(undefined)
-  const { isLoading: isFeedbackLoading, isFetching: isFeedbackFetching } = trpc.useQuery(
-    ['booking.getFeedbackSkillById', props.data.id!.toString()],
-    {
-      onSuccess(data) {
-        setFeedbackGame(data.data.row)
-      },
-    },
-  )
+  const feedbackGame = trpc.useQuery(['booking.getFeedbackSkillById', props.data.id!.toString()]) || undefined
+  const postFeedback = trpc.useMutation(['booking.postFeedback'])
+
+  const [feedback, setFeedback] = useState<PostFeedbackProps>({ rate: 5, content: '' })
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSendFeedback()
+    }
+  }
+
+  const handleSendFeedback = () => {
+    if (!!feedback.rate) {
+      postFeedback.mutate(
+        { id: props.data.id!.toString(), feedback: { amountStar: feedback.rate, content: feedback.content } },
+        {
+          onSuccess(data) {
+            console.log(data.success)
+          },
+        },
+      )
+    }
+  }
 
   return (
     <>
@@ -37,15 +56,15 @@ const GamePlayed = (props: { data: ProviderSkillResponse }) => {
           {props.data.description ?? 'Không có giới thiệu'}
         </span>
       </div>
-      {feedbackGame ? (
+      {feedbackGame.data?.success ? (
         <>
           <div className="relative p-5 bg-zinc-800 rounded-3xl">
             <div className="h-[600px] flex flex-col gap-5 p-3 overflow-y-auto">
               <p className="text-4xl font-bold font-inter">Đánh giá</p>
 
-              {feedbackGame.length > 0 ? (
-                feedbackGame?.map((feedback) => (
-                  <div key={feedback.id} className="grid grid-cols-10 p-3 border-2 border-gray-600 rounded-lg">
+              {Number(feedbackGame.data.data.row?.length || 0) > 0 ? (
+                feedbackGame.data.data.row?.map((feedback) => (
+                  <div key={feedback.id} className="grid grid-cols-10 p-3 border-b-2 border-gray-600">
                     <div className="col-span-1">
                       <Image
                         className="object-cover rounded-full"
@@ -61,9 +80,9 @@ const GamePlayed = (props: { data: ProviderSkillResponse }) => {
                           {feedback?.booking?.booker?.name}
                         </span>
 
-                        <div className="flex flex-row items-center gap-1">
-                          <p className="text-lg font-normal font-roboto">{feedback.amountStar}</p>
-                          <Star theme="filled" size="15" fill="#FFDF00" />
+                        <div className="flex flex-row items-center gap-2">
+                          {/* <p className="text-lg font-normal font-roboto">{feedback.amountStar}</p> */}
+                          <Rate disabled defaultValue={feedback.amountStar} />
                         </div>
                       </div>
                       <span className="font-normal text-md">{feedback.content}</span>
@@ -77,26 +96,30 @@ const GamePlayed = (props: { data: ProviderSkillResponse }) => {
                 </>
               )}
             </div>
-            <div className="bg-transparent flex items-center gap-3">
+            <div className="bg-transparent flex items-end gap-3">
               <div className="p-2 content-center bg-[#413F4D] rounded-full cursor-pointer hover:bg-gray-500 active:bg-gray-400">
                 <Picture theme="outline" size="24" fill="#FFFFFF" strokeLinejoin="bevel" />
               </div>
               <div className="w-full">
+                <div className="p-2">
+                  <Rate defaultValue={feedback.rate} onChange={(value) => setFeedback({ ...feedback, rate: value })} />
+                </div>
                 <InputWithButton
                   className="outline-none bg-[#413F4D] text-white border-none focus:outline-[#6d3fe0] max-h-10 rounded-2xl"
                   placeholder="Bình luận"
                   position={'right'}
                   component={
-                    <div
-                      className="flex items-center cursor-pointer rounded-full bg-[#413F4D] p-2"
-                      // onClick={handleSendComment}
-                    >
-                      <Send theme="filled" size="25" fill="#FFFFFF" strokeLinejoin="bevel" />
-                    </div>
+                    <Button
+                      customCSS={`absolute top-0 bottom-0 right-3 ${!!feedback.rate && 'hover:scale-105'} `}
+                      onClick={handleSendFeedback}
+                      isLoading={postFeedback.isLoading}
+                      type="button"
+                      icon={<Send theme="filled" size="25" fill="#FFFFFF" strokeLinejoin="bevel" />}
+                    />
                   }
-                  // onKeyPress={handleKeyPress}
-                  // value={comment}
-                  // onChange={(e) => setComment(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  value={feedback.content}
+                  onChange={(e) => setFeedback({ ...feedback, content: e.target.value })}
                 />
               </div>
             </div>

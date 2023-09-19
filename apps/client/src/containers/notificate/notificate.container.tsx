@@ -1,17 +1,18 @@
+import { useAuth } from '~/contexts/auth'
+
 import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 
 import { notification } from 'antd'
 import Image from 'next/image'
 import { BookingHandleRequestStatusEnum } from 'ume-service-openapi'
 
-import { SocketTokenContext } from '~/components/layouts/app-layout/app-layout'
 import { NotificateSkeletonLoader } from '~/components/skeleton-load'
 
 import { trpc } from '~/utils/trpc'
 
 let result: string
 const Notificate = (props: { type: string }) => {
-  const { socketToken } = useContext(SocketTokenContext)
+  const { isAuthenticated } = useAuth()
   const [page, setPage] = useState<number>(1)
   const limit = '10'
   const [listNotificated, setListNotificated] = useState<any>([])
@@ -122,7 +123,7 @@ const Notificate = (props: { type: string }) => {
   }, [])
 
   useEffect(() => {
-    if (containerRef?.current && socketToken) {
+    if (containerRef?.current && isAuthenticated) {
       const { scrollTop, scrollHeight, clientHeight } = containerRef.current
       const isAtEnd = scrollTop + clientHeight >= scrollHeight
 
@@ -138,7 +139,7 @@ const Notificate = (props: { type: string }) => {
 
   return (
     <>
-      {socketToken ? (
+      {isAuthenticated ? (
         <>
           {loadingNotificated ? (
             <NotificateSkeletonLoader />

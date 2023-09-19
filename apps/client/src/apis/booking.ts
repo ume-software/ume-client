@@ -13,6 +13,7 @@ import {
   getNoticeAmount,
   getProviderBySlug,
   getProviders,
+  postFeedback,
   putProviderResponeBooking,
 } from './services/booking-service'
 
@@ -78,6 +79,15 @@ export const bookingRouter = createRouter()
     input: z.string(),
     resolve: async ({ input }) => {
       return await getFeedbackSkillById(input)
+    },
+  })
+  .mutation('postFeedback', {
+    input: z.object({
+      id: z.string(),
+      feedback: z.optional(z.object({ content: z.optional(z.string()), amountStar: z.optional(z.number()) })),
+    }),
+    resolve: async ({ ctx, input }) => {
+      return await postFeedback(input, ctx)
     },
   })
   .query('getNoticeAmount', {

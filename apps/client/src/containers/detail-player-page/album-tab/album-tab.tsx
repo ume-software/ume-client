@@ -24,7 +24,6 @@ const AlbumTab = (props: { id: string }) => {
       },
     },
   )
-  console.log(props.id)
 
   const left: JSX.Element[] = []
   const middle: JSX.Element[] = []

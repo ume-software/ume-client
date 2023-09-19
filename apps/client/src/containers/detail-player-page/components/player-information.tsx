@@ -1,20 +1,10 @@
 import { Menu, Transition } from '@headlessui/react'
-import {
-  CircleFourLine,
-  Dot,
-  Female,
-  Jump,
-  Male,
-  More,
-  Pencil,
-  PersonalPrivacy,
-  Plus,
-  ShareTwo,
-} from '@icon-park/react'
+import { Dot, Female, Jump, Lock, Male, More, Pencil, Plus, ShareTwo } from '@icon-park/react'
 import cover from 'public/cover.png'
 import TestImage4 from 'public/cover.png'
 import detailBackground from 'public/detail-cover-background.png'
 import ImgForEmpty from 'public/img-for-empty.png'
+import lgbtIcon from 'public/rainbow-flag-11151.svg'
 
 import { Fragment, ReactElement, ReactNode, useState } from 'react'
 
@@ -115,8 +105,15 @@ const valueGenders: valueGenderProps[] = [
     icon: <Male theme="outline" size="20" fill="#3463f9" />,
   },
   { value: 'FEMALE', icon: <Female theme="outline" size="20" fill="#f70a34" /> },
-  { value: 'ORTHER', icon: <Jump theme="outline" size="20" fill="#771cac" /> },
-  { value: 'PRIVATE', icon: <PersonalPrivacy theme="outline" size="20" fill="#f7761c" /> },
+  {
+    value: 'ORTHER',
+    icon: (
+      <div className="flex items-center">
+        <Image width={30} height={20} alt="lgbt-icon" src={lgbtIcon} layout="fixed" />
+      </div>
+    ),
+  },
+  { value: 'PRIVATE', icon: <Lock theme="outline" size="20" fill="#f7761c" /> },
 ]
 
 const PlayerInformation = (props: { data: GetProfileProviderBySlugResponse }) => {
@@ -159,6 +156,15 @@ const PlayerInformation = (props: { data: GetProfileProviderBySlugResponse }) =>
     setSelectedTab(item)
   }
 
+  const caculateAge = (dateOfBirth: string) => {
+    const currentDate = new Date().getTime()
+    const dob = new Date(dateOfBirth).getTime()
+
+    const age = Math.floor((currentDate - dob) / (1000 * 60 * 60 * 24 * 365))
+
+    return age
+  }
+
   return (
     <>
       <div style={{ height: '380px', margin: '0 70px' }}>
@@ -179,12 +185,12 @@ const PlayerInformation = (props: { data: GetProfileProviderBySlugResponse }) =>
               </div>
               <div className="text-white flex flex-col gap-y-2">
                 <p className="text-white text-4xl font-medium">{props.data?.name}</p>
-                <div className="flex flex-row gap-3">
-                  <div className="bg-gray-700 p-2 rounded-full flex items-center gap-1">
+                <div className="flex flex-row items-center gap-3">
+                  <div className="bg-gray-700 p-2 rounded-full flex items-center">
                     {valueGenders.map((gender) => (
-                      <>{gender.value == props.data?.user?.gender && gender.icon}</>
+                      <div key={gender.value}>{gender.value == props.data?.user?.gender && gender.icon}</div>
                     ))}
-                    <p>16</p>
+                    <p>{caculateAge(props.data.user?.dob!)}</p>
                   </div>
                   <div className="bg-gray-700 p-2 rounded-full flex items-center gap-1">
                     <Dot theme="multi-color" size="24" fill={'#54AF45'} />
