@@ -6,9 +6,9 @@ import { useState } from 'react'
 
 import { Space, Table, Tag, Tooltip } from 'antd'
 
-import ModalBase from '../modal-base'
-import BanModal from '../modal-base/ban'
-import ProviderDetail from '../provider-detail'
+import ProviderDetail from './provider-detail'
+
+import BanModal from '~/components/modal-base/ban'
 
 export default function TableProviders({ data }) {
   const [openProviderDetail, setOpenProviderDetail] = useState(false)
@@ -119,7 +119,7 @@ export default function TableProviders({ data }) {
 
   return (
     <div>
-      <Table columns={columnsProvider} dataSource={data} className="z-0" />
+      <Table pagination={false} columns={columnsProvider} dataSource={data} className="z-0" />
       <ProviderDetail
         providerId={providerId}
         openValue={openProviderDetail}

@@ -31,7 +31,7 @@ export default function ComfirmModal({
             customCSS="mx-6 px-4 py-1 border-2 bg-[#7463F0] border-[#7463F0] hover:scale-105"
             onClick={isComfirmFunction}
           >
-            Chặn
+            Xác nhận
           </Button>
         </div>
       </ModalBase>

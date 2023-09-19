@@ -6,7 +6,7 @@ import React, { useState } from 'react'
 import Head from 'next/head'
 import { FilterProviderPagingResponse } from 'ume-service-openapi'
 
-import TableProviders from '~/components/custom-table'
+import TableProviders from './components/table-provider'
 
 import { trpc } from '~/utils/trpc'
 

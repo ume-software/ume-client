@@ -1,9 +1,6 @@
 import * as React from 'react'
 
 import { Table } from 'antd'
-import Image from 'next/image'
-
-import skillPictureDummy from '../../../public/skill.jpg'
 
 export interface ITransactionTableProps {}
 
