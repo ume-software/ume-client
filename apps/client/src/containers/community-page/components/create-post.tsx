@@ -1,7 +1,6 @@
 import { AddPicture, DeleteFive } from '@icon-park/react'
-import { TextArea } from '@ume/ui'
+import { Button, TextArea } from '@ume/ui'
 import { uploadAudioBooking, uploadImageBooking } from '~/apis/upload-media'
-import { getEnv } from '~/env'
 
 import { ChangeEvent, FormEvent, Key, SetStateAction, useEffect, useId, useRef, useState } from 'react'
 
@@ -84,7 +83,6 @@ const CreatePost = (props: any) => {
     e.preventDefault()
 
     const fileUpload = await handleUploadFiles(e.currentTarget)
-    console.log(fileUpload)
 
     if (!(content == '' && (await fileUpload).thumbnails.length == 0)) {
       try {
@@ -128,29 +126,27 @@ const CreatePost = (props: any) => {
           <div className="relative flex flex-col gap-3">
             <div className="relative flex items-center justify-between">
               <label>Hình ảnh</label>
-              {!mediaFiles ? (
-                <div className="">
-                  <div className="relative cursor-pointer w-fit">
-                    <label className="flex justify-start items-center p-3 z-10 gap-2 rounded-lg bg-purple-600 hover:bg-gray-700">
-                      <AddPicture theme="filled" size="15" fill="#FFFFFF" strokeLinejoin="bevel" />
-                      Chọn ảnh
-                    </label>
-                    <div className="absolute w-full h-full top-0 left-0">
-                      <input
-                        className="opacity-0 w-full h-full"
-                        type="file"
-                        name="files"
-                        onChange={(e) => handleMediaChange(e)}
-                        multiple
-                      />
-                    </div>
+              <div className="relative cursor-pointer w-fit">
+                {!mediaFiles ? (
+                  <label className="flex justify-start items-center p-3 z-10 gap-2 rounded-lg bg-purple-600 hover:bg-gray-700">
+                    <AddPicture theme="filled" size="15" fill="#FFFFFF" strokeLinejoin="bevel" />
+                    Chọn ảnh
+                  </label>
+                ) : (
+                  <div className="p-2 rounded-full hover:bg-gray-700" onClick={() => setRemoveMedia(true)}>
+                    <DeleteFive theme="filled" size="20" fill="#FFFFFF" strokeLinejoin="bevel" />
                   </div>
+                )}
+                <div className={`absolute w-full h-full top-0 left-0 ${mediaFiles && '-z-10'}`}>
+                  <input
+                    className="opacity-0 w-full h-full"
+                    type="file"
+                    name="files"
+                    onChange={(e) => handleMediaChange(e)}
+                    multiple
+                  />
                 </div>
-              ) : (
-                <div className="p-2 rounded-full hover:bg-gray-700" onClick={() => setRemoveMedia(true)}>
-                  <DeleteFive theme="filled" size="20" fill="#FFFFFF" strokeLinejoin="bevel" />
-                </div>
-              )}
+              </div>
             </div>
             <div className="flex flex-col gap-2">
               {!removeMedia &&
@@ -172,17 +168,16 @@ const CreatePost = (props: any) => {
           </div>
         </div>
         <div className="mt-3 p-5">
-          <button
-            className={`rounded-lg w-full text-white ${
-              content === '' && !!!mediaFiles
-                ? 'bg-gray-600 cursor-not-allowed'
-                : 'bg-purple-700 cursor-pointer hover:scale-105'
-            } py-1 font-semibold text-lg  text-center`}
+          <Button
+            customCSS={`rounded-lg w-full text-white py-1 font-semibold text-lg  text-center ${
+              !(content === '' && !!!mediaFiles) && 'hover:scale-105'
+            }`}
             type="submit"
-            disabled={content === '' && !!!mediaFiles}
+            isDisabled={content === '' && !!!mediaFiles}
+            isLoading={createNewPost.isLoading}
           >
             Tạo bài viết
-          </button>
+          </Button>
         </div>
       </form>
     </>
