@@ -1,8 +1,8 @@
 import { authRouter } from './auth'
 import { createRouter } from './configurations'
 import { identityRouter } from './identity'
-import { userRouter } from './user'
 import { providerRouter } from './provider'
+import { userRouter } from './user'
 
 export const rootRouter = createRouter()
   .merge('auth.', authRouter)

@@ -14,7 +14,7 @@ export const getIdentityInfo = async (ctx) => {
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).getAdminInfo()
+    }).getInfo()
 
     return {
       data: response.data,
