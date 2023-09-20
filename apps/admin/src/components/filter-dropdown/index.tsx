@@ -16,6 +16,7 @@ const FilterDropdown = ({ title, items, filter, setFilter }) => {
       })
     }
   }
+  console.log(filter)
   return (
     <div>
       <Dropdown
@@ -25,7 +26,7 @@ const FilterDropdown = ({ title, items, filter, setFilter }) => {
         }}
         placement="bottomLeft"
       >
-        <button className="rounded-xl py-2 px-4 bg-umeHeader hover:bg-gray-700 m-2">{title}</button>
+        <button className="px-4 py-2 m-2 rounded-xl bg-umeHeader hover:bg-gray-700">{title}</button>
       </Dropdown>
     </div>
   )

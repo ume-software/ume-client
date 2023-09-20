@@ -89,7 +89,7 @@ const UserTable = ({ userList }) => {
       dataIndex: 'gender',
       key: 'gender',
       render: (text) => (
-        <div className="w-14 flex justify-center">
+        <div className="flex justify-center w-14">
           {text == 'FEMALE' ? <>Nữ</> : text == 'MALE' ? <>Nam</> : <>Khác</>}
         </div>
       ),
@@ -99,11 +99,11 @@ const UserTable = ({ userList }) => {
       key: 'isBaned',
       dataIndex: 'isBaned',
       render: (text) => (
-        <div className="flex justify-center items-center">
+        <div className="flex items-center justify-center">
           {!text ? (
-            <Tag className="bg-green-500 rounded-lg text-white px-3 py-2">Hoạt động</Tag>
+            <Tag className="px-3 py-2 text-white bg-green-500 rounded-lg">Hoạt động</Tag>
           ) : (
-            <Tag className="bg-red-500 rounded-lg text-white px-3 py-2">Tạm dừng</Tag>
+            <Tag className="px-3 py-2 text-white bg-red-500 rounded-lg">Tạm dừng</Tag>
           )}
         </div>
       ),
@@ -125,14 +125,14 @@ const UserTable = ({ userList }) => {
             <div className="flex">
               <Eyes
                 onClick={() => handleOpenUserDetails(record)}
-                className="mr-2 rounded-full hover:bg-gray-500 p-2"
+                className="p-2 mr-2 rounded-full hover:bg-gray-500"
                 theme="outline"
                 size="24"
                 fill="#fff"
               />
               <ReduceOne
                 onClick={() => handleOpenBan(record)}
-                className="rounded-full hover:bg-gray-500 p-2"
+                className="p-2 rounded-full hover:bg-gray-500"
                 theme="outline"
                 size="24"
                 fill="#ff0000"
@@ -146,14 +146,14 @@ const UserTable = ({ userList }) => {
 
   let locale = {
     emptyText: (
-      <div className="w-full h-full flex justify-center items-center">
+      <div className="flex items-center justify-center w-full h-full">
         <Image height={600} alt="empty data" src={EmptyErrorPic} />
       </div>
     ),
   }
 
   return (
-    <div className=" mt-5">
+    <div className="mt-5 ">
       <Table locale={locale} pagination={false} columns={columns} dataSource={listData} />
 
       <UserDetails data={userDetails} openValue={openUserDetail} closeFunction={handlecloseUserDetails} />

@@ -21,7 +21,7 @@ const statusFilterItems = [
   {
     key: 'all',
     label: (
-      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white px-3 py-2 w-full flex justify-center">
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
         Tất cả
       </Tag>
     ),
@@ -29,7 +29,7 @@ const statusFilterItems = [
   {
     key: 'false',
     label: (
-      <Tag className="bg-green-500 hover:bg-green-600 rounded-lg text-white px-3 py-2 w-full flex justify-center">
+      <Tag className="flex justify-center w-full px-3 py-2 text-white bg-green-500 rounded-lg hover:bg-green-600">
         Hoạt động
       </Tag>
     ),
@@ -37,7 +37,7 @@ const statusFilterItems = [
   {
     key: 'true',
     label: (
-      <Tag className="bg-red-500 hover:bg-red-600 rounded-lg text-white px-3 py-2 w-full flex justify-center">
+      <Tag className="flex justify-center w-full px-3 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600">
         Tạm dừng
       </Tag>
     ),
@@ -48,32 +48,32 @@ const genderFilterItems = [
   {
     key: 'all',
     label: (
-      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white px-3 py-2 w-full flex justify-center">
-        <div className="flex justify-center items-center w-10">Tất cả</div>
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
+        <div className="flex items-center justify-center w-10">Tất cả</div>
       </Tag>
     ),
   },
   {
     key: 'male',
     label: (
-      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white px-3 py-2 w-full flex justify-center">
-        <div className="flex justify-center items-center w-10">Nam</div>
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
+        <div className="flex items-center justify-center w-10">Nam</div>
       </Tag>
     ),
   },
   {
     key: 'female',
     label: (
-      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white px-3 py-2 w-full flex justify-center">
-        <div className="flex justify-center items-center w-10">Nữ</div>
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
+        <div className="flex items-center justify-center w-10">Nữ</div>
       </Tag>
     ),
   },
   {
     key: 'orther',
     label: (
-      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white px-3 py-2 w-full flex justify-center">
-        <div className="flex justify-center items-center w-10">Khác</div>
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
+        <div className="flex items-center justify-center w-10">Khác</div>
       </Tag>
     ),
   },
@@ -142,14 +142,14 @@ const UserManager = () => {
       <div className="py-10">
         <span className="content-title">Quản Lý người dùng</span>
         <div className="flex flex-col my-10">
-          <div className="flex justify-between items-center">
+          <div className="flex items-center justify-between">
             <div className="flex">
               <FilterDropdown title="Giới tính" items={genderFilterItems} filter={filter} setFilter={setFilter} />
               <FilterDropdown title="Trạng thái" items={statusFilterItems} filter={filter} setFilter={setFilter} />
             </div>
 
-            <div className="flex items-center rounded-lg pl-2 bg-umeHeader border-2 border-white">
-              <Search className=" active:bg-gray-700 p-2 rounded-full mr-3" theme="outline" size="24" fill="#fff" />
+            <div className="flex items-center pl-2 border-2 border-white rounded-lg bg-umeHeader">
+              <Search className="p-2 mr-3 rounded-full active:bg-gray-700" theme="outline" size="24" fill="#fff" />
               <Input
                 placeholder="Tìm kiếm tên người dùng"
                 onKeyPress={handleKeyPress}

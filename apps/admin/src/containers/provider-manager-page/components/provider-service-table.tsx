@@ -3,6 +3,8 @@ import * as React from 'react'
 import { Table } from 'antd'
 import Image from 'next/image'
 
+import EmptyErrorPic from '../../../../public/empty_error.png'
+
 export interface IProviderServiceTableProps {}
 
 export default function ProviderServiceTable(props: IProviderServiceTableProps) {
@@ -70,6 +72,9 @@ export default function ProviderServiceTable(props: IProviderServiceTableProps) 
       title: 'Ngày tạo',
       dataIndex: 'createDate',
       key: 'createDate',
+      render: (createDate) => (
+        <div className="flex justify-center">{new Date(createDate).toLocaleDateString('en-GB')}</div>
+      ),
     },
     {
       title: 'Số giờ phục vụ',
@@ -92,5 +97,12 @@ export default function ProviderServiceTable(props: IProviderServiceTableProps) 
       key: 'revenue',
     },
   ]
-  return <Table columns={columnsService} dataSource={data} className="z-0" />
+  const locale = {
+    emptyText: (
+      <div className="flex items-center justify-center w-full h-full">
+        <Image height={600} alt="empty data" src={EmptyErrorPic} />
+      </div>
+    ),
+  }
+  return <Table locale={locale} pagination={false} columns={columnsService} dataSource={data} className="z-0" />
 }

@@ -2,43 +2,71 @@ import { TRPCError } from '@trpc/server'
 import { getEnv } from '~/env'
 
 import { parse, serialize } from 'cookie'
-import { ProviderApi } from 'ume-service-openapi'
+import { AdminManageProviderApi } from 'ume-service-openapi'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
-export const getProviderService = async (query?: {
-  startCost?: number
-  endCost?: number
-  skillId?: string
-  name?: string
-  gender?: string
-  limit?: string
-  page?: string
-  order?: string
-}) => {
+export const getProviderList = async (
+  ctx,
+  query?: {
+    limit?: string
+    page?: string
+    select?: string
+    where?: string
+    order?: string
+  },
+) => {
   try {
-    console.log(`-------------${getEnv().baseUmeServiceURL}------------------`)
-    const response = await new ProviderApi({
+    const cookies = parse(ctx.req.headers.cookie ?? '')
+    console.log(cookies['accessToken'])
+    const response = await new AdminManageProviderApi({
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
-    }).getListProvider(
-      undefined,
-      undefined,
-      undefined,
-      query?.name,
-      query?.gender as 'MALE' | 'FEMALE' | 'ORTHER' | 'PRIVATE',
-      query?.limit,
-      query?.page,
-      undefined,
-    )
+      accessToken: cookies['accessToken'],
+    }).adminGetListProvider(query?.limit, query?.page, query?.select, query?.where, query?.order)
     return {
       data: response.data,
+      success: true,
+      message: 'Success',
     }
   } catch (error) {
     console.log('error at catch', error)
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
       message: error.message || 'Failed to get list provider',
+    })
+  }
+}
+
+export const getProviderDetail = async (
+  ctx,
+  query?: {
+    slug: string
+    limit?: string
+    page?: string
+    select?: string
+    where?: string
+    order?: string
+  },
+) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie ?? '')
+    console.log(cookies['accessToken'])
+    const response = await new AdminManageProviderApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).adminGetProviderBySlug(query?.slug!!, query?.limit, query?.page, query?.select, query?.where, query?.order)
+    return {
+      data: response.data,
+      success: true,
+      message: 'Success',
+    }
+  } catch (error) {
+    console.log('error at catch', error)
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.message || 'Failed to get provider detail',
     })
   }
 }

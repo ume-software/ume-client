@@ -5,7 +5,9 @@ import * as React from 'react'
 import { useState } from 'react'
 
 import { Space, Table, Tag, Tooltip } from 'antd'
+import Image from 'next/image'
 
+import EmptyErrorPic from '../../../../public/empty_error.png'
 import ProviderDetail from './provider-detail'
 
 import BanModal from '~/components/modal-base/ban'
@@ -68,17 +70,19 @@ export default function TableProviders({ data }) {
     },
     {
       title: <div className="flex justify-center w-full px-0 mx-0">Trạng Thái</div>,
-      key: 'status',
-      dataIndex: 'status',
-      render: (_, { status }) => {
+      key: 'isBanned',
+      dataIndex: 'isBanned',
+      render: (_, { isBanned }) => {
+        let textStatus = 'Hoạt động'
         let color = 'bg-green-500'
-        if (status === 'Bị Chặn') {
+        if (isBanned) {
+          textStatus = 'Bị Chặn'
           color = 'bg-red-500'
         }
         return (
           <div className="flex justify-center w-full">
-            <Tag color={color} key={status} className={`text-white ${color}`}>
-              {status.toUpperCase()}
+            <Tag color={color} key={isBanned} className={`text-white ${color} px-3 py-2 rounded-lg`}>
+              {textStatus.toUpperCase()}
             </Tag>
           </div>
         )
@@ -88,6 +92,7 @@ export default function TableProviders({ data }) {
       title: 'Ngày tham gia',
       dataIndex: 'joinDate',
       key: 'joinDate',
+      render: (joinDate) => <div className="flex justify-center">{new Date(joinDate).toLocaleDateString('en-GB')}</div>,
     },
     {
       title: '',
@@ -97,6 +102,7 @@ export default function TableProviders({ data }) {
           <Tooltip placement="top" title="Xem Chi Tiết" arrow={mergedArrow}>
             <Button
               onClick={(e) => {
+                console.log(record.id)
                 openProviderDetailHandle(record.id)
               }}
             >
@@ -116,11 +122,19 @@ export default function TableProviders({ data }) {
       ),
     },
   ]
+  const locale = {
+    emptyText: (
+      <div className="flex items-center justify-center w-full h-full">
+        <Image height={600} alt="empty data" src={EmptyErrorPic} />
+      </div>
+    ),
+  }
 
   return (
     <div>
-      <Table pagination={false} columns={columnsProvider} dataSource={data} className="z-0" />
+      <Table locale={locale} pagination={false} columns={columnsProvider} dataSource={data} className="z-0" />
       <ProviderDetail
+        providerInfo={data}
         providerId={providerId}
         openValue={openProviderDetail}
         closeFunction={closeProviderDetailHandle}

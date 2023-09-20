@@ -1,10 +1,20 @@
 import * as React from 'react'
 
 import { Table } from 'antd'
+import Image from 'next/image'
+
+import EmptyErrorPic from '../../../../public/empty_error.png'
 
 export interface ITransactionTableProps {}
 
 export default function TransactionTable(props: ITransactionTableProps) {
+  const locale = {
+    emptyText: (
+      <div className="flex items-center justify-center w-full h-full">
+        <Image height={600} alt="empty data" src={EmptyErrorPic} />
+      </div>
+    ),
+  }
   const data = [
     {
       member: 'Lynnelle Gaddas',
@@ -62,6 +72,9 @@ export default function TransactionTable(props: ITransactionTableProps) {
       title: 'Ngày giao dịch',
       dataIndex: 'bookingDate',
       key: 'bookingDate',
+      render: (bookingDate) => (
+        <div className="flex justify-center">{new Date(bookingDate).toLocaleDateString('en-GB')}</div>
+      ),
     },
     {
       title: 'Kỹ năng',
@@ -89,5 +102,5 @@ export default function TransactionTable(props: ITransactionTableProps) {
       key: 'feedback',
     },
   ]
-  return <Table columns={columnsService} dataSource={data} className="z-0" />
+  return <Table locale={locale} pagination={false} columns={columnsService} dataSource={data} className="z-0" />
 }

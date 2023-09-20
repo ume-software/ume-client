@@ -4,9 +4,12 @@ import * as React from 'react'
 
 import { Avatar } from 'antd'
 import Image from 'next/image'
+import { AdminGetProviderResponse } from 'ume-service-openapi'
 
 import ProviderServiceTable from './provider-service-table'
 import TransactionTable from './transaction-table'
+
+import { trpc } from '~/utils/trpc'
 
 export interface IProviderInfoProps {
   providerId: any
@@ -14,17 +17,46 @@ export interface IProviderInfoProps {
 }
 
 export default function ProviderInfo({ providerInfo, providerId }: IProviderInfoProps) {
-  console.log(providerInfo)
-  //Call API from id to get Infomation or truyen zo
-  const name = providerInfo.name || 'ABC'
-  const avatarUrl = providerInfo.avatarUrl || 'https://cdn.pixabay.com/photo/2020/05/11/22/31/cat-5160456_960_720.png'
-  const createdAt = new Date(providerInfo.createdAt).toLocaleDateString('en-GB') || '20/07/2023'
-  const email = providerInfo.email || 'taoCayLamRoiDo@gmail.com'
-  const phone = providerInfo.phone || '0944660278'
-  const rating = providerInfo.rating || 'abc'
-  const servicedTime = providerInfo.servicedTime || 'ABC'
-  const balance = providerInfo.balance || 'Abc'
-  const status = providerInfo.status || 'Bị Chặn'
+  const [providerDetail, setProviderDetail] = React.useState<AdminGetProviderResponse | undefined>()
+  const SELECT_SKILL = [
+    '$all',
+    {
+      providerSkills: [
+        {
+          providerSkills: [
+            {
+              skill: ['imageUrl', 'name', 'createdAt'],
+            },
+          ],
+        },
+      ],
+    },
+  ]
+  const { isLoading: isUserListLoading, isFetching: isUserListFetching } = trpc.useQuery(
+    [
+      'provider.getProviderDetail',
+      {
+        slug: providerId,
+        select: JSON.stringify(SELECT_SKILL),
+      },
+    ],
+    {
+      onSuccess(data) {
+        setProviderDetail(data.data)
+      },
+    },
+  )
+
+  console.log(providerDetail)
+  const name = providerInfo.name
+  const avatarUrl = providerInfo.avatarUrl
+  const createdAt = new Date(providerInfo.createdAt).toLocaleDateString('en-GB')
+  const email = providerInfo.Gmail
+  const phone = providerInfo.phone
+  const rating = providerInfo.rating
+  const servicedTime = providerInfo.servicedTime
+  const balance = providerInfo.balance
+  const status = providerInfo.status
   const [switchTable, setSwitchTable] = React.useState(true)
 
   function handleSwitchTable() {
