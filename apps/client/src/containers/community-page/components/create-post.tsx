@@ -173,7 +173,8 @@ const CreatePost = (props: any) => {
               !(content === '' && !!!mediaFiles) && 'hover:scale-105'
             }`}
             type="submit"
-            isDisabled={content === '' && !!!mediaFiles}
+            isDisabled={true}
+            isOutlinedButton={!(content === '' && !!!mediaFiles)}
             isLoading={createNewPost.isLoading}
           >
             Tạo bài viết

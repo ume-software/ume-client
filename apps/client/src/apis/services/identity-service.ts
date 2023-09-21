@@ -95,3 +95,27 @@ export const getUserBySlug = async (input, ctx) => {
     })
   }
 }
+
+export const updateUserProfile = async (
+  query: { name: string; slug: string; gender: string; dob: string; avatarUrl: string },
+  ctx,
+) => {
+  const cookies = parse(ctx.req.headers.cookie ?? '')
+  try {
+    const reponse = await new UserApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).updateUserProfile()
+    return {
+      data: reponse.data,
+      success: true,
+      message: '',
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to get data recharge',
+    })
+  }
+}

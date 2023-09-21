@@ -22,6 +22,7 @@ const BookingPlayer = (props: { data }) => {
     voucherIds: [],
   })
   const [total, setTotal] = useState(0)
+  const accountBalance = trpc.useQuery(['identity.account-balance'])
   const createBooking = trpc.useMutation(['booking.createBooking'])
 
   // const handleServiceChange = (value: string) => {
@@ -46,32 +47,40 @@ const BookingPlayer = (props: { data }) => {
   })
 
   const handleCreateBooking = (values, { setSubmitting }) => {
-    try {
-      createBooking.mutate(values, {
-        onSuccess: (data) => {
-          if (data.success) {
+    if (accountBalance.data?.data.totalCoinsAvailable! >= total) {
+      try {
+        createBooking.mutate(values, {
+          onSuccess: (data) => {
+            if (data.success) {
+              setSubmitting(false)
+              setBooking({ providerSkillId: '', bookingPeriod: 1, voucherIds: [] })
+              notification.success({
+                message: 'Tạo đơn thành công',
+                description: 'Đơn của bạn đã được tạo thành công.',
+                placement: 'bottomLeft',
+              })
+            }
+          },
+          onError: (error) => {
+            console.error(error)
             setSubmitting(false)
-            setBooking({ providerSkillId: '', bookingPeriod: 1, voucherIds: [] })
-            notification.success({
-              message: 'Tạo đơn thành công',
-              description: 'Đơn của bạn đã được tạo thành công.',
+            notification.error({
+              message: 'Tạo đơn thất bại',
+              description: 'Đơn của bạn chưa được tạo thành công!',
               placement: 'bottomLeft',
             })
-          }
-        },
-        onError: (error) => {
-          console.error(error)
-          setSubmitting(false)
-          notification.error({
-            message: 'Tạo đơn thất bại',
-            description: 'Đơn của bạn chưa được tạo thành công!',
-            placement: 'bottomLeft',
-          })
-        },
+          },
+        })
+      } catch (error) {
+        console.error('Failed to create booking:', error)
+        setSubmitting(false)
+      }
+    } else {
+      notification.warning({
+        message: 'Tài khoản không đủ',
+        description: 'Bạn không có đủ tiền. Vui lòng nạp thêm!',
+        placement: 'bottomLeft',
       })
-    } catch (error) {
-      console.error('Failed to create booking:', error)
-      setSubmitting(false)
     }
   }
 

@@ -42,9 +42,9 @@ const AccountSettingContainer = () => {
 
   return (
     <>
-      <div className="h-screen grid grid-cols-10 text-white">
+      <div className="min-h-screen bg-umeBackground grid grid-cols-10 text-white">
         <div className="col-span-2">
-          <div className="p-10 bg-zinc-800 rounded-2xl sticky top-20">
+          <div className="p-10 bg-zinc-800 rounded-3xl sticky top-20">
             <div className="flex flex-col gap-5">
               {settingType.map((item) => (
                 <>
