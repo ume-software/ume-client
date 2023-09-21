@@ -5,7 +5,9 @@ import Image from 'next/image'
 
 import EmptyErrorPic from '../../../../public/empty_error.png'
 
-export interface ITransactionTableProps {}
+export interface ITransactionTableProps {
+  data: any
+}
 
 export default function TransactionTable(props: ITransactionTableProps) {
   const locale = {
@@ -15,53 +17,7 @@ export default function TransactionTable(props: ITransactionTableProps) {
       </div>
     ),
   }
-  const data = [
-    {
-      member: 'Lynnelle Gaddas',
-      bookingDate: '30/10/2022',
-      skill: 'Liên minh huyền thoại',
-      serveTime: 7,
-      status: 'done',
-      mountMoney: 237,
-      feedback: 'Thằng này ngáo',
-    },
-    {
-      member: 'Jemimah Tranfield',
-      bookingDate: '07/05/2023',
-      skill: 'Liên minh huyền thoại',
-      serveTime: 19,
-      status: 'done',
-      mountMoney: 1556,
-      feedback: 'Thằng này ngáo',
-    },
-    {
-      member: 'Cathy Ridhole',
-      bookingDate: '08/06/2023',
-      skill: 'Liên minh huyền thoại',
-      serveTime: 24,
-      status: 'done',
-      mountMoney: 1309,
-      feedback: 'Thằng này ngáo',
-    },
-    {
-      member: 'Hester Weatherby',
-      bookingDate: '25/01/2023',
-      skill: 'Liên minh huyền thoại',
-      serveTime: 16,
-      status: 'done',
-      mountMoney: 777,
-      feedback: 'Thằng này ngáo',
-    },
-    {
-      member: 'Elspeth Khrishtafovich',
-      bookingDate: '09/03/2023',
-      skill: 'Liên minh huyền thoại',
-      serveTime: 21,
-      status: 'done',
-      mountMoney: 308,
-      feedback: 'Thằng này ngáo',
-    },
-  ]
+  const { data } = props
   const columnsService = [
     {
       title: 'Người dùng',
@@ -73,7 +29,7 @@ export default function TransactionTable(props: ITransactionTableProps) {
       dataIndex: 'bookingDate',
       key: 'bookingDate',
       render: (bookingDate) => (
-        <div className="flex justify-center">{new Date(bookingDate).toLocaleDateString('en-GB')}</div>
+        <div className="flex justify-start">{new Date(bookingDate).toLocaleDateString('en-GB')}</div>
       ),
     },
     {
@@ -96,11 +52,11 @@ export default function TransactionTable(props: ITransactionTableProps) {
       dataIndex: 'mountMoney',
       key: 'mountMoney',
     },
-    {
-      title: 'Phản hồi',
-      dataIndex: 'feedback',
-      key: 'feedback',
-    },
+    // {
+    //   title: 'Phản hồi',
+    //   dataIndex: 'feedback',
+    //   key: 'feedback',
+    // },
   ]
   return <Table locale={locale} pagination={false} columns={columnsService} dataSource={data} className="z-0" />
 }

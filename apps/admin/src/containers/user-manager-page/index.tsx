@@ -5,6 +5,7 @@ import React, { ReactNode, useState } from 'react'
 
 import { Badge, Dropdown, Pagination, Space, Tag } from 'antd'
 import Head from 'next/head'
+import { title } from 'process'
 import { UserInformationPagingResponse } from 'ume-service-openapi'
 
 import UserTable from './components/user-table'
@@ -103,8 +104,6 @@ const UserManager = () => {
     if (filter.isBanned !== 'all') {
       filter.isBanned == 'true' ? (query.isBanned = true) : (query.isBanned = false)
     }
-    // console.log(query)
-
     return query
   }
 
@@ -116,6 +115,21 @@ const UserManager = () => {
       },
     },
   )
+
+  const handleFilter = (title, key) => {
+    setPage(1)
+    if (title == 'Giới tính') {
+      setFilter({
+        ...filter,
+        gender: key,
+      })
+    } else if (title == 'Trạng thái') {
+      setFilter({
+        ...filter,
+        isBanned: key,
+      })
+    }
+  }
 
   const handleSearchChange = (e) => {
     setSearchChange(e.target.value)
@@ -139,20 +153,20 @@ const UserManager = () => {
       <Head>
         <title>Admin | User Manager</title>
       </Head>
-      <div className="py-10">
+      <div className="pb-10">
         <span className="content-title">Quản Lý người dùng</span>
         <div className="flex flex-col my-10">
           <div className="flex items-center justify-between">
             <div className="flex">
-              <FilterDropdown title="Giới tính" items={genderFilterItems} filter={filter} setFilter={setFilter} />
-              <FilterDropdown title="Trạng thái" items={statusFilterItems} filter={filter} setFilter={setFilter} />
+              <FilterDropdown title="Giới tính" items={genderFilterItems} handleFilter={handleFilter} />
+              <FilterDropdown title="Trạng thái" items={statusFilterItems} handleFilter={handleFilter} />
             </div>
 
             <div className="flex items-center pl-2 border-2 border-white rounded-lg bg-umeHeader">
               <Search className="p-2 mr-3 rounded-full active:bg-gray-700" theme="outline" size="24" fill="#fff" />
               <Input
                 placeholder="Tìm kiếm tên người dùng"
-                onKeyPress={handleKeyPress}
+                onKeyUp={handleKeyPress}
                 value={searchChange}
                 onChange={handleSearchChange}
                 className="bg-umeHeader focus:outline-none"
@@ -161,7 +175,7 @@ const UserManager = () => {
             </div>
           </div>
         </div>
-        <span className="text-gray-500">1-10 trên 250 user</span>
+        <span className="text-gray-500">1-10 trên {userList?.count} user</span>
         <UserTable userList={userList} />
         <div className="flex w-full justify-center pb-[200px] mt-5">
           <Pagination

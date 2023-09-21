@@ -6,6 +6,7 @@ import React, { useState } from 'react'
 import { Pagination, Tag } from 'antd'
 import Head from 'next/head'
 import { AdminGetProviderPagingResponse, FilterProviderPagingResponse } from 'ume-service-openapi'
+import { util } from 'zod'
 
 import TableProviders from './components/table-provider'
 
@@ -78,6 +79,7 @@ const genderFilterItems = [
   },
 ]
 const ProviderManager = () => {
+  const utils = trpc.useContext()
   const LIMIT = '10'
   const SELECT = ['$all', { user: ['$all'] }]
   const [page, setPage] = useState(1)
@@ -87,6 +89,7 @@ const ProviderManager = () => {
     search: 'all',
   })
   const [searchChange, setSearchChange] = useState('')
+  const ORDER = [{ id: 'asc' }]
   const [providerList, setProviderList] = useState<AdminGetProviderPagingResponse | undefined>()
   const generateQuery = () => {
     let query: LooseObject = {}
@@ -115,9 +118,13 @@ const ProviderManager = () => {
         page: page.toString(),
         select: JSON.stringify(SELECT),
         where: JSON.stringify(generateQuery()),
+        order: JSON.stringify(ORDER),
       },
     ],
     {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: 'always',
+      refetchOnMount: false,
       onSuccess(data) {
         setProviderList(data.data)
       },
@@ -152,6 +159,23 @@ const ProviderManager = () => {
       })
     }
   }
+  const handleFilter = (title, key) => {
+    setPage(1)
+    if (title == 'Giới tính') {
+      setFilter({
+        ...filter,
+        gender: key,
+      })
+    } else if (title == 'Trạng thái') {
+      setFilter({
+        ...filter,
+        isBanned: key,
+      })
+    }
+  }
+  function refreshData() {
+    utils.invalidateQueries('provider.getProviderList')
+  }
 
   return (
     <div>
@@ -163,8 +187,8 @@ const ProviderManager = () => {
         <div className="flex items-center justify-between my-5">
           <div className="flex items-center justify-between">
             <div className="flex">
-              <FilterDropdown title="Giới tính" items={genderFilterItems} filter={filter} setFilter={setFilter} />
-              <FilterDropdown title="Trạng thái" items={statusFilterItems} filter={filter} setFilter={setFilter} />
+              <FilterDropdown title="Giới tính" items={genderFilterItems} handleFilter={handleFilter} />
+              <FilterDropdown title="Trạng thái" items={statusFilterItems} handleFilter={handleFilter} />
             </div>
           </div>
           <div className="flex items-center px-3 bg-gray-800 border-2 rounded-lg">

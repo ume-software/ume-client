@@ -1,10 +1,11 @@
+import { Left, Right } from '@icon-park/react'
 import { Button } from '@ume/ui'
 
 import * as React from 'react'
 
-import { Avatar } from 'antd'
+import { Avatar, Pagination } from 'antd'
 import Image from 'next/image'
-import { AdminGetProviderResponse } from 'ume-service-openapi'
+import { AdminGetProviderResponse, AdminGetProviderSkillPagingResponse } from 'ume-service-openapi'
 
 import ProviderServiceTable from './provider-service-table'
 import TransactionTable from './transaction-table'
@@ -17,37 +18,93 @@ export interface IProviderInfoProps {
 }
 
 export default function ProviderInfo({ providerInfo, providerId }: IProviderInfoProps) {
-  const [providerDetail, setProviderDetail] = React.useState<AdminGetProviderResponse | undefined>()
+  const [providerSkills, setProviderSkills] = React.useState<AdminGetProviderSkillPagingResponse | undefined>()
+  const [providerTransHistory, setProviderTransHistory] = React.useState<
+    AdminGetProviderSkillPagingResponse | undefined
+  >()
+  const [pageService, setPageService] = React.useState(1)
+  const [pageTrans, setPageTrans] = React.useState(1)
+  const PAGE_SIZE_SERVICE = 5
+  const PAGE_SIZE_TRANS = 10
   const SELECT_SKILL = [
     '$all',
     {
-      providerSkills: [
-        {
-          providerSkills: [
-            {
-              skill: ['imageUrl', 'name', 'createdAt'],
-            },
-          ],
-        },
-      ],
+      skill: ['$all'],
     },
   ]
-  const { isLoading: isUserListLoading, isFetching: isUserListFetching } = trpc.useQuery(
+  const SELECT_TRANS = [
+    '$all',
+    {
+      booker: ['$all'],
+    },
+    { providerSkill: ['$all', { skill: ['$all'] }] },
+  ]
+  const { isLoading: isListSkillLoading, isFetching: isListSkillFetching } = trpc.useQuery(
     [
-      'provider.getProviderDetail',
+      'provider.getProviderSkill',
       {
         slug: providerId,
         select: JSON.stringify(SELECT_SKILL),
+        limit: PAGE_SIZE_SERVICE.toString(),
+        page: pageService.toString(),
       },
     ],
     {
       onSuccess(data) {
-        setProviderDetail(data.data)
+        setProviderSkills(data.data)
       },
     },
   )
 
-  console.log(providerDetail)
+  const dataProviderSkills = providerSkills?.row?.map((row: any) => {
+    return {
+      key: row.id,
+      id: row.id,
+      imageUrl: row.skill.imageUrl,
+      name: row.skill.name,
+      createDate: row.createdAt,
+      totalBookingPeriod: row.totalBookingPeriod,
+      totalBooking: row.totalBooking,
+      // rating: 'chua co',
+      totalRevenue: row.totalRevenue,
+      ...row,
+    }
+  })
+
+  const { isLoading: isListTransLoading, isFetching: isListTransFetching } = trpc.useQuery(
+    [
+      'provider.getProviderBookingHistory',
+      {
+        slug: providerId,
+        select: JSON.stringify(SELECT_TRANS),
+        limit: PAGE_SIZE_TRANS.toString(),
+        page: pageTrans.toString(),
+        order: JSON.stringify([{ createdAt: 'desc' }]),
+      },
+    ],
+    {
+      onSuccess(data) {
+        setProviderTransHistory(data.data)
+      },
+    },
+  )
+  console.log(providerTransHistory)
+
+  const dataProviderTranHistory = providerTransHistory?.row?.map((row: any) => {
+    return {
+      key: row.id,
+      id: row.id,
+      member: row.booker.name,
+      bookingDate: row.createdAt,
+      skill: row.providerSkill.skill.name,
+      serveTime: row.bookingPeriod,
+      status: row.status,
+      mountMoney: row.totalCost,
+      // feedback: 'Thằng này ngáo',
+      ...row,
+    }
+  })
+
   const name = providerInfo.name
   const avatarUrl = providerInfo.avatarUrl
   const createdAt = new Date(providerInfo.createdAt).toLocaleDateString('en-GB')
@@ -66,13 +123,19 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
       setSwitchTable(true)
     }
   }
+  const handlePageChange = (switchTable, nextPage) => {
+    if (switchTable) {
+      setPageService(nextPage)
+    } else {
+      setPageTrans(nextPage)
+    }
+  }
 
   return (
     <div className="flex-col w-auto bg-[#15151B] mt-5 px-4">
       <div className="flex w-auto px-4 border-b-2 border-[#FFFFFF80] pb-5">
         <div className="pr-4 rounded-full">
           <Avatar src={avatarUrl} size={200} />
-          {/* <Image src={data.avatarUrl} width={150} height={200} alt="Personal Infor" className="rounded-full" /> */}
         </div>
         <div className="flex flex-col justify-end w-2/5 ">
           <div className="h-12 text-white">
@@ -117,8 +180,29 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
         </div>
       </div>
       <div>
-        {switchTable && <ProviderServiceTable />}
-        {!switchTable && <TransactionTable />}
+        {switchTable && <ProviderServiceTable data={dataProviderSkills} />}
+        {!switchTable && <TransactionTable data={dataProviderTranHistory} />}
+        <div className="flex w-full justify-center pb-[200px] mt-5">
+          <Pagination
+            itemRender={(page, type) => (
+              <div className="text-white">
+                {type == 'prev' ? (
+                  <Left theme="outline" size="24" fill="#fff" />
+                ) : type == 'next' ? (
+                  <Right theme="outline" size="24" fill="#fff" />
+                ) : (
+                  page
+                )}
+              </div>
+            )}
+            pageSize={switchTable ? PAGE_SIZE_SERVICE : PAGE_SIZE_TRANS}
+            current={switchTable ? pageService : pageTrans}
+            total={switchTable ? providerSkills?.count : providerTransHistory?.count}
+            onChange={(nextPage) => {
+              handlePageChange(switchTable, nextPage)
+            }}
+          />
+        </div>
       </div>
     </div>
   )

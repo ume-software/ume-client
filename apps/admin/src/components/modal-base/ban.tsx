@@ -6,21 +6,21 @@ import ModalBase from '.'
 import ComfirmModal from './comfirm'
 
 export interface IBanModalProps {
-  providerId?: any
+  isBanned?: any
   name?: any
   closeFunction: any | undefined
   openValue: boolean
   className?: any
+  excuteFunction: any | undefined
 }
 
-export default function BanModal({ providerId, name, openValue, closeFunction }: IBanModalProps) {
-  const titleValue = `Chặn [${name}]`
+export default function BanModal({ isBanned, name, openValue, closeFunction, excuteFunction }: IBanModalProps) {
+  const titleValue = !isBanned ? `Chặn ${name}` : `Bỏ chặn ${name}`
   const [content, setContent] = React.useState<string>('')
   const [openConfirm, setOpenConfirm] = React.useState(false)
+
   function handleBanProvider() {
-    //call API ban provider
-    console.log(providerId)
-    console.log(content)
+    excuteFunction()
     setOpenConfirm(false)
     closeHandle()
   }
@@ -55,7 +55,7 @@ export default function BanModal({ providerId, name, openValue, closeFunction }:
               customCSS="mx-6 px-4 py-1 border-2 bg-[#7463F0] border-[#7463F0] hover:scale-105"
               onClick={createHandle}
             >
-              Chặn
+              {!isBanned ? 'Chặn' : 'Bỏ chặn'}
             </Button>
           </div>
         </div>
@@ -64,9 +64,9 @@ export default function BanModal({ providerId, name, openValue, closeFunction }:
         closeFunction={closeComfirmFormHandle}
         openValue={openConfirm}
         isComfirmFunction={handleBanProvider}
-        titleValue="Xác Nhận Chặn"
+        titleValue={!isBanned ? 'Xác nhận chặn' : 'Xác nhận bỏ chặn'}
       >
-        {content === '' && <div className="mx-4 text-yellow-500">Lý do chặn trống</div>}
+        {content === '' && <div className="mx-4 text-yellow-500">Lý do trống</div>}
       </ComfirmModal>
     </>
   )

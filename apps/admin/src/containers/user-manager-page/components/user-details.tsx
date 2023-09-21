@@ -51,7 +51,7 @@ export default function UserDetails({ data, openValue, closeFunction }: IUserDet
 
   let locale = {
     emptyText: (
-      <div className="w-full h-full flex justify-center items-center">
+      <div className="flex items-center justify-center w-full h-full">
         <Image height={250} alt="empty data" src={EmptyErrorPic} />
       </div>
     ),
@@ -64,7 +64,7 @@ export default function UserDetails({ data, openValue, closeFunction }: IUserDet
       className="w-auto bg-black"
     >
       <PersionalInfo data={data} />
-      <div className="flex justify-between text-white mt-5 px-4">
+      <div className="flex justify-between px-4 mt-5 text-white">
         <span>Biến động số dư</span>
         <div className="border-b-2 border-[#7463F0] mx-4 mr-6"></div>
 
@@ -72,7 +72,7 @@ export default function UserDetails({ data, openValue, closeFunction }: IUserDet
           Số dư: <span className="font-bold"></span>
         </div>
       </div>
-      <div className="my-4 px-4">
+      <div className="px-4 my-4">
         <Table pagination={false} locale={locale} columns={columns} dataSource={transaction?.row} />
       </div>
     </ModalBase>

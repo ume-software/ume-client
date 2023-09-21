@@ -2,21 +2,10 @@ import React from 'react'
 
 import { Dropdown } from 'antd'
 
-const FilterDropdown = ({ title, items, filter, setFilter }) => {
+const FilterDropdown = ({ title, items, handleFilter }) => {
   const handleItemSelected: (typeof items)['onClick'] = (e) => {
-    if (title == 'Giới tính') {
-      setFilter({
-        ...filter,
-        gender: e.key,
-      })
-    } else if (title == 'Trạng thái') {
-      setFilter({
-        ...filter,
-        isBanned: e.key,
-      })
-    }
+    handleFilter(title, e.key)
   }
-  console.log(filter)
   return (
     <div>
       <Dropdown

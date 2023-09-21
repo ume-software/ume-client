@@ -1,25 +1,31 @@
 import { BaseballBat, Eyes, ReduceOne } from '@icon-park/react'
 import { Button } from '@ume/ui'
+import { BanProvider } from '~/api/services/provider-service'
 
 import * as React from 'react'
 import { useState } from 'react'
 
-import { Space, Table, Tag, Tooltip } from 'antd'
+import { Space, Table, Tag, Tooltip, notification } from 'antd'
 import Image from 'next/image'
+import { util } from 'zod'
 
 import EmptyErrorPic from '../../../../public/empty_error.png'
 import ProviderDetail from './provider-detail'
 
 import BanModal from '~/components/modal-base/ban'
 
+import { trpc } from '~/utils/trpc'
+
 export default function TableProviders({ data }) {
+  const utils = trpc.useContext()
   const [openProviderDetail, setOpenProviderDetail] = useState(false)
   const [providerId, setProviderId] = useState(null)
   const [providerName, setProviderName] = useState(null)
+  const [isBanedProvider, setIsBanedProvider] = useState(null)
   const [openBanProvider, setOpenBanProvider] = useState(false)
-
+  const BanProvider = trpc.useMutation(['provider.BanProvider'])
+  const UnBanProvider = trpc.useMutation(['provider.UnBanProvider'])
   function openProviderDetailHandle(providerId) {
-    console.log(providerId)
     setProviderId(providerId)
     setOpenProviderDetail(true)
   }
@@ -29,10 +35,58 @@ export default function TableProviders({ data }) {
   function closeBanProviderHandle() {
     setOpenBanProvider(false)
   }
-  function banProviderHandle(providerId, providerName) {
+  function HandleBanFunction() {
+    if (!isBanedProvider) {
+      try {
+        BanProvider.mutate(
+          {
+            slug: providerId!!,
+          },
+          {
+            onSuccess: (data) => {
+              if (data.success) {
+                notification.success({
+                  message: 'Chặn Người Cung Cấp thành công!',
+                  description: 'Người Cung Cấp Đã Bị Chặn',
+                  placement: 'bottomLeft',
+                })
+                utils.invalidateQueries('provider.getProviderList')
+              }
+            },
+          },
+        )
+      } catch (error) {
+        console.error('Failed to Handle Ban/Unban Provider:', error)
+      }
+    } else {
+      try {
+        UnBanProvider.mutate(
+          {
+            slug: providerId!!,
+          },
+          {
+            onSuccess: (data) => {
+              if (data.success) {
+                notification.success({
+                  message: 'Bỏ Chặn Người Cung Cấp thành công!',
+                  description: 'Người Cung Cấp Đã Được Bỏ Chặn',
+                  placement: 'bottomLeft',
+                })
+                utils.invalidateQueries('provider.getProviderList')
+              }
+            },
+          },
+        )
+      } catch (error) {
+        console.error('Failed to Handle Ban/Unban Provider:', error)
+      }
+    }
+  }
+  function banProviderHandle(providerId, providerName, isBanned) {
     setProviderId(providerId)
     setProviderName(providerName)
     setOpenBanProvider(true)
+    setIsBanedProvider(isBanned)
   }
   const [arrow, setArrow] = useState('Show')
   const mergedArrow = React.useMemo(() => {
@@ -92,7 +146,7 @@ export default function TableProviders({ data }) {
       title: 'Ngày tham gia',
       dataIndex: 'joinDate',
       key: 'joinDate',
-      render: (joinDate) => <div className="flex justify-center">{new Date(joinDate).toLocaleDateString('en-GB')}</div>,
+      render: (joinDate) => <div className="flex justify-start">{new Date(joinDate).toLocaleDateString('en-GB')}</div>,
     },
     {
       title: '',
@@ -102,7 +156,6 @@ export default function TableProviders({ data }) {
           <Tooltip placement="top" title="Xem Chi Tiết" arrow={mergedArrow}>
             <Button
               onClick={(e) => {
-                console.log(record.id)
                 openProviderDetailHandle(record.id)
               }}
             >
@@ -112,10 +165,10 @@ export default function TableProviders({ data }) {
           <Tooltip placement="top" title="Chặn" arrow={mergedArrow}>
             <Button
               onClick={(e) => {
-                banProviderHandle(record.id, record.name)
+                banProviderHandle(record.id, record.name, record.isBanned)
               }}
             >
-              <ReduceOne theme="outline" size="24" fill="#ff0000" />
+              <ReduceOne theme="outline" size="24" fill={record.isBanned ? '#ff0000' : '#ffffff'} />
             </Button>
           </Tooltip>
         </Space>
@@ -140,10 +193,11 @@ export default function TableProviders({ data }) {
         closeFunction={closeProviderDetailHandle}
       />
       <BanModal
-        providerId={providerId}
+        isBanned={isBanedProvider}
         name={providerName}
         closeFunction={closeBanProviderHandle}
         openValue={openBanProvider}
+        excuteFunction={HandleBanFunction}
       />
     </div>
   )
