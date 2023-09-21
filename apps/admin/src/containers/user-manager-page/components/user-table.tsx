@@ -11,7 +11,7 @@ import { string } from 'zod'
 import EmptyErrorPic from '../../../../public/empty_error.png'
 import UserDetails from './user-details'
 
-import BanModal from '~/components/modal-base/ban'
+import BanModal from '~/components/modal-base/ban-modal'
 
 const tableDataMapping = (data) => {
   const list: {

@@ -3,7 +3,7 @@ import { Button, TextArea } from '@ume/ui'
 import * as React from 'react'
 
 import ModalBase from '.'
-import ComfirmModal from './comfirm'
+import ComfirmModal from './comfirm-modal'
 
 export interface IBanModalProps {
   providerId?: any

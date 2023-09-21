@@ -7,7 +7,7 @@ import { useState } from 'react'
 import { Space, Table, Tag, Tooltip } from 'antd'
 
 import ModalBase from '../modal-base'
-import BanModal from '../modal-base/ban'
+import BanModal from '../modal-base/ban-modal'
 import ProviderDetail from '../provider-detail'
 
 export default function TableProviders({ data }) {

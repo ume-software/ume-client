@@ -14,24 +14,6 @@ export interface IPersionalInfoProps {
 }
 
 export default function PersionalInfo({ data }: IPersionalInfoProps) {
-  const name = 'ABC'
-  const joinedDate = '20/07/2023'
-  const gmail = 'taoCayLamRoiDo@gmail.com'
-  const phone = '0944660278'
-  const rating = 'abc'
-  const servicedTime = 'ABC'
-  const balance = 'Abc'
-  const status = 'Bị Chặn'
-  const [switchTable, setSwitchTable] = React.useState(true)
-
-  function handleSwitchTable() {
-    if (switchTable === true) {
-      setSwitchTable(false)
-    } else {
-      setSwitchTable(true)
-    }
-  }
-
   return (
     <div className="flex-col w-auto bg-[#15151B] mt-5 px-4">
       <div className="flex w-auto px-4 border-b-2 border-[#FFFFFF80] pb-5">
