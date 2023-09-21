@@ -118,8 +118,6 @@ const UserTable = ({ userList }) => {
       title: '',
       key: 'action',
       render: (record) => {
-        // console.log(record)
-
         return (
           <>
             <div className="flex">

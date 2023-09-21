@@ -14,9 +14,6 @@ export interface IPersionalInfoProps {
 }
 
 export default function PersionalInfo({ data }: IPersionalInfoProps) {
-  // console.log(data)
-
-  //Call API from id to get Infomation or truyen zo
   const name = 'ABC'
   const joinedDate = '20/07/2023'
   const gmail = 'taoCayLamRoiDo@gmail.com'
@@ -40,7 +37,6 @@ export default function PersionalInfo({ data }: IPersionalInfoProps) {
       <div className="flex w-auto px-4 border-b-2 border-[#FFFFFF80] pb-5">
         <div className="pr-4 rounded-full">
           <Avatar src={data.avatarUrl} size={200} />
-          {/* <Image src={data.avatarUrl} width={150} height={200} alt="Personal Infor" className="rounded-full" /> */}
         </div>
         <div className="flex flex-col justify-end w-2/5 ">
           <div className="h-12 text-white">
@@ -59,35 +55,6 @@ export default function PersionalInfo({ data }: IPersionalInfoProps) {
           </div>
         </div>
       </div>
-      {/* <div className="flex justify-between mt-4">
-        <div className="h-6 text-white ">
-          Đánh giá: <span className="font-bold">{rating}</span>
-        </div>
-        <div className="h-6 text-white ">
-          Số giờ đã phục vụ: <span className="font-bold">{servicedTime}</span>
-        </div>
-        <div className="h-6 text-white ">
-          Số dư: <span className="font-bold">{balance}</span>
-        </div>
-      </div> */}
-      {/* <div className="flex h-10 mt-4">
-        <div className="flex flex-col">
-          <Button onClick={handleSwitchTable} customCSS="hover:text-gray-400">
-            Dịch vụ cung cấp
-          </Button>
-          {switchTable && <div className="border-b-2 border-[#7463F0] mx-4 mr-6"></div>}
-        </div>
-        <div className="flex flex-col w-40 ">
-          <Button onClick={handleSwitchTable} customCSS="hover:text-gray-400">
-            Lịch sử giao dịch
-          </Button>
-          {!switchTable && <div className="border-b-2 border-[#7463F0] mx-4"></div>}
-        </div>
-      </div> */}
-      {/* <div>
-        {switchTable && <ProviderServiceTable />}
-        {!switchTable && <TransactionTable />}
-      </div> */}
     </div>
   )
 }

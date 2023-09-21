@@ -104,7 +104,6 @@ const UserManager = () => {
     if (filter.isBanned !== 'all') {
       filter.isBanned == 'true' ? (query.isBanned = true) : (query.isBanned = false)
     }
-    // console.log(query)
 
     return query
   }

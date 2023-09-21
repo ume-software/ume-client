@@ -11,26 +11,7 @@ import TableProviders from '~/components/custom-table'
 import { trpc } from '~/utils/trpc'
 
 const ProviderManager = () => {
-  // const [providerList, setProviderList] = useState<FilterProviderPagingResponse | undefined>()
-
-  // const { isLoading: isUserListLoading, isFetching: isUserListFetching } = trpc.useQuery(
-  //   [
-  //     'provider.getProvider',
-  //     {
-  //       limit: '10',
-  //       page: '1',
-  //       order: '[]',
-  //     },
-  //   ],
-  //   {
-  //     onSuccess(data) {
-  //       setProviderList(data.data)
-  //     },
-  //   },
-  // )
-  // console.log(providerList)
-
-  // call api get data
+  
   const data = [
     {
       id: 1,

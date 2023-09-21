@@ -32,8 +32,6 @@ export const getUserCoinHistories = async (
   ctx,
   query: { slug: string; page: string; where?: string; order?: string },
 ) => {
-  // console.log('======================' + query.slug)
-
   try {
     const cookies = parse(ctx.req.headers.cookie ?? '')
     const response = await new AdminManageUserApi({

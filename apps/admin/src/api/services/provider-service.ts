@@ -17,7 +17,6 @@ export const getProviderService = async (query?: {
   order?: string
 }) => {
   try {
-    console.log(`-------------${getEnv().baseUmeServiceURL}------------------`)
     const response = await new ProviderApi({
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
