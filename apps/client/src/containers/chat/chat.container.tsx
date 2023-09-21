@@ -1,6 +1,7 @@
 import { ArrowLeft, FullScreen, Search } from '@icon-park/react'
 import { InputWithAffix, TextInput } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
+import { useAuth } from '~/contexts/auth'
 
 import { useContext, useEffect, useId, useState } from 'react'
 
@@ -9,7 +10,6 @@ import { ChattingChannelResponse, MemberChatChannelResponse, MessageResponse } f
 
 import ChatContent from './chat-content'
 
-import { SocketContext, UserContext } from '~/components/layouts/app-layout/app-layout'
 import { ChatSkeleton } from '~/components/skeleton-load'
 
 import { trpc } from '~/utils/trpc'
@@ -17,7 +17,7 @@ import { trpc } from '~/utils/trpc'
 const Chat = (props: { playerId?: string }) => {
   const index = useId()
   const [searchText, setSearchTextt] = useState('')
-  const { userContext, setUserContext } = useContext(UserContext)
+  const { user } = useAuth()
   const {
     data: chattingChannels,
     isLoading: loadingChattingChannels,
@@ -74,7 +74,7 @@ const Chat = (props: { playerId?: string }) => {
                     let seftMemberInfo: MemberChatChannelResponse | null = null
                     for (let index = 0; index < item.members.length; index++) {
                       const member = item.members[index]
-                      if (member.userId.toString() != userContext?.id.toString()) {
+                      if (member.userId.toString() != user?.id.toString()) {
                         otherMemberInfo.push(member)
                       } else {
                         seftMemberInfo = member
@@ -82,7 +82,7 @@ const Chat = (props: { playerId?: string }) => {
                     }
 
                     const isMe = item.messages[0]?.senderId
-                      ? item.messages[0]?.senderId.toString() == userContext?.id.toString()
+                      ? item.messages[0]?.senderId.toString() == user?.id.toString()
                       : false
 
                     const isReadedLatestMessage =

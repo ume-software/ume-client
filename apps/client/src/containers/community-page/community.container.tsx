@@ -102,7 +102,7 @@ const CommunityContainer = () => {
               </div>
               <div>
                 <div
-                  className="rounded-full w-full text-white bg-purple-700 py-2 font-semibold text-2xl hover:scale-105 text-center cursor-pointer"
+                  className="rounded-full w-full text-white bg-purple-700 py-2 font-medium text-xl hover:scale-105 text-center cursor-pointer"
                   onClick={handleCreatePost}
                 >
                   Tạo bài viết

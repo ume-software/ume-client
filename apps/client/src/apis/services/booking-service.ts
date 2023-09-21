@@ -18,7 +18,7 @@ import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 export const getListSkill = async () => {
   try {
     const response = await new SkillApi({
-      basePath: getEnv().baseBookingURL,
+      basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
     }).findAndCountAll('unlimited', '1', '["$all"]')
 
@@ -45,7 +45,7 @@ export const getProviders = async (query?: {
 }) => {
   try {
     const response = await new ProviderApi({
-      basePath: getEnv().baseBookingURL,
+      basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
     }).getListProvider(
       query?.startCost,
@@ -71,7 +71,7 @@ export const getProviders = async (query?: {
 export const getHotProviders = async () => {
   try {
     const response = await new ProviderApi({
-      basePath: getEnv().baseBookingURL,
+      basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
     }).getListHotProvider(7, '8', '1')
     return {
@@ -88,7 +88,7 @@ export const getHotProviders = async () => {
 export const getProviderBySlug = async (providerId: string) => {
   try {
     const respone = await new ProviderApi({
-      basePath: getEnv().baseBookingURL,
+      basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
     }).getProviderBySlug(providerId)
     return {
@@ -106,7 +106,7 @@ export const getCurrentBookingForProvider = async (ctx) => {
   try {
     const cookies = parse(ctx.req.headers.cookie)
     const respone = await new BookingApi({
-      basePath: getEnv().baseBookingURL,
+      basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
     }).getCurrentBookingForProvider()
@@ -125,7 +125,7 @@ export const createBooking = async (provider: BookingProviderRequest, ctx) => {
   try {
     const cookies = parse(ctx.req.headers.cookie)
     const respone = await new BookingApi({
-      basePath: getEnv().baseBookingURL,
+      basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
     }).createBooking(provider)
@@ -146,7 +146,7 @@ export const putProviderResponeBooking = async ({ bookingHistoryId, status }, ct
   try {
     const cookies = parse(ctx.req.headers.cookie)
     const respone = await new BookingApi({
-      basePath: getEnv().baseBookingURL,
+      basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
     }).bookingHandle({
@@ -168,7 +168,7 @@ export const putProviderResponeBooking = async ({ bookingHistoryId, status }, ct
 export const getFeedbackSkillById = async (feedbackSkillId) => {
   try {
     const respone = await new ProviderSkillApi({
-      basePath: getEnv().baseBookingURL,
+      basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
     }).getFeedbackByProviderSkill(feedbackSkillId, '1', '1', '["$all"]')
     return {
@@ -187,7 +187,7 @@ export const getNoticeAmount = async (ctx) => {
   try {
     const cookies = parse(ctx.req.headers.cookie)
     const respone = await new NoticeApi({
-      basePath: getEnv().baseBookingURL,
+      basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
     }).amountNewNotice()
@@ -207,7 +207,7 @@ export const getAllNotice = async (query: { page: string; limit: string }, ctx) 
   try {
     const cookies = parse(ctx.req.headers.cookie)
     const respone = await new NoticeApi({
-      basePath: getEnv().baseBookingURL,
+      basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
     }).getNotice(query.limit, query.page, '["$all"]')
@@ -227,7 +227,7 @@ export const getAblumByProviderSlug = async (query: { slug: string; page?: strin
   try {
     const cookies = parse(ctx.req.headers.cookie)
     const respone = await new ProviderApi({
-      basePath: getEnv().baseBookingURL,
+      basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
     }).getAlbumByProviderSlug(query.slug, query.limit, query.page)
@@ -247,7 +247,7 @@ export const postFeedback = async (query: { id: string; content?: string; amount
   try {
     const cookies = parse(ctx.req.headers.cookie)
     const respone = await new BookingApi({
-      basePath: getEnv().baseBookingURL,
+      basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
     }).createFeedbackBooking(query.id)

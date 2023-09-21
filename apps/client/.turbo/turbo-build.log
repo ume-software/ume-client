@@ -1,6 +1,6 @@
 $ npx next build
-info  - Loaded env from D:\FPTU\Capstone_Project\ume-client\apps\client\.env.local
-info  - Loaded env from D:\FPTU\Capstone_Project\ume-client\apps\client\.env.production
+info  - Loaded env from /Users/huyqtrieu/Desktop/Personal/ume-client/apps/client/.env.local
+info  - Loaded env from /Users/huyqtrieu/Desktop/Personal/ume-client/apps/client/.env.production
 warn  - Invalid next.config.js options detected: 
   - The root value has an unexpected property, transpilePackages, which is not in the list of allowed properties (amp, analyticsId, assetPrefix, basePath, cleanDistDir, compiler, compress, crossOrigin, devIndicators, distDir, env, eslint, excludeDefaultMomentLocales, experimental, exportPathMap, generateBuildId, generateEtags, headers, httpAgentOptions, i18n, images, onDemandEntries, optimizeFonts, output, outputFileTracing, pageExtensions, poweredByHeader, productionBrowserSourceMaps, publicRuntimeConfig, reactStrictMode, redirects, rewrites, sassOptions, serverRuntimeConfig, staticPageGenerationTimeout, swcMinify, trailingSlash, typescript, useFileSystemPublicRoutes, webpack).
 
@@ -8,7 +8,7 @@ See more info here: https://nextjs.org/docs/messages/invalid-next-config
 info  - Linting and checking validity of types...
 
 ./src/containers/community-page/components/comment-post.tsx
-72:22  Warning: The ref value 'containerRef.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'containerRef.current' to a variable inside the effect, and use that variable in the cleanup function.  react-hooks/exhaustive-deps
+73:22  Warning: The ref value 'containerRef.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'containerRef.current' to a variable inside the effect, and use that variable in the cleanup function.  react-hooks/exhaustive-deps
 
 info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules
 info  - Creating an optimized production build...
@@ -21,26 +21,26 @@ info  - Generating static pages (6/8)
 info  - Generating static pages (8/8)
 info  - Finalizing page optimization...
 
-Route (pages)                                 Size     First Load JS
-┌ λ /                                         257 B           100 kB
-├   /_app                                     0 B            99.7 kB
-├ ○ /404 (650 ms)                             6.28 kB         106 kB
-├ ○ /account-setting (501 ms)                 1.82 kB         102 kB
-├ λ /api/status                               0 B            99.7 kB
-├ λ /api/trpc/[trpc]                          0 B            99.7 kB
-├ ○ /community (511 ms)                       1.82 kB         102 kB
-├ ○ /filter-skill/[filterSkillName] (656 ms)  1.89 kB         102 kB
-├ ○ /home (474 ms)                            1.83 kB         102 kB
-├ ○ /live (463 ms)                            1.82 kB         102 kB
-├ λ /logout                                   375 B           100 kB
-├ ○ /player/[playerId] (624 ms)               1.89 kB         102 kB
-└ ○ /register-provider (503 ms)               1.82 kB         102 kB
-+ First Load JS shared by all                 107 kB
-  ├ chunks/framework-22108eb722d84e59.js      45.4 kB
-  ├ chunks/main-1549b305685c3af3.js           26.7 kB
-  ├ chunks/pages/_app-f5d714b0c5e9921b.js     25.1 kB
-  ├ chunks/webpack-e8325ad3495fd164.js        2.48 kB
-  └ css/ae9b5d6834df6a83.css                  6.99 kB
+Route (pages)                              Size     First Load JS
+┌ λ /                                      257 B           100 kB
+├   /_app                                  0 B            99.8 kB
+├ ○ /404                                   6.28 kB         106 kB
+├ ○ /account-setting                       1.82 kB         102 kB
+├ λ /api/status                            0 B            99.8 kB
+├ λ /api/trpc/[trpc]                       0 B            99.8 kB
+├ ○ /community                             1.82 kB         102 kB
+├ ○ /filter-skill/[filterSkillName]        1.89 kB         102 kB
+├ ○ /home                                  1.83 kB         102 kB
+├ ○ /live                                  1.83 kB         102 kB
+├ λ /logout                                375 B           100 kB
+├ ○ /player/[playerId]                     1.89 kB         102 kB
+└ ○ /register-provider                     1.82 kB         102 kB
++ First Load JS shared by all              107 kB
+  ├ chunks/framework-22108eb722d84e59.js   45.4 kB
+  ├ chunks/main-1549b305685c3af3.js        26.7 kB
+  ├ chunks/pages/_app-033cb49fe1085deb.js  25.3 kB
+  ├ chunks/webpack-cd7d76d63f595838.js     2.47 kB
+  └ css/92f37211144ad3ac.css               6.97 kB
 
 λ  (Server)  server-side renders at runtime (uses getInitialProps or getServerSideProps)
 ○  (Static)  automatically rendered as static HTML (uses no initial props)

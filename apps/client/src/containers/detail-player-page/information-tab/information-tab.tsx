@@ -3,6 +3,7 @@ import { CustomDrawer } from '@ume/ui'
 import coin from 'public/coin-icon.png'
 import ImgForEmpty from 'public/img-for-empty.png'
 import Chat from '~/containers/chat/chat.container'
+import { useAuth } from '~/contexts/auth'
 
 import { useContext, useState } from 'react'
 
@@ -14,13 +15,13 @@ import GamePlayed from './game'
 import PersonalInformation from './personal-information'
 
 import { LoginModal } from '~/components/header/login-modal.component'
-import { DrawerContext, SocketTokenContext, UserContext } from '~/components/layouts/app-layout/app-layout'
+import { DrawerContext, SocketTokenContext } from '~/components/layouts/app-layout/app-layout'
 
 import { trpc } from '~/utils/trpc'
 
 const InformationTab = (props: { data }) => {
   const { socketToken, setSocketToken } = useContext(SocketTokenContext)
-  const { userContext } = useContext(UserContext)
+  const { user } = useAuth()
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
   const { childrenDrawer, setChildrenDrawer } = useContext(DrawerContext)
   const [gamesToggle, setGamesToggle] = useState(false)
@@ -153,7 +154,7 @@ const InformationTab = (props: { data }) => {
                 alt="Empty Image"
               />
             </div>
-            {userContext?.id != props.data.userId ? (
+            {user?.id != props.data.userId ? (
               <div className="flex flex-col gap-5 my-10">
                 <CustomDrawer
                   customOpenBtn={`rounded-full w-full text-purple-700 border-2 border-purple-700 py-2 font-semibold text-2xl cursor-pointer hover:scale-105 text-center`}
