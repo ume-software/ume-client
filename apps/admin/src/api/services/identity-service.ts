@@ -11,10 +11,10 @@ export const getIdentityInfo = async (ctx) => {
   try {
     const cookies = parse(ctx.req.headers.cookie ?? '')
     const response = await new AuthApi({
-      basePath: getEnv().baseIdentityURL,
+      basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).getAdminInfo()
+    }).getInfo()
 
     return {
       data: response.data,
