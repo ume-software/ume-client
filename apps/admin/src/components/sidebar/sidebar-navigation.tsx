@@ -84,7 +84,7 @@ const SidebarNavigation: SidebarNavigationItem[] = [
       },
       {
         label: (
-          <Link href="/#" rel="noopener noreferrer">
+          <Link href="/provider-manager" rel="noopener noreferrer">
             Nhà cung cấp
           </Link>
         ),

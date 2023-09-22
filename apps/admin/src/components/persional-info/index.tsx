@@ -6,14 +6,22 @@ import { Avatar } from 'antd'
 import Image from 'next/image'
 
 import avataProviderTest from '../../../public/anh.jpg'
-import ProviderServiceTable from '../custom-table/table-provider-service'
-import TransactionTable from '../custom-table/transaction-histories'
 
 export interface IPersionalInfoProps {
   data: any
 }
 
 export default function PersionalInfo({ data }: IPersionalInfoProps) {
+  const [switchTable, setSwitchTable] = React.useState(true)
+
+  function handleSwitchTable() {
+    if (switchTable === true) {
+      setSwitchTable(false)
+    } else {
+      setSwitchTable(true)
+    }
+  }
+
   return (
     <div className="flex-col w-auto bg-[#15151B] mt-5 px-4">
       <div className="flex w-auto px-4 border-b-2 border-[#FFFFFF80] pb-5">
