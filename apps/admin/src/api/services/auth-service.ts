@@ -2,14 +2,14 @@ import { TRPCError } from '@trpc/server'
 import { getEnv } from '~/env'
 
 import { parse, serialize } from 'cookie'
-import { AuthApi } from 'ume-service-openapi'
+import { AdminAuthApi, AuthApi } from 'ume-service-openapi'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
 export const signinService = async ({ username, password }, ctx) => {
   try {
-    const response = await new AuthApi({
-      basePath: getEnv().baseIdentityURL,
+    const response = await new AdminAuthApi({
+      basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
     }).adminLogin({
       username: username,

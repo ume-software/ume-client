@@ -10,6 +10,6 @@ export const trpcHandler = trpcNext.createNextApiHandler({
     enabled: true,
   },
   onError({ error, type, path, input, ctx, req }) {
-    console.log(error)
+    console.error(error)
   },
 })
