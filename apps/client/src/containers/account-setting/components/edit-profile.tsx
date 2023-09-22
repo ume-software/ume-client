@@ -28,7 +28,7 @@ interface AccountSettingProps {
   latestOnline: null
   name: string | undefined
   phone: string | undefined
-  slug: object | undefined
+  slug: string | undefined
   username: string | undefined
 }
 

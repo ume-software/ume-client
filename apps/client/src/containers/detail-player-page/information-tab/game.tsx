@@ -32,9 +32,7 @@ const GamePlayed = (props: { data: ProviderSkillResponse }) => {
       postFeedback.mutate(
         { id: props.data.id!.toString(), feedback: { amountStar: feedback.rate, content: feedback.content } },
         {
-          onSuccess(data) {
-            console.log(data.success)
-          },
+          onSuccess(data) {},
         },
       )
     }
@@ -81,7 +79,6 @@ const GamePlayed = (props: { data: ProviderSkillResponse }) => {
                         </span>
 
                         <div className="flex flex-row items-center gap-2">
-                          {/* <p className="text-lg font-normal font-roboto">{feedback.amountStar}</p> */}
                           <Rate disabled defaultValue={feedback.amountStar} />
                         </div>
                       </div>
