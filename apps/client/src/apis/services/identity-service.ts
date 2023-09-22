@@ -106,7 +106,13 @@ export const updateUserProfile = async (
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).updateUserProfile()
+    }).updateUserProfile({
+      name: query.name,
+      avatarUrl: query.avatarUrl,
+      dob: query.dob,
+      gender: query.gender as 'MALE' | 'FEMALE' | 'ORTHER' | 'PRIVATE',
+      slug: query.slug,
+    })
     return {
       data: reponse.data,
       success: true,

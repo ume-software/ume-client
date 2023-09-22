@@ -10,6 +10,8 @@ import Image from 'next/legacy/image'
 import { useRouter } from 'next/router'
 import { UserInformationResponse } from 'ume-service-openapi'
 
+import { SkeletonForAccountSetting } from '~/components/skeleton-load'
+
 import { trpc } from '~/utils/trpc'
 
 interface GenderProps {
@@ -59,8 +61,15 @@ const EditProfile = () => {
     slug: undefined,
     username: undefined,
   })
+  const inforChange: boolean =
+    userSettingData?.name == settingAccount.name &&
+    userSettingData?.avatarUrl == settingAccount.avatarUrl &&
+    userSettingData?.dob == settingAccount.dob &&
+    userSettingData?.gender == settingAccount.gender.key &&
+    userSettingData?.phone == settingAccount.phone &&
+    userSettingData?.slug == settingAccount.slug
 
-  useEffect(() => {
+  const handleReturnIniState = () => {
     setSettingAccount({
       avatarUrl: userSettingData?.avatarUrl,
       dob: userSettingData?.dob,
@@ -73,6 +82,10 @@ const EditProfile = () => {
       slug: userSettingData?.slug,
       username: userSettingData?.username,
     })
+  }
+
+  useEffect(() => {
+    handleReturnIniState()
   }, [userSettingData])
 
   return (
@@ -82,15 +95,16 @@ const EditProfile = () => {
         <>
           <div className="w-full flex flex-col items-center gap-5 p-10">
             <div className="w-full flex justify-start items-center gap-24">
-              <div className="relative w-[250px] h-[300px]">
+              <div className="relative p-2">
                 <Image
-                  className="absolute rounded-lg"
-                  layout="fill"
+                  className="rounded-lg"
+                  width={250}
+                  height={300}
                   objectFit="cover"
                   src={userSettingData.avatarUrl || ImgForEmpty}
                   alt="Personal Image"
                 />
-                <div className="absolute right-2 bottom-0 p-2 bg-zinc-800 hover:bg-gray-700 rounded-full">
+                <div className="absolute right-0 bottom-0 p-2 bg-zinc-800 hover:bg-gray-700 rounded-full">
                   <Pencil theme="filled" size="25" fill="#FFFFFF" strokeLinejoin="bevel" />
                 </div>
               </div>
@@ -111,7 +125,7 @@ const EditProfile = () => {
                     <label>Đường dẫn của bạn</label>
                     <Input
                       className={`${
-                        settingAccount.name == userSettingData.name ? 'bg-zinc-800' : 'bg-gray-700'
+                        settingAccount.slug == userSettingData.slug ? 'bg-zinc-800' : 'bg-gray-700'
                       } border border-white`}
                       placeholder="nguyen_van_a"
                       value={settingAccount.slug}
@@ -222,17 +236,26 @@ const EditProfile = () => {
               </div>
             </div>
             <div className="flex gap-10 mt-20">
-              <Button isDisabled={false} isOutlinedButton={true} customCSS="w-[100px] text-xl p-2 hover:scale-105">
-                Hủy
-              </Button>
-              <Button isDisabled={true} isOutlinedButton={true} customCSS="w-[100px] text-xl p-2 hover:scale-105">
-                Thay đổi
-              </Button>
+              {!inforChange && (
+                <>
+                  <Button
+                    isDisabled={false}
+                    isOutlinedButton={true}
+                    customCSS="w-[100px] text-xl p-2 hover:scale-105"
+                    onClick={() => handleReturnIniState()}
+                  >
+                    Hủy
+                  </Button>
+                  <Button isDisabled={true} isOutlinedButton={true} customCSS="w-[100px] text-xl p-2 hover:scale-105">
+                    Thay đổi
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </>
       ) : (
-        ''
+        <SkeletonForAccountSetting />
       )}
     </div>
   )

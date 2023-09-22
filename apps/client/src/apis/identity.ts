@@ -1,7 +1,13 @@
 import { z } from 'zod'
 
 import { createRouter } from './configurations'
-import { getAccountBalance, getIdentityInfo, getUserBySlug, requestRecharge } from './services/identity-service'
+import {
+  getAccountBalance,
+  getIdentityInfo,
+  getUserBySlug,
+  requestRecharge,
+  updateUserProfile,
+} from './services/identity-service'
 
 export const identityRouter = createRouter()
   .query('identityInfo', {
@@ -27,5 +33,17 @@ export const identityRouter = createRouter()
     input: z.string(),
     resolve: async ({ input, ctx }) => {
       return await getUserBySlug(input, ctx)
+    },
+  })
+  .mutation('updateUserProfile', {
+    input: z.object({
+      name: z.string(),
+      slug: z.string(),
+      gender: z.string(),
+      dob: z.string(),
+      avatarUrl: z.string(),
+    }),
+    resolve: async ({ input, ctx }) => {
+      return await updateUserProfile(input, ctx)
     },
   })
