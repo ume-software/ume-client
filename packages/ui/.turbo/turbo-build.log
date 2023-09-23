@@ -5,16 +5,16 @@ CLI tsup v6.7.0
 CLI Target: es6
 ESM Build start
 CJS Build start
-CJS dist/index.js  27.18 KB
 CJS dist/index.css 73.00 B
-CJS ⚡️ Build success in 116ms
-ESM dist/index.css 73.00 B
+CJS dist/index.js  27.18 KB
+CJS ⚡️ Build success in 133ms
 ESM dist/index.mjs 24.53 KB
-ESM ⚡️ Build success in 116ms
+ESM dist/index.css 73.00 B
+ESM ⚡️ Build success in 134ms
 DTS Build start
-DTS ⚡️ Build success in 2092ms
+DTS ⚡️ Build success in 2506ms
 DTS dist/index.d.ts 6.87 KB
 
 Rebuilding...
 
-Done in 107ms.
+Done in 105ms.
