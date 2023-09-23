@@ -30,7 +30,9 @@ export const Sidebar = (props) => {
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
   const [showMessage, setShowMessage] = useState(false)
   const utils = trpc.useContext()
-  const { data: chattingChannels } = trpc.useQuery(['chatting.getListChattingChannels', { limit: '5', page: '1' }])
+  const { data: chattingChannels } = trpc.useQuery(['chatting.getListChattingChannels', { limit: '5', page: '1' }], {
+    enabled: isAuthenticated,
+  })
 
   useEffect(() => {
     if (isAuthenticated) {

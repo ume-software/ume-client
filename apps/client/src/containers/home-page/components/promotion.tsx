@@ -28,7 +28,7 @@ export const Promotion = () => {
     cacheTime: 0,
     refetchOnMount: true,
     onSuccess(data) {
-      setListHotProvider((prevData) => [...(prevData ?? []), ...(data?.data?.row ?? [])])
+      setListHotProvider(data?.data?.row)
     },
   })
 
@@ -86,7 +86,7 @@ export const Promotion = () => {
                 {listHotProvider?.map((provider) => (
                   <Link
                     key={provider?.id}
-                    href={`/player/${provider?.slug ?? provider?.id}?tab=information&serviceId=${provider.skillid}`}
+                    href={`/player/${provider?.slug ?? provider?.id}?tab=information&serviceId=${provider.serviceId}`}
                   >
                     <PromoteCard data={provider} />
                   </Link>
@@ -99,7 +99,7 @@ export const Promotion = () => {
                 {listProvider?.map((provider) => (
                   <Link
                     key={provider?.id}
-                    href={`/player/${provider?.slug ?? provider?.id}?tab=information&serviceId=${provider.skillid}`}
+                    href={`/player/${provider?.slug ?? provider?.id}?tab=information&serviceId=${provider.serviceId}`}
                   >
                     <PromoteCard data={provider} />
                   </Link>

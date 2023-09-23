@@ -34,7 +34,7 @@ const convertArrayObjectToObject = (input: Array<any>, key: string = '_id') => {
   }, {})
 }
 const ChatContent = (props: { channel: ChattingChannelResponse }) => {
-  const index = useId()
+  // const index = useId()
   const [messageInput, setMessageInput] = useState('')
   const { socketClientEmit } = useContext(SocketClientEmit)
   const { socketContext } = useContext(SocketContext)
@@ -106,7 +106,7 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
               )}
             </Link>
             <div className="flex gap-2">
-              {actionButtons.map((item) => (
+              {actionButtons.map((item, index) => (
                 <div
                   key={index}
                   className="p-2 bg-[#413F4D] rounded-full cursor-pointer hover:bg-gray-500 active:bg-gray-400"

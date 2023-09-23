@@ -31,6 +31,7 @@ export const bookingRouter = createRouter()
         skillId: z.optional(z.string()),
         name: z.optional(z.string()),
         gender: z.optional(z.string()),
+        status: z.optional(z.string()),
         limit: z.optional(z.string()),
         page: z.optional(z.string()),
         order: z.optional(z.string()),
@@ -58,7 +59,7 @@ export const bookingRouter = createRouter()
   })
   .mutation('createBooking', {
     input: z.object({
-      providerSkillId: z.string(),
+      providerServiceId: z.string(),
       bookingPeriod: z.number(),
       voucherIds: z.array(z.string()).optional(),
     }),

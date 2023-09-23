@@ -15,7 +15,7 @@ import { ChatSkeleton } from '~/components/skeleton-load'
 import { trpc } from '~/utils/trpc'
 
 const Chat = (props: { playerId?: string }) => {
-  const index = useId()
+  // const index = useId()
   const [searchText, setSearchTextt] = useState('')
   const { user } = useAuth()
   const {

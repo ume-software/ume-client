@@ -2,7 +2,7 @@ import { TRPCError } from '@trpc/server'
 import { getEnv } from '~/env'
 
 import { parse } from 'cookie'
-import { AudioApi, CommentPostRequest, CreateNewPostRequest, DonateApi, ImageApi, PostApi } from 'ume-service-openapi'
+import { AudioApi, CommentPostRequest, CreateNewPostRequest, DonationApi, PostApi } from 'ume-service-openapi'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
@@ -198,10 +198,10 @@ export const createNewPost = async (input: CreateNewPostRequest, ctx) => {
 
 export const donateProviderTop = async (input: string) => {
   try {
-    const response = await new DonateApi({
+    const response = await new DonationApi({
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
-    }).topDonateProvider(input as '1Y' | '1M' | '1W', 3)
+    }).topDonationDonor(input as '1Y' | '1M' | '1W', 3)
     return {
       data: response.data,
       success: true,
@@ -216,10 +216,10 @@ export const donateProviderTop = async (input: string) => {
 
 export const donateUserTop = async (input) => {
   try {
-    const response = await new DonateApi({
+    const response = await new DonationApi({
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
-    }).topUserDonate(input as '1Y' | '1M' | '1W', 3)
+    }).topDonationRecipient(input as '1Y' | '1M' | '1W', 3)
     return {
       data: response.data,
       success: true,

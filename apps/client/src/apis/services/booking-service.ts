@@ -5,12 +5,11 @@ import { parse } from 'cookie'
 import {
   BookingApi,
   BookingProviderRequest,
-  FeedbackBookingRequest,
-  ImageApi,
   NoticeApi,
   ProviderApi,
-  ProviderSkillApi,
-  SkillApi,
+  ProviderServiceApi,
+  ServiceApi,
+  UserApi,
 } from 'ume-service-openapi'
 import { optional } from 'zod'
 
@@ -18,7 +17,7 @@ import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
 export const getListSkill = async () => {
   try {
-    const response = await new SkillApi({
+    const response = await new ServiceApi({
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
     }).findAndCountAll('unlimited', '1', '["$all"]')
@@ -37,9 +36,10 @@ export const getListSkill = async () => {
 export const getProviders = async (query?: {
   startCost?: number
   endCost?: number
-  skillId?: string
+  serviceId?: string
   name?: string
   gender?: string
+  status?: string
   limit?: string
   page?: string
   order?: string
@@ -51,9 +51,10 @@ export const getProviders = async (query?: {
     }).getListProvider(
       query?.startCost,
       query?.endCost,
-      query?.skillId,
+      query?.serviceId,
       query?.name,
-      query?.gender as 'MALE' | 'FEMALE' | 'ORTHER' | 'PRIVATE',
+      query?.gender as 'MALE' | 'FEMALE' | 'OTHER' | 'PRIVATE',
+      query?.status as 'ACTIVATED' | 'UN_ACTIVATED' | 'STOPPED_ACCEPTING_BOOKING' | 'BUSY',
       query?.limit,
       query?.page,
       query?.order,
@@ -168,10 +169,10 @@ export const putProviderResponeBooking = async ({ bookingHistoryId, status }, ct
 
 export const getFeedbackSkillById = async (feedbackSkillId) => {
   try {
-    const respone = await new ProviderSkillApi({
+    const respone = await new ProviderServiceApi({
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
-    }).getFeedbackByProviderSkill(feedbackSkillId, '1', '1', '["$all"]')
+    }).getFeedbackByProviderService(feedbackSkillId, '1', '1', '["$all"]')
     return {
       data: respone.data,
       success: true,
@@ -227,11 +228,11 @@ export const getAllNotice = async (query: { page: string; limit: string }, ctx) 
 export const getAblumByProviderSlug = async (query: { slug: string; page?: string; limit?: string }, ctx) => {
   try {
     const cookies = parse(ctx.req.headers.cookie)
-    const respone = await new ProviderApi({
+    const respone = await new UserApi({
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).getAlbumByProviderSlug(query.slug, query.limit, query.page)
+    }).getAlbumByUserSlug(query.slug, query.limit, query.page)
     return {
       data: respone.data,
       success: true,

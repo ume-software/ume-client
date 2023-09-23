@@ -50,7 +50,7 @@ const genderData: GenderProps[] = [
 const FilterContainer = (props) => {
   const router = useRouter()
   const skillId = router.query.serviceId
-  const limit = '20'
+  const limit = undefined
   const containerRef = useRef<HTMLDivElement>(null)
   const [scrollPosition, setScrollPosition] = useState(0)
   const [listProviderFilter, setListProviderFilter] = useState<FilterProviderPagingResponse['row']>([])
@@ -61,11 +61,7 @@ const FilterContainer = (props) => {
   const [listSkils, setListSkils] = useState<any>([])
   const [priceRange, setPriceRange] = useState<[number, number]>([min, max])
 
-  const {
-    data: skills,
-    isLoading: loadingSkill,
-    isFetching,
-  } = trpc.useQuery(['booking.getListSkill'], {
+  const { isLoading: loadingSkill, isFetching } = trpc.useQuery(['booking.getListSkill'], {
     onSuccess(data) {
       setListSkils(data?.data?.row)
     },
@@ -296,7 +292,7 @@ const FilterContainer = (props) => {
               listProviderFilter?.map((provider) => (
                 <Link
                   key={provider?.id}
-                  href={`/player/${provider?.slug ?? provider?.id}?tab=information&serviceId=${provider.skillid}`}
+                  href={`/player/${provider?.slug ?? provider?.id}?tab=information&serviceId=${provider.serviceId}`}
                 >
                   <PromoteCard data={provider} />
                 </Link>

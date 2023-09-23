@@ -1,5 +1,5 @@
 import { Down, Gamepad, People, Right } from '@icon-park/react'
-import { CustomDrawer } from '@ume/ui'
+import { Button, CustomDrawer } from '@ume/ui'
 import coin from 'public/coin-icon.png'
 import ImgForEmpty from 'public/img-for-empty.png'
 import Chat from '~/containers/chat/chat.container'
@@ -10,7 +10,7 @@ import { useContext, useEffect, useState } from 'react'
 import { notification } from 'antd'
 import Image from 'next/legacy/image'
 import { useRouter } from 'next/router'
-import { GetProfileProviderBySlugResponse, ProviderSkillResponse } from 'ume-service-openapi'
+import { GetProfileProviderBySlugResponse } from 'ume-service-openapi'
 
 import BookingPlayer from '../booking/booking-player.container'
 import GamePlayed from './game'
@@ -18,6 +18,7 @@ import PersonalInformation from './personal-information'
 
 import { LoginModal } from '~/components/header/login-modal.component'
 import { DrawerContext } from '~/components/layouts/app-layout/app-layout'
+import { ChatSkeleton } from '~/components/skeleton-load'
 
 import { trpc } from '~/utils/trpc'
 
@@ -35,9 +36,11 @@ const InformationTab = (props: { data: GetProfileProviderBySlugResponse }) => {
 
   const createNewChatChannel = trpc.useMutation(['chatting.createNewChatChannel'])
 
-  const selectedSkill = props.data?.providerSkills!.find(
-    (providerSkill) => gameSelected == providerSkill.skillId || gameSelected == providerSkill.skill?.slug,
+  const selectedSkill = props.data.providerServices!.find(
+    (providerSkill) => gameSelected == providerSkill.service || gameSelected == providerSkill.service?.slug,
   )!
+
+  console.log(props.data)
 
   const handleGamesToggle = () => {
     setGamesToggle(!gamesToggle)
@@ -60,6 +63,11 @@ const InformationTab = (props: { data: GetProfileProviderBySlugResponse }) => {
 
   const handleChatOpen = async () => {
     if (isAuthenticated) {
+      setChildrenDrawer(
+        <>
+          <ChatSkeleton />
+        </>,
+      )
       try {
         await createNewChatChannel.mutate(
           {
@@ -129,18 +137,20 @@ const InformationTab = (props: { data: GetProfileProviderBySlugResponse }) => {
                       : 'hidden'
                   }`}
                 >
-                  {props.data?.providerSkills?.map((item) => (
+                  {props.data?.providerServices?.map((item) => (
                     <div
                       key={item.id}
                       className={`flex lg:flex-row flex-col items-center group gap-3 hover:bg-gray-700 p-1 rounded-xl ${
-                        gameSelected == item.skillId || gameSelected == item.skill?.slug ? 'bg-gray-700' : ''
+                        gameSelected && (gameSelected == item.serviceId || gameSelected == item.service?.slug)
+                          ? 'bg-gray-700'
+                          : ''
                       }`}
-                      onClick={() => handleSelected(item.skillId)}
+                      onClick={() => handleSelected(item.serviceId)}
                     >
-                      <Image src={item?.skill?.imageUrl || ImgForEmpty} alt="Game Image" width={60} height={80} />
+                      <Image src={item?.service?.imageUrl || ImgForEmpty} alt="Game Image" width={60} height={80} />
                       <div className="max-w-[150px] min-w-[150px]">
                         <p className="font-semibold text-lg text-white z-[4] truncate group-hover:w-fit">
-                          {item?.skill?.name}
+                          {item?.service?.name}
                         </p>
                         <div className="flex items-center">
                           <Image src={coin} width={20} height={20} alt="coin" />
@@ -180,7 +190,11 @@ const InformationTab = (props: { data: GetProfileProviderBySlugResponse }) => {
               <div className="flex flex-col gap-5 my-10">
                 <CustomDrawer
                   customOpenBtn={`rounded-full w-full text-purple-700 border-2 border-purple-700 py-2 font-semibold text-2xl cursor-pointer hover:scale-105 text-center`}
-                  openBtn={<div onClick={handleChatOpen}>Chat</div>}
+                  openBtn={
+                    <Button isLoading={createNewChatChannel.isLoading} onClick={handleChatOpen}>
+                      Chat
+                    </Button>
+                  }
                   token={isAuthenticated}
                 >
                   {childrenDrawer}
@@ -189,7 +203,7 @@ const InformationTab = (props: { data: GetProfileProviderBySlugResponse }) => {
                 <CustomDrawer
                   drawerTitle="Xác nhận đặt"
                   customOpenBtn="rounded-full w-full text-white bg-purple-700 py-2 font-semibold text-2xl cursor-pointer hover:scale-105 text-center"
-                  openBtn={<div onClick={handleOrderOpen}>Order</div>}
+                  openBtn={<Button onClick={handleOrderOpen}>Order</Button>}
                   token={isAuthenticated}
                 >
                   {childrenDrawer}
