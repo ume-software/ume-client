@@ -7,9 +7,9 @@ import {
   getAblumByProviderSlug,
   getAllNotice,
   getCurrentBookingForProvider,
-  getFeedbackSkillById,
+  getFeedbackServiceById,
   getHotProviders,
-  getListSkill,
+  getListService,
   getNoticeAmount,
   getProviderBySlug,
   getProviders,
@@ -17,9 +17,9 @@ import {
 } from './services/booking-service'
 
 export const bookingRouter = createRouter()
-  .query('getListSkill', {
+  .query('getListService', {
     resolve: async ({ ctx }) => {
-      return await getListSkill()
+      return await getListService()
     },
   })
   .query('getProviders', {
@@ -27,7 +27,7 @@ export const bookingRouter = createRouter()
       z.object({
         startCost: z.optional(z.number()),
         endCost: z.optional(z.number()),
-        skillId: z.optional(z.string()),
+        serviceId: z.optional(z.string()),
         name: z.optional(z.string()),
         gender: z.optional(z.string()),
         limit: z.optional(z.string()),
@@ -57,7 +57,7 @@ export const bookingRouter = createRouter()
   })
   .mutation('createBooking', {
     input: z.object({
-      providerSkillId: z.string(),
+      providerServiceId: z.string(),
       bookingPeriod: z.number(),
       voucherIds: z.array(z.string()).optional(),
     }),
@@ -74,10 +74,10 @@ export const bookingRouter = createRouter()
       return await putProviderResponeBooking(input, ctx)
     },
   })
-  .query('getFeedbackSkillById', {
+  .query('getFeedbackServiceById', {
     input: z.string(),
     resolve: async ({ input }) => {
-      return await getFeedbackSkillById(input)
+      return await getFeedbackServiceById(input)
     },
   })
   .query('getNoticeAmount', {

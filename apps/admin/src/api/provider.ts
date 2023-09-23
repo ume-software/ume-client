@@ -7,7 +7,7 @@ export const providerRouter = createRouter().query('getProvider', {
   input: z.object({
     startCost: z.optional(z.number()),
     endCost: z.optional(z.number()),
-    skillId: z.optional(z.string()),
+    serviceId: z.optional(z.string()),
     name: z.optional(z.string()),
     gender: z.optional(z.string()),
     limit: z.string(),

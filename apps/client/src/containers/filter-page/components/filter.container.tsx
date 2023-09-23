@@ -45,7 +45,7 @@ const genderData = [
 
 const FilterContainer = (props) => {
   const router = useRouter()
-  const skillId = router.query.skillId
+  const serviceId = router.query.serviceId
   const limit = '20'
   const containerRef = useRef<HTMLDivElement>(null)
   const [scrollPosition, setScrollPosition] = useState(0)
@@ -58,10 +58,10 @@ const FilterContainer = (props) => {
   const [priceRange, setPriceRange] = useState<[number, number]>([min, max])
 
   const {
-    data: skills,
-    isLoading: loadingSkill,
+    data: services,
+    isLoading: loadingService,
     isFetching,
-  } = trpc.useQuery(['booking.getListSkill'], {
+  } = trpc.useQuery(['booking.getListService'], {
     onSuccess(data) {
       setListSkils(data?.data?.row)
     },
@@ -78,7 +78,7 @@ const FilterContainer = (props) => {
       {
         startCost: priceRange[0],
         endCost: priceRange[1],
-        skillId: String(skillId),
+        serviceId: String(serviceId),
         name: searchText,
         gender: gender,
         limit: limit,
@@ -142,7 +142,7 @@ const FilterContainer = (props) => {
       setListProviderFilter(data.data?.data.row)
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [priceRange, skillId, searchText, gender])
+  }, [priceRange, serviceId, searchText, gender])
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
@@ -153,8 +153,8 @@ const FilterContainer = (props) => {
   return (
     <div className="min-h-screen mx-10 text-white">
       <div className="flex items-center justify-between mx-5 my-5">
-        <p className="text-5xl font-bold">{props?.skillName}</p>
-        <CategoryDrawer data={listSkils} loadingSkill={loadingSkill} />
+        <p className="text-5xl font-bold">{props?.serviceName}</p>
+        <CategoryDrawer data={listSkils} loadingService={loadingService} />
       </div>
       <div className="flex items-center justify-between mx-5">
         <div className="flex gap-5 my-8 items-center">
@@ -290,7 +290,10 @@ const FilterContainer = (props) => {
           <div ref={containerRef} className="grid gap-6 mt-2 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1">
             {listProviderFilter?.length != 0 ? (
               listProviderFilter?.map((provider) => (
-                <Link key={provider?.id} href={`/player/${provider?.slug || provider?.id}?service=${provider.skillid}`}>
+                <Link
+                  key={provider?.id}
+                  href={`/player/${provider?.slug || provider?.id}?service=${provider.serviceId}`}
+                >
                   <PromoteCard data={provider} />
                 </Link>
               ))

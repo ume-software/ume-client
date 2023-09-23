@@ -9,7 +9,7 @@ import { trpc } from '~/utils/trpc'
 
 const Category = () => {
   const [listSkils, setListSkils] = useState<any>([])
-  const { data: skills, isLoading: loadingSkill } = trpc.useQuery(['booking.getListSkill'], {
+  const { data: services, isLoading: loadingService } = trpc.useQuery(['booking.getListService'], {
     refetchOnWindowFocus: false,
     refetchOnReconnect: 'always',
     cacheTime: 0,
@@ -21,19 +21,19 @@ const Category = () => {
 
   return (
     <>
-      {loadingSkill ? (
+      {loadingService ? (
         <>
           <SliderSkeletonLoader />
         </>
       ) : (
         <>
-          {skills && (
+          {services && (
             <div className="flex-col items-center w-full ">
               <div className="grid grid-cols-2 my-5 text-white">
                 <h2 className="block text-3xl font-bold">Dịch vụ</h2>
-                <CategoryDrawer data={listSkils} loadingSkill={loadingSkill} />
+                <CategoryDrawer data={listSkils} loadingService={loadingService} />
               </div>
-              <CategorySlide skills={listSkils} />
+              <CategorySlide services={listSkils} />
             </div>
           )}
         </>

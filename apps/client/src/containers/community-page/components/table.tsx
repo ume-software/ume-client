@@ -4,24 +4,19 @@ import medalTop2 from 'public/second-place-medal.png'
 import medalTop3 from 'public/third-place-medal.png'
 
 import Image from 'next/legacy/image'
-import {
-  TopDonateProviderPagingResponse,
-  TopDonateProviderResponse,
-  TopUserDonatePagingResponse,
-  TopUserDonateResponse,
-} from 'ume-service-openapi'
+import { TopDonationDonorPagingResponse, TopDonationRecipientPagingResponse } from 'ume-service-openapi'
 
 import { TableSkeletonLoader } from '~/components/skeleton-load'
 
 const Table = (props: {
   type: string
-  data: TopUserDonatePagingResponse['row'] | TopDonateProviderPagingResponse['row'] | undefined
-  loadingUserDonate?: boolean
+  data: TopDonationDonorPagingResponse['row'] | TopDonationRecipientPagingResponse['row'] | undefined
+  loadingUserDonation?: boolean
 }) => {
   return (
     <>
       <div className="w-[80%] bg-zinc-800 rounded-xl p-3 animate-running-border">
-        {!props.loadingUserDonate ? (
+        {!props.loadingUserDonation ? (
           <>
             <div>
               {props?.data?.length != 0 ? (
@@ -51,7 +46,7 @@ const Table = (props: {
                                   layout="fill"
                                   objectFit="cover"
                                   src={data?.user?.avatarUrl || data?.provider?.avatarUrl}
-                                  alt="Donater Image"
+                                  alt="Donationr Image"
                                 />
                               </div>
                               <p className="truncate">{data?.user?.name || data?.provider?.name}</p>
@@ -59,7 +54,7 @@ const Table = (props: {
                           </td>
                           <td className="py-2">
                             <div className="flex items-center justify-center">
-                              {Math.floor(data?.totalCoinDonate) || Math.floor(data?.actualReceivingAmount)}
+                              {Math.floor(data?.totalCoinDonation) || Math.floor(data?.actualReceivingAmount)}
                               <Image src={coin} width={40} height={40} alt="coin" />
                             </div>
                           </td>

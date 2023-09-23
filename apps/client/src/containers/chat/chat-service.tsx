@@ -10,12 +10,12 @@ const ChatService = (props: { serviceData }) => {
               className="absolute rounded-lg"
               layout="fill"
               objectFit="cover"
-              src={props.serviceData?.gameImg || props.serviceData?.skill?.imageUrl}
+              src={props.serviceData?.gameImg || props.serviceData?.service?.imageUrl}
               alt="Game Image"
             />
           </div>
           <div className="flex flex-col">
-            <span className="text-white  text-xl font-semibold">{props.serviceData?.skill?.name}</span>
+            <span className="text-white  text-xl font-semibold">{props.serviceData?.service?.name}</span>
             <span className="text-white  text-xl font-semibold opacity-30">Coin {props.serviceData?.cost} / Game</span>
           </div>
         </div>
