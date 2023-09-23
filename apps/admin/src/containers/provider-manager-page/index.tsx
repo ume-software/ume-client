@@ -1,17 +1,13 @@
 import { Search } from '@icon-park/react'
 import { Button, Input } from '@ume/ui'
 
-import React, { useState } from 'react'
+import React from 'react'
 
 import Head from 'next/head'
-import { FilterProviderPagingResponse } from 'ume-service-openapi'
 
 import TableProviders from '~/components/custom-table'
 
-import { trpc } from '~/utils/trpc'
-
 const ProviderManager = () => {
-  
   const data = [
     {
       id: 1,

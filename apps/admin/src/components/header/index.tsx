@@ -1,9 +1,6 @@
-import { MenuUnfoldOne, Remind } from '@icon-park/react'
+import { Remind } from '@icon-park/react'
 
-import { Avatar, Badge, Space, Typography } from 'antd'
-import Image from 'next/image'
-
-import WhiteLogo from '../../../public/ico/ume-white.ico'
+import { Avatar, Badge, Space } from 'antd'
 
 export const Header = () => {
   return (
