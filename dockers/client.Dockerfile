@@ -13,7 +13,7 @@ RUN yarn global add turbo
 WORKDIR /app
 
 # Install app dependencies
-COPY  ["yarn.lock", "package.json", "./"] 
+COPY  ["yarn.lock", "package.json", "./"]
 
 # Copy source files
 COPY . .
@@ -23,4 +23,4 @@ RUN yarn install
 
 EXPOSE 3000
 
-CMD ["yarn", "dev"]
+CMD ["yarn", "build:client"]
