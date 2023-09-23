@@ -8,7 +8,7 @@ import ComfirmModal from './comfirm-modal'
 export interface IBanModalProps {
   providerId?: any
   name?: any
-  closeFunction: any | undefined
+  closeFunction: any
   openValue: boolean
   className?: any
 }

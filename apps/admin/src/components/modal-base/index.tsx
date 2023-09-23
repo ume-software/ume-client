@@ -3,7 +3,7 @@ import * as React from 'react'
 import { Modal } from 'antd'
 
 export interface IModalBaseProps {
-  closeFunction: any | undefined
+  closeFunction: any
   openValue: boolean
   children?: React.ReactNode
   titleValue?: string

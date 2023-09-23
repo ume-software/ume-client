@@ -1,13 +1,6 @@
-import { Button } from '@ume/ui'
-
 import * as React from 'react'
 
 import { Avatar } from 'antd'
-import Image from 'next/image'
-
-import avataProviderTest from '../../../public/anh.jpg'
-import ProviderServiceTable from '../custom-table/table-provider-service'
-import TransactionTable from '../custom-table/transaction-histories'
 
 export interface IPersionalInfoProps {
   data: any

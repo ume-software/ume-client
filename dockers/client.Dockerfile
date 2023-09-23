@@ -24,4 +24,4 @@ RUN yarn install
 
 EXPOSE 3000
 
-CMD ["yarn", "build:client"]
+CMD ["yarn", "dev:client"]

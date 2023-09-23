@@ -18,19 +18,18 @@ export const Promotion = () => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [scrollPosition, setScrollPosition] = useState(0)
 
-  const {
-    data: hotProviders,
-    isLoading: loadingHotProvider,
-    isFetching: isFetchingHotProviders,
-  } = trpc.useQuery(['booking.getHotProviders'], {
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: 'always',
-    cacheTime: 0,
-    refetchOnMount: true,
-    onSuccess(data) {
-      setListHotProvider((prevData) => [...(prevData ?? []), ...(data?.data?.row ?? [])])
+  const { isLoading: loadingHotProvider, isFetching: isFetchingHotProviders } = trpc.useQuery(
+    ['booking.getHotProviders'],
+    {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: 'always',
+      cacheTime: 0,
+      refetchOnMount: true,
+      onSuccess(data) {
+        setListHotProvider((prevData) => [...(prevData ?? []), ...(data?.data?.row ?? [])])
+      },
     },
-  })
+  )
 
   const {
     data: providers,

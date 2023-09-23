@@ -1,6 +1,5 @@
 import { setItem } from '~/hooks/localHooks'
 
-import { log } from 'console'
 import { useRouter } from 'next/router'
 
 import { Header } from '../header'
@@ -12,7 +11,7 @@ interface ILayout {
   children: React.ReactNode
 }
 const Layout = ({ children }: ILayout) => {
-  const response = trpc.useQuery(['identity.adminInfo'], {
+  trpc.useQuery(['identity.adminInfo'], {
     onSuccess(data) {
       setItem('user', data.data)
     },
