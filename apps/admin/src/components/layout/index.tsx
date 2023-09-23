@@ -1,5 +1,8 @@
 import { setItem } from '~/hooks/localHooks'
 
+import { log } from 'console'
+import { useRouter } from 'next/router'
+
 import { Header } from '../header'
 import Sidebar from '../sidebar'
 
@@ -18,13 +21,19 @@ const Layout = ({ children }: ILayout) => {
     },
   })
 
+  const router = useRouter()
+  if (router.pathname == '/signin') {
+    return <>{children}</>
+  }
   return (
     <>
-      <div>
+      <div className="max-w-full max-h-full">
         <Header />
-        <Sidebar />
       </div>
-      <div className="mt-12 ml-20">{children}</div>
+      <div>
+        <Sidebar />
+        <div className="mt-16 pl-[23%] w-full px-20 py-5 h-full bg-[#15151b] text-white">{children}</div>
+      </div>
     </>
   )
 }
