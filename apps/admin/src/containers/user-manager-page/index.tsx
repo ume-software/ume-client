@@ -1,11 +1,10 @@
-import { Female, Left, Male, More, Right, Search } from '@icon-park/react'
-import { Button, Input } from '@ume/ui'
+import { Left, Right, Search } from '@icon-park/react'
+import { Input } from '@ume/ui'
 
-import React, { ReactNode, useState } from 'react'
+import React, { useState } from 'react'
 
-import { Badge, Dropdown, Pagination, Space, Tag } from 'antd'
+import { Pagination, Tag } from 'antd'
 import Head from 'next/head'
-import { title } from 'process'
 import { UserInformationPagingResponse } from 'ume-service-openapi'
 
 import UserTable from './components/user-table'
@@ -108,11 +107,11 @@ const UserManager = () => {
     return query
   }
 
-  const { isLoading: isUserListLoading, isFetching: isUserListFetching } = trpc.useQuery(
+  trpc.useQuery(
     ['user.getUserList', { page: page.toString(), where: JSON.stringify(generateQuery()), order: undefined }],
     {
       onSuccess(data) {
-        setUserList(data.data)
+        setUserList(data?.data as any)
       },
     },
   )

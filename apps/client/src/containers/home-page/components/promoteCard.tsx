@@ -44,7 +44,7 @@ const PromoteCard = (props: { data: FilterProviderResponse }) => {
         <div className="w-[140px] h-[140px] relative -translate-y-6">
           <Image
             className="absolute duration-500 ease-in-out rounded-2xl group-hover:scale-110 object-cover"
-            src={props?.data?.avatarurl || ''}
+            src={props?.data?.avatarUrl || ''}
             alt="image_provider"
             layout="fill"
             loading="lazy"
@@ -59,12 +59,12 @@ const PromoteCard = (props: { data: FilterProviderResponse }) => {
           ) : (
             <PlayOne theme="outline" size="30" fill="#FFFFFF" className="inline-block m-auto" />
           )}
-          <audio ref={audioRef} src={props?.data?.voiceurl} />
+          <audio ref={audioRef} src={props?.data?.voiceUrl} />
         </button>
       </div>
       <div className="flex flex-col gap-3 pr-5">
         <div className="w-fit flex items-center gap-3 bg-purple-600 p-2 mb-2 rounded-md text-white">
-          <p className="text-md font-semibold">{props?.data?.skillname}</p>
+          <p className="text-md font-semibold">{props?.data?.serviceName}</p>
           <div className="flex items-center gap-1 text-lg font-bold">
             <Star theme="filled" size="15" fill="#FFBB00" strokeLinejoin="bevel" />{' '}
             {(Number(props?.data?.star) || 0).toFixed(1)}

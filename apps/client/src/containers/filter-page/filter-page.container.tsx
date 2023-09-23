@@ -8,10 +8,10 @@ const FilterPage = (props) => {
   return (
     <>
       <Head>
-        <title>UME | {props?.skillName}</title>
+        <title>UME | {props?.serviceName}</title>
       </Head>
       <AppLayout {...props}>
-        <FilterContainer skillName={props?.skillName} />
+        <FilterContainer serviceName={props?.serviceName} />
       </AppLayout>
     </>
   )

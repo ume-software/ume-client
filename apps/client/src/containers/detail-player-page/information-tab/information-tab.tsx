@@ -107,7 +107,7 @@ const InformationTab = (props: { data }) => {
                       : 'hidden'
                   }`}
                 >
-                  {props.data.providerSkills?.map((item, index) => (
+                  {props.data.providerServices?.map((item, index) => (
                     <div
                       key={index}
                       className={`flex lg:flex-row flex-col items-center group gap-3 hover:bg-gray-700 p-1 rounded-xl ${
@@ -115,10 +115,10 @@ const InformationTab = (props: { data }) => {
                       }`}
                       onClick={() => handleSelected(index)}
                     >
-                      <Image src={item.skill.imageUrl} alt="Game Image" width={60} height={80} />
+                      <Image src={item.service.imageUrl} alt="Game Image" width={60} height={80} />
                       <div className="max-w-[150px] min-w-[150px]">
                         <p className="font-semibold text-lg text-white z-[4] truncate group-hover:w-fit">
-                          {item.skill.name}
+                          {item.service.name}
                         </p>
                         <div className="flex items-center">
                           <Image src={coin} width={20} height={20} alt="coin" />
@@ -139,7 +139,7 @@ const InformationTab = (props: { data }) => {
             {gameSelected < 0 ? (
               <PersonalInformation key={props.data.id} data={props.data} />
             ) : (
-              <GamePlayed data={props.data.providerSkills[gameSelected]} />
+              <GamePlayed data={props.data.providerServices[gameSelected]} />
             )}
           </div>
         </div>

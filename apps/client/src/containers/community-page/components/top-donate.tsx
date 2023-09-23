@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { TopDonateProviderPagingResponse, TopUserDonatePagingResponse } from 'ume-service-openapi'
+import { TopDonationDonorPagingResponse, TopDonationRecipientPagingResponse } from 'ume-service-openapi'
 
 import Table from './table'
 
@@ -16,35 +16,30 @@ const durationArray: DurationProps[] = [
   { key: '1M', nameVi: 'Tháng' },
 ]
 
-const TopDonate = (props) => {
+const TopDonation = (props) => {
   const [duration, setDuration] = useState<string>('1W')
-  const [userDonate, setUserDonate] = useState<TopUserDonatePagingResponse['row'] | undefined>(undefined)
-  const [providerDonate, setProviderDonate] = useState<TopDonateProviderPagingResponse['row'] | undefined>(undefined)
-  const {
-    data: userDonateData,
-    isLoading: loadingUserDonate,
-    isFetching: fetchingUserDonate,
-    refetch: refetchUserDonate,
-  } = trpc.useQuery(['community.donateUserTop', duration], {
-    onSuccess(data) {
-      setUserDonate(data?.data?.row)
+  const [userDonation, setUserDonation] = useState<TopDonationDonorPagingResponse['row'] | undefined>(undefined)
+  const [providerDonation, setProviderDonation] = useState<TopDonationRecipientPagingResponse['row'] | undefined>(
+    undefined,
+  )
+  const { isLoading: loadingUserDonation, refetch: refetchUserDonation } = trpc.useQuery(
+    ['community.donateUserTop', duration],
+    {
+      onSuccess(data) {
+        setUserDonation(data?.data?.row)
+      },
     },
-  })
+  )
 
-  const {
-    data: providerDonateData,
-    isLoading: loadingProviderDonate,
-    isFetching: fetchingProviderDonate,
-    refetch: refetchProviderDonate,
-  } = trpc.useQuery(['community.donateProviderTop', duration], {
+  const { refetch: refetchProviderDonation } = trpc.useQuery(['community.donateProviderTop', duration], {
     onSuccess(data) {
-      setProviderDonate(data?.data?.row)
+      setProviderDonation(data?.data?.row)
     },
   })
 
   useEffect(() => {
-    refetchUserDonate()
-    refetchProviderDonate()
+    refetchUserDonation()
+    refetchProviderDonation()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [duration])
 
@@ -67,13 +62,13 @@ const TopDonate = (props) => {
       </div>
       <div className="flex flex-col gap-5 mt-5">
         <div>
-          <Table type={'User'} data={userDonate} loadingUserDonate={loadingUserDonate} />
+          <Table type={'User'} data={userDonation} loadingUserDonation={loadingUserDonation} />
         </div>
         <div>
-          <Table type={'Provider'} data={providerDonate} loadingUserDonate={loadingUserDonate} />
+          <Table type={'Provider'} data={providerDonation} loadingUserDonation={loadingUserDonation} />
         </div>
       </div>
     </>
   )
 }
-export default TopDonate
+export default TopDonation

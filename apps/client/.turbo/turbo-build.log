@@ -29,7 +29,7 @@ Route (pages)                              Size     First Load JS
 ├ λ /api/status                            0 B            99.8 kB
 ├ λ /api/trpc/[trpc]                       0 B            99.8 kB
 ├ ○ /community                             1.82 kB         102 kB
-├ ○ /filter-skill/[filterSkillName]        1.89 kB         102 kB
+├ ○ /filter-skill/[filterSkillName]        1.9 kB          102 kB
 ├ ○ /home                                  1.83 kB         102 kB
 ├ ○ /live                                  1.83 kB         102 kB
 ├ λ /logout                                375 B           100 kB
@@ -39,7 +39,7 @@ Route (pages)                              Size     First Load JS
   ├ chunks/framework-22108eb722d84e59.js   45.4 kB
   ├ chunks/main-1549b305685c3af3.js        26.7 kB
   ├ chunks/pages/_app-033cb49fe1085deb.js  25.3 kB
-  ├ chunks/webpack-cd7d76d63f595838.js     2.47 kB
+  ├ chunks/webpack-9b2d90487813bbe9.js     2.47 kB
   └ css/92f37211144ad3ac.css               6.97 kB
 
 λ  (Server)  server-side renders at runtime (uses getInitialProps or getServerSideProps)

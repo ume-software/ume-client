@@ -1,14 +1,14 @@
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 
-const FilterSkill = dynamic(() => import('~/containers/filter-page/filter-page.container'), {
+const FilterService = dynamic(() => import('~/containers/filter-page/filter-page.container'), {
   ssr: false,
 })
 
-const FilterSkillPage = (props) => {
+const FilterServicePage = (props) => {
   const router = useRouter()
-  const skillName = router.query.filterSkillName
+  const serviceName = router.query.filterServiceName
 
-  return <FilterSkill skillName={skillName} />
+  return <FilterService serviceName={serviceName} />
 }
-export default FilterSkillPage
+export default FilterServicePage

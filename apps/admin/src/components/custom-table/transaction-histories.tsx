@@ -3,7 +3,7 @@ import * as React from 'react'
 import { Table } from 'antd'
 import Image from 'next/image'
 
-import skillPictureDummy from '../../../public/skill.jpg'
+import servicePictureDummy from '../../../public/service.jpg'
 
 export interface ITransactionTableProps {}
 
@@ -12,7 +12,7 @@ export default function TransactionTable(props: ITransactionTableProps) {
     {
       member: 'Lynnelle Gaddas',
       bookingDate: '30/10/2022',
-      skill: 'Liên minh huyền thoại',
+      service: 'Liên minh huyền thoại',
       serveTime: 7,
       status: 'done',
       mountMoney: 237,
@@ -21,7 +21,7 @@ export default function TransactionTable(props: ITransactionTableProps) {
     {
       member: 'Jemimah Tranfield',
       bookingDate: '07/05/2023',
-      skill: 'Liên minh huyền thoại',
+      service: 'Liên minh huyền thoại',
       serveTime: 19,
       status: 'done',
       mountMoney: 1556,
@@ -30,7 +30,7 @@ export default function TransactionTable(props: ITransactionTableProps) {
     {
       member: 'Cathy Ridhole',
       bookingDate: '08/06/2023',
-      skill: 'Liên minh huyền thoại',
+      service: 'Liên minh huyền thoại',
       serveTime: 24,
       status: 'done',
       mountMoney: 1309,
@@ -39,7 +39,7 @@ export default function TransactionTable(props: ITransactionTableProps) {
     {
       member: 'Hester Weatherby',
       bookingDate: '25/01/2023',
-      skill: 'Liên minh huyền thoại',
+      service: 'Liên minh huyền thoại',
       serveTime: 16,
       status: 'done',
       mountMoney: 777,
@@ -48,7 +48,7 @@ export default function TransactionTable(props: ITransactionTableProps) {
     {
       member: 'Elspeth Khrishtafovich',
       bookingDate: '09/03/2023',
-      skill: 'Liên minh huyền thoại',
+      service: 'Liên minh huyền thoại',
       serveTime: 21,
       status: 'done',
       mountMoney: 308,
@@ -68,8 +68,8 @@ export default function TransactionTable(props: ITransactionTableProps) {
     },
     {
       title: 'Kỹ năng',
-      dataIndex: 'skill',
-      key: 'skill',
+      dataIndex: 'service',
+      key: 'service',
     },
     {
       title: 'Giờ phục vụ',

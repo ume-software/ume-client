@@ -8,16 +8,17 @@ import {
   ImageApi,
   NoticeApi,
   ProviderApi,
-  ProviderSkillApi,
-  SkillApi,
+  ProviderServiceApi,
+  ServiceApi,
+  UserApi,
 } from 'ume-service-openapi'
 import { optional } from 'zod'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
-export const getListSkill = async () => {
+export const getListService = async () => {
   try {
-    const response = await new SkillApi({
+    const response = await new ServiceApi({
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
     }).findAndCountAll('unlimited', '1', '["$all"]')
@@ -28,7 +29,7 @@ export const getListSkill = async () => {
   } catch (error) {
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
-      message: error.message || 'Failed to get list skill',
+      message: error.message || 'Failed to get list service',
     })
   }
 }
@@ -36,7 +37,7 @@ export const getListSkill = async () => {
 export const getProviders = async (query?: {
   startCost?: number
   endCost?: number
-  skillId?: string
+  serviceId?: string
   name?: string
   gender?: string
   limit?: string
@@ -50,9 +51,10 @@ export const getProviders = async (query?: {
     }).getListProvider(
       query?.startCost,
       query?.endCost,
-      query?.skillId,
+      query?.serviceId,
       query?.name,
-      query?.gender as 'MALE' | 'FEMALE' | 'ORTHER' | 'PRIVATE',
+      query?.gender as 'MALE' | 'FEMALE' | 'OTHER' | 'PRIVATE',
+      'ACTIVATED', //TODO: ditme fix sau nha
       query?.limit,
       query?.page,
       query?.order,
@@ -97,7 +99,7 @@ export const getProviderBySlug = async (providerId: string) => {
   } catch (error) {
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.respone?.status) || 500,
-      message: error.message || 'Fail to get list skill',
+      message: error.message || 'Fail to get list service',
     })
   }
 }
@@ -165,12 +167,12 @@ export const putProviderResponeBooking = async ({ bookingHistoryId, status }, ct
   }
 }
 
-export const getFeedbackSkillById = async (feedbackSkillId) => {
+export const getFeedbackServiceById = async (feedbackServiceId) => {
   try {
-    const respone = await new ProviderSkillApi({
+    const respone = await new ProviderServiceApi({
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
-    }).getFeedbackByProviderSkill(feedbackSkillId, '1', '1', '["$all"]')
+    }).getFeedbackByProviderService(feedbackServiceId, '1', '1', '["$all"]')
     return {
       data: respone.data,
       success: true,
@@ -226,11 +228,11 @@ export const getAllNotice = async (query: { page: string; limit: string }, ctx) 
 export const getAblumByProviderSlug = async (query: { slug: string; page?: string; limit?: string }, ctx) => {
   try {
     const cookies = parse(ctx.req.headers.cookie)
-    const respone = await new ProviderApi({
+    const respone = await new UserApi({
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).getAlbumByProviderSlug(query.slug, query.limit, query.page)
+    }).getAlbumByUserSlug(query.slug, query.limit, query.page)
     return {
       data: respone.data,
       success: true,

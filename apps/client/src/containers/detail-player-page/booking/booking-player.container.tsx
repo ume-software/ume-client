@@ -17,7 +17,7 @@ import { trpc } from '~/utils/trpc'
 
 const BookingPlayer = (props: { data }) => {
   const [booking, setBooking] = useState<BookingProviderRequest>({
-    providerSkillId: '',
+    providerServiceId: '',
     bookingPeriod: 1,
     voucherIds: [],
   })
@@ -25,24 +25,24 @@ const BookingPlayer = (props: { data }) => {
   const createBooking = trpc.useMutation(['booking.createBooking'])
 
   // const handleServiceChange = (value: string) => {
-  //   setBooking((prevBooking) => ({ ...prevBooking, providerSkillId: value }))
+  //   setBooking((prevBooking) => ({ ...prevBooking, providerServiceId: value }))
   // }
   // const handlePeriodChange = (value: number) => {
   //   setBooking((prevBooking) => ({ ...prevBooking, bookingPeriod: value }))
   // }
 
   // useEffect(() => {
-  //   const selectedItem = props.data.providerSkills?.find((item) => booking.providerSkillId == item.id)
+  //   const selectedItem = props.data.providerServices?.find((item) => booking.providerServiceId == item.id)
   //   setTotal((selectedItem?.defaultCost || 0) * booking.bookingPeriod)
   // }, [booking])
 
-  const handleTotal = (providerSkillId, bookingPeriod) => {
-    const selectedItem = props.data.providerSkills?.find((item) => providerSkillId == item.id)
+  const handleTotal = (providerServiceId, bookingPeriod) => {
+    const selectedItem = props.data.providerServices?.find((item) => providerServiceId == item.id)
     setTotal((selectedItem?.defaultCost || 0) * bookingPeriod)
   }
 
   const validationSchema = Yup.object().shape({
-    providerSkillId: Yup.string().required('*Chưa chọn dịch vụ'),
+    providerServiceId: Yup.string().required('*Chưa chọn dịch vụ'),
   })
 
   const handleCreateBooking = (values, { setSubmitting }) => {
@@ -51,7 +51,7 @@ const BookingPlayer = (props: { data }) => {
         onSuccess: (data) => {
           if (data.success) {
             setSubmitting(false)
-            setBooking({ providerSkillId: '', bookingPeriod: 1, voucherIds: [] })
+            setBooking({ providerServiceId: '', bookingPeriod: 1, voucherIds: [] })
             notification.success({
               message: 'Tạo đơn thành công',
               description: 'Đơn của bạn đã được tạo thành công.',
@@ -98,7 +98,7 @@ const BookingPlayer = (props: { data }) => {
                     <div className="flex flex-col gap-10">
                       <p className="text-4xl font-bold ">{props.data?.name}</p>
                       <div className={`flex flex-col gap-3`}>
-                        <label htmlFor="providerSkillId" className="text-2xl font-medium ">
+                        <label htmlFor="providerServiceId" className="text-2xl font-medium ">
                           Chọn dịch vụ
                         </label>
                         <Select
@@ -112,16 +112,16 @@ const BookingPlayer = (props: { data }) => {
                             ((option?.label as string) ?? '').toLowerCase().includes(input)
                           }
                           onChange={(value) => {
-                            setFieldValue('providerSkillId', value)
+                            setFieldValue('providerServiceId', value)
                             handleTotal(value, values.bookingPeriod)
                           }}
-                          value={values.providerSkillId}
-                          options={props.data.providerSkills?.map((service) => ({
+                          value={values.providerServiceId}
+                          options={props.data.providerServices?.map((service) => ({
                             value: service.id,
-                            label: service.skill?.name,
+                            label: service.service?.name,
                           }))}
                         />
-                        <ErrorMessage name="providerSkillId">
+                        <ErrorMessage name="providerServiceId">
                           {(errorMessage) => <div className="font-normal  text-sm text-red-500">{errorMessage}</div>}
                         </ErrorMessage>
                       </div>
@@ -140,7 +140,7 @@ const BookingPlayer = (props: { data }) => {
                           defaultValue={1}
                           onChange={(value) => {
                             setFieldValue('bookingPeriod', value)
-                            handleTotal(values.providerSkillId, value)
+                            handleTotal(values.providerServiceId, value)
                           }}
                           value={values.bookingPeriod}
                         />

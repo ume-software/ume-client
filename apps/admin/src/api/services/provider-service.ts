@@ -9,7 +9,7 @@ import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 export const getProviderService = async (query?: {
   startCost?: number
   endCost?: number
-  skillId?: string
+  serviceId?: string
   name?: string
   gender?: string
   limit?: string
@@ -25,10 +25,9 @@ export const getProviderService = async (query?: {
       undefined,
       undefined,
       query?.name,
-      query?.gender as 'MALE' | 'FEMALE' | 'ORTHER' | 'PRIVATE',
-      query?.limit,
+      query?.gender as 'MALE' | 'FEMALE' | 'OTHER' | 'PRIVATE',
+      query?.limit as 'ACTIVATED' | 'UN_ACTIVATED' | 'STOPPED_ACCEPTING_BOOKING' | 'BUSY',
       query?.page,
-      undefined,
     )
     return {
       data: response.data,
