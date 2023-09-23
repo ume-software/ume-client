@@ -37,6 +37,7 @@ jobs:
           key: ${{ secrets.AWS_KEY }}
           port: ${{ secrets.AWS_PORT }}
           script: |-
+            sudo docker image prune -af
             sudo docker pull huyraw/ume_client
             sudo docker stop backend_server
             sudo docker rm backend_server
