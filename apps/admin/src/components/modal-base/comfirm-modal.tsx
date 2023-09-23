@@ -5,9 +5,9 @@ import * as React from 'react'
 import ModalBase from '.'
 
 export interface IComfirmModalProps {
-  closeFunction: any | undefined
+  closeFunction: any
   openValue: boolean
-  isComfirmFunction: any | undefined
+  isComfirmFunction: any
   titleValue?: any
   children?: React.ReactNode
 }

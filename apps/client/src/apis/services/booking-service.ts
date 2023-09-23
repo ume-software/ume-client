@@ -15,7 +15,7 @@ import { optional } from 'zod'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
-export const getListSkill = async () => {
+export const getListService = async () => {
   try {
     const response = await new ServiceApi({
       basePath: getEnv().baseUmeServiceURL,
@@ -28,7 +28,7 @@ export const getListSkill = async () => {
   } catch (error) {
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
-      message: error.message || 'Failed to get list skill',
+      message: error.message || 'Failed to get list service',
     })
   }
 }
@@ -99,7 +99,7 @@ export const getProviderBySlug = async (providerId: string) => {
   } catch (error) {
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.respone?.status) || 500,
-      message: error.message || 'Fail to get list skill',
+      message: error.message || 'Fail to get list service',
     })
   }
 }
@@ -167,12 +167,12 @@ export const putProviderResponeBooking = async ({ bookingHistoryId, status }, ct
   }
 }
 
-export const getFeedbackSkillById = async (feedbackSkillId) => {
+export const getFeedbackServiceById = async (feedbackServiceId) => {
   try {
     const respone = await new ProviderServiceApi({
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
-    }).getFeedbackByProviderService(feedbackSkillId, '1', '1', '["$all"]')
+    }).getFeedbackByProviderService(feedbackServiceId, '1', '1', '["$all"]')
     return {
       data: respone.data,
       success: true,

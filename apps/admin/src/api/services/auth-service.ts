@@ -1,8 +1,8 @@
 import { TRPCError } from '@trpc/server'
 import { getEnv } from '~/env'
 
-import { parse, serialize } from 'cookie'
-import { AdminAuthApi, AuthApi } from 'ume-service-openapi'
+import { serialize } from 'cookie'
+import { AdminAuthApi } from 'ume-service-openapi'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 

@@ -49,8 +49,8 @@ const genderData: GenderProps[] = [
 
 const FilterContainer = (props) => {
   const router = useRouter()
-  const skillId = router.query.serviceId
-  const limit = undefined
+  const serviceId = router.query.serviceId
+  const limit = '20'
   const containerRef = useRef<HTMLDivElement>(null)
   const [scrollPosition, setScrollPosition] = useState(0)
   const [listProviderFilter, setListProviderFilter] = useState<FilterProviderPagingResponse['row']>([])
@@ -78,7 +78,7 @@ const FilterContainer = (props) => {
       {
         startCost: priceRange[0],
         endCost: priceRange[1],
-        skillId: String(skillId),
+        serviceId: String(serviceId),
         name: searchText,
         gender: gender.key,
         limit: limit,
@@ -142,7 +142,7 @@ const FilterContainer = (props) => {
       setListProviderFilter(data.data?.data.row)
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [priceRange, skillId, searchText, gender])
+  }, [priceRange, serviceId, searchText, gender])
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
@@ -153,8 +153,8 @@ const FilterContainer = (props) => {
   return (
     <div className="min-h-screen mx-10 text-white">
       <div className="flex items-center justify-between mx-5 my-5">
-        <p className="text-5xl font-bold">{props?.skillName}</p>
-        <CategoryDrawer data={listSkils} loadingSkill={loadingSkill} />
+        <p className="text-5xl font-bold">{props?.serviceName}</p>
+        <CategoryDrawer data={listSkils} loadingService={loadingService} />
       </div>
       <div className="flex items-center justify-between mx-5">
         <div className="flex gap-5 my-8 items-center">

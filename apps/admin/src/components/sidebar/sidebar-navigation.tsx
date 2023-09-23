@@ -95,7 +95,7 @@ const SidebarNavigation: SidebarNavigationItem[] = [
   },
   {
     label: 'Quản lý kỹ năng',
-    key: 'skill',
+    key: 'service',
     children: [
       {
         label: (
@@ -103,7 +103,7 @@ const SidebarNavigation: SidebarNavigationItem[] = [
             Kỹ năng
           </Link>
         ),
-        key: 'skill-manager',
+        key: 'service-manager',
         icon: <GameHandle theme="outline" size="22" fill="#fff" />,
       },
     ],

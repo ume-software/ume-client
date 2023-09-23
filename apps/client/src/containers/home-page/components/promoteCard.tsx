@@ -10,10 +10,10 @@ const PromoteCard = (props: { data: FilterProviderResponse }) => {
   const [isPlaying, setIsPlaying] = React.useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
-  const handlePlayAudio = (e) => {
+  const handlePlayAudio = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
     const audio = audioRef.current
-    if (audio && audio.paused) {
+    if (audio?.paused) {
       audio.play()
       setIsPlaying(true)
     } else if (audio) {

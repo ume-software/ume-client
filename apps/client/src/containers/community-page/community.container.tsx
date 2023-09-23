@@ -7,7 +7,7 @@ import { ReactNode, useContext, useId, useState } from 'react'
 import CreatePost from './components/create-post'
 import FollowingPost from './components/following-post'
 import GeneralPost from './components/general-post'
-import TopDonate from './components/top-donate'
+import TopDonation from './components/top-donate'
 
 import { LoginModal } from '~/components/header/login-modal.component'
 
@@ -110,7 +110,7 @@ const CommunityContainer = () => {
           <div className="col-span-5">{socialSelected.postTypeChildren}</div>
           <div className="col-span-3">
             <div className="sticky top-20">
-              <TopDonate />
+              <TopDonation />
             </div>
           </div>
         </div>

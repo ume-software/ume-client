@@ -8,13 +8,13 @@ import Link from 'next/link'
 import { DrawerContext } from '~/components/layouts/app-layout/app-layout'
 import { CategoryGridSkeleton } from '~/components/skeleton-load'
 
-function CategoryDrawer({ data, loadingSkill }) {
+function CategoryDrawer({ data, loadingService }) {
   const { childrenDrawer, setChildrenDrawer } = useContext(DrawerContext)
 
   const handleAllServiceOpen = () => {
     setChildrenDrawer(
       <>
-        {loadingSkill ? (
+        {loadingService ? (
           <CategoryGridSkeleton />
         ) : (
           <div className="w-full h-full px-6 overflow-y-auto custom-scrollbar">

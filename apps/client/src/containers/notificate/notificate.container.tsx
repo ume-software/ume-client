@@ -153,7 +153,7 @@ const Notificate = (props: { type: string }) => {
                         <div className="w-[90%] h-full relative rounded-lg">
                           <Image
                             className="rounded-lg"
-                            src={item?.booker?.avatarUrl || item?.providerSkill?.skill?.imageUrl}
+                            src={item?.booker?.avatarUrl || item?.providerService?.service?.imageUrl}
                             alt="Game Image"
                             layout="fill"
                             objectFit="contain"
@@ -166,7 +166,7 @@ const Notificate = (props: { type: string }) => {
                           <div>
                             Đã gửi yêu cầu chơi game{' '}
                             <p className="inline font-bold">
-                              {item?.providerSkill?.skill?.name || item?.data?.providerSkill?.skill?.name}
+                              {item?.providerService?.service?.name || item?.data?.providerService?.service?.name}
                             </p>{' '}
                             cùng bạn thời gian là:{' '}
                             <p className="inline font-bold">{item?.bookingPeriod || item?.data?.bookingPeriod}h</p>

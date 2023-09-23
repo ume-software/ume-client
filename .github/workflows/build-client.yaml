@@ -1,5 +1,5 @@
 name: Deploy Backend
- 
+
 on:
   push:
 
@@ -42,5 +42,3 @@ jobs:
             sudo docker stop backend_server
             sudo docker rm backend_server
             sudo docker run --detach --name backend_server -p 3000:3000 huyraw/ume_client
-#            sudo docker rmi  $(sudo docker images -aq)
- 
