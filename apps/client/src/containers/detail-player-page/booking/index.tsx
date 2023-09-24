@@ -1,1 +1,1 @@
-export * from './booking-player.container'
+export * from './booking-provider.container'

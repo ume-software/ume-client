@@ -61,7 +61,7 @@ const FilterContainer = (props) => {
   const [listSkils, setListSkils] = useState<any>([])
   const [priceRange, setPriceRange] = useState<[number, number]>([min, max])
 
-  const { isLoading: loadingSkill, isFetching } = trpc.useQuery(['booking.getListSkill'], {
+  const { isLoading: loadingService, isFetching } = trpc.useQuery(['booking.getListService'], {
     onSuccess(data) {
       setListSkils(data?.data?.row)
     },
@@ -292,7 +292,7 @@ const FilterContainer = (props) => {
               listProviderFilter?.map((provider) => (
                 <Link
                   key={provider?.id}
-                  href={`/player/${provider?.slug ?? provider?.id}?tab=information&serviceId=${provider.serviceId}`}
+                  href={`/profile/${provider?.slug ?? provider?.id}?tab=information&serviceId=${provider.serviceId}`}
                 >
                   <PromoteCard data={provider} />
                 </Link>

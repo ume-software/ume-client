@@ -4,7 +4,7 @@ import { optional, z } from 'zod'
 import { createRouter } from './configurations'
 import {
   createBooking,
-  getAblumByProviderSlug,
+  getAlbumByUserSlug,
   getAllNotice,
   getCurrentBookingForProvider,
   getFeedbackServiceById,
@@ -102,9 +102,9 @@ export const bookingRouter = createRouter()
       return await getAllNotice(input, ctx)
     },
   })
-  .query('getAblumByProviderSlug', {
+  .query('getAlbumByUserSlug', {
     input: z.object({ slug: z.string(), page: z.optional(z.string()), limit: z.optional(z.string()) }),
     resolve: async ({ ctx, input }) => {
-      return await getAblumByProviderSlug(input, ctx)
+      return await getAlbumByUserSlug(input, ctx)
     },
   })

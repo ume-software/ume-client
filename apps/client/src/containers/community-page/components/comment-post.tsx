@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Send } from '@icon-park/react'
 import { InputWithButton } from '@ume/ui'
 import { useAuth } from '~/contexts/auth'

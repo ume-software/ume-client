@@ -87,7 +87,7 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
         <div className="relative max-h-screen overflow-hidden">
           <div className="w-full flex items-center justify-between">
             <Link
-              href={`/player/${images[0].providerInformation.slug || images[0].providerInformation.id}`}
+              href={`/profile/${images[0].providerInformation.slug || images[0].providerInformation.id}`}
               className="w-3/4 p-2 rounded-lg hover:bg-gray-700"
             >
               {images && (

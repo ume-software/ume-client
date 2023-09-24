@@ -1,1 +1,1 @@
-export * from './detail-player.container'
+export * from './detail-profile.container'

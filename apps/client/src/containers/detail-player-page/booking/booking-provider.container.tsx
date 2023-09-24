@@ -15,7 +15,7 @@ import * as Yup from 'yup'
 
 import { trpc } from '~/utils/trpc'
 
-const BookingPlayer = (props: { data }) => {
+const BookingProvider = (props: { data }) => {
   const [booking, setBooking] = useState<BookingProviderRequest>({
     providerServiceId: '',
     bookingPeriod: 1,
@@ -53,7 +53,7 @@ const BookingPlayer = (props: { data }) => {
           onSuccess: (data) => {
             if (data.success) {
               setSubmitting(false)
-              setBooking({ providerSkillId: '', bookingPeriod: 1, voucherIds: [] })
+              setBooking({ providerServiceId: '', bookingPeriod: 1, voucherIds: [] })
               notification.success({
                 message: 'Tạo đơn thành công',
                 description: 'Đơn của bạn đã được tạo thành công.',
@@ -199,4 +199,4 @@ const BookingPlayer = (props: { data }) => {
     </>
   )
 }
-export default BookingPlayer
+export default BookingProvider

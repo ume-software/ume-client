@@ -12,9 +12,9 @@ import Image from 'next/legacy/image'
 import { useRouter } from 'next/router'
 import { GetProfileProviderBySlugResponse } from 'ume-service-openapi'
 
-import BookingPlayer from '../booking/booking-player.container'
-import GamePlayed from './game'
+import BookingPlayer from '../booking/booking-provider.container'
 import PersonalInformation from './personal-information'
+import Service from './service'
 
 import { LoginModal } from '~/components/header/login-modal.component'
 import { DrawerContext } from '~/components/layouts/app-layout/app-layout'
@@ -36,21 +36,20 @@ const InformationTab = (props: { data: GetProfileProviderBySlugResponse }) => {
 
   const createNewChatChannel = trpc.useMutation(['chatting.createNewChatChannel'])
 
-  const selectedSkill = props.data.providerServices!.find(
-    (providerSkill) => gameSelected == providerSkill.service || gameSelected == providerSkill.service?.slug,
-  )!
-
-  console.log(props.data)
+  const selectedSkill =
+    props.data?.providerServices?.find(
+      (providerSkill) => gameSelected == providerSkill.serviceId || gameSelected == providerSkill?.service?.slug,
+    ) || undefined
 
   const handleGamesToggle = () => {
     setGamesToggle(!gamesToggle)
   }
 
-  const handleSelected = (skillId: string | undefined) => {
+  const handleSelected = (serviceId: string | undefined) => {
     router.replace(
       {
         pathname: basePath,
-        query: { tab: slug.tab, serviceId: skillId },
+        query: { tab: slug.tab, serviceId: serviceId },
       },
       undefined,
       {
@@ -58,7 +57,7 @@ const InformationTab = (props: { data: GetProfileProviderBySlugResponse }) => {
       },
     )
 
-    setGameSelected(skillId)
+    setGameSelected(serviceId)
   }
 
   const handleChatOpen = async () => {
@@ -169,9 +168,9 @@ const InformationTab = (props: { data: GetProfileProviderBySlugResponse }) => {
         <div className="col-span-5">
           <div className="flex flex-col gap-8">
             {selectedSkill && gameSelected ? (
-              <GamePlayed data={selectedSkill} />
+              <Service data={selectedSkill} />
             ) : (
-              <PersonalInformation key={props.data?.id} data={props.data} />
+              <PersonalInformation data={props.data} />
             )}
           </div>
         </div>
@@ -186,7 +185,7 @@ const InformationTab = (props: { data: GetProfileProviderBySlugResponse }) => {
                 alt="Empty Image"
               />
             </div>
-            {user?.id != props.data?.userId ? (
+            {user?.id != props.data?.id ? (
               <div className="flex flex-col gap-5 my-10">
                 <CustomDrawer
                   customOpenBtn={`rounded-full w-full text-purple-700 border-2 border-purple-700 py-2 font-semibold text-2xl cursor-pointer hover:scale-105 text-center`}

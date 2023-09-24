@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 
 import { Carousel, Rate } from 'antd'
 import Image from 'next/legacy/image'
-import { FeedbackPagingResponse, ProviderSkillResponse } from 'ume-service-openapi'
+import { FeedbackPagingResponse, ProviderServiceResponse } from 'ume-service-openapi'
 
 import { trpc } from '~/utils/trpc'
 
@@ -15,8 +15,8 @@ interface PostFeedbackProps {
   content?: string
 }
 
-const GamePlayed = (props: { data: ProviderSkillResponse }) => {
-  const feedbackGame = trpc.useQuery(['booking.getFeedbackSkillById', props.data.id!.toString()]) || undefined
+const Service = (props: { data: ProviderServiceResponse }) => {
+  const feedbackGame = trpc.useQuery(['booking.getFeedbackServiceById', props.data.id!.toString()]) || undefined
   const postFeedback = trpc.useMutation(['booking.postFeedback'])
 
   const [feedback, setFeedback] = useState<PostFeedbackProps>({ rate: 5, content: '' })
@@ -41,7 +41,7 @@ const GamePlayed = (props: { data: ProviderSkillResponse }) => {
   return (
     <>
       <div className="p-10 bg-zinc-800 rounded-3xl">
-        <p className="text-3xl font-bold text-white font-roboto">{props.data.skill?.name}</p>
+        <p className="text-3xl font-bold text-white font-roboto">{props.data.service?.name}</p>
         {/* <Carousel autoplay>
           {props.data.images?.map((item, index) => <Image key={index} src={item} alt="Game Image" />) || (
             <>
@@ -128,4 +128,4 @@ const GamePlayed = (props: { data: ProviderSkillResponse }) => {
     </>
   )
 }
-export default GamePlayed
+export default Service

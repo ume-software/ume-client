@@ -1,10 +1,10 @@
 import Head from 'next/head'
 
-import DetailPlayerContainer from './detail-player.container'
+import DetailPlayerContainer from './detail-profile.container'
 
 import { AppLayout } from '~/components/layouts/app-layout/app-layout'
 
-const DetailPlayerPage = (props) => {
+const DetailProfilePage = (props) => {
   return (
     <>
       <Head>
@@ -16,4 +16,4 @@ const DetailPlayerPage = (props) => {
     </>
   )
 }
-export default DetailPlayerPage
+export default DetailProfilePage
