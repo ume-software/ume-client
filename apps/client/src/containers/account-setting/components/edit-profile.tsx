@@ -3,6 +3,7 @@ import { Menu, Transition } from '@headlessui/react'
 import { Check, Pencil } from '@icon-park/react'
 import { Button, Input } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
+import { GenderEnum } from '~/enumVariable/enumVariable'
 
 import { Fragment, useEffect, useState } from 'react'
 
@@ -33,10 +34,10 @@ interface AccountSettingProps {
 }
 
 const genderData: GenderProps[] = [
-  { key: 'MALE', name: 'Male' },
-  { key: 'FEMALE', name: 'Female' },
-  { key: 'ORTHER', name: 'Khác' },
-  { key: 'PRIVATE', name: 'Ẩn' },
+  { key: GenderEnum.MALE, name: 'Nam' },
+  { key: GenderEnum.FEMALE, name: 'Nữ' },
+  { key: GenderEnum.OTHER, name: 'Khác' },
+  { key: GenderEnum.PRIVATE, name: 'Ẩn' },
 ]
 
 const EditProfile = () => {
@@ -86,6 +87,7 @@ const EditProfile = () => {
 
   useEffect(() => {
     handleReturnIniState()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userSettingData])
 
   return (

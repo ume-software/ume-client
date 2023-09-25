@@ -171,6 +171,10 @@ const CategoryGridSkeleton = () => {
   )
 }
 
+const BGFullGridSkeleton = () => {
+  return <div className="w-full h-full animate-pulse flex-row items-center justify-center rounded-xl bg-gray-300"></div>
+}
+
 const ChatSkeleton = () => {
   return (
     <>
@@ -229,6 +233,7 @@ export {
   NotificateSkeletonLoader,
   TableSkeletonLoader,
   CategoryGridSkeleton,
+  BGFullGridSkeleton,
   ChatSkeleton,
   SkeletonForAccountSetting,
 }

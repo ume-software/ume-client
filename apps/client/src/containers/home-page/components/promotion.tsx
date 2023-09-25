@@ -86,7 +86,9 @@ export const Promotion = () => {
                 {listHotProvider?.map((provider) => (
                   <Link
                     key={provider?.id}
-                    href={`/profile/${provider?.slug ?? provider?.id}?tab=information&serviceId=${provider.serviceId}`}
+                    href={`/profile/${provider?.slug ?? provider?.id}?tab=information&service=${
+                      provider.serviceSlug || provider.serviceId
+                    }`}
                   >
                     <PromoteCard data={provider} />
                   </Link>
@@ -99,7 +101,9 @@ export const Promotion = () => {
                 {listProvider?.map((provider) => (
                   <Link
                     key={provider?.id}
-                    href={`/profile/${provider?.slug ?? provider?.id}?tab=information&serviceId=${provider.serviceId}`}
+                    href={`/profile/${provider?.slug ?? provider?.id}?tab=information&service=${
+                      provider.serviceSlug || provider.serviceId
+                    }`}
                   >
                     <PromoteCard data={provider} />
                   </Link>

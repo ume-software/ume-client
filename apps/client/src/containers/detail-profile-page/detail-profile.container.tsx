@@ -10,7 +10,7 @@ import { Fragment, ReactElement, ReactNode, useEffect, useState } from 'react'
 
 import Image, { ImageProps, StaticImageData } from 'next/legacy/image'
 import { useRouter } from 'next/router'
-import { GetProfileProviderBySlugResponse } from 'ume-service-openapi'
+import { GetProfileProviderBySlugResponse, UserInformationResponse } from 'ume-service-openapi'
 
 import AlbumTab from './album-tab/album-tab'
 import FeedsTab from './feeds-tab'
@@ -136,17 +136,15 @@ const DetailProfileContainer = () => {
   const basePath = router.asPath.split('?')[0]
   const slug = router.query
 
-  const [providerDetail, setProviderDetail] = useState<GetProfileProviderBySlugResponse | undefined>(undefined)
+  const [providerDetail, setProviderDetail] = useState<UserInformationResponse | undefined>(undefined)
   const { isLoading: isProviderDetailLoading, isFetching: isProviderDetailFetching } = trpc.useQuery(
-    ['booking.getProviderBySlug', slug.profileId!.toString()],
+    ['booking.getUserBySlug', slug.profileId!.toString()],
     {
       onSuccess(data) {
         setProviderDetail(data.data)
       },
     },
   )
-
-  console.log(providerDetail)
 
   const [selectedTab, setSelectedTab] = useState<TabDataProps>(
     tabDatas.find((tab) => {

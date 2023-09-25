@@ -7,19 +7,21 @@ import { ReactNode, useEffect, useState } from 'react'
 
 import Image from 'next/legacy/image'
 import { useRouter } from 'next/router'
-import { DetailAlbumResponse, GetProfileProviderBySlugResponse } from 'ume-service-openapi'
+import { DetailAlbumResponse, GetProfileProviderBySlugResponse, UserInformationResponse } from 'ume-service-openapi'
 
 import AlbumImage from './album-image'
 
+import { BGFullGridSkeleton } from '~/components/skeleton-load'
+
 import { trpc } from '~/utils/trpc'
 
-const AlbumTab = (props: { data: GetProfileProviderBySlugResponse }) => {
+const AlbumTab = (props: { data: UserInformationResponse }) => {
   const router = useRouter()
   const slug = router.query
 
   const [album, setAlbum] = useState<DetailAlbumResponse[] | undefined>()
 
-  const { isLoading: loadingAlbum } = trpc.useQuery(
+  const { isLoading: isLoadingAlbum } = trpc.useQuery(
     ['booking.getAlbumByUserSlug', { slug: slug.profileId?.toString() || props.data.slug }],
     {
       refetchOnWindowFocus: false,
@@ -88,8 +90,20 @@ const AlbumTab = (props: { data: GetProfileProviderBySlugResponse }) => {
             </div>
           </>
         ) : (
-          <div className="mt-3 col-span-3">
-            <Image src={ImgForEmpty} alt="EmptyImage" />
+          <div className="w-full h-screen mt-3 text-center">
+            {isLoadingAlbum ? (
+              <>
+                <div className="w-full grid grid-cols-8 gap-10">
+                  {[...Array(8)].map((_, index) => (
+                    <div key={index} className="w-[100%] h-[350px] col-span-2">
+                      <BGFullGridSkeleton />
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <Image src={ImgForEmpty} alt="EmptyImage" />
+            )}
           </div>
         )}
       </div>

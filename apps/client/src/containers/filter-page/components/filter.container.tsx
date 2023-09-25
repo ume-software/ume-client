@@ -4,6 +4,7 @@ import { Input } from '@ume/ui'
 import coin from 'public/coin-icon.png'
 import CategoryDrawer from '~/containers/home-page/components/category-drawer'
 import PromoteCard from '~/containers/home-page/components/promoteCard'
+import { GenderEnum } from '~/enumVariable/enumVariable'
 
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react'
 
@@ -40,16 +41,17 @@ const max: number = 100
 const min: number = 0
 
 const genderData: GenderProps[] = [
-  { key: undefined, name: 'All' },
-  { key: 'MALE', name: 'Male' },
-  { key: 'FEMALE', name: 'Female' },
-  { key: 'ORTHER', name: 'Orther' },
-  { key: 'PRIVATE', name: 'Private' },
+  { key: undefined, name: 'Giới tính' },
+  { key: GenderEnum.MALE, name: 'Nam' },
+  { key: GenderEnum.FEMALE, name: 'Nữ' },
+  { key: GenderEnum.OTHER, name: 'Khác' },
+  { key: GenderEnum.PRIVATE, name: 'Ẩn' },
 ]
 
 const FilterContainer = (props) => {
   const router = useRouter()
-  const serviceId = router.query.serviceId
+  const service = router.query.service
+
   const limit = '20'
   const containerRef = useRef<HTMLDivElement>(null)
   const [scrollPosition, setScrollPosition] = useState(0)
@@ -78,7 +80,7 @@ const FilterContainer = (props) => {
       {
         startCost: priceRange[0],
         endCost: priceRange[1],
-        serviceId: String(serviceId),
+        serviceId: String(service),
         name: searchText,
         gender: gender.key,
         limit: limit,
@@ -142,7 +144,7 @@ const FilterContainer = (props) => {
       setListProviderFilter(data.data?.data.row)
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [priceRange, serviceId, searchText, gender])
+  }, [priceRange, service, searchText, gender, page, order])
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
@@ -192,7 +194,7 @@ const FilterContainer = (props) => {
           <div className="relative">
             <Menu>
               <Menu.Button>
-                <button className="text-xl font-semibold px-8 py-2 bg-[#292734] hover:bg-gray-700 rounded-xl">
+                <button className="min-w-[130px] text-xl font-semibold px-8 py-2 bg-[#292734] hover:bg-gray-700 rounded-xl">
                   {gender.name}
                 </button>
               </Menu.Button>
@@ -292,7 +294,9 @@ const FilterContainer = (props) => {
               listProviderFilter?.map((provider) => (
                 <Link
                   key={provider?.id}
-                  href={`/profile/${provider?.slug ?? provider?.id}?tab=information&serviceId=${provider.serviceId}`}
+                  href={`/profile/${provider?.slug ?? provider?.id}?tab=information&service=${
+                    provider.serviceSlug || provider.serviceId
+                  }`}
                 >
                   <PromoteCard data={provider} />
                 </Link>

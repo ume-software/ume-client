@@ -42,7 +42,7 @@ export const Sidebar = (props) => {
 
   const handleChatOpen = (channelId?: string) => {
     if (isAuthenticated) {
-      setChildrenDrawer(<Chat playerId={channelId} />)
+      setChildrenDrawer(<Chat providerId={channelId} />)
       if (channelId) {
         setSocketContext((prevState) => ({
           ...prevState,

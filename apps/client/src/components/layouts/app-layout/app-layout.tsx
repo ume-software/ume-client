@@ -68,8 +68,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     if (isAuthenticated) {
       const socketInstance = isAuthenticated ? socket(accessToken) : null
 
-      console.log(socketInstance)
-
       setSocketClientEmit({ socketInstanceChatting: socketInstance?.socketInstanceChatting })
 
       if (socketInstance?.socketInstanceBooking) {

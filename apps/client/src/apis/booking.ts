@@ -11,8 +11,8 @@ import {
   getHotProviders,
   getListService,
   getNoticeAmount,
-  getProviderBySlug,
   getProviders,
+  getUserBySlug,
   postFeedback,
   putProviderResponeBooking,
 } from './services/booking-service'
@@ -46,10 +46,10 @@ export const bookingRouter = createRouter()
       return await getHotProviders()
     },
   })
-  .query('getProviderBySlug', {
+  .query('getUserBySlug', {
     input: z.string(),
     resolve: async ({ ctx, input }) => {
-      return await getProviderBySlug(input)
+      return await getUserBySlug(input)
     },
   })
   .query('getCurrentBookingForProvider', {

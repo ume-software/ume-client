@@ -1,3 +1,4 @@
+import { UpdateUserProfileRequestGenderEnum } from 'ume-service-openapi'
 import { z } from 'zod'
 
 import { createRouter } from './configurations'
@@ -37,11 +38,11 @@ export const identityRouter = createRouter()
   })
   .mutation('updateUserProfile', {
     input: z.object({
-      name: z.string(),
-      slug: z.string(),
-      gender: z.string(),
-      dob: z.string(),
-      avatarUrl: z.string(),
+      name: z.optional(z.string()),
+      slug: z.optional(z.string()),
+      gender: z.optional(z.nativeEnum(UpdateUserProfileRequestGenderEnum)),
+      dob: z.optional(z.string()),
+      avatarUrl: z.optional(z.string()),
     }),
     resolve: async ({ input, ctx }) => {
       return await updateUserProfile(input, ctx)

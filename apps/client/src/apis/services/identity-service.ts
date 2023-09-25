@@ -2,7 +2,7 @@ import { TRPCError } from '@trpc/server'
 import { getEnv } from '~/env'
 
 import { parse, serialize } from 'cookie'
-import { AuthApi, UserApi } from 'ume-service-openapi'
+import { AuthApi, UpdateUserProfileRequestGenderEnum, UserApi } from 'ume-service-openapi'
 import { BuyCoinRequestApi, CoinApi } from 'ume-service-openapi'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
@@ -97,7 +97,13 @@ export const getUserBySlug = async (input, ctx) => {
 }
 
 export const updateUserProfile = async (
-  query: { name: string; slug: string; gender: string; dob: string; avatarUrl: string },
+  query: {
+    name?: string
+    slug?: string
+    gender?: UpdateUserProfileRequestGenderEnum
+    dob?: string
+    avatarUrl?: string
+  },
   ctx,
 ) => {
   const cookies = parse(ctx.req.headers.cookie ?? '')
@@ -110,7 +116,7 @@ export const updateUserProfile = async (
       name: query.name,
       avatarUrl: query.avatarUrl,
       dob: query.dob,
-      gender: query.gender as 'MALE' | 'FEMALE' | 'ORTHER' | 'PRIVATE',
+      gender: query.gender,
       slug: query.slug,
     })
     return {

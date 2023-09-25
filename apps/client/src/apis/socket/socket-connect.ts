@@ -12,7 +12,7 @@ export const socket = (token: string | null) => {
       auth: {
         authorization: `Bearer ${token}`,
       },
-      path: '/booking-service/socket/',
+      path: '/ume-service/socket/',
     })
 
     const socketInstanceChatting = socketio.connect(getEnv().baseSocketChattingURL, {

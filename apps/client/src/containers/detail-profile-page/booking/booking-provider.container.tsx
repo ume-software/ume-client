@@ -10,12 +10,12 @@ import { notification } from 'antd'
 import { NotificationPlacement } from 'antd/es/notification/interface'
 import { ErrorMessage, Field, Form, Formik } from 'formik'
 import Image from 'next/legacy/image'
-import { BookingProviderRequest } from 'ume-service-openapi'
+import { BookingProviderRequest, ProviderConfigResponseStatusEnum, UserInformationResponse } from 'ume-service-openapi'
 import * as Yup from 'yup'
 
 import { trpc } from '~/utils/trpc'
 
-const BookingProvider = (props: { data }) => {
+const BookingProvider = (props: { data: UserInformationResponse }) => {
   const [booking, setBooking] = useState<BookingProviderRequest>({
     providerServiceId: '',
     bookingPeriod: 1,
@@ -24,18 +24,6 @@ const BookingProvider = (props: { data }) => {
   const [total, setTotal] = useState(0)
   const accountBalance = trpc.useQuery(['identity.account-balance'])
   const createBooking = trpc.useMutation(['booking.createBooking'])
-
-  // const handleServiceChange = (value: string) => {
-  //   setBooking((prevBooking) => ({ ...prevBooking, providerServiceId: value }))
-  // }
-  // const handlePeriodChange = (value: number) => {
-  //   setBooking((prevBooking) => ({ ...prevBooking, bookingPeriod: value }))
-  // }
-
-  // useEffect(() => {
-  //   const selectedItem = props.data.providerServices?.find((item) => booking.providerServiceId == item.id)
-  //   setTotal((selectedItem?.defaultCost || 0) * booking.bookingPeriod)
-  // }, [booking])
 
   const handleTotal = (providerServiceId, bookingPeriod) => {
     const selectedItem = props.data.providerServices?.find((item) => providerServiceId == item.id)
@@ -47,7 +35,13 @@ const BookingProvider = (props: { data }) => {
   })
 
   const handleCreateBooking = (values, { setSubmitting }) => {
-    if (accountBalance.data?.data.totalCoinsAvailable! >= total) {
+    if (!props.data.isOnline || props.data.providerConfig?.status != ProviderConfigResponseStatusEnum.Activated) {
+      notification.warning({
+        message: 'Tài khoản chưa sẵn sàng',
+        description: 'Tài khoản hiện chưa sẵn sàng lúc này. Vui lòng thử lại vào lúc khác!',
+        placement: 'bottomLeft',
+      })
+    } else if (accountBalance.data?.data.totalCoinsAvailable! >= total) {
       try {
         createBooking.mutate(values, {
           onSuccess: (data) => {

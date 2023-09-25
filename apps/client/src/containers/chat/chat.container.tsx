@@ -14,7 +14,7 @@ import { ChatSkeleton } from '~/components/skeleton-load'
 
 import { trpc } from '~/utils/trpc'
 
-const Chat = (props: { playerId?: string }) => {
+const Chat = (props: { providerId?: string }) => {
   // const index = useId()
   const [searchText, setSearchTextt] = useState('')
   const { user } = useAuth()
@@ -26,7 +26,7 @@ const Chat = (props: { playerId?: string }) => {
   const [filterChannel, setFilterChannel] = useState<ChattingChannelResponse[] | undefined>([])
 
   const [channelSelected, setChannelSelected] = useState<ChattingChannelResponse | undefined>({
-    _id: props.playerId,
+    _id: props.providerId,
   } as any)
 
   const handleSelected = (id: string) => {

@@ -87,12 +87,12 @@ export const getHotProviders = async () => {
   }
 }
 
-export const getProviderBySlug = async (providerId: string) => {
+export const getUserBySlug = async (providerId: string) => {
   try {
-    const respone = await new ProviderApi({
+    const respone = await new UserApi({
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
-    }).getProviderBySlug(providerId)
+    }).getUserBySlug(providerId)
     return {
       data: respone.data,
     }
