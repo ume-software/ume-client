@@ -1,0 +1,6 @@
+**/node_modules
+.vscode
+../.next
+Dockerfile
+node_modules
+npm-debug.log
