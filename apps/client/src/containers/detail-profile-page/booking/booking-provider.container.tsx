@@ -10,31 +10,20 @@ import { notification } from 'antd'
 import { NotificationPlacement } from 'antd/es/notification/interface'
 import { ErrorMessage, Field, Form, Formik } from 'formik'
 import Image from 'next/legacy/image'
-import { BookingProviderRequest } from 'ume-service-openapi'
+import { BookingProviderRequest, ProviderConfigResponseStatusEnum, UserInformationResponse } from 'ume-service-openapi'
 import * as Yup from 'yup'
 
 import { trpc } from '~/utils/trpc'
 
-const BookingPlayer = (props: { data }) => {
+const BookingProvider = (props: { data: UserInformationResponse }) => {
   const [booking, setBooking] = useState<BookingProviderRequest>({
     providerServiceId: '',
     bookingPeriod: 1,
     voucherIds: [],
   })
   const [total, setTotal] = useState(0)
+  const accountBalance = trpc.useQuery(['identity.account-balance'])
   const createBooking = trpc.useMutation(['booking.createBooking'])
-
-  // const handleServiceChange = (value: string) => {
-  //   setBooking((prevBooking) => ({ ...prevBooking, providerServiceId: value }))
-  // }
-  // const handlePeriodChange = (value: number) => {
-  //   setBooking((prevBooking) => ({ ...prevBooking, bookingPeriod: value }))
-  // }
-
-  // useEffect(() => {
-  //   const selectedItem = props.data.providerServices?.find((item) => booking.providerServiceId == item.id)
-  //   setTotal((selectedItem?.defaultCost || 0) * booking.bookingPeriod)
-  // }, [booking])
 
   const handleTotal = (providerServiceId, bookingPeriod) => {
     const selectedItem = props.data.providerServices?.find((item) => providerServiceId == item.id)
@@ -46,32 +35,46 @@ const BookingPlayer = (props: { data }) => {
   })
 
   const handleCreateBooking = (values, { setSubmitting }) => {
-    try {
-      createBooking.mutate(values, {
-        onSuccess: (data) => {
-          if (data.success) {
+    if (!props.data.isOnline || props.data.providerConfig?.status != ProviderConfigResponseStatusEnum.Activated) {
+      notification.warning({
+        message: 'Tài khoản chưa sẵn sàng',
+        description: 'Tài khoản hiện chưa sẵn sàng lúc này. Vui lòng thử lại vào lúc khác!',
+        placement: 'bottomLeft',
+      })
+    } else if (accountBalance.data?.data.totalCoinsAvailable! >= total) {
+      try {
+        createBooking.mutate(values, {
+          onSuccess: (data) => {
+            if (data.success) {
+              setSubmitting(false)
+              setBooking({ providerServiceId: '', bookingPeriod: 1, voucherIds: [] })
+              notification.success({
+                message: 'Tạo đơn thành công',
+                description: 'Đơn của bạn đã được tạo thành công.',
+                placement: 'bottomLeft',
+              })
+            }
+          },
+          onError: (error) => {
+            console.error(error)
             setSubmitting(false)
-            setBooking({ providerServiceId: '', bookingPeriod: 1, voucherIds: [] })
-            notification.success({
-              message: 'Tạo đơn thành công',
-              description: 'Đơn của bạn đã được tạo thành công.',
+            notification.error({
+              message: 'Tạo đơn thất bại',
+              description: 'Đơn của bạn chưa được tạo thành công!',
               placement: 'bottomLeft',
             })
-          }
-        },
-        onError: (error) => {
-          console.error(error)
-          setSubmitting(false)
-          notification.error({
-            message: 'Tạo đơn thất bại',
-            description: 'Đơn của bạn chưa được tạo thành công!',
-            placement: 'bottomLeft',
-          })
-        },
+          },
+        })
+      } catch (error) {
+        console.error('Failed to create booking:', error)
+        setSubmitting(false)
+      }
+    } else {
+      notification.warning({
+        message: 'Tài khoản không đủ',
+        description: 'Bạn không có đủ tiền. Vui lòng nạp thêm!',
+        placement: 'bottomLeft',
       })
-    } catch (error) {
-      console.error('Failed to create booking:', error)
-      setSubmitting(false)
     }
   }
 
@@ -105,7 +108,6 @@ const BookingPlayer = (props: { data }) => {
                           className="w-full"
                           size="large"
                           showSearch
-                          showArrow={false}
                           placeholder="Select service"
                           optionFilterProp="children"
                           filterOption={(input, option) =>
@@ -191,4 +193,4 @@ const BookingPlayer = (props: { data }) => {
     </>
   )
 }
-export default BookingPlayer
+export default BookingProvider

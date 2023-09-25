@@ -9,7 +9,7 @@ import { ReactNode, useContext, useEffect, useRef, useState } from 'react'
 import Image, { StaticImageData } from 'next/legacy/image'
 
 import { LoginModal } from '../header/login-modal.component'
-import { DrawerContext, SocketContext, SocketTokenContext } from '../layouts/app-layout/app-layout'
+import { DrawerContext, SocketContext } from '../layouts/app-layout/app-layout'
 
 import { trpc } from '~/utils/trpc'
 
@@ -25,22 +25,24 @@ interface chatProps {
 export const Sidebar = (props) => {
   const { childrenDrawer, setChildrenDrawer } = useContext(DrawerContext)
 
-  const { socketToken } = useContext(SocketTokenContext)
+  const { isAuthenticated, user } = useAuth()
   const { socketContext, setSocketContext } = useContext(SocketContext)
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
   const [showMessage, setShowMessage] = useState(false)
   const utils = trpc.useContext()
-  const { data: chattingChannels } = trpc.useQuery(['chatting.getListChattingChannels', { limit: '5', page: '1' }])
-  const { user } = useAuth()
+  const { data: chattingChannels } = trpc.useQuery(['chatting.getListChattingChannels', { limit: '5', page: '1' }], {
+    enabled: isAuthenticated,
+  })
+
   useEffect(() => {
-    if (socketToken) {
+    if (isAuthenticated) {
       setIsModalLoginVisible(false)
     }
-  }, [socketToken])
+  }, [isAuthenticated])
 
   const handleChatOpen = (channelId?: string) => {
-    if (socketToken) {
-      setChildrenDrawer(<Chat playerId={channelId} />)
+    if (isAuthenticated) {
+      setChildrenDrawer(<Chat providerId={channelId} />)
       if (channelId) {
         setSocketContext((prevState) => ({
           ...prevState,
@@ -65,7 +67,7 @@ export const Sidebar = (props) => {
       return () => clearTimeout(timeout)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socketContext?.socketChattingContext, socketContext?.socketChattingContext[0]?.channelId, socketToken])
+  }, [socketContext?.socketChattingContext, socketContext?.socketChattingContext[0]?.channelId, isAuthenticated])
 
   return (
     <>
@@ -80,12 +82,12 @@ export const Sidebar = (props) => {
               <ArrowLeft theme="outline" size="30" fill="#fff" />
             </div>
           }
-          token={!!socketToken}
+          token={isAuthenticated}
         >
           {childrenDrawer}
         </CustomDrawer>
         <div className="flex flex-col gap-3">
-          {socketToken &&
+          {isAuthenticated &&
             chattingChannels?.data.row.map((item) => {
               const images = item.members.filter((member) => {
                 return member.userId.toString() != user?.id.toString()

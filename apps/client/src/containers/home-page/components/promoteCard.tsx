@@ -41,9 +41,9 @@ const PromoteCard = (props: { data: FilterProviderResponse }) => {
   return (
     <div className="bg-[#292734] text-white rounded-3xl pl-6 pb-4 mt-6 max-w-72 h-70 group hover:duration-500 hover:ease-in-out block">
       <div className="flex flex-row justify-between">
-        <div className="w-[140px] h-[140px] relative -translate-y-6">
+        <div className="w-[140px] h-[140px] relative -translate-y-6 group-hover:scale-110 duration-500">
           <Image
-            className="absolute duration-500 ease-in-out rounded-2xl group-hover:scale-110 object-cover"
+            className="absolute ease-in-out rounded-2xl object-cover"
             src={props?.data?.avatarUrl || ''}
             alt="image_provider"
             layout="fill"

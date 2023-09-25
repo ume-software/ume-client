@@ -1,5 +1,6 @@
 import { CloseSmall, Earth, EveryUser } from '@icon-park/react'
 import { Modal } from '@ume/ui'
+import { useAuth } from '~/contexts/auth'
 
 import { ReactNode, useContext, useId, useState } from 'react'
 
@@ -9,7 +10,6 @@ import GeneralPost from './components/general-post'
 import TopDonation from './components/top-donate'
 
 import { LoginModal } from '~/components/header/login-modal.component'
-import { SocketTokenContext } from '~/components/layouts/app-layout/app-layout'
 
 interface CommunityProps {
   postTypeName: string
@@ -32,7 +32,7 @@ const postTypeData: CommunityProps[] = [
 
 const CommunityContainer = () => {
   const index = useId()
-  const { socketToken } = useContext(SocketTokenContext)
+  const { isAuthenticated } = useAuth()
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [socialSelected, setSocialSelected] = useState<CommunityProps>({
@@ -68,11 +68,8 @@ const CommunityContainer = () => {
   })
 
   const handleCreatePost = () => {
-    if (socketToken) {
-      setIsModalVisible(true)
-    } else {
-      setIsModalLoginVisible(true)
-    }
+    setIsModalVisible(isAuthenticated)
+    setIsModalLoginVisible(!isAuthenticated)
   }
 
   return (
@@ -89,7 +86,7 @@ const CommunityContainer = () => {
                 <div className="flex flex-col gap-5">
                   {postTypeData.map((item) => (
                     <div
-                      key={index}
+                      key={item.postTypeName}
                       className={`flex items-center p-3 rounded-xl gap-2 cursor-pointer hover:bg-gray-700
                       ${socialSelected.postTypeName === item.postTypeName ? 'bg-gray-700' : ''}`}
                       onClick={() => setSocialSelected(item)}

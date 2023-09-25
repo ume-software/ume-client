@@ -1,10 +1,11 @@
+import { useAuth } from '~/contexts/auth'
+
 import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 
 import { PostResponse } from 'ume-service-openapi'
 
 import CommunityPost from './community-post'
 
-import { SocketTokenContext } from '~/components/layouts/app-layout/app-layout'
 import { PostSkeletonLoader } from '~/components/skeleton-load'
 
 import { trpc } from '~/utils/trpc'
@@ -12,7 +13,7 @@ import { trpc } from '~/utils/trpc'
 const GeneralPost = () => {
   const [suggestPostData, setSuggestPostData] = useState<PostResponse[] | undefined>(undefined)
   const [scrollPosition, setScrollPosition] = useState(0)
-  const { socketToken } = useContext(SocketTokenContext)
+  const { isAuthenticated } = useAuth()
   const containerRef = useRef<HTMLDivElement>(null)
   const [idPostArray, setIdPostArray] = useState<string[]>([])
   const {
@@ -20,7 +21,7 @@ const GeneralPost = () => {
     isLoading: loadingSuggestPost,
     isFetching: fetchingSuggestPost,
     refetch: refetchSuggestPost,
-  } = socketToken
+  } = isAuthenticated
     ? trpc.useQuery(['community.getSuggestPost'], {
         refetchOnWindowFocus: false,
         refetchOnReconnect: 'always',
@@ -65,7 +66,7 @@ const GeneralPost = () => {
   }, [scrollPosition])
 
   useEffect(() => {
-    if (socketToken && idPostArray.length > 0) {
+    if (isAuthenticated && idPostArray.length > 0) {
       watchedPost.mutate(idPostArray[idPostArray.length - 1])
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

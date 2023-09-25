@@ -4,15 +4,16 @@ import { optional, z } from 'zod'
 import { createRouter } from './configurations'
 import {
   createBooking,
-  getAblumByProviderSlug,
+  getAlbumByUserSlug,
   getAllNotice,
   getCurrentBookingForProvider,
   getFeedbackServiceById,
   getHotProviders,
   getListService,
   getNoticeAmount,
-  getProviderBySlug,
   getProviders,
+  getUserBySlug,
+  postFeedback,
   putProviderResponeBooking,
 } from './services/booking-service'
 
@@ -30,6 +31,7 @@ export const bookingRouter = createRouter()
         serviceId: z.optional(z.string()),
         name: z.optional(z.string()),
         gender: z.optional(z.string()),
+        status: z.optional(z.string()),
         limit: z.optional(z.string()),
         page: z.optional(z.string()),
         order: z.optional(z.string()),
@@ -44,10 +46,10 @@ export const bookingRouter = createRouter()
       return await getHotProviders()
     },
   })
-  .query('getProviderBySlug', {
+  .query('getUserBySlug', {
     input: z.string(),
     resolve: async ({ ctx, input }) => {
-      return await getProviderBySlug(input)
+      return await getUserBySlug(input)
     },
   })
   .query('getCurrentBookingForProvider', {
@@ -80,6 +82,15 @@ export const bookingRouter = createRouter()
       return await getFeedbackServiceById(input)
     },
   })
+  .mutation('postFeedback', {
+    input: z.object({
+      id: z.string(),
+      feedback: z.optional(z.object({ content: z.optional(z.string()), amountStar: z.optional(z.number()) })),
+    }),
+    resolve: async ({ ctx, input }) => {
+      return await postFeedback(input, ctx)
+    },
+  })
   .query('getNoticeAmount', {
     resolve: async ({ ctx }) => {
       return await getNoticeAmount(ctx)
@@ -91,9 +102,9 @@ export const bookingRouter = createRouter()
       return await getAllNotice(input, ctx)
     },
   })
-  .query('getAblumByProviderSlug', {
+  .query('getAlbumByUserSlug', {
     input: z.object({ slug: z.string(), page: z.optional(z.string()), limit: z.optional(z.string()) }),
     resolve: async ({ ctx, input }) => {
-      return await getAblumByProviderSlug(input, ctx)
+      return await getAlbumByUserSlug(input, ctx)
     },
   })

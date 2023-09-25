@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Send } from '@icon-park/react'
 import { InputWithButton } from '@ume/ui'
 import { useAuth } from '~/contexts/auth'
@@ -8,7 +9,6 @@ import Image from 'next/legacy/image'
 import Link from 'next/link'
 
 import { LoginModal } from '~/components/header/login-modal.component'
-import { SocketTokenContext } from '~/components/layouts/app-layout/app-layout'
 import { CommentSkeletonLoader } from '~/components/skeleton-load'
 import { TimeFormat } from '~/components/time-format'
 
@@ -29,7 +29,7 @@ const CommmentPost = (props: CommentPostProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [comment, setComment] = useState('')
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
-  const { socketToken } = useContext(SocketTokenContext)
+  const { isAuthenticated } = useAuth()
   const {
     data: commentPostByID,
     isLoading: loadingCommentPostByID,
@@ -76,7 +76,7 @@ const CommmentPost = (props: CommentPostProps) => {
   })
 
   const handleSendComment = () => {
-    if (socketToken) {
+    if (isAuthenticated) {
       if (comment != '') {
         try {
           commentForPostId.mutate(

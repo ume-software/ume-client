@@ -1,7 +1,10 @@
 import { EditName, Remind, Setting } from '@icon-park/react'
+import { useAuth } from '~/contexts/auth'
 
 import { ReactNode, useContext, useEffect, useState } from 'react'
 import React from 'react'
+
+import { useRouter } from 'next/router'
 
 import EditNotificated from './components/edit-notificated'
 import EditProfile from './components/edit-profile'
@@ -10,7 +13,7 @@ import Privacy from './components/privacy'
 import { trpc } from '~/utils/trpc'
 
 interface SettingTypeProps {
-  key: number
+  key: string
   label: string
   icon: ReactNode
   children: ReactNode
@@ -18,19 +21,19 @@ interface SettingTypeProps {
 
 const settingType: SettingTypeProps[] = [
   {
-    key: 1,
+    key: 'settingInformation',
     label: 'Chỉnh sửa thông tin',
     icon: <EditName theme="filled" size="17" fill="#FFFFFF" strokeLinejoin="bevel" />,
     children: <EditProfile />,
   },
   {
-    key: 2,
+    key: 'settingNotification',
     label: 'Thông báo',
     icon: <Remind theme="filled" size="17" fill="#FFFFFF" strokeLinejoin="bevel" />,
     children: <EditNotificated />,
   },
   {
-    key: 3,
+    key: 'settingPrivacy',
     label: 'Quyền riêng tư',
     icon: <Setting theme="filled" size="17" fill="#FFFFFF" strokeLinejoin="bevel" />,
     children: <Privacy />,
@@ -38,13 +41,45 @@ const settingType: SettingTypeProps[] = [
 ]
 
 const AccountSettingContainer = () => {
+  const router = useRouter()
+  const basePath = router.asPath.split('?')[0]
+  const slug = router.query
+
+  const { isAuthenticated } = useAuth()
+
   const [children, setChildren] = useState<SettingTypeProps>(settingType[0])
+
+  const handleChangeTab = (item: string) => {
+    router.replace(
+      {
+        pathname: basePath,
+        query: { ...slug, tab: item },
+      },
+      undefined,
+      { shallow: true },
+    )
+  }
+
+  //Uncomment nếu code xong
+  // useEffect(() => {
+  //   if (isAuthenticated) {
+  //     return
+  //   } else {
+  //     router.replace({ pathname: '/home' })
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [isAuthenticated])
+
+  useEffect(() => {
+    handleChangeTab(children.key)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [children])
 
   return (
     <>
-      <div className="h-screen grid grid-cols-10 text-white">
+      <div className="min-h-screen bg-umeBackground grid grid-cols-10 text-white">
         <div className="col-span-2">
-          <div className="p-10 bg-zinc-800 rounded-2xl sticky top-20">
+          <div className="min-w-[150px] p-10 bg-zinc-800 rounded-3xl sticky top-20">
             <div className="flex flex-col gap-5">
               {settingType.map((item) => (
                 <>
@@ -56,14 +91,14 @@ const AccountSettingContainer = () => {
                     onClick={() => setChildren(item)}
                   >
                     <div>{item.icon}</div>
-                    <p className="text-xl font-semibold">{item.label}</p>
+                    <p className="text-xl font-semibold truncate">{item.label}</p>
                   </div>
                 </>
               ))}
             </div>
           </div>
         </div>
-        <div className="col-span-8">{children.children}</div>
+        <div className="min-w-[770px] col-span-8">{children.children}</div>
       </div>
     </>
   )

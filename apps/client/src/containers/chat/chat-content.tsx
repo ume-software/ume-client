@@ -8,7 +8,7 @@ import Image from 'next/legacy/image'
 import Link from 'next/link'
 import { ChattingChannelResponse, MemberChatChannelResponse } from 'ume-chatting-service-openapi'
 
-import { SocketClientEmit, SocketContext, SocketTokenContext } from '~/components/layouts/app-layout/app-layout'
+import { SocketClientEmit, SocketContext } from '~/components/layouts/app-layout/app-layout'
 import { CommentSkeletonLoader } from '~/components/skeleton-load'
 
 import { getSocket } from '~/utils/constants'
@@ -34,11 +34,11 @@ const convertArrayObjectToObject = (input: Array<any>, key: string = '_id') => {
   }, {})
 }
 const ChatContent = (props: { channel: ChattingChannelResponse }) => {
-  const index = useId()
+  // const index = useId()
   const [messageInput, setMessageInput] = useState('')
   const { socketClientEmit } = useContext(SocketClientEmit)
   const { socketContext } = useContext(SocketContext)
-  const { socketToken } = useContext(SocketTokenContext)
+  const { isAuthenticated } = useAuth()
   const { user } = useAuth()
   const utils = trpc.useContext()
   const { data: chattingMessageChannel, isLoading: loadingChattingMessageChannel } = trpc.useQuery([
@@ -53,7 +53,7 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
       utils.invalidateQueries('chatting.getMessagesByChannelId')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socketContext?.socketChattingContext, socketToken])
+  }, [socketContext?.socketChattingContext, isAuthenticated])
 
   const mappingMember: { [key: string]: MemberChatChannelResponse } = convertArrayObjectToObject(
     chattingMessageChannel?.data.members || [],
@@ -65,7 +65,7 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
   })!
 
   const handleSentMessage = () => {
-    if (socketToken && messageInput != '') {
+    if (isAuthenticated && messageInput != '') {
       socketClientEmit?.socketInstanceChatting?.emit(getSocket().SOCKER_CHATTING_SERVER_ON.SENT_MESSAGE_TO_CHANNEL, {
         channelId: props.channel._id,
         content: messageInput,
@@ -87,7 +87,7 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
         <div className="relative max-h-screen overflow-hidden">
           <div className="w-full flex items-center justify-between">
             <Link
-              href={`/player/${images[0].providerInformation.slug || images[0].providerInformation.id}`}
+              href={`/profile/${images[0].providerInformation.slug || images[0].providerInformation.id}`}
               className="w-3/4 p-2 rounded-lg hover:bg-gray-700"
             >
               {images && (
@@ -106,7 +106,7 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
               )}
             </Link>
             <div className="flex gap-2">
-              {actionButtons.map((item) => (
+              {actionButtons.map((item, index) => (
                 <div
                   key={index}
                   className="p-2 bg-[#413F4D] rounded-full cursor-pointer hover:bg-gray-500 active:bg-gray-400"
