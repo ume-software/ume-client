@@ -46,11 +46,11 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
     setGamesToggle(!gamesToggle)
   }
 
-  const handleSelected = (serviceId: string | undefined) => {
+  const handleSelected = (service: string | undefined) => {
     router.replace(
       {
         pathname: basePath,
-        query: { tab: slug.tab, serviceId: serviceId },
+        query: { tab: slug.tab, service: service },
       },
       undefined,
       {
@@ -58,7 +58,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
       },
     )
 
-    setGameSelected(serviceId)
+    setGameSelected(service)
   }
 
   useEffect(() => {
@@ -147,11 +147,11 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                         <div
                           key={item.id}
                           className={`flex lg:flex-row flex-col items-center group gap-3 hover:bg-gray-700 p-1 rounded-xl ${
-                            gameSelected && (gameSelected == item.serviceId || gameSelected == item.service?.slug)
+                            gameSelected && (gameSelected == item.service?.slug || gameSelected == item.serviceId)
                               ? 'bg-gray-700'
                               : ''
                           }`}
-                          onClick={() => handleSelected(item.serviceId)}
+                          onClick={() => handleSelected(item.service?.slug || item.serviceId)}
                         >
                           <Image src={item?.service?.imageUrl || ImgForEmpty} alt="Game Image" width={60} height={80} />
                           <div className="max-w-[150px] min-w-[150px]">
