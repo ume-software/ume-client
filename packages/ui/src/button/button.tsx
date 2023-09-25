@@ -21,7 +21,7 @@ export const Button = ({
   isOutlinedButton = false,
   icon,
   type = 'submit',
-  isActive = false,
+  isActive = true,
   ...props
 }: ButtonProps) => {
   const btnClass =

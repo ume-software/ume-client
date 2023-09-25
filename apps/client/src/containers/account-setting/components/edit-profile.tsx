@@ -103,7 +103,7 @@ const EditProfile = () => {
 
   const handleUpdateInformation = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (userSettingData?.avatarUrl != settingAccount.avatarUrl) {
+    if (selectedImage) {
       const formData = new FormData(e.currentTarget)
       const responseData = await uploadImageBooking(formData)
       if (responseData?.data?.data?.results) {
