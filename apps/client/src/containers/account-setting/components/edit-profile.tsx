@@ -3,10 +3,13 @@ import { Menu, Transition } from '@headlessui/react'
 import { Check, Pencil } from '@icon-park/react'
 import { Button, Input } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
+import { uploadImageBooking } from '~/apis/upload-media'
 import { GenderEnum } from '~/enumVariable/enumVariable'
 
-import { Fragment, useEffect, useState } from 'react'
+import { FormEvent, Fragment, useEffect, useState } from 'react'
 
+import { notification } from 'antd'
+import { identity } from 'lodash'
 import Image from 'next/legacy/image'
 import { useRouter } from 'next/router'
 import { UserInformationResponse } from 'ume-service-openapi'
@@ -16,7 +19,7 @@ import { SkeletonForAccountSetting } from '~/components/skeleton-load'
 import { trpc } from '~/utils/trpc'
 
 interface GenderProps {
-  key: string | undefined
+  key: GenderEnum
   name: string
 }
 
@@ -50,6 +53,11 @@ const EditProfile = () => {
       },
     },
   )
+  const utils = trpc.useContext()
+
+  const updateInformation = trpc.useMutation(['identity.updateUserProfile'])
+  const [selectedImage, setSelectedImage] = useState<string | undefined>(undefined)
+
   const [settingAccount, setSettingAccount] = useState<AccountSettingProps>({
     avatarUrl: undefined,
     dob: undefined,
@@ -70,7 +78,7 @@ const EditProfile = () => {
     userSettingData?.phone == settingAccount.phone &&
     userSettingData?.slug == settingAccount.slug
 
-  const handleReturnIniState = () => {
+  const handleReturnInitState = () => {
     setSettingAccount({
       avatarUrl: userSettingData?.avatarUrl,
       dob: userSettingData?.dob,
@@ -85,8 +93,79 @@ const EditProfile = () => {
     })
   }
 
+  const handleImageChange = (event) => {
+    const file = event.target.files[0]
+
+    if (file) {
+      setSelectedImage(URL.createObjectURL(file))
+    }
+  }
+
+  const handleUpdateInformation = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (userSettingData?.avatarUrl != settingAccount.avatarUrl) {
+      const formData = new FormData(e.currentTarget)
+      const responseData = await uploadImageBooking(formData)
+      if (responseData?.data?.data?.results) {
+        try {
+          updateInformation.mutate(
+            {
+              avatarUrl: String(responseData.data.data.results),
+              dob: settingAccount.dob || undefined,
+              gender: settingAccount.gender.key,
+              name: settingAccount.name,
+              slug: settingAccount.slug || undefined,
+            },
+            {
+              onSuccess() {
+                setSelectedImage(undefined)
+                utils.invalidateQueries('identity.identityInfo')
+                notification.success({
+                  message: 'Cập nhật thông tin thành công',
+                  description: 'Thông tin vừa được cập nhật',
+                  placement: 'bottomLeft',
+                })
+              },
+            },
+          )
+        } catch (error) {
+          console.error('Failed to update information:', error)
+        }
+      } else {
+        notification.error({
+          message: 'Cập nhật thông tin thất bại',
+          description: 'Có lỗ trong quá tring cập nhật thông tin. Vui lòng thử lại sau!',
+          placement: 'bottomLeft',
+        })
+      }
+    } else {
+      try {
+        await updateInformation.mutate(
+          {
+            dob: settingAccount.dob || undefined,
+            gender: settingAccount.gender.key,
+            name: settingAccount.name,
+            slug: settingAccount.slug || undefined,
+          },
+          {
+            onSuccess() {
+              utils.invalidateQueries('identity.identityInfo')
+              notification.success({
+                message: 'Cập nhật thông tin thành công',
+                description: 'Thông tin vừa được cập nhật',
+                placement: 'bottomLeft',
+              })
+            },
+          },
+        )
+      } catch (error) {
+        console.error('Failed to update information:', error)
+      }
+    }
+  }
+
   useEffect(() => {
-    handleReturnIniState()
+    handleReturnInitState()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userSettingData])
 
@@ -95,19 +174,25 @@ const EditProfile = () => {
       <p className="text-4xl font-bold">Thông tin cá nhân</p>
       {!isLoadingUserSettingData && userSettingData && settingAccount ? (
         <>
-          <div className="w-full flex flex-col items-center gap-5 p-10">
+          <form onSubmit={handleUpdateInformation} className="w-full flex flex-col items-center gap-5 p-10">
             <div className="w-full flex justify-start items-center gap-24">
               <div className="relative p-2">
-                <Image
-                  className="rounded-lg"
-                  width={250}
-                  height={300}
-                  objectFit="cover"
-                  src={userSettingData.avatarUrl || ImgForEmpty}
-                  alt="Personal Image"
-                />
+                <div className="w-[250px] h-[300px]">
+                  <Image
+                    className="rounded-lg"
+                    layout="fill"
+                    src={selectedImage ? selectedImage : userSettingData.avatarUrl || ImgForEmpty}
+                    alt="Personal Image"
+                  />
+                </div>
                 <div className="absolute right-0 bottom-0 p-2 bg-zinc-800 hover:bg-gray-700 rounded-full">
                   <Pencil theme="filled" size="25" fill="#FFFFFF" strokeLinejoin="bevel" />
+                  <input
+                    className="absolute w-full h-full top-0 left-0 opacity-0 z-20"
+                    type="file"
+                    name="files"
+                    onChange={handleImageChange}
+                  />
                 </div>
               </div>
               <div>
@@ -220,14 +305,14 @@ const EditProfile = () => {
                       {userSettingData.isVerified ? (
                         <div className="flex items-center justify-between">
                           <div className="w-fit bg-green-600 p-2 text-white rounded-lg">Đã xác minh</div>{' '}
-                          <Button isDisabled={true} isOutlinedButton={true} customCSS="p-2 hover:scale-105">
+                          <Button isActive={true} isOutlinedButton={true} customCSS="p-2 hover:scale-105">
                             Xem hình ảnh xác minh
                           </Button>
                         </div>
                       ) : (
                         <div className="flex items-center justify-between">
                           <div className="w-fit bg-red-600 p-2 text-white rounded-lg">Chưa xác minh</div>
-                          <Button isDisabled={true} isOutlinedButton={true} customCSS="p-2 hover:scale-105">
+                          <Button isActive={true} isOutlinedButton={true} customCSS="p-2 hover:scale-105">
                             Xác minh danh tính
                           </Button>
                         </div>
@@ -238,23 +323,29 @@ const EditProfile = () => {
               </div>
             </div>
             <div className="flex gap-10 mt-20">
-              {!inforChange && (
+              {(!inforChange || selectedImage) && (
                 <>
                   <Button
-                    isDisabled={false}
+                    isActive={false}
                     isOutlinedButton={true}
                     customCSS="w-[100px] text-xl p-2 hover:scale-105"
-                    onClick={() => handleReturnIniState()}
+                    onClick={() => handleReturnInitState()}
                   >
                     Hủy
                   </Button>
-                  <Button isDisabled={true} isOutlinedButton={true} customCSS="w-[100px] text-xl p-2 hover:scale-105">
+                  <Button
+                    customCSS="w-[100px] text-xl p-2 hover:scale-105"
+                    type="submit"
+                    isActive={true}
+                    isOutlinedButton={true}
+                    isLoading={updateInformation.isLoading}
+                  >
                     Thay đổi
                   </Button>
                 </>
               )}
             </div>
-          </div>
+          </form>
         </>
       ) : (
         <SkeletonForAccountSetting />
