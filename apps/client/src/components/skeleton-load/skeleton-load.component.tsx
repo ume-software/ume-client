@@ -171,6 +171,10 @@ const CategoryGridSkeleton = () => {
   )
 }
 
+const BGFullGridSkeleton = () => {
+  return <div className="w-full h-full animate-pulse flex-row items-center justify-center rounded-xl bg-gray-300"></div>
+}
+
 const ChatSkeleton = () => {
   return (
     <>
@@ -194,11 +198,29 @@ const ChatSkeleton = () => {
   )
 }
 
-const skeletonForGridLoad = () => {
+const SkeletonForAccountSetting = () => {
   return (
     <>
-      <div className="w-full"></div>
-      <div className="grid grid-cols-10"></div>
+      <div className="skeleton-loader animate-pulse">
+        <div className="w-full flex items-center gap-24 p-10">
+          <div className="flex justify-start items-center gap-24">
+            <div className="skeleton-avatar w-[250px] h-[300px] rounded-lg bg-gray-300"></div>
+          </div>
+          <div className="w-full skeleton-content space-y-4">
+            <div className="skeleton-line w-1/2 h-7 bg-gray-300"></div>
+            <div className="skeleton-line w-3/4 h-7 bg-gray-300"></div>
+            <div className="skeleton-line w-1/2 h-7 bg-gray-300"></div>
+            <div className="skeleton-line w-4/5 h-7 bg-gray-300"></div>
+            <div className="skeleton-line w-2/3 h-7 bg-gray-300"></div>
+            <div className="skeleton-line w-1/3 h-7 bg-gray-300"></div>
+            <div className="skeleton-line w-4/5 h-7 bg-gray-300"></div>
+          </div>
+        </div>
+        <div className="flex justify-center gap-10 mt-20">
+          <div className="skeleton-button w-20 h-8 bg-gray-300 rounded-lg"></div>
+          <div className="skeleton-button w-20 h-8 bg-gray-300 rounded-lg"></div>
+        </div>
+      </div>
     </>
   )
 }
@@ -211,5 +233,7 @@ export {
   NotificateSkeletonLoader,
   TableSkeletonLoader,
   CategoryGridSkeleton,
+  BGFullGridSkeleton,
   ChatSkeleton,
+  SkeletonForAccountSetting,
 }

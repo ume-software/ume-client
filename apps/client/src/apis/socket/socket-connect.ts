@@ -1,8 +1,6 @@
 import * as socketio from 'socket.io-client'
 import { getEnv } from '~/env'
 
-import { getSocket } from '~/utils/constants'
-
 export const socket = (token: string | null) => {
   if (token != null) {
     const socketInstanceBooking = socketio.connect(getEnv().baseSocketBookingURL, {
@@ -14,7 +12,7 @@ export const socket = (token: string | null) => {
       auth: {
         authorization: `Bearer ${token}`,
       },
-      path: '/booking-service/socket/',
+      path: '/ume-service/socket/',
     })
 
     const socketInstanceChatting = socketio.connect(getEnv().baseSocketChattingURL, {

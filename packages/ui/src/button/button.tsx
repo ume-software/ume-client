@@ -27,7 +27,7 @@ export const Button = ({
   const btnClass =
     DEFAULT_STYLE +
     (isDisabled
-      ? ` ${isOutlinedButton ? '!bg-[#e9eef5] !text-slate-800 opacity-60' : '!bg-slate-300'}`
+      ? ` ${isOutlinedButton ? 'bg-purple-700 text-slate-800 cursor-pointer' : 'bg-gray-600'}`
       : ` ${isOutlinedButton && 'border border-slate-300'}`) +
     (customCSS ? ` ${customCSS}` : '')
 
@@ -38,7 +38,7 @@ export const Button = ({
           {...props}
           type={type}
           disabled={isDisabled}
-          className="w-full h-full btn"
+          className={`w-full h-full btn ${!isOutlinedButton ? 'bg-transparent' : 'bg-transparent cursor-pointer'}`}
           tabIndex={99}
           style={{ borderRadius: 3 }}
         >

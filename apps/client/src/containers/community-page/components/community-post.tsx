@@ -2,6 +2,7 @@ import { Menu, Transition } from '@headlessui/react'
 import { CloseSmall, Comment, Like, More, ShareTwo, TipsOne } from '@icon-park/react'
 import { Modal } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
+import { useAuth } from '~/contexts/auth'
 
 import {
   Dispatch,
@@ -25,7 +26,6 @@ import PostByID from './post-by-ID'
 import PostImageLayout from './post-image-layout'
 
 import { LoginModal } from '~/components/header/login-modal.component'
-import { SocketTokenContext } from '~/components/layouts/app-layout/app-layout'
 import { TimeFormat } from '~/components/time-format'
 
 import { trpc } from '~/utils/trpc'
@@ -43,7 +43,7 @@ const CommunityPost = (props: CommunityPostProps) => {
   const [isPostModal, setIsPostModal] = useState<boolean>(false)
   const [isLikePost, setIsLikePost] = useState<boolean>(props.data.isLike)
   const [postComment, setPostComment] = useState<number>(0)
-  const { socketToken } = useContext(SocketTokenContext)
+  const { isAuthenticated } = useAuth()
   const [isModalLoginVisible, setIsModalLoginVisible] = useState<boolean>(false)
   const postRef = useRef<HTMLDivElement>(null)
   const likeForPostId = trpc.useMutation(['community.likeForPostId'])
@@ -128,7 +128,7 @@ const CommunityPost = (props: CommunityPostProps) => {
     setIsPostModal(true)
   }
   const handleLikePost = () => {
-    if (socketToken) {
+    if (isAuthenticated) {
       if (isLikePost) {
         unLikeForPostId.mutate(props?.data?.id, {
           onSuccess: () => {

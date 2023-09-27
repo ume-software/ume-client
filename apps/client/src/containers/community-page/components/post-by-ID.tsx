@@ -34,7 +34,7 @@ const PostByID = (props) => {
                 src={props.postData?.thumbnails[imageIndex]?.url}
                 alt={`${props.postData?.thumbnails[imageIndex]?.type}`}
                 layout="fill"
-                objectFit="contain"
+                objectFit="scale-down"
               />
             ) : (
               <div className="h-[90%] flex justify-center items-center">

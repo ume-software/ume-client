@@ -18,18 +18,19 @@ export const Promotion = () => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [scrollPosition, setScrollPosition] = useState(0)
 
-  const { isLoading: loadingHotProvider, isFetching: isFetchingHotProviders } = trpc.useQuery(
-    ['booking.getHotProviders'],
-    {
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: 'always',
-      cacheTime: 0,
-      refetchOnMount: true,
-      onSuccess(data) {
-        setListHotProvider((prevData) => [...(prevData ?? []), ...(data?.data?.row ?? [])])
-      },
+  const {
+    data: hotProviders,
+    isLoading: loadingHotProvider,
+    isFetching: isFetchingHotProviders,
+  } = trpc.useQuery(['booking.getHotProviders'], {
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: 'always',
+    cacheTime: 0,
+    refetchOnMount: true,
+    onSuccess(data) {
+      setListHotProvider(data?.data?.row)
     },
-  )
+  })
 
   const {
     data: providers,
@@ -85,7 +86,9 @@ export const Promotion = () => {
                 {listHotProvider?.map((provider) => (
                   <Link
                     key={provider?.id}
-                    href={`/player/${provider?.slug ?? provider?.id}?service=${provider.serviceId}`}
+                    href={`/profile/${provider?.slug ?? provider?.id}?tab=information&service=${
+                      provider.serviceSlug || provider.serviceId
+                    }`}
                   >
                     <PromoteCard data={provider} />
                   </Link>
@@ -98,7 +101,9 @@ export const Promotion = () => {
                 {listProvider?.map((provider) => (
                   <Link
                     key={provider?.id}
-                    href={`/player/${provider?.slug ?? provider?.id}?service=${provider.serviceId}`}
+                    href={`/profile/${provider?.slug ?? provider?.id}?tab=information&service=${
+                      provider.serviceSlug || provider.serviceId
+                    }`}
                   >
                     <PromoteCard data={provider} />
                   </Link>

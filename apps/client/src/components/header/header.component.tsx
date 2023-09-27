@@ -12,7 +12,6 @@ import { parse } from 'cookie'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
 
-import { SocketTokenContext } from '../layouts/app-layout/app-layout'
 import { LoginModal } from './login-modal.component'
 import { RechargeModal } from './recharge-form.component'
 
@@ -31,7 +30,6 @@ export const Header: React.FC = ({}: HeaderProps) => {
   const [userInfo, setUserInfo] = useState<any>()
   const [balance, setBalance] = useState<any>()
   const [notificatedAmount] = useState<number>(0)
-  const { setSocketToken } = useContext(SocketTokenContext)
   const [selectedTab, setSelectedTab] = useState('Chính')
   const [isModalLoginVisible, setIsModalLoginVisible] = React.useState(false)
   const accessToken = parse(document.cookie).accessToken
@@ -43,12 +41,6 @@ export const Header: React.FC = ({}: HeaderProps) => {
     },
     enabled: isAuthenticated,
   })
-
-  useEffect(() => {
-    if (userInfo) {
-      setSocketToken(accessToken || null)
-    }
-  }, [setSocketToken, userInfo, accessToken])
 
   const tabDatas: TabProps[] = [
     {
