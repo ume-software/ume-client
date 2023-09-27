@@ -1,16 +1,5 @@
 import { Menu, Transition } from '@headlessui/react'
-import {
-  CircleFourLine,
-  Dot,
-  Female,
-  Jump,
-  Male,
-  More,
-  Pencil,
-  PersonalPrivacy,
-  Plus,
-  ShareTwo,
-} from '@icon-park/react'
+import { Dot, Female, Jump, Male, More, Pencil, PersonalPrivacy, Plus, ShareTwo } from '@icon-park/react'
 import cover from 'public/cover.png'
 import TestImage4 from 'public/cover.png'
 import detailBackground from 'public/detail-cover-background.png'
