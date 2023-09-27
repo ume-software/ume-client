@@ -7,6 +7,16 @@ export interface IPersionalInfoProps {
 }
 
 export default function PersionalInfo({ data }: IPersionalInfoProps) {
+  const [switchTable, setSwitchTable] = React.useState(true)
+
+  function handleSwitchTable() {
+    if (switchTable === true) {
+      setSwitchTable(false)
+    } else {
+      setSwitchTable(true)
+    }
+  }
+
   return (
     <div className="flex-col w-auto bg-[#15151B] mt-5 px-4">
       <div className="flex w-auto px-4 border-b-2 border-[#FFFFFF80] pb-5">
