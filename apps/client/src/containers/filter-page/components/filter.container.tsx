@@ -135,7 +135,7 @@ const FilterContainer = (props) => {
   useEffect(() => {
     if (containerRef.current) {
       const { scrollHeight } = containerRef.current
-      const isAtEnd = scrollPosition >= scrollHeight - 500
+      const isAtEnd = scrollPosition >= scrollHeight - 700
       if (isAtEnd && Number(providersFilter?.data.count) > 20 * Number(page)) {
         setPage(String(Number(page) + 1))
       }
@@ -167,7 +167,7 @@ const FilterContainer = (props) => {
     )
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [priceRange, service, debouncedValue, gender, page, order])
+  }, [priceRange, service, debouncedValue, gender, order])
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
