@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/alt-text */
 import { Menu, Transition } from '@headlessui/react'
-import { Check, Pencil } from '@icon-park/react'
-import { Button, Input } from '@ume/ui'
+import { Check, CloseSmall, Pencil } from '@icon-park/react'
+import { Button, Input, Modal } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
 import { uploadImageBooking } from '~/apis/upload-media'
 import { GenderEnum } from '~/enumVariable/enumVariable'
@@ -14,6 +14,7 @@ import Image from 'next/legacy/image'
 import { useRouter } from 'next/router'
 import { UserInformationResponse } from 'ume-service-openapi'
 
+import ConfirmForm from '~/components/confirm-form/confirmForm'
 import { SkeletonForAccountSetting } from '~/components/skeleton-load'
 
 import { trpc } from '~/utils/trpc'
@@ -57,6 +58,7 @@ const EditProfile = () => {
 
   const updateInformation = trpc.useMutation(['identity.updateUserProfile'])
   const [selectedImage, setSelectedImage] = useState<string | undefined>(undefined)
+  const [isModalVisible, setIsModalVisible] = useState(false)
 
   const [settingAccount, setSettingAccount] = useState<AccountSettingProps>({
     avatarUrl: undefined,
@@ -93,6 +95,10 @@ const EditProfile = () => {
     })
   }
 
+  const handleClose = () => {
+    setIsModalVisible(false)
+  }
+
   const handleImageChange = (event) => {
     const file = event.target.files[0]
 
@@ -119,6 +125,7 @@ const EditProfile = () => {
             {
               onSuccess() {
                 setSelectedImage(undefined)
+                setIsModalVisible(false)
                 utils.invalidateQueries('identity.identityInfo')
                 notification.success({
                   message: 'Cập nhật thông tin thành công',
@@ -150,6 +157,7 @@ const EditProfile = () => {
           {
             onSuccess() {
               utils.invalidateQueries('identity.identityInfo')
+              setIsModalVisible(false)
               notification.success({
                 message: 'Cập nhật thông tin thành công',
                 description: 'Thông tin vừa được cập nhật',
@@ -163,6 +171,38 @@ const EditProfile = () => {
       }
     }
   }
+
+  const confirmModal = Modal.useEditableForm({
+    onOK: () => {},
+    onClose: handleClose,
+    show: isModalVisible,
+    form: (
+      <>
+        <ConfirmForm
+          title="Thay đổi thông tin cá nhân"
+          description="Bạn có chấp nhận thay đổi thông tin cá nhân hay không?"
+          onClose={handleClose}
+          onOk={(e) => {
+            handleUpdateInformation(e)
+          }}
+        />
+      </>
+    ),
+    backgroundColor: '#15151b',
+    closeButtonOnConner: (
+      <>
+        <CloseSmall
+          onClick={handleClose}
+          onKeyDown={(e) => e.key === 'Enter' && handleClose()}
+          tabIndex={1}
+          className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
+          theme="outline"
+          size="24"
+          fill="#FFFFFF"
+        />
+      </>
+    ),
+  })
 
   useEffect(() => {
     handleReturnInitState()
@@ -328,23 +368,27 @@ const EditProfile = () => {
                   <Button
                     isActive={false}
                     isOutlinedButton={true}
-                    customCSS="w-[100px] text-xl p-2 hover:scale-105"
+                    customCSS="w-[100px] text-xl p-2 rounded-xl hover:scale-105"
                     onClick={() => handleReturnInitState()}
                   >
                     Hủy
                   </Button>
                   <Button
-                    customCSS="w-[100px] text-xl p-2 hover:scale-105"
-                    type="submit"
+                    customCSS="w-[100px] text-xl p-2 rounded-xl hover:scale-105"
+                    type="button"
                     isActive={true}
                     isOutlinedButton={true}
-                    isLoading={updateInformation.isLoading}
+                    // isLoading={updateInformation.isLoading}
+                    onClick={() => {
+                      setIsModalVisible(true)
+                    }}
                   >
                     Thay đổi
                   </Button>
                 </>
               )}
             </div>
+            {isModalVisible && confirmModal}
           </form>
         </>
       ) : (

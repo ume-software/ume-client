@@ -9,6 +9,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   isLoading?: boolean
   isOutlinedButton?: boolean
   isActive?: boolean
+  isDisable?: boolean
   icon?: ReactNode
 }
 const DEFAULT_STYLE = `rounded-md border-1 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/99 font-medium text-white`
@@ -22,6 +23,7 @@ export const Button = ({
   icon,
   type = 'submit',
   isActive = true,
+  isDisable = false,
   ...props
 }: ButtonProps) => {
   const btnClass =
@@ -37,7 +39,7 @@ export const Button = ({
         <button
           {...props}
           type={type}
-          disabled={!isActive}
+          disabled={isDisable}
           className={`w-full h-full btn ${!isOutlinedButton ? 'bg-transparent' : 'bg-transparent cursor-pointer'}`}
           tabIndex={99}
           style={{ borderRadius: 3 }}
