@@ -113,7 +113,7 @@ const PlayerInformation = (props: { data }) => {
     },
     {
       label: `Album`,
-      children: <AlbumTab id={props.data.userId.toString()} />,
+      children: <AlbumTab id={props?.data?.userId.toString()} />,
     },
     {
       label: `Khoảnh khắc`,
@@ -154,7 +154,7 @@ const PlayerInformation = (props: { data }) => {
                 <div className="flex flex-row gap-3">
                   <div className="bg-gray-700 p-2 rounded-full flex items-center gap-1">
                     {valueGenders.map((gender) => (
-                      <>{gender.value == props.data.user.gender && gender.icon}</>
+                      <>{gender?.value == props?.data?.user?.gender && gender?.icon}</>
                     ))}
                     <p>16</p>
                   </div>
