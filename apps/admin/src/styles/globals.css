@@ -83,6 +83,10 @@
     background-color: #292734 !important;
 }
 
+.ant-menu::-webkit-scrollbar {
+  display: none;               /* width of the entire scrollbar */
+}
+
 .ant-menu-title-content{
     font-weight: bold;
     color: white;
@@ -131,5 +135,8 @@
     background-color: #1f2937;
   }
 
+  .ant-dropdown .ant-dropdown-menu {
+        background-color: #1f2937 !important; 
+  }
 
 

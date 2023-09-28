@@ -5,7 +5,8 @@ import React, { useState } from 'react'
 
 import { Pagination, Tag } from 'antd'
 import Head from 'next/head'
-import { UserInformationPagingResponse } from 'ume-service-openapi'
+import { title } from 'process'
+import { AdminGetUserPagingResponseResponse } from 'ume-service-openapi'
 
 import UserTable from './components/user-table'
 
@@ -80,7 +81,7 @@ const genderFilterItems = [
 ]
 
 const UserManager = () => {
-  const [userList, setUserList] = useState<UserInformationPagingResponse | undefined>()
+  const [userList, setUserList] = useState<AdminGetUserPagingResponseResponse | undefined>()
   const [page, setPage] = useState(1)
   const [filter, setFilter] = useState({
     gender: 'all',
@@ -104,11 +105,11 @@ const UserManager = () => {
       filter.isBanned == 'true' ? (query.isBanned = true) : (query.isBanned = false)
     }
 
-    return query
+    return JSON.stringify(query)
   }
 
-  trpc.useQuery(
-    ['user.getUserList', { page: page.toString(), where: JSON.stringify(generateQuery()), order: undefined }],
+  const { isLoading: isUserListLoading, isFetching: isUserListFetching } = trpc.useQuery(
+    ['user.getUserList', { page: page.toString(), where: generateQuery(), order: undefined }],
     {
       onSuccess(data) {
         setUserList(data?.data as any)
@@ -179,7 +180,7 @@ const UserManager = () => {
         <UserTable userList={userList} />
         <div className="flex w-full justify-center pb-[200px] mt-5">
           <Pagination
-            itemRender={(page, type, originalElement) => (
+            itemRender={(page, type) => (
               <div className="text-white">
                 {type == 'prev' ? (
                   <Left theme="outline" size="24" fill="#fff" />
