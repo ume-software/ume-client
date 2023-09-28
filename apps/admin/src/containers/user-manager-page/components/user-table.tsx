@@ -85,7 +85,7 @@ const UserTable = ({ userList }) => {
       key: 'phone',
     },
     {
-      title: 'Giới tính',
+      title: <div className="flex justify-center items-center">Giới tính</div>,
       dataIndex: 'gender',
       key: 'gender',
       render: (text) => (
@@ -95,21 +95,21 @@ const UserTable = ({ userList }) => {
       ),
     },
     {
-      title: 'Trạng thái',
+      title: <div className="flex justify-center items-center">Trạng thái</div>,
       key: 'isBaned',
       dataIndex: 'isBaned',
       render: (text) => (
         <div className="flex justify-center items-center">
           {!text ? (
-            <Tag className="bg-green-500 rounded-lg text-white px-3 py-2">Hoạt động</Tag>
+            <Tag className="bg-green-500 rounded-lg text-white px-3 py-2 m-0">Hoạt động</Tag>
           ) : (
-            <Tag className="bg-red-500 rounded-lg text-white px-3 py-2">Tạm dừng</Tag>
+            <Tag className="bg-red-500 rounded-lg text-white px-3 py-2 m-0">Tạm dừng</Tag>
           )}
         </div>
       ),
     },
     {
-      title: 'Ngày tham gia',
+      title: <div className="flex justify-center items-center">Ngày tham gia</div>,
       key: 'createdAt',
       dataIndex: 'createdAt',
       render: (date) => <div className="flex justify-center">{new Date(date).toLocaleDateString('en-GB')}</div>,
