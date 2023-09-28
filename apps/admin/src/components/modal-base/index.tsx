@@ -9,9 +9,17 @@ export interface IModalBaseProps {
   titleValue?: string
   className?: any
   width?: any
+  isdestroyOnClose?: boolean
 }
 
-export default function ModalBase({ titleValue, openValue, closeFunction, width, children }: IModalBaseProps) {
+export default function ModalBase({
+  titleValue,
+  openValue,
+  closeFunction,
+  width,
+  children,
+  isdestroyOnClose,
+}: IModalBaseProps) {
   const title = () => {
     return (
       <div className="bg-[#15151B] pt-4 pb-2">
@@ -24,7 +32,14 @@ export default function ModalBase({ titleValue, openValue, closeFunction, width,
 
   return (
     <>
-      <Modal title={title()} open={openValue} onCancel={closeFunction} footer={null} width={width ? width : 1000}>
+      <Modal
+        title={title()}
+        open={openValue}
+        onCancel={closeFunction}
+        footer={null}
+        width={width ? width : 1000}
+        destroyOnClose={isdestroyOnClose ? isdestroyOnClose : false}
+      >
         {children}
       </Modal>
     </>

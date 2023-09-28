@@ -138,5 +138,26 @@
   .ant-dropdown .ant-dropdown-menu {
         background-color: #1f2937 !important; 
   }
+/* slect ant design for vourcher */
+.ant-select-selector {
+  background-color:#413F4D !important;
+  color: white !important;  
+  border: 2px solid white !important;
+}
+.ant-select-selection-overflow-item{
+  background-color: #7463F0 !important;
+  margin-right: 0.2rem !important;
+  border-radius: 10%;
+  height: 1.6rem !important;
+}
+.ant-select-selection-placeholder {
+  color: #FFFFFF80 !important;
+}
+.ant-select-selection-search{
+  background-color:#413F4D !important;
+}
+.ant-select-selection-overflow-item-suffix{
+  display: none !important;
+}
 
 

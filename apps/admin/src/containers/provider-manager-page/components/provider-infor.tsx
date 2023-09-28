@@ -68,6 +68,7 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
       ...row,
     }
   })
+  console.log(dataProviderSkills)
 
   const { isLoading: isListTransLoading, isFetching: isListTransFetching } = trpc.useQuery(
     [
@@ -101,6 +102,7 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
       ...row,
     }
   })
+  console.log(dataProviderTranHistory)
 
   const name = providerInfo.name
   const avatarUrl = providerInfo.avatarUrl
