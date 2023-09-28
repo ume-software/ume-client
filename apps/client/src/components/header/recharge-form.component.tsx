@@ -2,6 +2,8 @@ import { CheckOne, CloseSmall } from '@icon-park/react'
 import { Button, FieldLabel, FormInput, Modal } from '@ume/ui'
 import coin from 'public/coin-icon.png'
 import momo from 'public/momo-logo.png'
+import vnpay from 'public/vnpay-logo.png'
+import { RechargeEnum } from '~/enumVariable/enumVariable'
 
 import { useState } from 'react'
 
@@ -9,6 +11,7 @@ import { QRCode } from 'antd'
 import { Formik } from 'formik'
 import Image from 'next/image'
 import { StaticImageData } from 'next/legacy/image'
+import { useRouter } from 'next/router'
 import * as Yup from 'yup'
 
 import { trpc } from '~/utils/trpc'
@@ -32,7 +35,7 @@ interface paymentPlatformArrayProps {
 const coinRechangeValue: number[] = [10000, 20000, 50000, 100000, 200000, 500000]
 const paymentPlatformArray: paymentPlatformArrayProps[] = [
   { paymentPlatform: 'MOMO', imgSrc: momo, tax: 0.01, type: 'QR' },
-  { paymentPlatform: 'VNPAY', imgSrc: momo, tax: 0.03, type: 'VNPAY' },
+  { paymentPlatform: 'VNPAY', imgSrc: vnpay, tax: 0.03, type: 'VNPAY' },
 ]
 
 export const RechargeModal = ({ setShowRechargeModal, showRechargeModal }: IRechargeModalProps) => {
@@ -49,6 +52,7 @@ export const RechargeModal = ({ setShowRechargeModal, showRechargeModal }: IRech
   })
 
   const requestRecharge = trpc.useMutation(['identity.request-recharge'])
+
   const RechargeForm = () => {
     return (
       <div className="px-4 pb-4 my-2 text-white">
@@ -92,8 +96,13 @@ export const RechargeModal = ({ setShowRechargeModal, showRechargeModal }: IRech
                       },
                       {
                         onSuccess: (data) => {
-                          setQRContent(data.data)
                           setSubmiting(false)
+                          if (data.data.dataStringType == RechargeEnum.REDIRECT_URL) {
+                            handleClose()
+                            window.open(`${data.data.dataString}`, '_blank')
+                          } else if (data.data.dataStringType == RechargeEnum.QR) {
+                            setQRContent(data.data)
+                          }
                         },
                         onError: (error) => {
                           console.log(error)
@@ -148,8 +157,12 @@ export const RechargeModal = ({ setShowRechargeModal, showRechargeModal }: IRech
                           />
                         </div>
                         <Button
-                          customCSS="bg-[#37354F] py-2 mt-10 hover:bg-slate-700 !rounded-3xl max-h-15 w-full text-[15px] hover:ease-in-out"
+                          customCSS={`mt-10 !rounded-2xl w-full !text-white py-1 font-semibold text-lg text-center ${
+                            values.balance && 'hover:scale-105'
+                          }`}
                           type="button"
+                          isActive={true}
+                          isOutlinedButton={!!values.balance}
                           onClick={() => {
                             handleSubmit()
                           }}

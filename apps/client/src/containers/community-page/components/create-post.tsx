@@ -169,7 +169,7 @@ const CreatePost = (props: any) => {
         </div>
         <div className="mt-3 p-5">
           <Button
-            customCSS={`rounded-lg w-full text-white py-1 font-semibold text-lg text-center ${
+            customCSS={`!rounded-2xl w-full !text-white py-1 font-semibold text-lg text-center ${
               !(content === '' && !!!mediaFiles) && 'hover:scale-105'
             }`}
             type="submit"
