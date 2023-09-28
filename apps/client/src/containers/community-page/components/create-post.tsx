@@ -128,7 +128,7 @@ const CreatePost = (props: any) => {
               <label>Hình ảnh</label>
               <div className="relative cursor-pointer w-fit">
                 {!mediaFiles ? (
-                  <label className="flex justify-start items-center p-3 z-10 gap-2 rounded-lg bg-purple-600 hover:bg-gray-700">
+                  <label className="z-10 flex items-center justify-start gap-2 p-3 bg-purple-600 rounded-lg hover:bg-gray-700">
                     <AddPicture theme="filled" size="15" fill="#FFFFFF" strokeLinejoin="bevel" />
                     Chọn ảnh
                   </label>
@@ -139,7 +139,7 @@ const CreatePost = (props: any) => {
                 )}
                 <div className={`absolute w-full h-full top-0 left-0 ${mediaFiles && '-z-10'}`}>
                   <input
-                    className="opacity-0 w-full h-full"
+                    className="w-full h-full opacity-0"
                     type="file"
                     name="files"
                     onChange={(e) => handleMediaChange(e)}
@@ -167,7 +167,7 @@ const CreatePost = (props: any) => {
             </div>
           </div>
         </div>
-        <div className="mt-3 p-5">
+        <div className="p-5 mt-3">
           <Button
             customCSS={`rounded-lg w-full text-white py-1 font-semibold text-lg  text-center ${
               !(content === '' && !!!mediaFiles) && 'hover:scale-105'

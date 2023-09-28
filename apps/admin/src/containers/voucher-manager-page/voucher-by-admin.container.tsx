@@ -6,6 +6,8 @@ import React, { useState } from 'react'
 import { Pagination, Tag } from 'antd'
 
 import VoucherTable from './components/voucher-table'
+import VourcherModalCreate from './components/vourcher-modal/vourcher-modal-create'
+import VourcherModalView from './components/vourcher-modal/vourcher-modal-view'
 
 import FilterDropdown from '~/components/filter-dropdown'
 
@@ -19,7 +21,7 @@ const statusFilterItems = [
   {
     key: 'all',
     label: (
-      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white px-3 py-2 w-full flex justify-center">
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
         Tất cả
       </Tag>
     ),
@@ -27,7 +29,7 @@ const statusFilterItems = [
   {
     key: 'true',
     label: (
-      <Tag className="bg-green-500 hover:bg-green-600 rounded-lg text-white px-3 py-2 w-full flex justify-center">
+      <Tag className="flex justify-center w-full px-3 py-2 text-white bg-green-500 rounded-lg hover:bg-green-600">
         Hoạt động
       </Tag>
     ),
@@ -35,7 +37,7 @@ const statusFilterItems = [
   {
     key: 'false',
     label: (
-      <Tag className="bg-red-500 hover:bg-red-600 rounded-lg text-white px-3 py-2 w-full flex justify-center">
+      <Tag className="flex justify-center w-full px-3 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600">
         Tạm dừng
       </Tag>
     ),
@@ -46,46 +48,67 @@ const voucherRecipientTypes = [
   {
     key: 'ALL',
     label: (
-      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white px-3 py-2 w-full flex justify-center">
-        <div className="flex justify-center items-center">Tất cả</div>
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
+        <div className="flex items-center justify-center">Tất cả</div>
       </Tag>
     ),
   },
   {
     key: 'FIRST_TIME_BOOKING',
     label: (
-      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white px-3 py-2 w-full flex justify-center">
-        <div className="flex justify-center items-center">Người lần đầu thuê</div>
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
+        <div className="flex items-center justify-center">Người lần đầu thuê</div>
       </Tag>
     ),
   },
   {
     key: 'PREVIOUS_BOOKING',
     label: (
-      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white px-3 py-2 w-full flex justify-center">
-        <div className="flex justify-center items-center">Người đã từng thuê</div>
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
+        <div className="flex items-center justify-center">Người đã từng thuê</div>
       </Tag>
     ),
   },
   {
     key: 'TOP_5_BOOKER',
     label: (
-      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white px-3 py-2 w-full flex justify-center">
-        <div className="flex justify-center items-center">Top 5 người thuê</div>
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
+        <div className="flex items-center justify-center">Top 5 người thuê</div>
       </Tag>
     ),
   },
   {
     key: 'TOP_10_BOOKER',
     label: (
-      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white px-3 py-2 w-full flex justify-center">
-        <div className="flex justify-center items-center">Top 10 người thuê</div>
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
+        <div className="flex items-center justify-center">Top 10 người thuê</div>
       </Tag>
     ),
   },
 ]
 
 const VoucherByAdmin = () => {
+  // model variable and function
+
+  const [openVourcherModalView, setOpenVourcherModalView] = useState(false)
+  const [openVourcherModalCreate, setOpenVourcherModalCreate] = useState(false)
+  const [openVourcherModalUpdate, setOpenVourcherModalUpdate] = useState(false)
+
+  function closeVourcherModalView() {
+    setOpenVourcherModalView(false)
+  }
+  function closeVourcherModalCreate() {
+    setOpenVourcherModalCreate(false)
+  }
+  function closeVourcherModalUpdate() {
+    setOpenVourcherModalUpdate(false)
+  }
+  function addVourcherHandler() {
+    // setOpenVourcherModalView(true)
+    setOpenVourcherModalCreate(true)
+    // setOpenVourcherModalUpdate(true)
+  }
+  // --------------------------
   const [adminVoucherList, setAdminVoucherList] = useState<any>()
   const [page, setPage] = useState(1)
   const [filter, setFilter] = useState({
@@ -159,27 +182,27 @@ const VoucherByAdmin = () => {
     <div>
       <div className="flex justify-between">
         <span className="content-title">Khuyến mãi của quản trị viên</span>
-        <Button customCSS="bg-[#7463f0] px-3 py-1 rounded-2xl active:bg-gray-600">
+        <Button customCSS="bg-[#7463f0] px-3 py-1 rounded-2xl active:bg-gray-600" onClick={addVourcherHandler}>
           <Plus theme="outline" size="24" fill="#fff" />
           Thêm khuyến mãi
         </Button>
       </div>
 
       <div className="flex flex-col my-10">
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between">
           <div className="flex">
-            <FilterDropdown title="Trạng thái" items={statusFilterItems} handleFilter={handleFilter} />
-            <FilterDropdown title="Đối tượng" items={voucherRecipientTypes} handleFilter={handleFilter} />
+            {/* <FilterDropdown title="Trạng thái" items={statusFilterItems} handleFilter={handleFilter} />
+            <FilterDropdown title="Đối tượng" items={voucherRecipientTypes} handleFilter={handleFilter} /> */}
           </div>
 
-          <div className="flex items-center rounded-lg pl-2 w-fit bg-umeHeader border-2 border-white">
-            <Search className=" active:bg-gray-700 p-2 rounded-full" theme="outline" size="24" fill="#fff" />
+          <div className="flex items-center pl-2 border-2 border-white rounded-lg w-fit bg-umeHeader">
+            <Search className="p-2 rounded-full active:bg-gray-700" theme="outline" size="24" fill="#fff" />
             <Input
               placeholder="Tìm kiếm tên khuyến mãi"
               onKeyUp={handleKeyPress}
               value={searchChange}
               onChange={handleSearchChange}
-              className="bg-umeHeader focus:outline-none w-full"
+              className="w-full bg-umeHeader focus:outline-none"
               type="text"
             />
           </div>
@@ -207,6 +230,9 @@ const VoucherByAdmin = () => {
           }}
         />
       </div>
+
+      <VourcherModalView closeFunction={closeVourcherModalView} openValue={openVourcherModalView} />
+      <VourcherModalCreate closeFunction={closeVourcherModalCreate} openValue={openVourcherModalCreate} />
     </div>
   )
 }

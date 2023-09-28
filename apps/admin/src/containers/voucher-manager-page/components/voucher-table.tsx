@@ -8,6 +8,7 @@ import Image from 'next/image'
 import EmptyErrorPic from '../../../../public/empty_error.png'
 
 import BanModal from '~/components/modal-base/ban-modal'
+import ComfirmModal from '~/components/modal-base/comfirm-modal'
 
 const tableDataMapping = (data?) => {
   const list: {}[] = []
@@ -92,15 +93,15 @@ const VoucherTable = ({ data }) => {
             <div className="flex">
               <Eyes
                 onClick={() => handleOpenUserDetails(record)}
-                className="mr-2 rounded-full hover:bg-gray-500 p-2"
+                className="p-2 mr-2 rounded-full hover:bg-gray-500"
                 theme="outline"
                 size="18"
                 fill="#85ea2d"
               />
-              <Write className="rounded-full hover:bg-gray-500 p-2" theme="outline" size="18" fill="#fff" />
+              <Write className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="18" fill="#fff" />
               <Delete
                 onClick={() => handleOpenBan(record)}
-                className="rounded-full hover:bg-gray-500 p-2"
+                className="p-2 rounded-full hover:bg-gray-500"
                 theme="outline"
                 size="18"
                 fill="#ff0000"
@@ -114,16 +115,23 @@ const VoucherTable = ({ data }) => {
 
   let locale = {
     emptyText: (
-      <div className="w-full h-full flex justify-center items-center">
+      <div className="flex items-center justify-center w-full h-full">
         <Image height={600} alt="empty data" src={EmptyErrorPic} />
       </div>
     ),
   }
 
   return (
-    <div className=" mt-5">
+    <div className="mt-5 ">
       <Table locale={locale} pagination={false} columns={columns} dataSource={listData} />
-      <BanModal name={'Que'} closeFunction={handlecloseBan} openValue={openBanUser} />
+      {/* <ComfirmModal
+        closeFunction={closeComfirmFormHandle}
+        openValue={openConfirm}
+        isComfirmFunction={handleBanProvider}
+        titleValue={!isBanned ? 'Xác nhận chặn' : 'Xác nhận bỏ chặn'}
+      >
+        {content === '' && <div className="mx-4 text-yellow-500">Lý do trống</div>}
+      </ComfirmModal> */}
     </div>
   )
 }
