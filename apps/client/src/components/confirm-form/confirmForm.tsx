@@ -43,7 +43,7 @@ const ConfirmForm = (props: ConfirmFormProps) => {
               isActive={true}
               isOutlinedButton={true}
               isLoading={props.isLoading}
-              onClick={props.onOk}
+              onClick={(e) => props.onOk(e)}
             >
               Chấp nhận
             </Button>

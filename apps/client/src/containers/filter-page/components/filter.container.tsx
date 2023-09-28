@@ -318,7 +318,7 @@ const FilterContainer = (props) => {
               listProviderFilter?.map((provider) => (
                 <Link
                   key={provider?.id}
-                  href={`/profile/${provider?.slug ?? provider?.id}?tab=information&service=${
+                  href={`/profile/${provider?.slug ?? provider?.id}?tab=service&service=${
                     provider.serviceSlug || provider.serviceId
                   }`}
                 >

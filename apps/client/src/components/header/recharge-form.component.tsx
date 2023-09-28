@@ -26,10 +26,14 @@ interface paymentPlatformArrayProps {
   paymentPlatform: string
   imgSrc: StaticImageData | string
   tax: number
+  type: string
 }
 
 const coinRechangeValue: number[] = [10000, 20000, 50000, 100000, 200000, 500000]
-const paymentPlatformArray: paymentPlatformArrayProps[] = [{ paymentPlatform: 'MOMO', imgSrc: momo, tax: 0.01 }]
+const paymentPlatformArray: paymentPlatformArrayProps[] = [
+  { paymentPlatform: 'MOMO', imgSrc: momo, tax: 0.01, type: 'QR' },
+  { paymentPlatform: 'VNPAY', imgSrc: momo, tax: 0.03, type: 'VNPAY' },
+]
 
 export const RechargeModal = ({ setShowRechargeModal, showRechargeModal }: IRechargeModalProps) => {
   const [qrContent, setQRContent] = useState<any>()
