@@ -148,12 +148,12 @@ const VoucherByAdmin = () => {
 
   const handleFilter = (id, key) => {
     setPage(1)
-    if (id == 'Đối tượng') {
+    if (id == 'voucherRecipientTypes') {
       setFilter({
         ...filter,
         voucherRecipientType: key,
       })
-    } else if (id == 'Trạng thái') {
+    } else if (id == 'status') {
       setFilter({
         ...filter,
         isActived: key,
@@ -191,8 +191,13 @@ const VoucherByAdmin = () => {
       <div className="flex flex-col my-10">
         <div className="flex items-center justify-between">
           <div className="flex">
-            {/* <FilterDropdown title="Trạng thái" items={statusFilterItems} handleFilter={handleFilter} />
-            <FilterDropdown title="Đối tượng" items={voucherRecipientTypes} handleFilter={handleFilter} /> */}
+            <FilterDropdown id={'status'} title="Trạng thái" items={statusFilterItems} handleFilter={handleFilter} />
+            <FilterDropdown
+              id={'voucherRecipientTypes'}
+              title="Đối tượng"
+              items={voucherRecipientTypes}
+              handleFilter={handleFilter}
+            />
           </div>
 
           <div className="flex items-center pl-2 border-2 border-white rounded-lg w-fit bg-umeHeader">
@@ -207,6 +212,10 @@ const VoucherByAdmin = () => {
             />
           </div>
         </div>
+      </div>
+      <div className="h-10">
+        <label htmlFor="pic">Click</label>
+        <input type="file" className="absolute -z-10 opacity-0" />
       </div>
       <VoucherTable data={adminVoucherList} />
       <div className="flex w-full justify-center pb-[200px] mt-5">

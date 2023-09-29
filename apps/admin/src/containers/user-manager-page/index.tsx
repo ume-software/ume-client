@@ -119,12 +119,12 @@ const UserManager = () => {
 
   const handleFilter = (title, key) => {
     setPage(1)
-    if (title == 'Giới tính') {
+    if (title == 'gender') {
       setFilter({
         ...filter,
         gender: key,
       })
-    } else if (title == 'Trạng thái') {
+    } else if (title == 'status') {
       setFilter({
         ...filter,
         isBanned: key,
@@ -159,8 +159,8 @@ const UserManager = () => {
         <div className="flex flex-col my-10">
           <div className="flex justify-between items-center">
             <div className="flex">
-              <FilterDropdown title="Giới tính" items={genderFilterItems} handleFilter={handleFilter} />
-              <FilterDropdown title="Trạng thái" items={statusFilterItems} handleFilter={handleFilter} />
+              <FilterDropdown id={'gender'} title="Giới tính" items={genderFilterItems} handleFilter={handleFilter} />
+              <FilterDropdown id={'status'} title="Trạng thái" items={statusFilterItems} handleFilter={handleFilter} />
             </div>
 
             <div className="flex items-center rounded-lg pl-2 bg-umeHeader border-2 border-white">
