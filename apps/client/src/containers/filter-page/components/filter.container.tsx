@@ -5,6 +5,7 @@ import coin from 'public/coin-icon.png'
 import CategoryDrawer from '~/containers/home-page/components/category-drawer'
 import PromoteCard from '~/containers/home-page/components/promoteCard'
 import { GenderEnum } from '~/enumVariable/enumVariable'
+import useDebounce from '~/hooks/useDebounce'
 
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react'
 
@@ -50,14 +51,18 @@ const genderData: GenderProps[] = [
 
 const FilterContainer = (props) => {
   const router = useRouter()
+  const basePath = router.asPath.split('?')[0]
+  const serviceName = router.asPath.split('/')[2].split('?')[0].replace(/%20/g, ' ')
   const service = router.query.service
+  const slug = router.query
 
   const limit = '20'
   const containerRef = useRef<HTMLDivElement>(null)
   const [scrollPosition, setScrollPosition] = useState(0)
   const [listProviderFilter, setListProviderFilter] = useState<FilterProviderPagingResponse['row']>([])
-  const [page, setPage] = useState('1')
+  const [page, setPage] = useState<string>(String(slug.page) || '1')
   const [searchText, setSearchText] = useState<string>('')
+  const debouncedValue = useDebounce<string>(searchText, 500)
   const [gender, setGender] = useState<GenderProps>(genderData[0])
   const [order, setOrder] = useState<OrderByProps>(orderBy[0])
   const [listSkils, setListSkils] = useState<any>([])
@@ -81,7 +86,7 @@ const FilterContainer = (props) => {
         startCost: priceRange[0],
         endCost: priceRange[1],
         serviceId: String(service),
-        name: searchText,
+        name: debouncedValue,
         gender: gender.key,
         limit: limit,
         page: page,
@@ -130,7 +135,7 @@ const FilterContainer = (props) => {
   useEffect(() => {
     if (containerRef.current) {
       const { scrollHeight } = containerRef.current
-      const isAtEnd = scrollPosition >= scrollHeight - 500
+      const isAtEnd = scrollPosition >= scrollHeight - 700
       if (isAtEnd && Number(providersFilter?.data.count) > 20 * Number(page)) {
         setPage(String(Number(page) + 1))
       }
@@ -143,8 +148,26 @@ const FilterContainer = (props) => {
     refetchListProviderFilter().then((data) => {
       setListProviderFilter(data.data?.data.row)
     })
+
+    router.replace(
+      {
+        pathname: basePath,
+        query: {
+          service: service,
+          minPrice: priceRange[0],
+          maxPrice: priceRange[1],
+          name: debouncedValue,
+          gender: gender.name,
+        },
+      },
+      undefined,
+      {
+        shallow: true,
+      },
+    )
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [priceRange, service, searchText, gender, page, order])
+  }, [priceRange, service, debouncedValue, gender, order])
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
@@ -155,7 +178,7 @@ const FilterContainer = (props) => {
   return (
     <div className="min-h-screen mx-10 text-white">
       <div className="flex items-center justify-between mx-5 my-5">
-        <p className="text-5xl font-bold">{props?.serviceName}</p>
+        <p className="text-5xl font-bold">{serviceName}</p>
         <CategoryDrawer data={listSkils} loadingService={loadingService} />
       </div>
       <div className="flex items-center justify-between mx-5">
@@ -164,6 +187,7 @@ const FilterContainer = (props) => {
             <Input
               className="w-full outline-none border-none bg-[#292734] focus:outline-[#6d3fe0] max-h-10 rounded-xl"
               placeholder="Nhập tên player..."
+              onChange={(e) => setSearchText(e.target.value)}
               onKeyPress={(e) => handleKeyPress(e)}
             />
           </div>
@@ -294,7 +318,7 @@ const FilterContainer = (props) => {
               listProviderFilter?.map((provider) => (
                 <Link
                   key={provider?.id}
-                  href={`/profile/${provider?.slug ?? provider?.id}?tab=information&service=${
+                  href={`/profile/${provider?.slug ?? provider?.id}?tab=service&service=${
                     provider.serviceSlug || provider.serviceId
                   }`}
                 >

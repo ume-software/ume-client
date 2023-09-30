@@ -1,6 +1,6 @@
-import { GetProfileProviderBySlugResponse, UserInformationResponse } from 'ume-service-openapi'
+import { UserInformationResponse } from 'ume-service-openapi'
 
-const PersonalInformation = (props: { data: UserInformationResponse }) => {
+const PersonalIntroduce = (props: { data: UserInformationResponse }) => {
   return (
     <>
       <div className="bg-zinc-800 rounded-3xl p-10">
@@ -11,4 +11,4 @@ const PersonalInformation = (props: { data: UserInformationResponse }) => {
     </>
   )
 }
-export default PersonalInformation
+export default PersonalIntroduce
