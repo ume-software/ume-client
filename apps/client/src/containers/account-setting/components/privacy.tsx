@@ -27,7 +27,7 @@ const Privacy = () => {
                   <p className="text-md opacity-50">Block lúc nào</p>
                 </div>
               </div>
-              <Button isDisabled={true} isOutlinedButton={true} customCSS="p-2">
+              <Button isActive={true} isOutlinedButton={true} customCSS="p-2">
                 Bỏ chặn
               </Button>
             </div>
@@ -47,7 +47,7 @@ const Privacy = () => {
                   <p className="text-md opacity-50">Block lúc nào</p>
                 </div>
               </div>
-              <Button isDisabled={true} isOutlinedButton={true} customCSS="p-2">
+              <Button isActive={true} isOutlinedButton={true} customCSS="p-2">
                 Bỏ chặn
               </Button>
             </div>

@@ -118,16 +118,16 @@ const valueGenders: valueGenderProps[] = [
 ]
 const tabDatas: TabDataProps[] = [
   {
-    key: 'Information',
-    label: `Thông tin cá nhân`,
+    key: 'Service',
+    label: `Dịch vụ`,
   },
   {
     key: 'Album',
-    label: `Album`,
+    label: `Ảnh`,
   },
   {
-    key: 'Feeds',
-    label: `Khoảnh khắc`,
+    key: 'Post',
+    label: `Bài viết`,
   },
 ]
 
@@ -141,7 +141,14 @@ const DetailProfileContainer = () => {
     ['booking.getUserBySlug', slug.profileId!.toString()],
     {
       onSuccess(data) {
-        setProviderDetail(data.data)
+        if (data.data.id) {
+          setProviderDetail(data.data)
+        } else {
+          router.replace('/404')
+        }
+      },
+      onError() {
+        router.replace('/404')
       },
     },
   )
@@ -188,7 +195,7 @@ const DetailProfileContainer = () => {
               <Image layout="fill" src={detailBackground} alt="background"></Image>
             </div>
             <div className="h-full flex flex-col justify-end gap-5">
-              <div className="flex flex-row justify-between md:items-center items-baseline pl-7 pr-7">
+              <div className="flex flex-row justify-between md:items-center items-baseline px-7 pb-5">
                 <div className="flex md:flex-row md:gap-x-8 flex-col gap-y-2" style={{ zIndex: 2 }}>
                   <div style={{ width: 194, height: 182, position: 'relative' }}>
                     <Image
@@ -199,8 +206,8 @@ const DetailProfileContainer = () => {
                       alt="avatar"
                     />
                   </div>
-                  <div className="text-white flex flex-col gap-y-2">
-                    <p className="text-white text-4xl font-medium">{providerDetail?.name}</p>
+                  <div className="text-white flex flex-col gap-y-2 my-5">
+                    <p className="text-white text-3xl font-medium">{providerDetail?.name}</p>
                     <div className="flex flex-row items-center gap-3">
                       <div className="bg-gray-700 p-2 rounded-full flex items-center gap-2">
                         <div>
@@ -263,7 +270,7 @@ const DetailProfileContainer = () => {
               <div className="flex flex-row gap-10" style={{ zIndex: 2 }}>
                 {tabDatas.map((item) => (
                   <span
-                    className={`text-white xl:text-3xl text-xl font-medium p-4 cursor-pointer ${
+                    className={`text-white xl:text-2xl text-xl font-medium p-4 cursor-pointer ${
                       item.key == selectedTab.key ? 'border-b-4 border-purple-700' : ''
                     }`}
                     key={item.key}
@@ -279,9 +286,9 @@ const DetailProfileContainer = () => {
           <div className="p-5">
             <span className="text-white">
               <div className="flex justify-center my-10">
-                {selectedTab.key == 'Information' && <InformationTab data={providerDetail!} />}
+                {selectedTab.key == 'Service' && <InformationTab data={providerDetail!} />}
                 {selectedTab.key == 'Album' && <AlbumTab data={providerDetail!} />}
-                {selectedTab.key == 'Feeds' && <FeedsTab datas={feedData} />}
+                {selectedTab.key == 'Post' && <FeedsTab datas={feedData} />}
               </div>
             </span>
           </div>

@@ -13,7 +13,7 @@ import { useRouter } from 'next/router'
 import { UserInformationResponse } from 'ume-service-openapi'
 
 import BookingPlayer from '../booking/booking-provider.container'
-import PersonalInformation from './personal-information'
+import PersonalIntroduce from './personal-introduce'
 import Service from './service'
 
 import { LoginModal } from '~/components/header/login-modal.component'
@@ -46,11 +46,11 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
     setGamesToggle(!gamesToggle)
   }
 
-  const handleSelected = (serviceId: string | undefined) => {
+  const handleSelected = (service: string | undefined) => {
     router.replace(
       {
         pathname: basePath,
-        query: { tab: slug.tab, serviceId: serviceId },
+        query: { tab: slug.tab, service: service },
       },
       undefined,
       {
@@ -58,7 +58,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
       },
     )
 
-    setGameSelected(serviceId)
+    setGameSelected(service)
   }
 
   useEffect(() => {
@@ -92,7 +92,11 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
           },
         )
       } catch (error) {
-        console.error('Failed to create booking:', error)
+        notification.error({
+          message: 'Create New Channel Fail',
+          description: 'Create New Channel Fail. Please try again!',
+          placement: 'bottomLeft',
+        })
       }
     } else {
       setIsModalLoginVisible(true)
@@ -147,11 +151,11 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                         <div
                           key={item.id}
                           className={`flex lg:flex-row flex-col items-center group gap-3 hover:bg-gray-700 p-1 rounded-xl ${
-                            gameSelected && (gameSelected == item.serviceId || gameSelected == item.service?.slug)
+                            gameSelected && (gameSelected == item.service?.slug || gameSelected == item.serviceId)
                               ? 'bg-gray-700'
                               : ''
                           }`}
-                          onClick={() => handleSelected(item.serviceId)}
+                          onClick={() => handleSelected(item.service?.slug || item.serviceId)}
                         >
                           <Image src={item?.service?.imageUrl || ImgForEmpty} alt="Game Image" width={60} height={80} />
                           <div className="max-w-[150px] min-w-[150px]">
@@ -177,7 +181,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                 {selectedService && gameSelected ? (
                   <Service data={selectedService} />
                 ) : (
-                  <PersonalInformation data={props.data} />
+                  <PersonalIntroduce data={props.data} />
                 )}
               </div>
             </div>
@@ -195,9 +199,15 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                 {user?.id != props.data?.id ? (
                   <div className="flex flex-col gap-5 my-10">
                     <CustomDrawer
-                      customOpenBtn={`rounded-full w-full text-purple-700 border-2 border-purple-700 py-2 font-semibold text-2xl cursor-pointer hover:scale-105 text-center`}
+                      customOpenBtn={`rounded-full w-full h-full text-purple-700 border-2 border-purple-700 py-2 font-semibold text-2xl cursor-pointer hover:scale-105 text-center`}
                       openBtn={
-                        <Button isLoading={createNewChatChannel.isLoading} onClick={handleChatOpen}>
+                        <Button
+                          customCSS="bg-transparent"
+                          isLoading={createNewChatChannel.isLoading}
+                          isActive={true}
+                          isOutlinedButton={true}
+                          onClick={handleChatOpen}
+                        >
                           Chat
                         </Button>
                       }
@@ -210,7 +220,16 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                       <CustomDrawer
                         drawerTitle="Xác nhận đặt"
                         customOpenBtn="rounded-full w-full text-white bg-purple-700 py-2 font-semibold text-2xl cursor-pointer hover:scale-105 text-center"
-                        openBtn={<Button onClick={handleOrderOpen}>Order</Button>}
+                        openBtn={
+                          <Button
+                            customCSS="bg-transparent"
+                            isActive={true}
+                            isOutlinedButton={false}
+                            onClick={handleOrderOpen}
+                          >
+                            Order
+                          </Button>
+                        }
                         token={isAuthenticated}
                       >
                         {childrenDrawer}
