@@ -4,7 +4,6 @@ import { Button } from '@ume/ui'
 import * as React from 'react'
 
 import { Avatar, Pagination } from 'antd'
-import Image from 'next/image'
 import { AdminGetProviderServicePagingResponse, BookingHistoryPagingResponse } from 'ume-service-openapi'
 
 import ProviderServiceTable from './provider-service-table'

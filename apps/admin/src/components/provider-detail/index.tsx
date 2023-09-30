@@ -10,7 +10,6 @@ export interface IProviderDetailProps {
 }
 
 export default function ProviderDetail({ providerId, openValue, closeFunction }: IProviderDetailProps) {
-  // call API dua theo providerId
   const data = ''
   return (
     <ModalBase

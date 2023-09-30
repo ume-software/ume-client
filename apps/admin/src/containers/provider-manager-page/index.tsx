@@ -1,12 +1,11 @@
 import { Left, Right, Search } from '@icon-park/react'
-import { Button, Input } from '@ume/ui'
+import { Input } from '@ume/ui'
 
 import React, { useState } from 'react'
 
 import { Pagination, Tag } from 'antd'
 import Head from 'next/head'
-import { AdminGetUserPagingResponseResponse, FilterProviderPagingResponse } from 'ume-service-openapi'
-import { util } from 'zod'
+import { AdminGetUserPagingResponseResponse } from 'ume-service-openapi'
 
 import TableProviders from './components/table-provider'
 
@@ -17,6 +16,7 @@ import { trpc } from '~/utils/trpc'
 interface LooseObject {
   [key: string]: any
 }
+
 const statusFilterItems = [
   {
     key: 'all',
@@ -79,9 +79,8 @@ const genderFilterItems = [
   },
 ]
 const ProviderManager = () => {
-  const utils = trpc.useContext()
   const LIMIT = '10'
-  const SELECT = ['$all'] //['$all', { user: ['$all'] }]
+  const SELECT = ['$all']
   const [page, setPage] = useState(1)
   const [filter, setFilter] = useState({
     gender: 'all',
@@ -108,7 +107,7 @@ const ProviderManager = () => {
 
     return query
   }
-  const { isLoading: isUserListLoading, isFetching: isUserListFetching } = trpc.useQuery(
+  trpc.useQuery(
     [
       'provider.getProviderList',
       {
@@ -122,9 +121,8 @@ const ProviderManager = () => {
     {
       refetchOnWindowFocus: false,
       refetchOnReconnect: 'always',
-      // refetchOnMount: false,
       onSuccess(data) {
-        setProviderList(data.data)
+        setProviderList(data?.data as any)
       },
     },
   )
@@ -181,9 +179,6 @@ const ProviderManager = () => {
         isBanned: key,
       })
     }
-  }
-  function refreshData() {
-    utils.invalidateQueries('provider.getProviderList')
   }
 
   return (

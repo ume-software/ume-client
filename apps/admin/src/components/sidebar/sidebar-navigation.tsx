@@ -8,6 +8,7 @@ import {
   SettingTwo,
   User,
   UserBusiness,
+  UserToUserTransmission,
 } from '@icon-park/react'
 
 import React, { ReactNode } from 'react'
@@ -76,7 +77,7 @@ const SidebarNavigation: SidebarNavigationItem[] = [
       {
         label: (
           <Link href="/user-manager" rel="noopener noreferrer">
-            Người dùng
+            Quản lý người dùng
           </Link>
         ),
         key: 'user-manager',
@@ -85,11 +86,20 @@ const SidebarNavigation: SidebarNavigationItem[] = [
       {
         label: (
           <Link href="/provider-manager" rel="noopener noreferrer">
-            Nhà cung cấp
+            Quản lý provider
           </Link>
         ),
         key: 'provider-manager',
         icon: <UserBusiness theme="outline" size="22" fill="#fff" />,
+      },
+      {
+        label: (
+          <Link href="/approve-provider" rel="noopener noreferrer">
+            Duyệt provider
+          </Link>
+        ),
+        key: 'approve-provider',
+        icon: <UserToUserTransmission theme="outline" size="22" fill="#fff" />,
       },
     ],
   },
@@ -100,7 +110,7 @@ const SidebarNavigation: SidebarNavigationItem[] = [
       {
         label: (
           <Link href="/#" rel="noopener noreferrer">
-            Kỹ năng
+            Quản lý kỹ năng
           </Link>
         ),
         key: 'service-manager',

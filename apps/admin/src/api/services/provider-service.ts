@@ -2,7 +2,7 @@ import { TRPCError } from '@trpc/server'
 import { getEnv } from '~/env'
 
 import { parse, serialize } from 'cookie'
-import { AdminManageProviderApi } from 'ume-service-openapi'
+import { AdminManageProviderApi, AdminManageUserKYCRequestApi } from 'ume-service-openapi'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
@@ -230,6 +230,39 @@ export const UnBanProvider = async ({ slug }, ctx) => {
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
       message: error.message || 'Failed to UnBanProvider',
+    })
+  }
+}
+
+export const getListKYC = async (
+  ctx,
+  query?: {
+    limit?: string
+    page?: string
+    select?: string
+    where?: string
+    order?: string
+  },
+) => {
+  const cookies = parse(ctx.req.headers.cookie)
+  try {
+    const response = await new AdminManageUserKYCRequestApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).adminGetListUserKYCRequest(query?.limit, query?.page, query?.select, query?.where, query?.order)
+
+    console.log(response.data)
+
+    return {
+      data: response.data.row,
+      successs: true,
+    }
+  } catch (error) {
+    console.log(error)
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.message || 'Failed to get list KYC',
     })
   }
 }
