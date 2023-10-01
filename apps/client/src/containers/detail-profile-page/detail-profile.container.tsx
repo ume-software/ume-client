@@ -8,6 +8,7 @@ import lgbtIcon from 'public/rainbow-flag-11151.svg'
 
 import { Fragment, ReactElement, ReactNode, useEffect, useState } from 'react'
 
+import { ConfigProvider, message, theme } from 'antd'
 import Image, { ImageProps, StaticImageData } from 'next/legacy/image'
 import { useRouter } from 'next/router'
 import { GetProfileProviderBySlugResponse, UserInformationResponse } from 'ume-service-openapi'
@@ -15,6 +16,8 @@ import { GetProfileProviderBySlugResponse, UserInformationResponse } from 'ume-s
 import AlbumTab from './album-tab/album-tab'
 import FeedsTab from './feeds-tab'
 import InformationTab from './information-tab/information-tab'
+
+import { BGFullGridSkeleton } from '~/components/skeleton-load'
 
 import { trpc } from '~/utils/trpc'
 
@@ -87,7 +90,7 @@ const moreButtonDatas: TabDataProps[] = [
     ),
   },
   {
-    key: 'share',
+    key: 'Share',
     label: 'Chia sẻ đến Facebook',
     icon: (
       <ShareTwo
@@ -136,6 +139,7 @@ const DetailProfileContainer = () => {
   const basePath = router.asPath.split('?')[0]
   const slug = router.query
 
+  const [messageApi, contextHolder] = message.useMessage()
   const [providerDetail, setProviderDetail] = useState<UserInformationResponse | undefined>(undefined)
   const { isLoading: isProviderDetailLoading, isFetching: isProviderDetailFetching } = trpc.useQuery(
     ['booking.getUserBySlug', slug.profileId!.toString()],
@@ -184,10 +188,44 @@ const DetailProfileContainer = () => {
     }
   }
 
+  const handleMenuButtonAction = (item: TabDataProps) => {
+    if (item.key == 'Share') {
+      navigator.clipboard.writeText(window.location.href)
+      messageApi.open({
+        type: 'success',
+        content: 'Copy link success',
+        duration: 2,
+      })
+    }
+  }
+
   return (
     <>
-      {providerDetail && isProviderDetailLoading ? (
-        <></>
+      <ConfigProvider
+        theme={{
+          algorithm: theme.darkAlgorithm,
+        }}
+      >
+        {contextHolder}
+      </ConfigProvider>
+
+      {!providerDetail && isProviderDetailLoading ? (
+        <>
+          <div className="w-screen h-[380px] mx-70">
+            <BGFullGridSkeleton />
+          </div>
+          <div className="grid mt-10 w-full h-screen grid-cols-10 gap-10 px-10">
+            <div className="col-span-2">
+              <BGFullGridSkeleton />
+            </div>
+            <div className="col-span-5">
+              <BGFullGridSkeleton />
+            </div>
+            <div className="col-span-3">
+              <BGFullGridSkeleton />
+            </div>
+          </div>
+        </>
       ) : (
         <>
           <div style={{ height: '380px', margin: '0 70px' }}>
@@ -247,15 +285,22 @@ const DetailProfileContainer = () => {
                       leaveFrom="transform opacity-100 scale-100"
                       leaveTo="transform opacity-0 scale-95"
                     >
-                      <Menu.Items className="absolute w-fit right-0 p-3 top-7 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                      <Menu.Items className="absolute w-fit right-0 py-3 top-7 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                         <div className="w-max flex flex-col gap-2">
                           {moreButtonDatas.map((item, index) => (
                             <div
                               key={index}
-                              className="hover:bg-purple-700 hover:text-white group rounded-md pl-2 pr-2 "
+                              className="hover:bg-purple-600 hover:text-white group rounded-md px-2 py-1"
                             >
                               <div className="scale-x-100 group-hover:scale-x-95 flex items-center justify-between gap-2 group-hover:-translate-x-2 duration-300">
-                                <a href="#">{item.label}</a>
+                                <div
+                                  className="cursor-pointer"
+                                  onClick={() => {
+                                    handleMenuButtonAction(item)
+                                  }}
+                                >
+                                  {item.label}
+                                </div>
                                 {item.icon}
                               </div>
                             </div>

@@ -18,7 +18,7 @@ import Service from './service'
 
 import { LoginModal } from '~/components/header/login-modal.component'
 import { DrawerContext } from '~/components/layouts/app-layout/app-layout'
-import { ChatSkeleton } from '~/components/skeleton-load'
+import { BGFullGridSkeleton, ChatSkeleton } from '~/components/skeleton-load'
 
 import { trpc } from '~/utils/trpc'
 
@@ -115,7 +115,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
       <div>
         <LoginModal isModalLoginVisible={isModalLoginVisible} setIsModalLoginVisible={setIsModalLoginVisible} />
       </div>
-      {props.data && (
+      {props.data ? (
         <>
           <div className="grid w-full grid-cols-10 gap-10 px-10">
             <div className="col-span-2">
@@ -240,6 +240,20 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                   <></>
                 )}
               </div>
+            </div>
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="grid w-screen h-screen grid-cols-10 gap-10 px-10">
+            <div className="col-span-2">
+              <BGFullGridSkeleton />
+            </div>
+            <div className="col-span-5">
+              <BGFullGridSkeleton />
+            </div>
+            <div className="col-span-3">
+              <BGFullGridSkeleton />
             </div>
           </div>
         </>
