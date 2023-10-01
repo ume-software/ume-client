@@ -1,6 +1,6 @@
 FROM node:16-alpine
 
-ENV NODE_ENV development
+ENV NODE_ENV=production
 ENV NODE_OPTIONS=--max_old_space_size=1024
 
 # https://github.com/vercel/turbo/issues/2198
