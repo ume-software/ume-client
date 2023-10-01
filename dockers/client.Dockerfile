@@ -1,6 +1,6 @@
 FROM node:16-alpine
 
-ENV NODE_ENV development
+ENV NODE_ENV=production
 ENV NODE_OPTIONS=--max_old_space_size=1024
 
 # https://github.com/vercel/turbo/issues/2198
@@ -10,18 +10,20 @@ RUN apk add --no-cache libc6-compat
 # add turborepo
 RUN yarn global add turbo
 
-# Set working directory
+# Set the working directory in the container
 WORKDIR /app
 
-# Install app dependencies
-COPY  ["yarn.lock", "package.json", "./"]
+# Copy the package.json and yarn.lock files to the container
+COPY ["package.json", "yarn.lock", "./"]
 
-# Copy source files
+# Install dependencies
+RUN yarn install --production
+
+# Copy the rest of your application files
 COPY . .
 
-# Install app dependencies
-RUN yarn install
-
+# Expose the port your application listens on (assuming it's 3000)
 EXPOSE 3000
 
-CMD ["yarn", "dev:client"]
+# Use Turbo to start your production application
+CMD ["yarn", "turbo", "start"]
