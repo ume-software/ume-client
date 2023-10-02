@@ -23,7 +23,7 @@ RUN yarn install
 COPY . .
 
 
-WORKDIR /app/client
+WORKDIR /app/apps/client
 RUN yarn build
 
 
