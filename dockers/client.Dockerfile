@@ -1,4 +1,4 @@
-FROM node:20-alpine
+FROM node:16-alpine
 
 ENV NODE_ENV=production
 ENV NODE_OPTIONS=--max_old_space_size=1024
