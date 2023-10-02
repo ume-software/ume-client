@@ -10,7 +10,7 @@ RUN apk add --no-cache libc6-compat
 # add turborepo
 RUN yarn global add turbo
 
-WORKDIR ./
+WORKDIR ./app
 
 # Copy the package.json and yarn.lock files to the container
 COPY ["package.json", "yarn.lock", "./"]
