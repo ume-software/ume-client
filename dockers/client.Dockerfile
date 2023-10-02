@@ -21,10 +21,10 @@ RUN yarn build:client
 
 COPY . .
 
-WORKDIR /apps/client
+# WORKDIR /apps/client
 
 # Expose the port your application listens on (assuming it's 3000)
 EXPOSE 3000
 
 # Use Turbo to start your production application
-CMD ["yarn", "start"]
+CMD ["yarn", "dev:client"]
