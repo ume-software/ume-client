@@ -1,4 +1,4 @@
-FROM node:16-alpine
+FROM node:20-alpine
 
 ENV NODE_ENV=production
 ENV NODE_OPTIONS=--max_old_space_size=1024
@@ -13,14 +13,11 @@ RUN yarn global add turbo
 WORKDIR /app
 
 # Copy the package.json and yarn.lock files to the container
-COPY ["package.json", "yarn.lock", "turbo.json", "./" ]
+COPY . .
 
 # Install dependencies
 RUN yarn install 
 RUN yarn build:client
-
-# Copy the rest of your application files
-COPY . .
 
 WORKDIR /app/apps/client
 
