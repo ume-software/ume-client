@@ -17,13 +17,14 @@ COPY ["package.json", "yarn.lock", "./"]
 
 # Install dependencies
 RUN yarn install 
-RUN yarn build:client
+
 
 # Copy the rest of your application files
 COPY . .
 
 
 WORKDIR /app/client
+RUN yarn build
 
 
 # Expose the port your application listens on (assuming it's 3000)
