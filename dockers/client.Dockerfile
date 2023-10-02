@@ -17,9 +17,10 @@ COPY ["package.json", "yarn.lock", "turbo.json", "./"]
 
 # Install dependencies
 RUN yarn install 
-RUN yarn build:client
 
 COPY . .
+
+RUN yarn build:client
 
 WORKDIR /app/apps/client
 
