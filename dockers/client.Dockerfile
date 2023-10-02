@@ -13,7 +13,7 @@ RUN yarn global add turbo
 WORKDIR /app
 
 # Copy the package.json and yarn.lock files to the container
-COPY ["package.json", "yarn.lock", "./"]
+COPY ["package.json", "yarn.lock", "turbo.json", "./" ]
 
 # Install dependencies
 RUN yarn install 
