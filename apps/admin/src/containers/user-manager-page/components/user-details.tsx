@@ -1,6 +1,8 @@
+import { Left, Right } from '@icon-park/react'
+
 import { useState } from 'react'
 
-import { Table } from 'antd'
+import { Pagination, Table } from 'antd'
 import Image from 'next/image'
 import { CoinHistoryPagingResponse } from 'ume-service-openapi'
 
@@ -14,15 +16,29 @@ import { trpc } from '~/utils/trpc'
 export interface IUserDetailsProps {
   closeFunction: any | undefined
   openValue: boolean
-  data: any
+  details: any
 }
 
-export default function UserDetails({ data, openValue, closeFunction }: IUserDetailsProps) {
+const tableDataMapping = (data?) => {
+  const list: {}[] = []
+  if (data) {
+    data.map((item) => {
+      const rowItem = {
+        key: item.id,
+        ...item,
+      }
+      list.push(rowItem)
+    })
+  }
+  return list
+}
+
+export default function UserDetails({ details, openValue, closeFunction }: IUserDetailsProps) {
   const [transaction, setTransaction] = useState<CoinHistoryPagingResponse>()
   const [page, setPage] = useState(1)
 
-  const { isLoading: isUserListLoading, isFetching: isUserListFetching } = trpc.useQuery(
-    ['user.getUserCoinHistories', { slug: data?.key, page: page.toString(), where: undefined, order: undefined }],
+  const { isLoading, isFetching } = trpc.useQuery(
+    ['user.getUserCoinHistories', { slug: details?.key, page: page.toString(), where: undefined, order: undefined }],
     {
       onSuccess(data) {
         setTransaction(data.data)
@@ -30,6 +46,9 @@ export default function UserDetails({ data, openValue, closeFunction }: IUserDet
     },
   )
 
+  const handlePageChange = (selectedPage) => {
+    setPage(selectedPage)
+  }
   const columns = [
     {
       title: 'Ngày giao dịch',
@@ -63,7 +82,7 @@ export default function UserDetails({ data, openValue, closeFunction }: IUserDet
       closeFunction={closeFunction}
       className="w-auto bg-black"
     >
-      <PersionalInfo data={data} />
+      <PersionalInfo data={details} />
       <div className="flex justify-between text-white mt-5 px-4">
         <span>Biến động số dư</span>
         <div className="border-b-2 border-[#7463F0] mx-4 mr-6"></div>
@@ -73,7 +92,28 @@ export default function UserDetails({ data, openValue, closeFunction }: IUserDet
         </div>
       </div>
       <div className="my-4 px-4">
-        <Table pagination={false} locale={locale} columns={columns} dataSource={transaction?.row} />
+        <Table pagination={false} locale={locale} columns={columns} dataSource={tableDataMapping(transaction?.row)} />
+        <div className="flex w-full justify-center pb-[200px] mt-5">
+          <Pagination
+            itemRender={(page, type) => (
+              <div className="text-white">
+                {type == 'prev' ? (
+                  <Left theme="outline" size="24" fill="#fff" />
+                ) : type == 'next' ? (
+                  <Right theme="outline" size="24" fill="#fff" />
+                ) : (
+                  page
+                )}
+              </div>
+            )}
+            pageSize={10}
+            current={page}
+            total={transaction?.count}
+            onChange={(page) => {
+              handlePageChange(page)
+            }}
+          />
+        </div>
       </div>
     </ModalBase>
   )

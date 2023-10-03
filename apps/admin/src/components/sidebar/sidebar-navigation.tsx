@@ -110,15 +110,15 @@ const SidebarNavigation: SidebarNavigationItem[] = [
   },
   {
     label: 'Quản lý giao dịch',
-    key: 'deposit',
+    key: 'transaction',
     children: [
       {
         label: (
-          <Link href="/#" rel="noopener noreferrer">
-            Quản lý kỹ năng
+          <Link href="/dashboard" rel="noopener noreferrer">
+            Thống kê
           </Link>
         ),
-        key: 'deposit-statistic',
+        key: 'transaction-statistic',
         icon: <ChartHistogramTwo theme="outline" size="22" fill="#fff" />,
       },
       {
@@ -132,7 +132,7 @@ const SidebarNavigation: SidebarNavigationItem[] = [
                 Yêu cầu mới nhất
               </Link>
             ),
-            key: 'latest-request',
+            key: 'latest-pay-request',
           },
           {
             label: (
@@ -140,7 +140,7 @@ const SidebarNavigation: SidebarNavigationItem[] = [
                 Tất cả yêu cầu
               </Link>
             ),
-            key: 'all-request',
+            key: 'all-pay-request',
           },
         ],
       },
@@ -155,7 +155,7 @@ const SidebarNavigation: SidebarNavigationItem[] = [
                 Yêu cầu mới nhất
               </Link>
             ),
-            key: 'latest-request',
+            key: 'latest-withdraw-request',
           },
           {
             label: (
@@ -163,7 +163,7 @@ const SidebarNavigation: SidebarNavigationItem[] = [
                 Tất cả yêu cầu
               </Link>
             ),
-            key: 'all-request',
+            key: 'all-withdraw-request',
           },
         ],
       },
@@ -175,6 +175,53 @@ const SidebarNavigation: SidebarNavigationItem[] = [
         ),
         key: 'deposit-history',
         icon: <History theme="outline" size="22" fill="#fff" />,
+      },
+    ],
+  },
+  {
+    label: 'Quản lý khuyến mãi',
+    key: 'voucher',
+    children: [
+      {
+        label: (
+          <Link href="/dashboard" rel="noopener noreferrer">
+            Thống kê
+          </Link>
+        ),
+        key: 'voucher-statistic',
+        icon: <ChartHistogramTwo theme="outline" size="22" fill="#fff" />,
+      },
+      {
+        label: (
+          <Link href="/voucher-manager/voucher-by-admin" rel="noopener noreferrer">
+            Khuyến mãi từ quản trị viên
+          </Link>
+        ),
+        key: 'voucher-by-admin',
+        icon: <RightUser theme="outline" size="22" fill="#fff" />,
+      },
+      {
+        label: 'Khuyến mãi từ nhà cung cấp',
+        key: 'voucher-by-provider',
+        icon: <UserBusiness theme="outline" size="22" fill="#fff" />,
+        children: [
+          {
+            label: (
+              <Link href="/voucher-manager/voucher-by-provider" rel="noopener noreferrer">
+                Tất cả khuyến mãi
+              </Link>
+            ),
+            key: 'all-voucher',
+          },
+          {
+            label: (
+              <Link href="/voucher-manager/approve-provider-voucher" rel="noopener noreferrer">
+                Khuyến mãi chờ duyệt
+              </Link>
+            ),
+            key: 'pending-voucher',
+          },
+        ],
       },
     ],
   },
