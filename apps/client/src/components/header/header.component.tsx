@@ -1,14 +1,13 @@
 import { Menu, Transition } from '@headlessui/react'
-import { Dot, Gift, Logout, Remind, Search, Setting, User, WalletOne } from '@icon-park/react'
-import { Button, Input } from '@ume/ui'
+import { Dot, Gift, Logout, Remind, Setting, User, WalletOne } from '@icon-park/react'
+import { Button } from '@ume/ui'
 import coin from 'public/coin-icon.png'
 import logo from 'public/ume-logo-2.svg'
 import Notificate from '~/containers/notificate/notificate.container'
 import { useAuth } from '~/contexts/auth'
 
-import React, { Fragment, ReactElement, useContext, useEffect, useId, useState } from 'react'
+import React, { Fragment, ReactElement, useEffect, useId, useState } from 'react'
 
-import { parse } from 'cookie'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
 
@@ -17,25 +16,35 @@ import { RechargeModal } from './recharge-form.component'
 
 import { trpc } from '~/utils/trpc'
 
-interface HeaderProps {}
-
 interface TabProps {
   label: string
   children: ReactElement
 }
 
-export const Header: React.FC = ({}: HeaderProps) => {
+export const Header: React.FC = () => {
   const index = useId()
   const [showRechargeModal, setShowRechargeModal] = useState(false)
-  const [userInfo, setUserInfo] = useState<any>()
   const [balance, setBalance] = useState<any>()
   const [notificatedAmount] = useState<number>(0)
   const [selectedTab, setSelectedTab] = useState('Chính')
   const [isModalLoginVisible, setIsModalLoginVisible] = React.useState(false)
-  const accessToken = parse(document.cookie).accessToken
-  const { isAuthenticated, user } = useAuth()
 
-  const { isLoading: loadingBalance } = trpc.useQuery(['identity.account-balance'], {
+  const accessToken = localStorage.getItem('accessToken')
+
+  const { isAuthenticated, user, logout, login } = useAuth()
+
+  const { isLoading: loadingUserInfo } = trpc.useQuery(['identity.identityInfo'], {
+    onSuccess(data) {
+      login({ ...data.data })
+    },
+    onError() {
+      localStorage.removeItem('accessToken')
+      localStorage.removeItem('refeshToken')
+    },
+    enabled: !accessToken,
+  })
+
+  trpc.useQuery(['identity.account-balance'], {
     onSuccess(data) {
       setBalance(data.data.totalCoinsAvailable)
     },
@@ -62,6 +71,10 @@ export const Header: React.FC = ({}: HeaderProps) => {
     setSelectedTab(target)
   }
 
+  const handleLogout = () => {
+    logout()
+  }
+
   return (
     <div className="fixed z-10 flex items-center justify-between w-full h-16 bg-umeHeader ">
       <LoginModal isModalLoginVisible={isModalLoginVisible} setIsModalLoginVisible={setIsModalLoginVisible} />
@@ -84,17 +97,6 @@ export const Header: React.FC = ({}: HeaderProps) => {
       </div>
       <div className="flex items-center">
         <div className="flex flex-1 pr-2 duration-500 hover:ease-in-out">
-          <span className="my-auto mr-2">
-            <Link href={'/register-provider'}>
-              <Button
-                name="register"
-                customCSS="bg-[#37354F] py-1  hover:bg-slate-700 !rounded-3xl max-h-10 w-[160px] text-[15px] hover:ease-in-out"
-                type="button"
-              >
-                Trở thành ume
-              </Button>
-            </Link>
-          </span>
           {isAuthenticated && (
             <span className="self-center my-auto mr-4 rounded-ful hover:scale-110 hover:ease-in-out">
               <button className="pt-2">
@@ -105,7 +107,7 @@ export const Header: React.FC = ({}: HeaderProps) => {
 
           {isAuthenticated && (
             <button onClick={() => setShowRechargeModal(true)}>
-              <div className="flex items-center justify-end rounded-full bg-[#37354F] px-2 mr-2 self-center text-white">
+              <div className="flex items-center justify-end rounded-full bg-[#37354F] pr-2 pl-4 mr-2 self-center text-white">
                 <p className="text-lg font-semibold">{balance}</p>
                 <Image src={coin} width={30} height={30} alt="coin" />
               </div>
@@ -198,7 +200,7 @@ export const Header: React.FC = ({}: HeaderProps) => {
                         layout="fixed"
                         height={35}
                         width={35}
-                        src={user?.avatarUrl?.toString() || ''}
+                        src={user?.avatarUrl?.toString() ?? ''}
                         alt="avatar"
                       />
                     </Menu.Button>
@@ -252,15 +254,15 @@ export const Header: React.FC = ({}: HeaderProps) => {
                       </Menu.Item>
                       <Menu.Item as="div">
                         {({ active }) => (
-                          <Link
-                            href={'/logout'}
+                          <button
+                            onClick={handleLogout}
                             className={`${
                               active ? 'bg-violet-500 text-white' : 'text-gray-900'
                             } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                           >
                             <Logout className="mr-3" theme="outline" size="20" fill="#333" />
                             Đăng xuất
-                          </Link>
+                          </button>
                         )}
                       </Menu.Item>
                     </Menu.Items>

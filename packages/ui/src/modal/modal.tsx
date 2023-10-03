@@ -30,6 +30,7 @@ interface EditableFormProps {
   closeButtonOnConner?: ReactNode
   backgroundColor?: string
   closeWhenClickOutSide?: true | boolean
+  customModalCSS?: string
 }
 
 const useSuccess = ({ show, onClose, title, message, closeButton }: SuccessErrorProps) => {
@@ -341,6 +342,7 @@ const useEditableForm = ({
   closeButtonOnConner,
   backgroundColor,
   closeWhenClickOutSide,
+  customModalCSS,
 }: EditableFormProps) => {
   const cancelButtonRef = useRef(null)
   const handleClose = () => {
@@ -373,8 +375,12 @@ const useEditableForm = ({
             <div className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" />
           </Transition.Child>
 
-          <div className="fixed inset-0 z-50 overflow-y-auto top-32 custom-scrollbar">
-            <div className="flex justify-center text-center min-h-fit sm:p-0">
+          <div
+            className={`${
+              customModalCSS ? customModalCSS : 'top-32'
+            } fixed overflow-y-auto inset-0 z-50 custom-scrollbar`}
+          >
+            <div className={`flex justify-center text-center ${customModalCSS ? 'h-full' : 'min-h-fit'}  sm:p-0`}>
               <Transition.Child
                 as={Fragment}
                 enter="ease-out duration-300"
