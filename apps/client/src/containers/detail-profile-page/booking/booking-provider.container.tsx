@@ -7,7 +7,6 @@ import { useContext, useEffect, useState } from 'react'
 
 import { InputNumber, Select } from 'antd'
 import { notification } from 'antd'
-import { NotificationPlacement } from 'antd/es/notification/interface'
 import { ErrorMessage, Field, Form, Formik } from 'formik'
 import Image from 'next/legacy/image'
 import { BookingProviderRequest, ProviderConfigResponseStatusEnum, UserInformationResponse } from 'ume-service-openapi'

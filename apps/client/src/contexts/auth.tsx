@@ -1,14 +1,15 @@
+import React from 'react'
 import { PropsWithChildren, createContext, useContext, useState } from 'react'
 
 import { UserInformationResponse } from 'ume-service-openapi'
 
-type AuthProviderType = PropsWithChildren
+type AuthProviderType = PropsWithChildren<{}>
 
 interface AuthContextData {
   isAuthenticated: boolean
   user: UserInformationResponse | null
-  login: (user: UserInformationResponse) => void
-  logout: () => void
+  login: (user: UserInformationResponse) => Promise<void>
+  logout: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData)
@@ -16,19 +17,21 @@ const AuthContext = createContext<AuthContextData>({} as AuthContextData)
 export const AuthProvider = ({ children }: AuthProviderType) => {
   const [user, setUser] = useState<UserInformationResponse | null>(null)
 
-  async function login(user: UserInformationResponse) {
-    setUser(user)
-  }
+  const authContextValue = React.useMemo(() => {
+    const login = async (user: UserInformationResponse): Promise<void> => {
+      setUser(user)
+    }
 
-  async function logout() {
-    setUser(null)
-  }
-  return (
-    <AuthContext.Provider value={{ isAuthenticated: Boolean(user), user, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  )
+    const logout = async (): Promise<void> => {
+      setUser(null)
+    }
+
+    return { isAuthenticated: Boolean(user), user, login, logout }
+  }, [user])
+
+  return <AuthContext.Provider value={authContextValue}>{children}</AuthContext.Provider>
 }
+
 export function useAuth() {
   const context = useContext(AuthContext)
   return context

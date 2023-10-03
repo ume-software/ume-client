@@ -1,11 +1,14 @@
 import { EditName, Remind, Setting } from '@icon-park/react'
+import logo from 'public/logo.png'
 import { useAuth } from '~/contexts/auth'
 
 import { ReactNode, useContext, useEffect, useState } from 'react'
 import React from 'react'
 
+import Image from 'next/legacy/image'
 import { useRouter } from 'next/router'
 
+import BecomeProvider from './components/become-provider'
 import EditNotificated from './components/edit-notificated'
 import EditProfile from './components/edit-profile'
 import Privacy from './components/privacy'
@@ -37,6 +40,12 @@ const settingType: SettingTypeProps[] = [
     label: 'Quyền riêng tư',
     icon: <Setting theme="filled" size="17" fill="#FFFFFF" strokeLinejoin="bevel" />,
     children: <Privacy />,
+  },
+  {
+    key: 'becomeProvider',
+    label: 'Trở thành nhà cung cấp',
+    icon: <Image width={20} height={20} src={logo} alt="BecomeProviderIcon" />,
+    children: <BecomeProvider />,
   },
 ]
 

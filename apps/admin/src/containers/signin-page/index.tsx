@@ -88,7 +88,7 @@ const SigninPage = () => {
                   type="submit"
                   customCSS="bg-blue-500 hover:opacoty-90 px-2 py-1
             hover:bg-ume-primary focus:bg-ume-primary active:bg-ume-primary/90"
-                  isDisabled={!(form.values.username || form.values.password) || isSubmiting}
+                  isActive={!(form.values.username || form.values.password) || isSubmiting}
                   isLoading={isSubmiting}
                 >
                   Login
