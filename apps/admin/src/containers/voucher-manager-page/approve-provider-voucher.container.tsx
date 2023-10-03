@@ -8,11 +8,13 @@ import { PrismaWhereConditionType, prismaWhereConditionToJsonString } from 'quer
 import {
   VoucherPagingResponse,
   VoucherResponse,
+  VoucherResponseDiscountUnitEnum,
   VoucherResponseRecipientTypeEnum,
   VoucherResponseStatusEnum,
+  VoucherResponseTypeEnum,
 } from 'ume-service-openapi'
 
-import AdminVoucherTable from './components/voucher-table/admin-voucher-table'
+import ApproveProviderVoucherTable from './components/voucher-table/approve-voucher-table'
 import VourcherModalCreate from './components/vourcher-modal/vourcher-modal-create'
 import VourcherModalView from './components/vourcher-modal/vourcher-modal-view'
 
@@ -20,34 +22,74 @@ import FilterDropdown from '~/components/filter-dropdown'
 
 import { trpc } from '~/utils/trpc'
 
-const statusFilterItems = [
+interface LooseObject {
+  [key: string]: any
+}
+
+const typeFilter = [
   {
     key: 'all',
     label: (
-      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-400 hover:text-white">
         Tất cả
       </Tag>
     ),
   },
   {
-    key: 'true',
+    key: VoucherResponseTypeEnum.Discount,
     label: (
-      <Tag className="flex justify-center w-full px-3 py-2 text-white bg-green-500 rounded-lg hover:bg-green-600">
-        Hoạt động
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-400 hover:text-white">
+        Giảm giá
       </Tag>
     ),
   },
   {
-    key: 'false',
+    key: VoucherResponseTypeEnum.Cashback,
     label: (
-      <Tag className="flex justify-center w-full px-3 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600">
-        Tạm dừng
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-400 hover:text-white">
+        Hoàn tiền
       </Tag>
     ),
   },
 ]
+const mappingtype = {
+  all: 'Loại',
+  CASHBACK: 'Hoàn tiền',
+  DISCOUNT: 'Giảm giá',
+}
+const discountUnitsFilter = [
+  {
+    key: 'all',
+    label: (
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-400 hover:text-white">
+        Tất cả
+      </Tag>
+    ),
+  },
+  {
+    key: VoucherResponseDiscountUnitEnum.Cash,
+    label: (
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-400 hover:text-white">
+        Tiền
+      </Tag>
+    ),
+  },
+  {
+    key: VoucherResponseDiscountUnitEnum.Percent,
+    label: (
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-400 hover:text-white">
+        Phần trăm
+      </Tag>
+    ),
+  },
+]
+const mappingDiscountUnits = {
+  all: 'Kiểu khuyến mãi',
+  CASH: 'Tiền',
+  PERCENT: 'Phần trăm',
+}
 
-const recipientType = [
+const recipientTypeFilter = [
   {
     key: VoucherResponseRecipientTypeEnum.All,
     label: (
@@ -97,13 +139,7 @@ const mappingRecipientType = {
   TOP_5_BOOKER: ' Top 5 người thuê',
   TOP_10_BOOKER: ' Top 10 người thuê',
 }
-const mappingStatus = {
-  all: 'Trạng thái',
-  true: 'Hoạt động',
-  false: 'Tạm dừng',
-}
-
-const VoucherByAdmin = () => {
+const ApproveProviderVoucher = () => {
   // model variable and function
 
   const [openVourcherModalView, setOpenVourcherModalView] = useState(false)
@@ -129,7 +165,8 @@ const VoucherByAdmin = () => {
   const [page, setPage] = useState(1)
   const [filter, setFilter] = useState({
     recipientType: 'ALL',
-    isActivated: 'all',
+    discountUnit: 'all',
+    type: 'all',
     search: '',
   })
   const [searchChange, setSearchChange] = useState('')
@@ -149,9 +186,11 @@ const VoucherByAdmin = () => {
         },
       },
     ],
-    providerId: null,
+
+    adminId: null,
     recipientType: filter.recipientType !== 'ALL' ? filter.recipientType : undefined,
-    isActivated: filter.isActivated !== 'ALL' ? (filter.isActivated == 'true' ? true : false) : undefined,
+    status: filter.discountUnit !== 'all' ? filter.discountUnit : undefined,
+    type: filter.type !== 'all' ? filter.type : undefined,
   })
 
   const { isLoading, isFetching } = trpc.useQuery(
@@ -173,10 +212,15 @@ const VoucherByAdmin = () => {
         ...filter,
         recipientType: key,
       })
-    } else if (id == 'status') {
+    } else if (id == 'discountUnit') {
       setFilter({
         ...filter,
-        isActivated: key,
+        discountUnit: key,
+      })
+    } else if (id == 'type') {
+      setFilter({
+        ...filter,
+        type: key,
       })
     }
   }
@@ -209,27 +253,31 @@ const VoucherByAdmin = () => {
     <div>
       <div className="flex justify-between">
         <span className="content-title">Khuyến mãi của quản trị viên</span>
-        <Button customCSS="bg-[#7463f0] px-3 py-1 rounded-2xl active:bg-gray-600" onClick={addVourcherHandler}>
-          <Plus theme="outline" size="24" fill="#fff" />
-          Thêm khuyến mãi
-        </Button>
+        <div></div>
       </div>
 
       <div className="flex flex-col my-10">
         <div className="flex items-center justify-between">
           <div className="flex">
             <FilterDropdown
-              id={'status'}
-              CustomCss="min-w-[7rem]"
-              title={mappingStatus[filter.isActivated]}
-              items={statusFilterItems}
+              id={'recipientType'}
+              CustomCss="min-w-[11rem]"
+              title={`${mappingRecipientType[filter.recipientType]}`}
+              items={recipientTypeFilter}
               handleFilter={handleFilter}
             />
             <FilterDropdown
-              id={'recipientType'}
-              CustomCss="min-w-[11rem]"
-              title={mappingRecipientType[filter.recipientType]}
-              items={recipientType}
+              id={'discountUnit'}
+              CustomCss="min-w-[9.5rem]"
+              title={`${mappingDiscountUnits[filter.discountUnit]}`}
+              items={discountUnitsFilter}
+              handleFilter={handleFilter}
+            />
+            <FilterDropdown
+              id={'type'}
+              CustomCss="min-w-[6.5rem]"
+              title={`${mappingtype[filter.type]}`}
+              items={typeFilter}
               handleFilter={handleFilter}
             />
           </div>
@@ -247,7 +295,7 @@ const VoucherByAdmin = () => {
           </div>
         </div>
       </div>
-      <AdminVoucherTable data={adminVoucherList} />
+      <ApproveProviderVoucherTable data={adminVoucherList} />
       <div className="flex w-full justify-center pb-[200px] mt-5">
         <Pagination
           itemRender={(page, type) => (
@@ -276,4 +324,4 @@ const VoucherByAdmin = () => {
   )
 }
 
-export default VoucherByAdmin
+export default ApproveProviderVoucher

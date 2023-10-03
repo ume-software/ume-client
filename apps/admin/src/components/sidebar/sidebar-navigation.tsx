@@ -207,19 +207,19 @@ const SidebarNavigation: SidebarNavigationItem[] = [
         children: [
           {
             label: (
-              <Link href="/#" rel="noopener noreferrer">
-                Khuyến mãi chờ duyệt
-              </Link>
-            ),
-            key: 'pending-voucher',
-          },
-          {
-            label: (
-              <Link href="/voucher-manager" rel="noopener noreferrer">
+              <Link href="/voucher-manager/voucher-by-provider" rel="noopener noreferrer">
                 Tất cả khuyến mãi
               </Link>
             ),
             key: 'all-voucher',
+          },
+          {
+            label: (
+              <Link href="/voucher-manager/approve-provider-voucher" rel="noopener noreferrer">
+                Khuyến mãi chờ duyệt
+              </Link>
+            ),
+            key: 'pending-voucher',
           },
         ],
       },

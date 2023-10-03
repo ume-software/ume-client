@@ -6,7 +6,12 @@ import React, { useState } from 'react'
 import { Pagination, Tag } from 'antd'
 import Head from 'next/head'
 import { title } from 'process'
-import { AdminGetUserPagingResponseResponse } from 'ume-service-openapi'
+import { PrismaWhereConditionType, prismaWhereConditionToJsonString } from 'query-string-prisma-ume'
+import {
+  AdminGetUserPagingResponseResponse,
+  AdminGetUserResponseResponse,
+  AdminGetUserResponseResponseGenderEnum,
+} from 'ume-service-openapi'
 
 import UserTable from './components/user-table'
 
@@ -47,7 +52,7 @@ const statusFilterItems = [
 
 const genderFilterItems = [
   {
-    key: 'all',
+    key: 'ALL',
     label: (
       <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white px-3 py-2 w-full flex justify-center">
         <div className="flex justify-center items-center w-10">Tất cả</div>
@@ -55,7 +60,7 @@ const genderFilterItems = [
     ),
   },
   {
-    key: 'male',
+    key: AdminGetUserResponseResponseGenderEnum.Male,
     label: (
       <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white px-3 py-2 w-full flex justify-center">
         <div className="flex justify-center items-center w-10">Nam</div>
@@ -63,7 +68,7 @@ const genderFilterItems = [
     ),
   },
   {
-    key: 'female',
+    key: AdminGetUserResponseResponseGenderEnum.Female,
     label: (
       <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white px-3 py-2 w-full flex justify-center">
         <div className="flex justify-center items-center w-10">Nữ</div>
@@ -71,7 +76,7 @@ const genderFilterItems = [
     ),
   },
   {
-    key: 'orther',
+    key: AdminGetUserResponseResponseGenderEnum.Other,
     label: (
       <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white px-3 py-2 w-full flex justify-center">
         <div className="flex justify-center items-center w-10">Khác</div>
@@ -79,37 +84,40 @@ const genderFilterItems = [
     ),
   },
 ]
-
+const mappingGender = {
+  ALL: 'Giới tính',
+  MALE: 'Nam',
+  FEMALE: ' Nữ',
+  OTHER: ' Khác',
+}
+const mappingStatus = {
+  all: 'Trạng thái',
+  false: 'Hoạt động',
+  true: 'Tạm dừng',
+}
 const UserManager = () => {
   const [userList, setUserList] = useState<AdminGetUserPagingResponseResponse | undefined>()
   const [page, setPage] = useState(1)
   const [filter, setFilter] = useState({
-    gender: 'all',
+    gender: 'ALL',
     isBanned: 'all',
-    search: 'all',
+    search: '',
   })
   const [searchChange, setSearchChange] = useState('')
+  const testQuerry: PrismaWhereConditionType<AdminGetUserResponseResponse> = Object.assign({
+    name: {
+      contains: filter.search,
+      mode: 'insensitive',
+    },
 
-  const generateQuery = () => {
-    let query: LooseObject = {}
-    if (filter.search !== 'all') {
-      query.name = {
-        contains: filter.search,
-        mode: 'insensitive',
-      }
-    }
-    if (filter.gender !== 'all') {
-      query.gender = filter.gender.toUpperCase()
-    }
-    if (filter.isBanned !== 'all') {
-      filter.isBanned == 'true' ? (query.isBanned = true) : (query.isBanned = false)
-    }
-
-    return JSON.stringify(query)
-  }
-
+    gender: filter.gender !== 'ALL' ? filter.gender : undefined,
+    isBanned: filter.isBanned !== 'all' ? (filter.isBanned == 'true' ? true : false) : undefined,
+  })
   const { isLoading: isUserListLoading, isFetching: isUserListFetching } = trpc.useQuery(
-    ['user.getUserList', { page: page.toString(), where: generateQuery(), order: undefined }],
+    [
+      'user.getUserList',
+      { page: page.toString(), where: prismaWhereConditionToJsonString(testQuerry), order: undefined },
+    ],
     {
       onSuccess(data) {
         setUserList(data?.data as any)
@@ -133,11 +141,18 @@ const UserManager = () => {
   }
 
   const handleSearchChange = (e) => {
+    if (e.target.value == '') {
+      setPage(1)
+      setFilter({
+        ...filter,
+        search: '',
+      })
+    }
     setSearchChange(e.target.value)
   }
 
-  const handlePageChange = (currentPage) => {
-    setPage(currentPage)
+  const handlePageChange = (selectedPage) => {
+    setPage(selectedPage)
   }
 
   const handleKeyPress = (e) => {
@@ -159,8 +174,20 @@ const UserManager = () => {
         <div className="flex flex-col my-10">
           <div className="flex justify-between items-center">
             <div className="flex">
-              <FilterDropdown id={'gender'} title="Giới tính" items={genderFilterItems} handleFilter={handleFilter} />
-              <FilterDropdown id={'status'} title="Trạng thái" items={statusFilterItems} handleFilter={handleFilter} />
+              <FilterDropdown
+                id={'gender'}
+                CustomCss="min-w-[6rem]"
+                title={`${mappingGender[filter.gender]}`}
+                items={genderFilterItems}
+                handleFilter={handleFilter}
+              />
+              <FilterDropdown
+                id={'status'}
+                CustomCss="min-w-[7rem]"
+                title={`${mappingStatus[filter.isBanned]}`}
+                items={statusFilterItems}
+                handleFilter={handleFilter}
+              />
             </div>
 
             <div className="flex items-center rounded-lg pl-2 bg-umeHeader border-2 border-white">

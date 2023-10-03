@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 import { createRouter } from './configurations'
-import { getUserCoinHistories, getUserList } from './services/user-service'
+import { banUser, getUserCoinHistories, getUserList, unBanUser } from './services/user-service'
 
 export const userRouter = createRouter()
   .query('getUserList', {
@@ -19,5 +19,21 @@ export const userRouter = createRouter()
     }),
     resolve: async ({ ctx, input }) => {
       return await getUserCoinHistories(ctx, input)
+    },
+  })
+  .mutation('banUser', {
+    input: z.object({
+      slug: z.string(),
+    }),
+    resolve: async ({ ctx, input }) => {
+      return await banUser(ctx, input)
+    },
+  })
+  .mutation('unBanUser', {
+    input: z.object({
+      slug: z.string(),
+    }),
+    resolve: async ({ ctx, input }) => {
+      return await unBanUser(ctx, input)
     },
   })

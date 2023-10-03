@@ -1,17 +1,17 @@
-import { CloseSmall, Eyes, H, Left, ReduceOne, Right } from '@icon-park/react'
-import { Modal } from '@ume/ui'
+import { CheckOne, Eyes, ReduceOne } from '@icon-park/react'
+import { Button } from '@ume/ui'
 
 import React, { useState } from 'react'
 
-import { Badge, Pagination, Space, Table, Tag } from 'antd'
+import { Table, Tag, notification } from 'antd'
 import Image from 'next/image'
-import { UserInformationPagingResponse } from 'ume-service-openapi'
-import { string } from 'zod'
 
 import EmptyErrorPic from '../../../../public/empty_error.png'
 import UserDetails from './user-details'
 
-import BanModal from '~/components/modal-base/ban-modal'
+import ComfirmModal from '~/components/modal-base/comfirm-modal'
+
+import { trpc } from '~/utils/trpc'
 
 const tableDataMapping = (data) => {
   const list: {
@@ -47,9 +47,15 @@ const tableDataMapping = (data) => {
 }
 
 const UserTable = ({ userList }) => {
+  const utils = trpc.useContext()
   const [openUserDetail, setOpenUserDetail] = useState(false)
   const [openBanUser, setOpenBanUser] = useState(false)
   const [userDetails, setUserDetails] = useState<{}>()
+  const [userName, setUserName] = useState(null)
+  const [isBannedUser, setisBannedUser] = useState(null)
+  const [userId, setUserId] = useState(null)
+  const banUser = trpc.useMutation(['user.banUser'])
+  const unBanUser = trpc.useMutation(['user.unBanUser'])
 
   const listData = tableDataMapping(userList?.row)
   const handleOpenUserDetails = (record) => {
@@ -62,9 +68,62 @@ const UserTable = ({ userList }) => {
   }
 
   const handleOpenBan = (record) => {
+    setUserId(record.key)
+    setUserName(record.name)
+    setisBannedUser(record.isBanned)
+
     setOpenBanUser(true)
   }
   const handlecloseBan = () => {
+    setOpenBanUser(false)
+  }
+
+  const handleBanFunction = () => {
+    if (!isBannedUser) {
+      try {
+        banUser.mutate(
+          {
+            slug: userId!!,
+          },
+          {
+            onSuccess: (data) => {
+              if (data.success) {
+                notification.success({
+                  message: 'Chặn Người Cung Cấp thành công!',
+                  description: 'Người Cung Cấp Đã Bị Chặn',
+                  placement: 'bottomLeft',
+                })
+                utils.invalidateQueries('user.getUserList')
+              }
+            },
+          },
+        )
+      } catch (error) {
+        console.error('Failed to Handle Ban/Unban User', error)
+      }
+    } else {
+      try {
+        unBanUser.mutate(
+          {
+            slug: userId!!,
+          },
+          {
+            onSuccess: (data) => {
+              if (data.success) {
+                notification.success({
+                  message: 'Bỏ chặn người dùng thành công!',
+                  description: 'Người dùng đã được bỏ chặn',
+                  placement: 'bottomLeft',
+                })
+                utils.invalidateQueries('user.getUserList')
+              }
+            },
+          },
+        )
+      } catch (error) {
+        console.error('Failed to Handle Ban/Unban User:', error)
+      }
+    }
     setOpenBanUser(false)
   }
 
@@ -73,6 +132,7 @@ const UserTable = ({ userList }) => {
       title: 'Tên',
       dataIndex: 'name',
       key: 'name',
+      render: (text) => <a>{text}</a>,
     },
     {
       title: 'Gmail',
@@ -96,8 +156,8 @@ const UserTable = ({ userList }) => {
     },
     {
       title: <div className="flex justify-center items-center">Trạng thái</div>,
-      key: 'isBaned',
-      dataIndex: 'isBaned',
+      key: 'isBanned',
+      dataIndex: 'isBanned',
       render: (text) => (
         <div className="flex justify-center items-center">
           {!text ? (
@@ -128,13 +188,13 @@ const UserTable = ({ userList }) => {
                 size="24"
                 fill="#fff"
               />
-              <ReduceOne
-                onClick={() => handleOpenBan(record)}
-                className="rounded-full hover:bg-gray-500 p-2"
-                theme="outline"
-                size="24"
-                fill="#ff0000"
-              />
+              <Button onClick={() => handleOpenBan(record)}>
+                {record.isBanned ? (
+                  <CheckOne className="rounded-full hover:bg-gray-500 p-2" theme="outline" size="20" fill="#22c55e" />
+                ) : (
+                  <ReduceOne className="rounded-full hover:bg-gray-500 p-2" theme="outline" size="20" fill="#ff0000" />
+                )}
+              </Button>
             </div>
           </>
         )
@@ -154,8 +214,20 @@ const UserTable = ({ userList }) => {
     <div className=" mt-5">
       <Table locale={locale} pagination={false} columns={columns} dataSource={listData} />
 
-      <UserDetails data={userDetails} openValue={openUserDetail} closeFunction={handlecloseUserDetails} />
-      <BanModal name={'Que'} closeFunction={handlecloseBan} openValue={openBanUser} />
+      {openUserDetail && (
+        <UserDetails details={userDetails} openValue={openUserDetail} closeFunction={handlecloseUserDetails} />
+      )}
+      <ComfirmModal
+        closeFunction={handlecloseBan}
+        openValue={openBanUser}
+        isComfirmFunction={handleBanFunction}
+        titleValue={!isBannedUser ? 'Xác nhận chặn' : 'Xác nhận bỏ chặn'}
+      >
+        <div className="text-white p-4">
+          Bạn có chắc chắn muốn {!isBannedUser ? ' chặn ' : ' bỏ chặn '}
+          {userName}
+        </div>
+      </ComfirmModal>
     </div>
   )
 }

@@ -1,22 +1,20 @@
-import { Search } from '@icon-park/react'
-import { Input } from '@ume/ui'
-
 import React from 'react'
 
 import Head from 'next/head'
 
-import VoucherTable from './components/voucher-table'
+import ApproveProviderVoucher from './approve-provider-voucher.container'
 import VoucherByAdmin from './voucher-by-admin.container'
+import VoucherByProvider from './voucher-by-provider.container'
 
 const VoucherManager = ({ task }) => {
   const SwitchVoucherManager = ({ selectedTask }) => {
-    console.log(selectedTask)
-
     switch (selectedTask) {
       case 'voucher-by-admin':
         return <VoucherByAdmin />
       case 'voucher-by-provider':
-        return <>voucher-by-provider</>
+        return <VoucherByProvider />
+      case 'approve-provider-voucher':
+        return <ApproveProviderVoucher />
     }
   }
 

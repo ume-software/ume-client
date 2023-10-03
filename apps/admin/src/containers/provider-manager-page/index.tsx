@@ -1,18 +1,29 @@
-import { Left, Right, Search } from '@icon-park/react'
-import { Button, Input } from '@ume/ui'
+import { Left, Right, Search } from '@icon-park/react';
+import { Button, Input } from '@ume/ui';
 
-import React, { useState } from 'react'
 
-import { Pagination, Tag } from 'antd'
-import Head from 'next/head'
-import { AdminGetUserPagingResponseResponse, FilterProviderPagingResponse } from 'ume-service-openapi'
-import { util } from 'zod'
 
-import TableProviders from './components/table-provider'
+import React, { useState } from 'react';
 
-import FilterDropdown from '~/components/filter-dropdown'
 
-import { trpc } from '~/utils/trpc'
+
+import { Pagination, Tag } from 'antd';
+import Head from 'next/head';
+import { AdminGetUserPagingResponseResponse, FilterProviderPagingResponse } from 'ume-service-openapi';
+import { util } from 'zod';
+
+
+
+import TableProviders from './components/table-provider';
+
+
+
+import FilterDropdown from '~/components/filter-dropdown';
+
+
+
+import { trpc } from '~/utils/trpc';
+
 
 interface LooseObject {
   [key: string]: any
@@ -153,6 +164,13 @@ const ProviderManager = () => {
     true: 'TẠM DỪNG',
   }
   const handleSearchChange = (e) => {
+    if (e.target.value == '') {
+      setPage(1)
+      setFilter({
+        ...filter,
+        search: '',
+      })
+    }
     setSearchChange(e.target.value)
   }
 
