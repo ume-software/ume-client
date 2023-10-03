@@ -14,6 +14,7 @@ import {
 
 import AdminVoucherTable from './components/voucher-table/admin-voucher-table'
 import VourcherModalCreate from './components/vourcher-modal/vourcher-modal-create'
+import VourcherModalUpdate from './components/vourcher-modal/vourcher-modal-update'
 import VourcherModalView from './components/vourcher-modal/vourcher-modal-view'
 
 import FilterDropdown from '~/components/filter-dropdown'
@@ -121,8 +122,8 @@ const VoucherByAdmin = () => {
   }
   function addVourcherHandler() {
     // setOpenVourcherModalView(true)
-    setOpenVourcherModalCreate(true)
-    // setOpenVourcherModalUpdate(true)
+    // setOpenVourcherModalCreate(true)
+    setOpenVourcherModalUpdate(true)
   }
   // --------------------------
   const [adminVoucherList, setAdminVoucherList] = useState<VoucherPagingResponse>()
@@ -272,6 +273,7 @@ const VoucherByAdmin = () => {
 
       <VourcherModalView closeFunction={closeVourcherModalView} openValue={openVourcherModalView} />
       <VourcherModalCreate closeFunction={closeVourcherModalCreate} openValue={openVourcherModalCreate} />
+      <VourcherModalUpdate closeFunction={closeVourcherModalUpdate} openValue={openVourcherModalUpdate} />
     </div>
   )
 }
