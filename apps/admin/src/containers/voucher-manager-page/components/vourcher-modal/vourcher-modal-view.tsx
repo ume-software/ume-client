@@ -15,6 +15,7 @@ export interface IVourcherModalViewProps {
 }
 
 export default function VourcherModalView({ vourcherId, closeFunction, openValue }: IVourcherModalViewProps) {
+  //call api
   const titleValue = 'Thông Tin Khuyến Mãi'
   const avatarUrl = anhURL.src
   const name = 'ABC'

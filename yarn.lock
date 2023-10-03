@@ -1353,6 +1353,7 @@
   integrity sha512-Vrjz5N5Ia4SEzWWgIVwnHNEnb1UE1XMkvY5DGXrAeOGE9imk0hgTHh5GyDjLDJi9OTCn9oo9dXH1uToK1VRfrg==
 
 "@types/node@*":
+<<<<<<< HEAD
   version "20.8.2"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-20.8.2.tgz#d76fb80d87d0d8abfe334fc6d292e83e5524efc4"
   integrity sha512-Vvycsc9FQdwhxE3y3DzeIxuEJbWGDsnrxvMADzTDF/lcdR9/K+AQIeAghTQsHtotg/q0j3WEOYS/jQgSdWue3w==
@@ -1361,6 +1362,16 @@
   version "18.18.3"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-18.18.3.tgz#e5188135fc2909b46530c798ef49be65083be3fd"
   integrity sha512-0OVfGupTl3NBFr8+iXpfZ8NR7jfFO+P1Q+IO/q0wbo02wYkP5gy36phojeYWpLQ6WAMjl+VfmqUk2YbUfp0irA==
+=======
+  version "20.8.0"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.8.0.tgz#10ddf0119cf20028781c06d7115562934e53f745"
+  integrity sha512-LzcWltT83s1bthcvjBmiBvGJiiUe84NWRHkw+ZV6Fr41z2FbIzvc815dk2nQ3RAKMuN2fkenM/z3Xv2QzEpYxQ==
+
+"@types/node@^18.11.9":
+  version "18.18.1"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.18.1.tgz#80b22f3df719f15c9736207980e95f35d01ec1aa"
+  integrity sha512-3G42sxmm0fF2+Vtb9TJQpnjmP+uKlWvFa8KoEGquh4gqRmoUG/N0ufuhikw6HEsdG2G2oIKhog1GCTfz9v5NdQ==
+>>>>>>> CPU-92
 
 "@types/prop-types@*":
   version "15.7.8"
@@ -2060,9 +2071,15 @@ camelcase@^6.2.0:
   integrity sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==
 
 caniuse-lite@^1.0.30001406, caniuse-lite@^1.0.30001538, caniuse-lite@^1.0.30001541:
+<<<<<<< HEAD
   version "1.0.30001543"
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001543.tgz#478a3e9dddbb353c5ab214b0ecb0dbed529ed1d8"
   integrity sha512-qxdO8KPWPQ+Zk6bvNpPeQIOH47qZSYdFZd6dXQzb2KzhnSXju4Kd7H1PkSJx6NICSMgo/IhRZRhhfPTHYpJUCA==
+=======
+  version "1.0.30001542"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001542.tgz#823ddb5aed0a70d5e2bfb49126478e84e9514b85"
+  integrity sha512-UrtAXVcj1mvPBFQ4sKd38daP8dEcXXr5sQe6QNNinaPd0iA/cxg9/l3VrSdL73jgw5sKyuQ6jNgiKO12W3SsVA==
+>>>>>>> CPU-92
 
 chalk@^2.4.2:
   version "2.4.2"
@@ -2580,9 +2597,15 @@ ee-first@1.1.1:
   integrity sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==
 
 electron-to-chromium@^1.4.535:
+<<<<<<< HEAD
   version "1.4.539"
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.539.tgz#5ce6b161e252132cc84501bc35d084995a2a9840"
   integrity sha512-wRmWJ8F7rgmINuI32S6r2SLrw/h/bJQsDSvBiq9GBfvc2Lh73qTOwn73r3Cf67mjVgFGJYcYtmERzySa5jIWlg==
+=======
+  version "1.4.537"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.537.tgz#aac4101db53066be1e49baedd000a26bc754adc9"
+  integrity sha512-W1+g9qs9hviII0HAwOdehGYkr+zt7KKdmCcJcjH0mYg6oL8+ioT3Skjmt7BLoAQqXhjf40AXd+HlR4oAWMlXjA==
+>>>>>>> CPU-92
 
 emittery@^0.13.1:
   version "0.13.1"
@@ -5387,7 +5410,11 @@ qs@6.11.0:
   dependencies:
     side-channel "^1.0.4"
 
+<<<<<<< HEAD
 query-string-prisma-ume@latest:
+=======
+query-string-prisma-ume@^1.0.45:
+>>>>>>> CPU-92
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/query-string-prisma-ume/-/query-string-prisma-ume-1.1.4.tgz#66e1e22e034a2468272733d970bc890ddd911e4c"
   integrity sha512-fv0db43aW41z1yhPxh8ubXYlxgJHnbVMWIrYDKFQDBCBuI+OMNf0X4lAV0xGL2ln6l8EW2Q5kvd9iLM+PuNSwQ==
@@ -6952,9 +6979,15 @@ ume-identity-service-openapi@latest:
     axios "^0.27.2"
 
 ume-service-openapi@latest:
+<<<<<<< HEAD
   version "1.2.13"
   resolved "https://registry.yarnpkg.com/ume-service-openapi/-/ume-service-openapi-1.2.13.tgz#c8a808e413cfa8575eb2b82875dcb507e950d6fb"
   integrity sha512-Xg7slKn1GwiMuVV2Tbz9jHv0awnUocf6wz4a6ArMhgSiYY6I3tHaFbTDOsPfRAF0N3dAuUWB2jNXc0hYFxZaoQ==
+=======
+  version "1.2.12"
+  resolved "https://registry.yarnpkg.com/ume-service-openapi/-/ume-service-openapi-1.2.12.tgz#3c062bfa474e9781c53bcc29cc29c22be94b3ad2"
+  integrity sha512-X98doR3LJf/SUORjByd9iS+JcWcsD6gV4kfpl4fPXqboAYIMnPrK/ppQONERnk0ES8RyZaGIgCxdiw9oID9Zhg==
+>>>>>>> CPU-92
   dependencies:
     axios "^0.27.2"
 
