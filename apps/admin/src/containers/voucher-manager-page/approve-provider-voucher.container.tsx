@@ -1,5 +1,5 @@
-import { Left, Plus, Right, Search } from '@icon-park/react'
-import { Button, Input } from '@ume/ui'
+import { Left, Right, Search } from '@icon-park/react'
+import { Input } from '@ume/ui'
 
 import React, { useState } from 'react'
 
@@ -10,7 +10,6 @@ import {
   VoucherResponse,
   VoucherResponseDiscountUnitEnum,
   VoucherResponseRecipientTypeEnum,
-  VoucherResponseStatusEnum,
   VoucherResponseTypeEnum,
 } from 'ume-service-openapi'
 
@@ -252,7 +251,7 @@ const ApproveProviderVoucher = () => {
   return (
     <div>
       <div className="flex justify-between">
-        <span className="content-title">Khuyến mãi của quản trị viên</span>
+        <span className="content-title">Kiểm duyệt khuyến mãi từ quản trị viên</span>
         <div></div>
       </div>
 

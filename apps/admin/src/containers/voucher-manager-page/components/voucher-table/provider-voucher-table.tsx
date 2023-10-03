@@ -115,25 +115,9 @@ const ProviderVoucherTable = ({ data }) => {
 
               {record.status != 'PENDING' ? (
                 <div className="flex pointer-events-none opacity-40">
-                  <CheckOne
-                    onClick={() => {
-                      console.log('approve')
-                    }}
-                    className="p-2 rounded-full hover:bg-gray-500"
-                    theme="outline"
-                    size="18"
-                    fill="#fff"
-                  />
+                  <CheckOne className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="18" fill="#fff" />
 
-                  <CloseOne
-                    onClick={() => {
-                      console.log('deny')
-                    }}
-                    className="p-2 rounded-full hover:bg-gray-600"
-                    theme="outline"
-                    size="18"
-                    fill="#fff"
-                  />
+                  <CloseOne className="p-2 rounded-full hover:bg-gray-600" theme="outline" size="18" fill="#fff" />
                 </div>
               ) : (
                 <div className="flex">

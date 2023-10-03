@@ -7,8 +7,6 @@ import { AdminManageVoucherApi } from 'ume-service-openapi'
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
 export const getAllVoucher = async (ctx, query: { page: string; where?: string; order?: string }) => {
-  // console.log(query)
-
   try {
     const cookies = parse(ctx.req.headers.cookie ?? '')
     const response = await new AdminManageVoucherApi({
