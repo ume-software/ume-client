@@ -6,15 +6,15 @@ CLI Target: es6
 ESM Build start
 CJS Build start
 CJS dist/index.css 73.00 B
-CJS dist/index.js  27.18 KB
-CJS ⚡️ Build success in 184ms
+CJS dist/index.js  27.30 KB
+CJS ⚡️ Build success in 114ms
+ESM dist/index.mjs 24.65 KB
 ESM dist/index.css 73.00 B
-ESM dist/index.mjs 24.53 KB
-ESM ⚡️ Build success in 184ms
+ESM ⚡️ Build success in 114ms
 DTS Build start
-DTS ⚡️ Build success in 2652ms
-DTS dist/index.d.ts 6.87 KB
+DTS ⚡️ Build success in 2539ms
+DTS dist/index.d.ts 6.95 KB
 
 Rebuilding...
 
-Done in 114ms.
+Done in 106ms.

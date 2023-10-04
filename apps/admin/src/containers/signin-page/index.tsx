@@ -3,6 +3,7 @@ import { Button, FieldLabel, FormInput } from '@ume/ui'
 import { useState } from 'react'
 
 import { FormikErrors, useFormik } from 'formik'
+import { isNull } from 'lodash'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 
@@ -23,6 +24,7 @@ const SigninPage = () => {
   const [errorMessage, setErrorMessage] = useState('')
   const signin = trpc.useMutation(['auth.signin'])
   const router = useRouter()
+
   const form = useFormik({
     initialValues: {
       username: '',
