@@ -52,6 +52,7 @@ const genderData: GenderProps[] = [
 ]
 
 const EditProfile = () => {
+  const today = new Date().toISOString().split('T')[0]
   const [userSettingData, setUserSettingData] = useState<UserInformationResponse | undefined>(undefined)
   const { isLoading: isLoadingUserSettingData, isFetching: isFetchingUserSettingData } = trpc.useQuery(
     ['identity.identityInfo'],
@@ -204,7 +205,7 @@ const EditProfile = () => {
 
   const handleUpdateInformation = async () => {
     if (editAccountInforFormRef.current) {
-      if (selectedImage) {
+      if (selectedImage.avatarURL) {
         const formData = new FormData(editAccountInforFormRef.current)
         const responseData = await uploadImageBooking(formData)
 
@@ -215,8 +216,8 @@ const EditProfile = () => {
                 avatarUrl: String(responseData.data.data.results),
                 dob: settingAccount.dob || undefined,
                 gender: settingAccount.gender.key,
-                name: settingAccount.name,
-                slug: settingAccount.slug || undefined,
+                name: settingAccount.name?.trim(),
+                slug: settingAccount.slug?.trim() || undefined,
               },
               {
                 onSuccess() {
@@ -254,8 +255,8 @@ const EditProfile = () => {
             {
               dob: settingAccount.dob || undefined,
               gender: settingAccount.gender.key,
-              name: settingAccount.name,
-              slug: settingAccount.slug || undefined,
+              name: settingAccount.name?.trim(),
+              slug: settingAccount.slug?.trim() || undefined,
             },
             {
               onSuccess() {
@@ -526,6 +527,7 @@ const EditProfile = () => {
                         className={`${
                           settingAccount.dob == userSettingData.dob ? 'bg-zinc-800' : 'bg-gray-700'
                         } border border-white border-opacity-30`}
+                        max={today}
                         value={settingAccount.dob}
                         onChange={(e) => setSettingAccount((prevData) => ({ ...prevData, dob: e.target.value }))}
                       />

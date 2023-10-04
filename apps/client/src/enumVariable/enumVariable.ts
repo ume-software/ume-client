@@ -9,3 +9,8 @@ export enum GenderEnum {
   OTHER = 'OTHER',
   PRIVATE = 'PRIVATE',
 }
+
+export enum MenuModalEnum {
+  ATTRIBUTE = 'ATTRIBUTE',
+  SUB_ATTRIBUTE = 'SUB_ATTRIBUTE',
+}
