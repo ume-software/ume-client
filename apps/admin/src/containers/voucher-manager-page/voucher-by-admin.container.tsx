@@ -122,8 +122,8 @@ const VoucherByAdmin = () => {
   }
   function addVourcherHandler() {
     // setOpenVourcherModalView(true)
-    // setOpenVourcherModalCreate(true)
-    setOpenVourcherModalUpdate(true)
+    setOpenVourcherModalCreate(true)
+    // setOpenVourcherModalUpdate(true)
   }
   // --------------------------
   const [adminVoucherList, setAdminVoucherList] = useState<VoucherPagingResponse>()
