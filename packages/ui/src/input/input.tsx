@@ -115,7 +115,7 @@ interface InputWithButtonProps extends React.InputHTMLAttributes<HTMLInputElemen
 
 export const InputWithButton = ({ position, component, ...props }: InputWithButtonProps) => {
   return (
-    <div className="relative flex -space-x-px gap-2">
+    <div className="relative flex gap-2 -space-x-px">
       <Input {...props} tabIndex={99} />
       {position === 'left' ? <>{component}</> : null}
       {position === 'right' ? <>{component}</> : null}

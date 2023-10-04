@@ -1,11 +1,12 @@
 import { Left, Right, Search } from '@icon-park/react'
-import { Input } from '@ume/ui'
+import { Button, Input } from '@ume/ui'
 
 import React, { useState } from 'react'
 
 import { Pagination, Tag } from 'antd'
 import Head from 'next/head'
-import { AdminGetUserPagingResponseResponse } from 'ume-service-openapi'
+import { AdminGetUserPagingResponseResponse, FilterProviderPagingResponse } from 'ume-service-openapi'
+import { util } from 'zod'
 
 import TableProviders from './components/table-provider'
 
@@ -151,6 +152,13 @@ const ProviderManager = () => {
     true: 'TẠM DỪNG',
   }
   const handleSearchChange = (e) => {
+    if (e.target.value == '') {
+      setPage(1)
+      setFilter({
+        ...filter,
+        search: '',
+      })
+    }
     setSearchChange(e.target.value)
   }
 
