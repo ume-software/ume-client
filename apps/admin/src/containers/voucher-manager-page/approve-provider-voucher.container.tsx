@@ -317,7 +317,7 @@ const ApproveProviderVoucher = () => {
         />
       </div>
 
-      <VourcherModalView closeFunction={closeVourcherModalView} openValue={openVourcherModalView} />
+      {/* <VourcherModalView closeFunction={closeVourcherModalView} openValue={openVourcherModalView} /> */}
       <VourcherModalCreate closeFunction={closeVourcherModalCreate} openValue={openVourcherModalCreate} />
     </div>
   )

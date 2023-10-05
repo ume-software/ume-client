@@ -33,8 +33,8 @@ export interface IVourcherModalCreateProps {
 
 export default function VourcherModalCreate({ closeFunction, openValue }: IVourcherModalCreateProps) {
   const titleValue = 'Thông Tin Khuyến Mãi'
-  const avatarUrl = anhURL.src
   const issuer = 'ADMIN'
+  const MAX_NUMBER = '100000'
   const [createAt, setCreateAt] = useState<any>(new Date().toLocaleDateString('en-GB'))
   const [isSubmiting, setSubmiting] = useState(false)
   interface IFormValues {
@@ -129,8 +129,6 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
     if (file && file.type.startsWith('image/')) {
       const reader = new FileReader()
       reader.onload = () => {
-        // setSelectedImage(file)
-        // setImageSource(URL.createObjectURL(file))
         form.setFieldValue('selectedImage', file)
         form.setFieldValue('imageSource', URL.createObjectURL(file))
       }
@@ -145,11 +143,9 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
   }
 
   const handleChangeApplyDay = (dayText) => {
-    // setApplyTime(dayText)
     form.setFieldValue('applyTime', dayText)
   }
   function handleTypeVoucher(value) {
-    // setTypeVoucher(value)
     form.setFieldValue('typeVoucher', value)
   }
   function filterOptionTypeVoucher(input, option) {
@@ -157,7 +153,6 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
   }
 
   function handleRecipientType(value) {
-    // setAudience(value)
     form.setFieldValue('audience', value)
   }
 
@@ -166,7 +161,6 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
   }
 
   function handleDisCountUnit(value) {
-    // setDiscountUnit(value)
     form.setFieldValue('discountUnit', value)
   }
 
@@ -229,15 +223,19 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                 description: 'đã được tạo thành công.',
                 placement: 'bottomLeft',
               })
+            } else {
+              notification.error({
+                message: 'Tạo thất bại!',
+                description: 'Tạo không thành công.',
+                placement: 'bottomLeft',
+              })
             }
           },
         })
       } catch (error) {
-        console.error('Failed to post comment:', error)
+        console.error('Failed to post voucher:', error)
       }
     }
-
-    //excute api here
     closeHandle()
   }
   function closeHandleSmall() {
@@ -250,9 +248,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
       if (form.values.selectedImage) {
         const formData = new FormData()
         formData.append('image', form.values.selectedImage)
-        console.log(formData)
         const responseData = await uploadImageVoucher(formData)
-        console.log(responseData)
         if (responseData?.data?.data?.results) {
           responseData?.data?.data?.results.map((image) => {
             imageUrl = image
@@ -402,7 +398,11 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                       onChange={(e) => {
                         const newValue = parseInt(e.target.value)
                         if (!isNaN(newValue) && newValue >= 0) {
-                          e.target.value = newValue.toString()
+                          if (newValue > parseInt(MAX_NUMBER)) {
+                            e.target.value = MAX_NUMBER
+                          } else {
+                            e.target.value = newValue.toString()
+                          }
                         } else {
                           e.target.value = '0'
                         }
@@ -429,7 +429,11 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                       onChange={(e) => {
                         const newValue = parseInt(e.target.value)
                         if (!isNaN(newValue) && newValue >= 0) {
-                          e.target.value = newValue.toString()
+                          if (newValue > parseInt(MAX_NUMBER)) {
+                            e.target.value = MAX_NUMBER
+                          } else {
+                            e.target.value = newValue.toString()
+                          }
                         } else {
                           e.target.value = '0'
                         }
@@ -553,7 +557,11 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                       onChange={(e) => {
                         const newValue = parseInt(e.target.value)
                         if (!isNaN(newValue) && newValue >= 0) {
-                          e.target.value = newValue.toString()
+                          if (newValue > parseInt(MAX_NUMBER)) {
+                            e.target.value = MAX_NUMBER
+                          } else {
+                            e.target.value = newValue.toString()
+                          }
                         } else {
                           e.target.value = '0'
                         }
@@ -579,7 +587,11 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                       onChange={(e) => {
                         const newValue = parseInt(e.target.value)
                         if (!isNaN(newValue) && newValue >= 0) {
-                          e.target.value = newValue.toString()
+                          if (newValue > parseInt(MAX_NUMBER)) {
+                            e.target.value = MAX_NUMBER
+                          } else {
+                            e.target.value = newValue.toString()
+                          }
                         } else {
                           e.target.value = '0'
                         }
@@ -605,7 +617,11 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                       onChange={(e) => {
                         const newValue = parseInt(e.target.value)
                         if (!isNaN(newValue) && newValue >= 0) {
-                          e.target.value = newValue.toString()
+                          if (newValue > parseInt(MAX_NUMBER)) {
+                            e.target.value = MAX_NUMBER
+                          } else {
+                            e.target.value = newValue.toString()
+                          }
                         } else {
                           e.target.value = '0'
                         }
@@ -708,8 +724,8 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                 form.isValid && form.values.name != '' && 'hover:scale-110 bg-[#7463F0] border-[#7463F0]'
               }`}
               onClick={(e) => {
-                e.preventDefault() // Prevent the default form submission
-                openConfirmModal() // Call your function
+                e.preventDefault()
+                openConfirmModal()
               }}
               isDisable={!form.isValid || form.values.name === ''}
             >
