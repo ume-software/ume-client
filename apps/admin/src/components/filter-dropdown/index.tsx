@@ -2,12 +2,21 @@ import React from 'react'
 
 import { Dropdown } from 'antd'
 
-const FilterDropdown = ({ id, title, items, handleFilter }) => {
+export interface IFilterDropdownProps {
+  id: any | undefined
+  title: string
+  handleFilter: any
+  CustomCss?: string
+  items: any
+}
+
+const FilterDropdown = ({ CustomCss, id, title, items, handleFilter }: IFilterDropdownProps) => {
   const handleItemSelected: (typeof items)['onClick'] = (e) => {
     handleFilter(id, e.key)
   }
+  let filterBtnCss = `px-4 py-2 m-2 rounded-xl bg-umeHeader hover:bg-gray-700 ${CustomCss}`
   return (
-    <div>
+    <div className="mr-5">
       <Dropdown
         menu={{
           items,
@@ -15,7 +24,7 @@ const FilterDropdown = ({ id, title, items, handleFilter }) => {
         }}
         placement="bottomLeft"
       >
-        <button className="px-4 py-2 m-2 rounded-xl bg-umeHeader hover:bg-gray-700">{title}</button>
+        <button className={filterBtnCss}>{title}</button>
       </Dropdown>
     </div>
   )

@@ -24,6 +24,7 @@ export default function TableProviders({ data }) {
   const [openBanProvider, setOpenBanProvider] = useState(false)
   const BanProvider = trpc.useMutation(['provider.BanProvider'])
   const UnBanProvider = trpc.useMutation(['provider.UnBanProvider'])
+
   function openProviderDetailHandle(providerId) {
     setProviderId(providerId)
     setOpenProviderDetail(true)
