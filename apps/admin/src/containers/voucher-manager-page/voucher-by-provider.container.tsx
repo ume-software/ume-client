@@ -34,7 +34,7 @@ const statusFilterItems = [
   {
     key: VoucherResponseDiscountUnitEnum.Cash,
     label: (
-      <Tag className="flex justify-center w-full px-3 py-2 text-white bg-green-500 rounded-lg hover:bg-green-600">
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
         Đã duyệt
       </Tag>
     ),
@@ -42,7 +42,7 @@ const statusFilterItems = [
   {
     key: VoucherResponseStatusEnum.Pending,
     label: (
-      <Tag className="flex justify-center w-full px-3 py-2 text-white bg-yellow-500 rounded-lg hover:bg-yellow-600">
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
         Chờ duyệt
       </Tag>
     ),
@@ -50,7 +50,7 @@ const statusFilterItems = [
   {
     key: VoucherResponseStatusEnum.Rejected,
     label: (
-      <Tag className="flex justify-center w-full px-3 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600">
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
         Từ chối
       </Tag>
     ),

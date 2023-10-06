@@ -6,6 +6,8 @@ import { Table, Tag } from 'antd'
 import Image from 'next/image'
 
 import EmptyErrorPic from '../../../../../public/empty_error.png'
+import VourcherModalUpdate from '../vourcher-modal/vourcher-modal-update'
+import VourcherModalView from '../vourcher-modal/vourcher-modal-view'
 
 import BanModal from '~/components/modal-base/ban-modal'
 import ComfirmModal from '~/components/modal-base/comfirm-modal'
@@ -38,6 +40,28 @@ const mappingType = {
 }
 const AdminVoucherTable = ({ data }) => {
   const listData = tableDataMapping(data?.row)
+  const [voucherModalData, setVoucherModalData] = useState()
+  const [openVourcherModalView, setOpenVourcherModalView] = useState(false)
+  const [openVourcherModalUpdate, setOpenVourcherModalUpdate] = useState(false)
+
+  function closeVourcherModalView() {
+    setOpenVourcherModalView(false)
+  }
+  function closeVourcherModalUpdate() {
+    setOpenVourcherModalUpdate(false)
+  }
+
+  function openModalHandle(action, record) {
+    setVoucherModalData(record)
+    switch (action) {
+      case 'view':
+        setOpenVourcherModalView(true)
+        break
+      case 'update':
+        setOpenVourcherModalUpdate(true)
+        break
+    }
+  }
   const columns = [
     {
       title: 'Tên',
@@ -94,9 +118,25 @@ const AdminVoucherTable = ({ data }) => {
       render: (record) => {
         return (
           <>
-            <div className="flex">
-              <Eyes className="p-2 mr-2 rounded-full hover:bg-gray-500" theme="outline" size="18" fill="#85ea2d" />
-              <Write className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="18" fill="#fff" />
+            <div className="flex max-w-[5rem]">
+              <Eyes
+                onClick={() => {
+                  openModalHandle('view', record.key)
+                }}
+                className="p-2 mr-2 rounded-full hover:bg-gray-500"
+                theme="outline"
+                size="18"
+                fill="#85ea2d"
+              />
+              <Write
+                onClick={() => {
+                  openModalHandle('update', record.key)
+                }}
+                className="p-2 rounded-full hover:bg-gray-500"
+                theme="outline"
+                size="18"
+                fill="#fff"
+              />
               <Delete className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="18" fill="#ff0000" />
             </div>
           </>
@@ -116,6 +156,20 @@ const AdminVoucherTable = ({ data }) => {
   return (
     <div className="mt-5 ">
       <Table locale={locale} pagination={false} columns={columns} dataSource={listData} />
+      {openVourcherModalView && (
+        <VourcherModalView
+          vourcherId={voucherModalData}
+          closeFunction={closeVourcherModalView}
+          openValue={openVourcherModalView}
+        />
+      )}
+      {openVourcherModalUpdate && (
+        <VourcherModalUpdate
+          vourcherId={voucherModalData}
+          closeFunction={closeVourcherModalUpdate}
+          openValue={openVourcherModalUpdate}
+        />
+      )}
     </div>
   )
 }
