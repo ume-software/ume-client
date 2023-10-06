@@ -32,7 +32,7 @@ const Voucher = () => {
     onClose: handleClose,
     title: titleForm,
     show: isModalVisible,
-    customModalCSS: 'w-fit top-10 overflow-y-auto',
+    customModalCSS: 'w-fit top-5 overflow-y-auto custom-scrollbar',
     form: (
       <>
         <VourcherModalCreate closeFunction={undefined} openValue={false}></VourcherModalCreate>

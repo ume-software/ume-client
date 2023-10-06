@@ -1,7 +1,7 @@
 import { CloseSmall, Plus } from '@icon-park/react'
 import { Button, FormInput, Input, Modal, TextArea } from '@ume/ui'
 import { uploadImageBooking } from '~/apis/upload-media'
-import { VoucherRecipientType, VoucherType } from '~/enumVariable/enumVariable'
+import { useAuth } from '~/contexts/auth'
 
 import * as React from 'react'
 import { useRef, useState } from 'react'
@@ -23,12 +23,6 @@ import ConfirmForm from '~/components/confirm-form/confirmForm'
 
 import { trpc } from '~/utils/trpc'
 
-const { Option } = Select
-
-interface IVourcherModalCreateProps {
-  closeFunction: any
-  openValue: boolean
-}
 interface IFormValues {
   vourcherCode: string
   imageSource: string
@@ -49,49 +43,92 @@ interface IFormValues {
   numUserCanUseInDay: number
 }
 interface IEnumType {
-  key: string
+  key: string | number
   label: string
 }
 
 const mappingRecipientType: IEnumType[] = [
-  { key: VoucherRecipientType.ALL, label: 'Tất cả' },
-  { key: VoucherRecipientType.FIRST_TIME_BOOKING, label: 'Người lần đầu thuê' },
-  { key: VoucherRecipientType.PREVIOUS_BOOKING, label: ' Người đã từng thuê' },
-  { key: VoucherRecipientType.SELECTIVE_BOOKER, label: ' Top 5 người thuê' },
-  { key: VoucherRecipientType.TOP_10_BOOKER, label: ' Top 10 người thuê' },
-  { key: VoucherRecipientType.TOP_5_BOOKER, label: 'Người đặt chọn' },
+  { key: CreateVoucherRequestRecipientTypeEnum.All, label: 'Tất cả' },
+  { key: CreateVoucherRequestRecipientTypeEnum.FirstTimeBooking, label: 'Người lần đầu thuê' },
+  { key: CreateVoucherRequestRecipientTypeEnum.PreviousBooking, label: ' Người đã từng thuê' },
+  { key: CreateVoucherRequestRecipientTypeEnum.SelectiveBooker, label: ' Top 5 người thuê' },
+  { key: CreateVoucherRequestRecipientTypeEnum.Top10Booker, label: ' Top 10 người thuê' },
+  { key: CreateVoucherRequestRecipientTypeEnum.Top5Booker, label: 'Người đặt chọn' },
 ]
 
 const voucherType: IEnumType[] = [
-  { key: VoucherType.DISCOUNT, label: 'Giảm giá' },
-  { key: VoucherType.CASHBACK, label: 'Hoàn tiền' },
+  { key: CreateVoucherRequestTypeEnum.Discount, label: 'Giảm giá' },
+  { key: CreateVoucherRequestTypeEnum.Cashback, label: 'Hoàn tiền' },
 ]
 
-export default function VourcherModalCreate({ closeFunction, openValue }: IVourcherModalCreateProps) {
-  const issuer = 'ADMIN'
+const moneyType: IEnumType[] = [
+  {
+    key: CreateVoucherRequestDiscountUnitEnum.Percent,
+    label: '%',
+  },
+  {
+    key: CreateVoucherRequestDiscountUnitEnum.Cash,
+    label: 'k/VND',
+  },
+]
+
+const timeInWeekType: IEnumType[] = [
+  {
+    key: 1,
+    label: 'Thứ 2',
+  },
+  {
+    key: 2,
+    label: 'Thứ 3',
+  },
+  {
+    key: 3,
+    label: 'Thứ 4',
+  },
+  {
+    key: 4,
+    label: 'Thứ 5',
+  },
+  {
+    key: 5,
+    label: 'Thứ 6',
+  },
+  {
+    key: 6,
+    label: 'Thứ 7',
+  },
+  {
+    key: 7,
+    label: 'Chủ nhật',
+  },
+]
+
+export default function VourcherModalCreate() {
+  const { user } = useAuth()
+  const issuer = user?.name
   const today = new Date().toISOString().split('T')[0]
-  const [isSubmiting, setSubmiting] = useState(false)
+  const createVoucherFormRef = useRef<HTMLFormElement>(null)
 
   const form = useFormik({
     initialValues: {
       vourcherCode: '',
       imageSource: '',
       description: '',
-      numVoucher: 0,
-      numVoucherInDay: 0,
-      minimize: 0,
+      numVoucher: undefined,
+      numVoucherInDay: undefined,
+      minimize: undefined,
       startDate: new Date().toISOString().split('T')[0],
       endDate: '',
-      applyTime: [],
+      applyTime: [timeInWeekType[0].key],
       name: '',
       typeVoucher: voucherType[0].key,
-      discountUnit: CreateVoucherRequestDiscountUnitEnum.Percent,
-      audience: mappingRecipientType[0],
+      discountUnit: moneyType[0].key,
+      audience: mappingRecipientType[0].key,
       content: '',
-      selectedImage: null,
+      selectedImage: undefined,
       status: undefined,
-      numUserCanUse: 0,
-      numUserCanUseInDay: 0,
+      numUserCanUse: undefined,
+      numUserCanUseInDay: undefined,
     },
     validationSchema: Yup.object({
       name: Yup.string().required('Name là bắt buộc'),
@@ -100,26 +137,29 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
       audience: Yup.string().required('Đối tượng là bắt buộc'),
     }),
     onSubmit: (values, { resetForm }) => {
-      setSubmiting(true)
       openConfirmModal()
       resetForm()
     },
   })
 
   const imageInputRef = useRef<HTMLInputElement>(null)
-  const [isModalConfirmationVisible, setIsModalConfirmationVisible] = useState(false)
+  const [isModalConfirmationVisible, setIsModalConfirmationVisible] = useState<boolean>(false)
   const providerCreateVoucher = trpc.useMutation(['identity.providerCreateVoucher'])
 
-  const checkFieldRequỉed =
-    form.values.name && form.values.typeVoucher && form.values.discountUnit && form.values.audience
+  const checkFieldRequỉed = !!(
+    form.values.name &&
+    form.values.typeVoucher &&
+    form.values.discountUnit &&
+    form.values.audience &&
+    form.values.endDate &&
+    form.values.endDate < form.values.startDate
+  )
 
   function clearData() {
     form.resetForm()
   }
   function closeHandle() {
     setIsModalConfirmationVisible(false)
-    clearData()
-    closeFunction()
   }
   const handleMediaChange = (e) => {
     const file = e.target.files[0]
@@ -139,35 +179,33 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
     }
   }
 
-  const handleChangeApplyDay = (dayText) => {
-    form.setFieldValue('applyTime', dayText)
+  const applyTimeValue = form.values.applyTime.map((value) => {
+    const item = timeInWeekType.find((item) => item.key === value)!
+    return item
+  })
+
+  const handleChangeApplyDay = (dateNumber: number) => {
+    let index = form.values.applyTime.indexOf(dateNumber)
+    if (index !== -1 && form.values.applyTime.length > 1) {
+      form.values.applyTime.splice(index, 1)
+      form.setFieldValue('applyTime', form.values.applyTime)
+    } else {
+      form.setFieldValue('applyTime', [...form.values.applyTime, dateNumber])
+    }
   }
+
   function handleTypeVoucher(value: IEnumType) {
     form.setFieldValue('typeVoucher', value)
-  }
-  function filterOptionTypeVoucher(input, option) {
-    return (option?.label ?? '').toUpperCase().includes(input.toUpperCase())
   }
 
   function handleRecipientType(value) {
     form.setFieldValue('audience', value)
   }
 
-  function filterOptionRecipientType(input, option) {
-    return (option?.label ?? '').toUpperCase().includes(input.toUpperCase())
-  }
-
-  function handleDisCountUnit(value) {
+  function handleTypeDiscount(value) {
     form.setFieldValue('discountUnit', value)
   }
 
-  function filterOptionDisCountUnit(input, option) {
-    return (option?.label ?? '').toUpperCase().includes(input.toUpperCase())
-  }
-
-  function openConfirmModalCancel() {
-    setIsModalConfirmationVisible(true)
-  }
   function openConfirmModal() {
     setIsModalConfirmationVisible(true)
   }
@@ -183,10 +221,12 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
     form: (
       <>
         <ConfirmForm
-          title="Thay đổi thông tin cá nhân"
-          description="Bạn có chấp nhận thay đổi thông tin cá nhân hay không?"
+          title="Tạo khuyến mãi mới"
+          description="Bạn có chấp nhận tạo khuyến mãi mới hay không?"
           onClose={handleClose}
-          onOk={() => {}}
+          onOk={() => {
+            submitHandle()
+          }}
         />
       </>
     ),
@@ -208,86 +248,89 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
   })
 
   async function submitHandle() {
-    if (await checkFieldRequỉed()) {
-      const imgURL = await uploadImage()
-      try {
-        const req = {
-          code: form.values.vourcherCode,
-          image: imgURL.imageUrl,
-          // content: form.values.content,
-          description: form.values.description,
-          numberIssued: form.values.numVoucher,
-          dailyNumberIssued: form.values.numVoucherInDay,
-          numberUsablePerBooker: form.values.numUserCanUse,
-          dailyUsageLimitPerBooker: form.values.numUserCanUseInDay,
-          maximumDiscountValue: form.values.minimize,
-          startDate: new Date(createAt).toISOString(),
-          endDate: new Date(form.values.endDate).toISOString(),
-          applyISODayOfWeek: form.values.applyTime,
-        }
-        let reqWithValuesNotNull = {
-          name: form.values.name,
-          type: form.values.typeVoucher,
-          discountUnit: form.values.discountUnit,
-          recipientType: form.values.audience,
-          isHided: true,
-        }
-        for (let key in req) {
-          if (req[key]) {
-            reqWithValuesNotNull[key] = req[key]
-          }
-        }
-        console.log(reqWithValuesNotNull)
-
-        providerCreateVoucher.mutate(reqWithValuesNotNull, {
-          onSuccess: (data) => {
-            if (data.success) {
-              notification.success({
-                message: 'Tạo thành công!',
-                description: 'đã được tạo thành công.',
-                placement: 'bottomLeft',
-              })
-            } else {
-              notification.error({
-                message: 'Tạo thất bại!',
-                description: 'Tạo không thành công.',
-                placement: 'bottomLeft',
-              })
-            }
-          },
-        })
-      } catch (error) {
-        console.error('Failed to post voucher:', error)
-      }
-    }
-    closeHandle()
-  }
-  function closeHandleSmall() {
-    openConfirmModalCancel()
-  }
-
-  const uploadImage = async () => {
-    let imageUrl = ''
-    try {
+    if (createVoucherFormRef.current && checkFieldRequỉed) {
       if (form.values.selectedImage) {
-        const formData = new FormData()
-        formData.append('image', form.values.selectedImage)
+        const formData = new FormData(createVoucherFormRef.current)
         const responseData = await uploadImageBooking(formData)
+
         if (responseData?.data?.data?.results) {
-          responseData?.data?.data?.results.map((image) => {
-            imageUrl = image
+          try {
+            providerCreateVoucher.mutate(
+              {
+                code: form.values.vourcherCode,
+                image: String(responseData.data.data.results),
+                name: form.values.name,
+                type: form.values.typeVoucher as CreateVoucherRequestTypeEnum,
+                discountUnit: form.values.discountUnit as CreateVoucherRequestDiscountUnitEnum,
+                recipientType: form.values.audience as CreateVoucherRequestRecipientTypeEnum,
+                isHided: true,
+                description: form.values.description,
+                numberIssued: form.values.numVoucher,
+                dailyNumberIssued: form.values.numVoucherInDay,
+                numberUsablePerBooker: form.values.numUserCanUse,
+                dailyUsageLimitPerBooker: form.values.numUserCanUseInDay,
+                maximumDiscountValue: form.values.minimize,
+                startDate: new Date(today).toISOString(),
+                endDate: new Date(form.values.endDate).toISOString(),
+                applyISODayOfWeek: form.values.applyTime as number[],
+              },
+              {
+                onSuccess: (data) => {
+                  if (data.success) {
+                    notification.success({
+                      message: 'Tạo khuyến mãi thành công!',
+                      description: 'Khuyến mãi đã được tạo thành công.',
+                      placement: 'bottomLeft',
+                    })
+                    clearData()
+                  } else {
+                    notification.error({
+                      message: 'Tạo khuyến mãi thất bại!',
+                      description: 'Tạo không thành công.',
+                      placement: 'bottomLeft',
+                    })
+                  }
+                },
+              },
+            )
+          } catch (error) {
+            notification.error({
+              message: 'Tạo khuyến mãi thất bại!',
+              description: 'Tạo không thành công. Vui lòng thử lại sau!',
+              placement: 'bottomLeft',
+            })
+          }
+        } else {
+          notification.error({
+            message: 'Tạo khuyến mãi thất bại!',
+            description: 'Tạo không thành công. Vui lòng thử lại sau!',
+            placement: 'bottomLeft',
           })
         }
+      } else {
+        notification.error({
+          message: 'Chưa cập nhật ảnh!',
+          description: 'Vui lòng kiểm tra lại hình ảnh.',
+          placement: 'bottomLeft',
+        })
       }
-    } catch (error) {
-      console.error('Error uploading image:', error)
+    } else {
+      notification.warning({
+        message: 'Vui lòng điền đủ thông tin',
+        description: 'Vui lòng điền đủ thông tin để tạo khuyến mãi.',
+        placement: 'bottomLeft',
+      })
     }
-    return { imageUrl }
+    closeHandle()
   }
 
   return (
     <>
-      <form onSubmit={form.handleSubmit} className="min-w-[1250px] flex flex-col mb-4 gap-y-4">
+      <form
+        ref={createVoucherFormRef}
+        onSubmit={form.handleSubmit}
+        className="min-w-[1250px] flex flex-col mb-4 gap-y-4 custom-scrollbar"
+      >
         <div className="flex-col w-auto bg-[#15151B] mt-5 px-4">
           <div className="flex w-auto px-4 border-b-2 border-[#FFFFFF80] pb-5">
             <div className="w-1/5 pr-4 mt-10">
@@ -328,7 +371,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                 />
               </div>
             </div>
-            <div className="flex flex-col justify-end w-2/5 ">
+            <div className="flex flex-col justify-end w-2/5">
               <div className="w-full h-12 text-white">
                 Tên:
                 <div className="inline-block w-2/3 ">
@@ -337,7 +380,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                     className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 ml-4 border-opacity-30 ${
                       form.errors.name && form.touched.name ? 'placeholder:text-red-500' : ''
                     }`}
-                    placeholder={!!form.errors.name && form.touched.name ? form.errors.name : 'Nhập Tên '}
+                    placeholder={'Nhập Tên *'}
                     disabled={false}
                     onChange={form.handleChange}
                     onBlur={form.handleBlur}
@@ -353,7 +396,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                   <FormInput
                     name="vourcherCode"
                     className="bg-[#413F4D] border-2 border-[#FFFFFF] h-8 ml-4 border-opacity-30"
-                    placeholder="Mã: SUPPERSALE"
+                    placeholder="Ex: SUPPERSALE"
                     disabled={false}
                     onChange={(e) => {
                       e.target.value = e.target.value.toUpperCase()
@@ -415,7 +458,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
           </div>
 
           <div className="flex w-auto px-4 border-b-2 border-[#FFFFFF80] pb-5">
-            <div className="flex flex-col justify-end w-3/5 mt-5">
+            <div className="flex flex-col justify-end w-3/5 mt-5 gap-3">
               <div className="h-12 text-white">
                 Số lượng phát hành:
                 <div className="inline-block w-1/5 ">
@@ -428,15 +471,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                     error={!!form.errors.numVoucher && form.touched.numVoucher}
                     errorMessage={form.errors.numVoucher}
                     disabled={false}
-                    onChange={(e) => {
-                      const newValue = parseInt(e.target.value)
-                      if (!isNaN(newValue) && newValue >= 0) {
-                        e.target.value = newValue.toString()
-                      } else {
-                        e.target.value = '0'
-                      }
-                      form.handleChange(e)
-                    }}
+                    onChange={(e) => form.handleChange(e)}
                     type="number"
                     min={0}
                     max={100000}
@@ -455,15 +490,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                     onBlur={form.handleBlur}
                     error={!!form.errors.numUserCanUse && form.touched.numUserCanUse}
                     errorMessage={form.errors.numUserCanUse}
-                    onChange={(e) => {
-                      const newValue = parseInt(e.target.value)
-                      if (!isNaN(newValue) && newValue >= 0) {
-                        e.target.value = newValue.toString()
-                      } else {
-                        e.target.value = '0'
-                      }
-                      form.handleChange(e)
-                    }}
+                    onChange={(e) => form.handleChange(e)}
                     type="number"
                     min={0}
                     max={100000}
@@ -475,84 +502,31 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                 <MenuForVoucher
                   buttonTitle={voucherType.find((item) => item.key == form.values.typeVoucher)?.label}
                   buttonCustomCss="min-w-[100px] bg-gray-700"
+                  isDisplayDownButton={true}
                   datas={voucherType}
                   chooseData={voucherType.filter((item) => item.key == form.values.typeVoucher)}
                   onChange={(e) => handleTypeVoucher(e.key)}
                 />
               </div>
-              <div className="h-12 text-white">
+              <div className="flex items-center gap-5 text-white">
                 Thời gian áp dụng trong tuần:
-                <Select
-                  mode="multiple"
-                  placeholder="Chọn ngày"
-                  defaultValue={form.values.applyTime}
-                  onChange={handleChangeApplyDay}
-                  optionLabelProp="label"
-                  style={{
-                    minWidth: '8rem',
-                    marginLeft: '1rem',
-                  }}
-                >
-                  <Option value={1} label="T2">
-                    <Space>
-                      <span role="img" aria-label="T2">
-                        T2
-                      </span>
-                      Thứ 2
-                    </Space>
-                  </Option>
-                  <Option value={2} label="T3">
-                    <Space>
-                      <span role="img" aria-label="T3">
-                        T3
-                      </span>
-                      Thứ 3
-                    </Space>
-                  </Option>
-                  <Option value={3} label="T4">
-                    <Space>
-                      <span role="img" aria-label="T4">
-                        T4
-                      </span>
-                      Thứ 4
-                    </Space>
-                  </Option>
-                  <Option value={4} label="T5">
-                    <Space>
-                      <span role="img" aria-label="T5">
-                        T5
-                      </span>
-                      Thứ 5
-                    </Space>
-                  </Option>
-                  <Option value={5} label="T6">
-                    <Space>
-                      <span role="img" aria-label="T6">
-                        T6
-                      </span>
-                      Thứ 6
-                    </Space>
-                  </Option>
-                  <Option value={6} label="T7">
-                    <Space>
-                      <span role="img" aria-label="T7">
-                        T7
-                      </span>
-                      Thứ 7
-                    </Space>
-                  </Option>
-                  <Option value={7} label="CN">
-                    <Space>
-                      <span role="img" aria-label="CN">
-                        CN
-                      </span>
-                      Chủ Nhật
-                    </Space>
-                  </Option>
-                </Select>
+                {
+                  <MenuForVoucher
+                    buttonTitle={applyTimeValue
+                      .map((item) => {
+                        return item?.label
+                      })
+                      .sort()}
+                    buttonCustomCss="min-w-[360px] bg-gray-700"
+                    isDisplayDownButton={true}
+                    datas={timeInWeekType}
+                    chooseData={applyTimeValue}
+                    onChange={(e) => handleChangeApplyDay(e.key)}
+                  />
+                }
               </div>
             </div>
-            <div className="flex flex-col justify-end w-2/5 ">
+            <div className="flex flex-col justify-end w-2/5 gap-3">
               <div className="h-12 text-white">
                 Số lượng phát hành mỗi ngày:
                 <div className="inline-block w-1/3 ">
@@ -564,15 +538,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                     onBlur={form.handleBlur}
                     error={!!form.errors.numVoucherInDay && form.touched.numVoucherInDay}
                     errorMessage={form.errors.numVoucherInDay}
-                    onChange={(e) => {
-                      const newValue = parseInt(e.target.value)
-                      if (!isNaN(newValue) && newValue >= 0) {
-                        e.target.value = newValue.toString()
-                      } else {
-                        e.target.value = '0'
-                      }
-                      form.handleChange(e)
-                    }}
+                    onChange={(e) => form.handleChange(e)}
                     type="number"
                     min={0}
                     max={100000}
@@ -590,15 +556,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                     onBlur={form.handleBlur}
                     error={!!form.errors.numUserCanUseInDay && form.touched.numUserCanUseInDay}
                     errorMessage={form.errors.numUserCanUseInDay}
-                    onChange={(e) => {
-                      const newValue = parseInt(e.target.value)
-                      if (!isNaN(newValue) && newValue >= 0) {
-                        e.target.value = newValue.toString()
-                      } else {
-                        e.target.value = '0'
-                      }
-                      form.handleChange(e)
-                    }}
+                    onChange={(e) => form.handleChange(e)}
                     type="number"
                     min={0}
                     max={100000}
@@ -616,84 +574,32 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                     onBlur={form.handleBlur}
                     error={!!form.errors.minimize && form.touched.minimize}
                     errorMessage={form.errors.minimize}
-                    onChange={(e) => {
-                      const newValue = parseInt(e.target.value)
-                      if (!isNaN(newValue) && newValue >= 0) {
-                        e.target.value = newValue.toString()
-                      } else {
-                        e.target.value = '0'
-                      }
-                      form.handleChange(e)
-                    }}
+                    onChange={(e) => form.handleChange(e)}
                     type="number"
                     min={0}
                     max={100}
                   />
                 </div>
-                <div className="inline-block w-1/4 ml-1 ">
-                  <Select
-                    showSearch
-                    placeholder="Loại"
-                    optionFilterProp="children"
-                    onChange={handleDisCountUnit}
-                    filterOption={filterOptionDisCountUnit}
-                    defaultValue={form.values.discountUnit}
-                    style={{
-                      minWidth: '4rem',
-                      marginLeft: '1rem',
-                    }}
-                    options={[
-                      {
-                        value: CreateVoucherRequestDiscountUnitEnum.Percent,
-                        label: '%',
-                      },
-                      {
-                        value: CreateVoucherRequestDiscountUnitEnum.Cash,
-                        label: 'k/VND',
-                      },
-                    ]}
+                <div className="inline-block w-1/4 ml-5 ">
+                  <MenuForVoucher
+                    buttonTitle={moneyType.find((item) => item.key == form.values.discountUnit)?.label}
+                    buttonCustomCss="min-w-[120px] bg-gray-700"
+                    isDisplayDownButton={true}
+                    datas={moneyType}
+                    chooseData={moneyType.filter((item) => item.key == form.values.discountUnit)}
+                    onChange={(e) => handleTypeDiscount(e.key)}
                   />
                 </div>
               </div>
-              <div className="h-12 text-white">
+              <div className="flex items-center gap-5 text-white">
                 Đối tượng:
-                <Select
-                  showSearch
-                  placeholder="Loại"
-                  optionFilterProp="children"
-                  onChange={handleRecipientType}
-                  filterOption={filterOptionRecipientType}
-                  defaultValue={form.values.audience}
-                  style={{
-                    minWidth: '8rem',
-                    marginLeft: '1rem',
-                  }}
-                  options={[
-                    {
-                      value: CreateVoucherRequestRecipientTypeEnum.All,
-                      label: mappingRecipientType.ALL,
-                    },
-                    {
-                      value: CreateVoucherRequestRecipientTypeEnum.FirstTimeBooking,
-                      label: mappingRecipientType.FIRST_TIME_BOOKING,
-                    },
-                    {
-                      value: CreateVoucherRequestRecipientTypeEnum.PreviousBooking,
-                      label: mappingRecipientType.PREVIOUS_BOOKING,
-                    },
-                    {
-                      value: CreateVoucherRequestRecipientTypeEnum.SelectiveBooker,
-                      label: mappingRecipientType.SELECTIVE_BOOKER,
-                    },
-                    {
-                      value: CreateVoucherRequestRecipientTypeEnum.Top10Booker,
-                      label: mappingRecipientType.TOP_10_BOOKER,
-                    },
-                    {
-                      value: CreateVoucherRequestRecipientTypeEnum.Top5Booker,
-                      label: mappingRecipientType.TOP_5_BOOKER,
-                    },
-                  ]}
+                <MenuForVoucher
+                  buttonTitle={mappingRecipientType.find((item) => item.key == form.values.audience)?.label}
+                  buttonCustomCss="min-w-[200px] bg-gray-700"
+                  isDisplayDownButton={true}
+                  datas={mappingRecipientType}
+                  chooseData={mappingRecipientType.filter((item) => item.key == form.values.audience)}
+                  onChange={(e) => handleRecipientType(e.key)}
                 />
               </div>
             </div>
@@ -704,7 +610,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                 <span className="w-16 mr-4">Mô tả: </span>
                 <TextArea
                   name="description"
-                  className="bg-[#413F4D] w-4/5"
+                  className="bg-[#413F4D] w-4/5 max-h-[140px]"
                   rows={5}
                   value={form.values.description}
                   onChange={form.handleChange}
@@ -713,19 +619,27 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
             </div>
           </div>
         </div>
-        <div className="flex justify-center pb-4 mt-6">
-          <Button customCSS="mx-6 px-4 py-1 border-2 hover:scale-110" onClick={openConfirmModalCancel}>
+        <div className="flex justify-center pb-4 mt-6 gap-10">
+          <Button
+            isActive={false}
+            isOutlinedButton={true}
+            type="reset"
+            customCSS="w-[100px] text-xl p-2 rounded-xl hover:scale-105"
+            onClick={() => clearData()}
+          >
             Hủy
           </Button>
           <Button
-            customCSS={`mx-6 px-4 py-1 border-2  ${
-              form.isValid && form.values.name != '' && 'hover:scale-110 bg-[#7463F0] border-[#7463F0]'
-            }`}
-            onClick={(e) => {
-              e.preventDefault()
+            customCSS={`w-[100px] text-xl p-2 rounded-xl ${
+              !checkFieldRequỉed ? 'opacity-30 cursor-not-allowed' : 'hover:scale-105'
+            } `}
+            type="button"
+            isActive={checkFieldRequỉed}
+            isOutlinedButton={true}
+            onClick={() => {
               openConfirmModal()
             }}
-            isDisable={!form.isValid || form.values.name === ''}
+            isDisable={!form.isValid || !checkFieldRequỉed}
           >
             Tạo
           </Button>

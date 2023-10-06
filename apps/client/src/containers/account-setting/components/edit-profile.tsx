@@ -343,7 +343,8 @@ const EditProfile = () => {
     onOK: () => {},
     onClose: handleClose,
     show: isModalVertificationVisible,
-    customModalCSS: 'top-0  overflow-y-auto custom-scrollbar',
+    customModalCSS: 'top-0 overflow-y-auto custom-scrollbar',
+    closeWhenClickOutSide: true,
     form: (
       <>
         <form

@@ -1,20 +1,22 @@
 import { Menu, Transition } from '@headlessui/react'
-import { Check } from '@icon-park/react'
+import { Check, Down } from '@icon-park/react'
 
 import { Fragment, ReactNode } from 'react'
 
 interface MenuForVoucherProps {
   buttonTitle: ReactNode
   buttonCustomCss?: string
-  datas: { key: string; label: string; [key: string]: any }[]
+  isDisplayDownButton?: boolean
+  datas: { key: string | number; label: string; [key: string]: any }[]
   styleData?: string
   onChange: (e: any) => void
-  chooseData: { key: string; label: string; [key: string]: any }[]
+  chooseData: { key: string | number; label: string; [key: string]: any }[]
 }
 
 const MenuForVoucher = ({
   buttonTitle,
   buttonCustomCss,
+  isDisplayDownButton,
   datas,
   styleData,
   onChange,
@@ -25,11 +27,12 @@ const MenuForVoucher = ({
       <Menu>
         <Menu.Button>
           <button
-            className={`${
+            className={`flex justify-between items-center gap-3 ${
               buttonCustomCss ? buttonCustomCss : 'min-w-[110px]'
-            } text-lg font-semibold px-5 py-2 hover:bg-gray-700 rounded-xl`}
+            } text-lg font-semibold px-3 py-2 hover:bg-gray-700 rounded-xl`}
           >
-            {buttonTitle}
+            {buttonTitle + ''}
+            {isDisplayDownButton && <Down theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />}
           </button>
         </Menu.Button>
         <Transition
@@ -42,7 +45,7 @@ const MenuForVoucher = ({
           leaveTo="transform opacity-0 scale-95"
         >
           <Menu.Items
-            className="absolute right-0 left-0 p-2 mt-2 origin-top-right bg-[#292734] divide-y divide-gray-100 rounded-xl shadow-lg w-full ring-1 ring-black ring-opacity-5 focus:outline-none"
+            className="absolute right-0 left-0 p-2 mt-2 origin-top-right bg-[#292734] divide-y divide-gray-100 rounded-xl shadow-lg w-full max-h-[200px] overflow-y-auto ring-1 ring-black ring-opacity-5 focus:outline-none hide-scrollbar"
             style={{ zIndex: 5 }}
           >
             <div className="flex flex-col gap-2" style={{ zIndex: 10 }}>
@@ -55,13 +58,6 @@ const MenuForVoucher = ({
                   onClick={() => onChange(data)}
                 >
                   <p className="text-md font-semibold">{data.label}</p>
-                  {/* <div>
-                    {chooseData.find((dataChoose) => dataChoose.key == data.key) ? (
-                      <Check theme="filled" size="10" fill="#FFFFFF" strokeLinejoin="bevel" />
-                    ) : (
-                      ''
-                    )}
-                  </div> */}
                 </div>
               ))}
             </div>
