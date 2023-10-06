@@ -29,9 +29,9 @@ const mappingRecipientType = {
   TOP_10_BOOKER: ' Top 10 người thuê',
 }
 const mappingStatus = {
-  true: <Tag className="bg-green-600 rounded-lg text-white px-2 py-1 m-0">Đã duyệt</Tag>,
+  APPROVED: <Tag className="bg-green-600 rounded-lg text-white px-2 py-1 m-0">Đã duyệt</Tag>,
   PENDING: <Tag className="bg-yellow-600 rounded-lg text-white px-2 py-1 m-0">Chờ duyệt</Tag>,
-  false: <Tag className="bg-red-600 rounded-lg text-white px-2 py-1 m-0">Bị từ chối</Tag>,
+  REJECTED: <Tag className="bg-red-600 rounded-lg text-white px-2 py-1 m-0">Bị từ chối</Tag>,
 }
 
 const mappingType = {
@@ -41,6 +41,27 @@ const mappingType = {
 
 const ApproveProviderVoucherTable = ({ data }) => {
   const listData = tableDataMapping(data?.row)
+  const [openConfirm, setOpenConfirm] = useState(false)
+  const [approveItem, setApproveItem] = useState({
+    voucher: '',
+    status: 'PENDING',
+  })
+
+  function handleOpenComfirm(rowVoucher, changedStatus) {
+    setApproveItem({
+      voucher: rowVoucher,
+      status: changedStatus,
+    })
+    setOpenConfirm(true)
+  }
+
+  function handleCloseComfirm() {
+    setOpenConfirm(false)
+  }
+  function handleApproval() {
+    console.log(approveItem)
+    setOpenConfirm(false)
+  }
 
   const columns = [
     {
@@ -110,7 +131,7 @@ const ApproveProviderVoucherTable = ({ data }) => {
               <div className="flex">
                 <CheckOne
                   onClick={() => {
-                    console.log('approve')
+                    handleOpenComfirm(record, 'APPROVED')
                   }}
                   className="p-2 rounded-full hover:bg-gray-500"
                   theme="outline"
@@ -120,12 +141,12 @@ const ApproveProviderVoucherTable = ({ data }) => {
 
                 <CloseOne
                   onClick={() => {
-                    console.log('deny')
+                    handleOpenComfirm(record, 'REJECTED')
                   }}
                   className="p-2 rounded-full hover:bg-gray-600"
                   theme="outline"
                   size="18"
-                  fill={record.status == 'PENDING' ? '#ff0000' : '#fff'}
+                  fill="#ff0000"
                 />
               </div>
             </div>

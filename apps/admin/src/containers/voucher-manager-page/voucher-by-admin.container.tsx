@@ -33,7 +33,7 @@ const statusFilterItems = [
   {
     key: 'true',
     label: (
-      <Tag className="flex justify-center w-full px-3 py-2 text-white bg-green-500 rounded-lg hover:bg-green-600">
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
         Hoạt động
       </Tag>
     ),
@@ -41,7 +41,7 @@ const statusFilterItems = [
   {
     key: 'false',
     label: (
-      <Tag className="flex justify-center w-full px-3 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600">
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
         Tạm dừng
       </Tag>
     ),
@@ -121,12 +121,10 @@ const VoucherByAdmin = () => {
     setOpenVourcherModalUpdate(false)
   }
   function addVourcherHandler() {
-    // setOpenVourcherModalView(true)
-    // setOpenVourcherModalCreate(true)
-    setOpenVourcherModalUpdate(true)
+    setOpenVourcherModalCreate(true)
   }
   // --------------------------
-  const [adminVoucherList, setAdminVoucherList] = useState<VoucherPagingResponse>()
+  const [adminVoucherList, setAdminVoucherList] = useState<VoucherPagingResponse | undefined>()
   const [page, setPage] = useState(1)
   const [filter, setFilter] = useState({
     recipientType: 'ALL',
@@ -134,7 +132,6 @@ const VoucherByAdmin = () => {
     search: '',
   })
   const [searchChange, setSearchChange] = useState('')
-
   const testQuerry: PrismaWhereConditionType<VoucherResponse> = Object.assign({
     OR: [
       {
@@ -152,17 +149,17 @@ const VoucherByAdmin = () => {
     ],
     providerId: null,
     recipientType: filter.recipientType !== 'ALL' ? filter.recipientType : undefined,
-    isActivated: filter.isActivated !== 'ALL' ? (filter.isActivated == 'true' ? true : false) : undefined,
+    isActivated: filter.isActivated !== 'all' ? (filter.isActivated == 'true' ? true : false) : undefined,
   })
 
   const { isLoading, isFetching } = trpc.useQuery(
     [
       'voucher.getAllVoucher',
-      { page: page.toString(), where: prismaWhereConditionToJsonString(testQuerry), order: undefined },
+      { page: page.toString(), where: prismaWhereConditionToJsonString(testQuerry, ['isUndefined']), order: undefined },
     ],
     {
       onSuccess(data) {
-        setAdminVoucherList(data.data)
+        setAdminVoucherList(data?.data as any)
       },
     },
   )
@@ -210,7 +207,7 @@ const VoucherByAdmin = () => {
     <div>
       <div className="flex justify-between">
         <span className="content-title">Khuyến mãi của quản trị viên</span>
-        <Button customCSS="bg-[#7463f0] px-3 py-1 rounded-2xl active:bg-gray-600" onClick={addVourcherHandler}>
+        <Button customCSS="bg-[#7463f0] px-3 rounded-2xl active:bg-gray-600" onClick={addVourcherHandler}>
           <Plus theme="outline" size="24" fill="#fff" />
           Thêm khuyến mãi
         </Button>
@@ -270,10 +267,7 @@ const VoucherByAdmin = () => {
           }}
         />
       </div>
-
-      <VourcherModalView closeFunction={closeVourcherModalView} openValue={openVourcherModalView} />
       <VourcherModalCreate closeFunction={closeVourcherModalCreate} openValue={openVourcherModalCreate} />
-      <VourcherModalUpdate closeFunction={closeVourcherModalUpdate} openValue={openVourcherModalUpdate} />
     </div>
   )
 }

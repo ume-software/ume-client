@@ -1,21 +1,35 @@
 import { TextArea } from '@ume/ui'
 
-import * as React from 'react'
+import { useState } from 'react'
 
 import Image from 'next/legacy/image'
+import { prismaSelectToJsonString } from 'query-string-prisma-ume'
+import { VoucherResponse } from 'ume-service-openapi'
 
 import anhURL from '../../../../../public/anh.jpg'
 
 import ModalBase from '~/components/modal-base'
 
+import { trpc } from '~/utils/trpc'
+
 export interface IVourcherModalViewProps {
   closeFunction: any
   openValue: boolean
-  vourcherId?: any
+  vourcherId: any
 }
 
 export default function VourcherModalView({ vourcherId, closeFunction, openValue }: IVourcherModalViewProps) {
+  const [voucherDetails, setVoucherDetails] = useState<VoucherResponse>()
   //call api
+  const { isLoading, isFetching } = trpc.useQuery(
+    ['voucher.getVoucherDetails', { id: vourcherId, select: '["$all"]' }],
+    {
+      onSuccess(data) {
+        setVoucherDetails(data.data)
+      },
+    },
+  )
+
   const titleValue = 'Thông Tin Khuyến Mãi'
   const avatarUrl = anhURL.src
   const name = 'ABC'

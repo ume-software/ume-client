@@ -2,7 +2,7 @@ import { TRPCError } from '@trpc/server'
 import { getEnv } from '~/env'
 
 import { parse } from 'cookie'
-import { AdminManageVoucherApi, CreateVoucherRequest } from 'ume-service-openapi'
+import { AdminManageVoucherApi, CreateVoucherRequest, UpdateVoucherRequest } from 'ume-service-openapi'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
@@ -27,7 +27,27 @@ export const getAllVoucher = async (ctx, query: { page: string; where?: string; 
     })
   }
 }
+export const getVoucherDetails = async (ctx, query: { id; select }) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie ?? '')
+    const response = await new AdminManageVoucherApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).adminGetVoucherDetail(query.id, undefined, undefined, query.select, undefined, undefined)
 
+    return {
+      data: response.data,
+      success: true,
+      message: 'Success',
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.message || 'Authentication failed',
+    })
+  }
+}
 export const createNewVoucherAdmin = async (input: CreateVoucherRequest, ctx) => {
   const cookies = parse(ctx.req.headers.cookie)
   try {
@@ -36,6 +56,26 @@ export const createNewVoucherAdmin = async (input: CreateVoucherRequest, ctx) =>
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
     }).adminCreateVoucher(input)
+    return {
+      data: response.data,
+      success: true,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.message || 'Failed to create voucher',
+    })
+  }
+}
+
+export const updateVoucherAdmin = async (input: { id: string; voucherUpdate: any }, ctx) => {
+  const cookies = parse(ctx.req.headers.cookie)
+  try {
+    const response = await new AdminManageVoucherApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).adminUpdateVoucher(input.id, input.voucherUpdate as UpdateVoucherRequest)
     return {
       data: response.data,
       success: true,

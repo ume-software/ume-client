@@ -13,6 +13,13 @@ import ComfirmModal from '~/components/modal-base/comfirm-modal'
 
 import { trpc } from '~/utils/trpc'
 
+const mappingGender = {
+  ALL: 'Giới tính',
+  MALE: 'Nam',
+  FEMALE: ' Nữ',
+  PRIVATE: 'Ẩn',
+  OTHER: ' Khác',
+}
 const tableDataMapping = (data) => {
   const list: {
     key: any
@@ -148,11 +155,7 @@ const UserTable = ({ userList }) => {
       title: <div className="flex justify-center items-center">Giới tính</div>,
       dataIndex: 'gender',
       key: 'gender',
-      render: (text) => (
-        <div className="w-14 flex justify-center">
-          {text == 'FEMALE' ? <>Nữ</> : text == 'MALE' ? <>Nam</> : <>Khác</>}
-        </div>
-      ),
+      render: (text) => <div className="w-14 flex justify-center">{mappingGender[text]}</div>,
     },
     {
       title: <div className="flex justify-center items-center">Trạng thái</div>,
@@ -180,7 +183,7 @@ const UserTable = ({ userList }) => {
       render: (record) => {
         return (
           <>
-            <div className="flex">
+            <div className="flex justify-end w-full">
               <Eyes
                 onClick={() => handleOpenUserDetails(record)}
                 className="mr-2 rounded-full hover:bg-gray-500 p-2"
