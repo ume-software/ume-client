@@ -4,7 +4,7 @@ import ModalBase from '../modal-base'
 import PersionalInfo from '../persional-info'
 
 export interface IProviderDetailProps {
-  closeFunction: any | undefined
+  closeFunction: any
   openValue: boolean
   providerId: any
 }

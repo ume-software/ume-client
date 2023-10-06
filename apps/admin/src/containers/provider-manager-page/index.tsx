@@ -1,12 +1,11 @@
 import { Left, Right, Search } from '@icon-park/react'
-import { Button, Input } from '@ume/ui'
+import { Input } from '@ume/ui'
 
 import React, { useState } from 'react'
 
 import { Pagination, Tag } from 'antd'
 import Head from 'next/head'
-import { AdminGetUserPagingResponseResponse, FilterProviderPagingResponse } from 'ume-service-openapi'
-import { util } from 'zod'
+import { AdminGetUserPagingResponseResponse } from 'ume-service-openapi'
 
 import TableProviders from './components/table-provider'
 
@@ -103,7 +102,7 @@ const ProviderManager = () => {
       query.gender = filter.gender.toUpperCase()
     }
     if (filter.isBanned !== 'all') {
-      filter.isBanned == 'true' ? (query.isBanned = true) : (query.isBanned = false)
+      filter.isBanned == 'true' ? query.isBanned == true : query.isBanned == false
     }
 
     return query

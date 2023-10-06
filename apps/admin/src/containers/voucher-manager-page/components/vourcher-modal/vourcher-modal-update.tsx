@@ -5,7 +5,7 @@ import { uploadImageVoucher } from '~/api/upload-media'
 import * as React from 'react'
 import { useRef, useState } from 'react'
 
-import { Select, Space } from 'antd'
+import { Select } from 'antd'
 import Image from 'next/legacy/image'
 import {
   CreateVoucherRequestDiscountUnitEnum,
@@ -17,8 +17,6 @@ import anhURL from '../../../../../public/anh.jpg'
 
 import ModalBase from '~/components/modal-base'
 import ComfirmModal from '~/components/modal-base/comfirm-modal'
-
-const { Option } = Select
 
 export interface IVourcherModalUpdateProps {
   closeFunction: any
@@ -53,7 +51,7 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
   const [vourcherCode, setVourcherCode] = useState<any>(vourcherCodeInit)
   const issuer = issuerInit
   const [status, setStatus] = useState<any>(statusInit)
-  const [createAt, setCreateAt] = useState<any>(createAtInit)
+  const [createAt] = useState<any>(createAtInit)
   const [endDate, setEndDate] = useState<any>(endDateInit)
   const [numVoucher, setNumVoucher] = useState<any>(numVoucherInit)
   const [numUserCanUse, setNumUserCanUse] = useState<any>(numUserCanUseInit)

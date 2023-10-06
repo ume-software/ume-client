@@ -6,15 +6,12 @@ import * as React from 'react'
 import { useRef, useState } from 'react'
 
 import { Select, Space, notification } from 'antd'
-import { values } from 'lodash'
 import Image from 'next/legacy/image'
 import {
   CreateVoucherRequestDiscountUnitEnum,
   CreateVoucherRequestRecipientTypeEnum,
   CreateVoucherRequestTypeEnum,
 } from 'ume-service-openapi'
-
-import anhURL from '../../../../../public/anh.jpg'
 
 import ModalBase from '~/components/modal-base'
 import ComfirmModal from '~/components/modal-base/comfirm-modal'
@@ -30,12 +27,12 @@ export interface IVourcherModalCreateProps {
 
 export default function VourcherModalCreate({ closeFunction, openValue }: IVourcherModalCreateProps) {
   const titleValue = 'Thông Tin Khuyến Mãi'
-  const avatarUrl = anhURL.src
+
   const [name, setName] = useState<any>()
   const [vourcherCode, setVourcherCode] = useState<any>()
   const issuer = 'ADMIN'
   const [status, setStatus] = useState<any>()
-  const [createAt, setCreateAt] = useState<any>(new Date().toLocaleDateString('en-GB'))
+  const [createAt] = useState<any>(new Date().toLocaleDateString('en-GB'))
   const [endDate, setEndDate] = useState<any>(new Date().toISOString().split('T')[0])
 
   const [numVoucher, setNumVoucher] = useState<any>()
@@ -87,7 +84,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
     closeFunction()
   }
   const handleMediaChange = (e) => {
-    const file = e.target.files[0]
+    const file = e.target.files?.[0]
     if (file && file.type.startsWith('image/')) {
       const reader = new FileReader()
       reader.onload = () => {
