@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { EditName, MessagePrivacy, Remind, Setting, Transaction } from '@icon-park/react'
+import { Coupon, EditName, MessagePrivacy, Remind, Setting, Transaction } from '@icon-park/react'
 import logo from 'public/logo.png'
 import { useAuth } from '~/contexts/auth'
 
@@ -16,6 +16,7 @@ import EditProfile from './components/edit-profile'
 import Privacy from './components/privacy'
 import ReportTicket from './components/report-ticket'
 import TransactionHistory from './components/transaction-history/transaction-history'
+import Voucher from './components/voucher/voucher'
 
 interface SettingTypeProps {
   key: string
@@ -48,6 +49,12 @@ const settingType: SettingTypeProps[] = [
     label: 'Trở thành nhà cung cấp',
     icon: <Image width={20} height={20} src={logo} alt="BecomeProviderIcon" />,
     children: <BecomeProvider />,
+  },
+  {
+    key: 'vouchers',
+    label: 'Khuyến mãi',
+    icon: <Coupon theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />,
+    children: <Voucher />,
   },
   {
     key: 'transactionHistory',

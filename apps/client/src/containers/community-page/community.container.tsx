@@ -52,6 +52,7 @@ const CommunityContainer = () => {
     show: isModalVisible,
     form: <CreatePost handleClose={handleClose} />,
     backgroundColor: '#15151b',
+    closeWhenClickOutSide: true,
     closeButtonOnConner: (
       <>
         <CloseSmall

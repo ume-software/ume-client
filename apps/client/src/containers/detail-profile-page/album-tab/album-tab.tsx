@@ -46,6 +46,7 @@ const AlbumTab = (props: { data: UserInformationResponse }) => {
     show: isPostModal,
     form: <></>,
     backgroundColor: '#15151b',
+    closeWhenClickOutSide: true,
     closeButtonOnConner: (
       <>
         <CloseSmall

@@ -1,10 +1,13 @@
 import { DeleteFive, Eyes, Left, Right } from '@icon-park/react'
+import ImgForEmpty from 'public/img-for-empty.png'
 
-import { useState } from 'react'
+import { ReactNode, useState } from 'react'
+
+import Image from 'next/legacy/image'
 
 interface ITable {
   dataHeader: string[]
-  dataBody: (string | undefined)[][]
+  dataBody: (ReactNode | undefined)[][]
   pageCount: number
   page: string
   setPage: (page: string) => void
@@ -57,47 +60,58 @@ const Table = ({
         {totalItem} giao dịch
       </div>
       <table className="w-full rounded-xl bg-[#292734] overflow-hidden">
-        <thead className="bg-purple-600">
-          <tr>
-            {dataHeader.map((item, index) => (
-              <th key={index} className="p-3 border-r-2 border-white border-opacity-20 last:border-r-0">
-                {item}
-              </th>
-            ))}
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {dataBody.map((row, indexRow) => (
-            <tr key={indexRow}>
-              {row.map((content, indexContent) => (
-                <td
-                  key={indexContent}
-                  className="text-center p-3  border-r-2 border-b-2 border-white border-opacity-5 last:border-r-0"
-                >
-                  {content || 'Không'}
-                </td>
-              ))}
+        {totalItem <= 0 ? (
+          <>
+            <div className="w-full h-full text-center">
+              <Image layout="intrinsic" src={ImgForEmpty} alt="Personal Image" width={800} height={500} />
+            </div>
+          </>
+        ) : (
+          <>
+            <thead className="bg-purple-600">
+              <tr>
+                {dataHeader.map((item, index) => (
+                  <th key={index} className="p-3 border-r-2 border-white border-opacity-20 last:border-r-0">
+                    {item}
+                  </th>
+                ))}
+                <th></th>
+              </tr>
+            </thead>
 
-              {(watchAction || deleteAction) && (
-                <td className="text-center py-3 border-r-2 border-b-2 border-white border-opacity-5">
-                  <div className="flex justify-center items-center gap-3">
-                    <Eyes theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" className="cursor-pointer" />
-                    {deleteAction && (
-                      <DeleteFive
-                        theme="outline"
-                        size="20"
-                        fill="#fff"
-                        strokeLinejoin="bevel"
-                        className="cursor-pointer"
-                      />
-                    )}
-                  </div>
-                </td>
-              )}
-            </tr>
-          ))}
-        </tbody>
+            <tbody>
+              {dataBody.map((row, indexRow) => (
+                <tr key={indexRow}>
+                  {row.map((content, indexContent) => (
+                    <td
+                      key={indexContent}
+                      className="text-center p-3  border-r-2 border-b-2 border-white border-opacity-5 last:border-r-0"
+                    >
+                      {content || 'Không'}
+                    </td>
+                  ))}
+
+                  {(watchAction || deleteAction) && (
+                    <td className="text-center py-3 border-r-2 border-b-2 border-white border-opacity-5">
+                      <div className="flex justify-center items-center gap-3">
+                        <Eyes theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" className="cursor-pointer" />
+                        {deleteAction && (
+                          <DeleteFive
+                            theme="outline"
+                            size="20"
+                            fill="#fff"
+                            strokeLinejoin="bevel"
+                            className="cursor-pointer"
+                          />
+                        )}
+                      </div>
+                    </td>
+                  )}
+                </tr>
+              ))}
+            </tbody>
+          </>
+        )}
       </table>
       {pageCount && (
         <>

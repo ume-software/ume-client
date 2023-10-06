@@ -2,7 +2,13 @@ import { TRPCError } from '@trpc/server'
 import { getEnv } from '~/env'
 
 import { parse, serialize } from 'cookie'
-import { AuthApi, UpdateUserProfileRequestGenderEnum, UserApi } from 'ume-service-openapi'
+import {
+  AuthApi,
+  CreateVoucherRequest,
+  UpdateUserProfileRequestGenderEnum,
+  UserApi,
+  VoucherApi,
+} from 'ume-service-openapi'
 import { BuyCoinRequestApi, CoinApi } from 'ume-service-openapi'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
@@ -119,6 +125,84 @@ export const updateUserProfile = async (
       gender: query.gender,
       slug: query.slug,
     })
+    return {
+      data: reponse.data,
+      success: true,
+      message: '',
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to get data recharge',
+    })
+  }
+}
+
+export const userKYC = async (
+  query: {
+    frontSideCitizenIdImageUrl: string
+    backSideCitizenIdImageUrl: string
+    portraitImageUrl: string
+  },
+  ctx,
+) => {
+  const cookies = parse(ctx.req.headers.cookie ?? '')
+  try {
+    const reponse = await new UserApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).userSendKYCRequest(query)
+    return {
+      data: reponse.data,
+      success: true,
+      message: '',
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to get data recharge',
+    })
+  }
+}
+
+export const providerGetSelfVoucher = async (
+  query: {
+    limit: string
+    page: string
+    where?: string
+    order?: string
+  },
+  ctx,
+) => {
+  const cookies = parse(ctx.req.headers.cookie ?? '')
+  try {
+    const reponse = await new VoucherApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).providerGetSelfVoucher(query.limit, query.page, '["$all"]', query.where, query.order)
+    return {
+      data: reponse.data,
+      success: true,
+      message: '',
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to get data recharge',
+    })
+  }
+}
+
+export const providerCreateVoucher = async (query: CreateVoucherRequest, ctx) => {
+  const cookies = parse(ctx.req.headers.cookie ?? '')
+  try {
+    const reponse = await new VoucherApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).providerCreateVoucher(query)
     return {
       data: reponse.data,
       success: true,
