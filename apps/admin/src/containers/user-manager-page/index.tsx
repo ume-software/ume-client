@@ -4,9 +4,7 @@ import { Input } from '@ume/ui'
 import React, { useState } from 'react'
 
 import { Pagination, Tag } from 'antd'
-import { isUndefined } from 'lodash'
 import Head from 'next/head'
-import { title } from 'process'
 import { PrismaWhereConditionType, prismaWhereConditionToJsonString } from 'query-string-prisma-ume'
 import {
   AdminGetUserPagingResponseResponse,
@@ -120,7 +118,7 @@ const UserManager = () => {
       mode: 'insensitive',
     },
 
-    gender: filter.gender !== 'ALL' ? 'PRIVATE' : undefined,
+    gender: filter.gender !== 'ALL' ? filter.gender : undefined,
     isBanned: filter.isBanned !== 'all' ? (filter.isBanned == 'true' ? true : false) : undefined,
   })
 

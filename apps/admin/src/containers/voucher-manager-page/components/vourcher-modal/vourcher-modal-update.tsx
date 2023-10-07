@@ -5,14 +5,13 @@ import { uploadImageVoucher } from '~/api/upload-media'
 import * as React from 'react'
 import { useRef, useState } from 'react'
 
-import { Select, Space } from 'antd'
+import { Select } from 'antd'
 import { FormikErrors, useFormik } from 'formik'
 import Image from 'next/legacy/image'
 import {
   CreateVoucherRequestDiscountUnitEnum,
   CreateVoucherRequestRecipientTypeEnum,
   CreateVoucherRequestTypeEnum,
-  VoucherResponse,
 } from 'ume-service-openapi'
 import * as Yup from 'yup'
 
@@ -32,7 +31,6 @@ export interface IVourcherModalUpdateProps {
 }
 
 export default function VourcherModalUpdate({ vourcherId, closeFunction, openValue }: IVourcherModalUpdateProps) {
-  // call API by vourcherID and set to init value
   const [voucherDetails, setVoucherDetails] = useState<any>()
   const SELECT = [
     '$all',

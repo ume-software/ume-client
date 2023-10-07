@@ -14,16 +14,11 @@ import {
 } from 'ume-service-openapi'
 
 import ApproveProviderVoucherTable from './components/voucher-table/approve-voucher-table'
-import VourcherModalCreate from './components/vourcher-modal/vourcher-modal-create'
-import VourcherModalView from './components/vourcher-modal/vourcher-modal-view'
 
 import FilterDropdown from '~/components/filter-dropdown'
 
 import { trpc } from '~/utils/trpc'
 
-interface LooseObject {
-  [key: string]: any
-}
 
 const typeFilter = [
   {
@@ -139,7 +134,6 @@ const mappingRecipientType = {
   TOP_10_BOOKER: ' Top 10 người thuê',
 }
 const ApproveProviderVoucher = () => {
-  // --------------------------
   const [adminVoucherList, setAdminVoucherList] = useState<VoucherPagingResponse>()
   const [page, setPage] = useState(1)
   const [filter, setFilter] = useState({

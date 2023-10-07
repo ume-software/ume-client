@@ -4,7 +4,6 @@ import React, { useState } from 'react'
 
 import { Table, Tag, notification } from 'antd'
 import Image from 'next/image'
-import { boolean, string } from 'zod'
 
 import EmptyErrorPic from '../../../../../public/empty_error.png'
 import VourcherModalView from '../vourcher-modal/vourcher-modal-view'
@@ -77,7 +76,6 @@ const ProviderVoucherTable = ({ data }) => {
     setOpenConfirm(false)
   }
   function handleApproval() {
-    console.log(approveItem)
     try {
       updateVoucher.mutate(
         { id: approveItem.voucher, voucherUpdate: { status: approveItem.status } },
@@ -85,8 +83,8 @@ const ProviderVoucherTable = ({ data }) => {
           onSuccess(data, variables, context) {
             if (data.success) {
               notification.success({
-                message: 'Chặn Người Cung Cấp thành công!',
-                description: 'Người Cung Cấp Đã Bị Chặn',
+                message: 'Thành công!',
+                description: 'Khuyến mãi đã được kiểm duyệt',
                 placement: 'bottomLeft',
               })
               utils.invalidateQueries('voucher.getAllVoucher')
@@ -128,7 +126,7 @@ const ProviderVoucherTable = ({ data }) => {
         if (record.discountUnit == 'PERCENT')
           return <div className="w-full flex justify-center">{record.discountValue + '%'}</div>
         else if (record.discountUnit == 'CASH')
-          return <div className="w-full flex justify-center">{record.discountValue + 'Coin'}</div>
+          return <div className="w-full flex justify-center">{record.discountValue + ' xu'}</div>
       },
     },
     {
@@ -169,7 +167,7 @@ const ProviderVoucherTable = ({ data }) => {
                 className="p-2 rounded-full hover:bg-gray-500"
                 theme="outline"
                 size="18"
-                fill="#1677ff"
+                fill="#fff"
               />
 
               {record.status != 'PENDING' ? (

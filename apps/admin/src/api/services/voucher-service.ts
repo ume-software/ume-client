@@ -29,8 +29,6 @@ export const getAllVoucher = async (ctx, query: { page: string; where?: string; 
 }
 export const getVoucherDetails = async (ctx, query: { id; select }) => {
   try {
-    console.log('=========================' + query.select)
-
     const cookies = parse(ctx.req.headers.cookie ?? '')
     const response = await new AdminManageVoucherApi({
       basePath: getEnv().baseUmeServiceURL,

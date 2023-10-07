@@ -66,7 +66,7 @@ export default function VourcherModalView({ vourcherId, closeFunction, openValue
   const minimize = voucherDetails?.discountValue || ''
   const audience = voucherDetails?.recipientType || ''
 
-  const description = voucherDetails?.description
+  const description = voucherDetails?.description || ''
   function closeHandle() {
     closeFunction()
   }
@@ -98,10 +98,10 @@ export default function VourcherModalView({ vourcherId, closeFunction, openValue
                 Trạng thái: <span className="font-bold">{status}</span>
               </div>
               <div className="h-12 text-white">
-                Ngày phát hành: <span className="font-bold">{createAt}</span>
+                Ngày phát hành: <span className="font-bold">{new Date(createAt).toLocaleDateString('en-GB')}</span>
               </div>
               <div className="h-12 text-white">
-                Ngày kết thúc: <span className="font-bold">{endDate}</span>
+                Ngày kết thúc: <span className="font-bold">{new Date(endDate).toLocaleDateString('en-GB')}</span>
               </div>
             </div>
           </div>
@@ -148,8 +148,8 @@ export default function VourcherModalView({ vourcherId, closeFunction, openValue
           </div>
           {status == 'PENDING' && (
             <div className="w-full flex justify-evenly items-center my-4">
-              <Button customCSS="py-1 px-2 bg-green-600"> Duyệt </Button>
-              <Button customCSS="py-1 px-2 bg-red-600"> Từ chối </Button>
+              <Button customCSS="py-1 px-2 "> Từ chối </Button>
+              <Button customCSS="py-1 px-2 bg-[#7463f0]"> Chấp nhận </Button>
             </div>
           )}
         </div>

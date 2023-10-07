@@ -11,15 +11,6 @@ interface ILayout {
   children: React.ReactNode
 }
 const Layout = ({ children }: ILayout) => {
-  // const response = trpc.useQuery(['identity.adminInfo'], {
-  //   onSuccess(data) {
-  //     setItem('user', data.data)
-  //   },
-  //   onError(error) {
-  //     console.log('get-info admin', error)
-  //   },
-  // })
-
   const router = useRouter()
   if (router.pathname == '/signin') {
     return <>{children}</>

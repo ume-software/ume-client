@@ -30,7 +30,7 @@ const statusFilterItems = [
     ),
   },
   {
-    key: VoucherResponseDiscountUnitEnum.Cash,
+    key: VoucherResponseStatusEnum.Approved,
     label: (
       <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
         Đã duyệt

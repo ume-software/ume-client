@@ -9,13 +9,10 @@ import {
   VoucherPagingResponse,
   VoucherResponse,
   VoucherResponseRecipientTypeEnum,
-  VoucherResponseStatusEnum,
 } from 'ume-service-openapi'
 
 import AdminVoucherTable from './components/voucher-table/admin-voucher-table'
 import VourcherModalCreate from './components/vourcher-modal/vourcher-modal-create'
-import VourcherModalUpdate from './components/vourcher-modal/vourcher-modal-update'
-import VourcherModalView from './components/vourcher-modal/vourcher-modal-view'
 
 import FilterDropdown from '~/components/filter-dropdown'
 
@@ -105,25 +102,14 @@ const mappingStatus = {
 }
 
 const VoucherByAdmin = () => {
-  // model variable and function
-
-  const [openVourcherModalView, setOpenVourcherModalView] = useState(false)
   const [openVourcherModalCreate, setOpenVourcherModalCreate] = useState(false)
-  const [openVourcherModalUpdate, setOpenVourcherModalUpdate] = useState(false)
 
-  function closeVourcherModalView() {
-    setOpenVourcherModalView(false)
-  }
   function closeVourcherModalCreate() {
     setOpenVourcherModalCreate(false)
-  }
-  function closeVourcherModalUpdate() {
-    setOpenVourcherModalUpdate(false)
   }
   function addVourcherHandler() {
     setOpenVourcherModalCreate(true)
   }
-  // --------------------------
   const [adminVoucherList, setAdminVoucherList] = useState<VoucherPagingResponse | undefined>()
   const [page, setPage] = useState(1)
   const [filter, setFilter] = useState({

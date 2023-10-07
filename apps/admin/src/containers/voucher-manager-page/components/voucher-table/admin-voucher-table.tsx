@@ -1,8 +1,9 @@
-import { Delete, Eyes, ReduceOne, Write } from '@icon-park/react'
+import { CheckOne, Delete, Eyes, ReduceOne, Write } from '@icon-park/react'
+import { Button } from '@ume/ui'
 
 import React, { useState } from 'react'
 
-import { Table, Tag } from 'antd'
+import { Table, Tag, notification } from 'antd'
 import Image from 'next/image'
 
 import EmptyErrorPic from '../../../../../public/empty_error.png'
@@ -11,6 +12,8 @@ import VourcherModalView from '../vourcher-modal/vourcher-modal-view'
 
 import BanModal from '~/components/modal-base/ban-modal'
 import ComfirmModal from '~/components/modal-base/comfirm-modal'
+
+import { trpc } from '~/utils/trpc'
 
 const tableDataMapping = (data?) => {
   const list: {}[] = []
@@ -43,6 +46,11 @@ const AdminVoucherTable = ({ data }) => {
   const [voucherModalData, setVoucherModalData] = useState()
   const [openVourcherModalView, setOpenVourcherModalView] = useState(false)
   const [openVourcherModalUpdate, setOpenVourcherModalUpdate] = useState(false)
+  const [selectedVoucher, setSelectedVoucher] = useState<any>()
+  const utils = trpc.useContext()
+  const [isActivated, setIsActivate] = useState()
+  const updateVoucher = trpc.useMutation(['voucher.updateVoucherAdmin'])
+  const [openConfirm, setOpenConfirm] = useState(false)
 
   function closeVourcherModalView() {
     setOpenVourcherModalView(false)
@@ -61,6 +69,47 @@ const AdminVoucherTable = ({ data }) => {
         setOpenVourcherModalUpdate(true)
         break
     }
+  }
+
+  function handleOpenConfirm(record) {
+    setSelectedVoucher(record.key)
+    setIsActivate(record.isActivated)
+    setOpenConfirm(true)
+  }
+  const handlecloseConfirm = () => {
+    setOpenConfirm(false)
+  }
+
+  function handleConfirmFunction() {
+    try {
+      updateVoucher.mutate(
+        { id: selectedVoucher, voucherUpdate: { isActivated: isActivated } },
+        {
+          onSuccess(data, variables, context) {
+            if (data.success) {
+              if (isActivated) {
+                notification.success({
+                  message: 'Dừng hoạt động thành công!',
+                  description: 'Khuyến mãi đã bị dừng hoạt động',
+                  placement: 'bottomLeft',
+                })
+              } else {
+                notification.success({
+                  message: 'Kích hoạt thành công!',
+                  description: 'Khuyến mãi đã được kích hoạt lại',
+                  placement: 'bottomLeft',
+                })
+              }
+
+              utils.invalidateQueries('voucher.getAllVoucher')
+            }
+          },
+        },
+      )
+    } catch (e) {
+      console.error(e)
+    }
+    setOpenConfirm(false)
   }
   const columns = [
     {
@@ -91,7 +140,7 @@ const AdminVoucherTable = ({ data }) => {
         if (record.discountUnit == 'PERCENT')
           return <div className="w-full flex justify-center">{record.discountValue + '%'}</div>
         else if (record.discountUnit == 'CASH')
-          return <div className="w-full flex justify-center">{record.discountValue + 'Coin'}</div>
+          return <div className="w-full flex justify-center">{record.discountValue + ' xu'}</div>
       },
     },
     {
@@ -116,28 +165,41 @@ const AdminVoucherTable = ({ data }) => {
       title: '',
       key: 'action',
       render: (record) => {
+        console.log(record)
+
         return (
           <>
             <div className="flex max-w-[6rem]">
-              <Eyes
-                onClick={() => {
-                  openModalHandle('view', record.key)
-                }}
-                className="p-2 mr-2 rounded-full hover:bg-gray-500"
-                theme="outline"
-                size="18"
-                fill="#85ea2d"
-              />
-              <Write
-                onClick={() => {
-                  openModalHandle('update', record.key)
-                }}
-                className="p-2 rounded-full hover:bg-gray-500"
-                theme="outline"
-                size="18"
-                fill="#fff"
-              />
-              <Delete className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="18" fill="#ff0000" />
+              <Button isActive={false}>
+                <Eyes
+                  onClick={() => {
+                    openModalHandle('view', record.key)
+                  }}
+                  className="p-2 mr-2 rounded-full hover:bg-gray-500"
+                  theme="outline"
+                  size="18"
+                  fill="#fff"
+                />
+              </Button>
+              <Button isActive={false}>
+                <Write
+                  onClick={() => {
+                    openModalHandle('update', record.key)
+                  }}
+                  className="p-2 rounded-full hover:bg-gray-500"
+                  theme="outline"
+                  size="18"
+                  fill="#1677ff"
+                />
+              </Button>
+              <Button isActive={false} onClick={() => handleOpenConfirm(record)}>
+                {record.isActivated ? (
+                  <ReduceOne className="rounded-full hover:bg-gray-500 p-2" theme="outline" size="20" fill="#ff0000" />
+                ) : (
+                  <CheckOne className="rounded-full hover:bg-gray-500 p-2" theme="outline" size="20" fill="#22c55e" />
+                )}
+              </Button>
+              {/* <Delete className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="18" fill="#ff0000" /> */}
             </div>
           </>
         )
@@ -170,6 +232,16 @@ const AdminVoucherTable = ({ data }) => {
           openValue={openVourcherModalUpdate}
         />
       )}
+      <ComfirmModal
+        closeFunction={handlecloseConfirm}
+        openValue={openConfirm}
+        isComfirmFunction={handleConfirmFunction}
+        titleValue={isActivated ? 'Xác nhận dừng hoạt động' : 'Xác nhận mở hoạt động'}
+      >
+        <div className="text-white p-4">
+          Bạn có chắc chắn muốn {!isActivated ? ' mở hoạt động ' : ' dừng hoạt động '} khuyến mãi này?
+        </div>
+      </ComfirmModal>
     </div>
   )
 }
