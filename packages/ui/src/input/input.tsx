@@ -71,7 +71,7 @@ export const InputWithAffix = ({ position, component, ...props }: InputWithAffix
     <div className={`flex -space-x-px ${props.className}`}>
       {position === 'left' ? (
         <div
-          className={`flex items-center justify-center rounded-l border border-slate-300 px-3.5 font-inter dark:border-navy-450 ${props.iconStyle}`}
+          className={`flex items-center justify-center rounded-l px-3.5 font-inter dark:border-navy-450 ${props.iconStyle}`}
         >
           {component}
         </div>
@@ -85,7 +85,7 @@ export const InputWithAffix = ({ position, component, ...props }: InputWithAffix
       />
       {position === 'right' ? (
         <div
-          className={`flex items-center justify-center rounded-l border border-slate-300 px-3.5 font-inter dark:border-navy-450 ${props.iconStyle}`}
+          className={`flex items-center justify-center rounded-l px-3.5 font-inter dark:border-navy-450 ${props.iconStyle}`}
         >
           {component}
         </div>

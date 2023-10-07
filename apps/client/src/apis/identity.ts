@@ -10,6 +10,7 @@ import { createRouter } from './configurations'
 import {
   getAccountBalance,
   getIdentityInfo,
+  getMyVoucher,
   getUserBySlug,
   providerCreateVoucher,
   providerGetSelfVoucher,
@@ -103,5 +104,16 @@ export const identityRouter = createRouter()
     }),
     resolve: async ({ input, ctx }) => {
       return await providerCreateVoucher(input, ctx)
+    },
+  })
+  .query('getMyVoucher', {
+    input: z.object({
+      limit: z.string(),
+      page: z.string(),
+      where: z.optional(z.string()),
+      order: z.optional(z.string()),
+    }),
+    resolve: async ({ input, ctx }) => {
+      return await getMyVoucher(input, ctx)
     },
   })

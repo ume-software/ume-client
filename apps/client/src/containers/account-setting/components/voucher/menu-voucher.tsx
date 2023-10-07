@@ -30,6 +30,7 @@ const MenuForVoucher = ({
             className={`flex justify-between items-center gap-3 ${
               buttonCustomCss ? buttonCustomCss : 'min-w-[110px]'
             } text-lg font-semibold px-3 py-2 hover:bg-gray-700 rounded-xl`}
+            type="button"
           >
             {buttonTitle + ''}
             {isDisplayDownButton && <Down theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />}

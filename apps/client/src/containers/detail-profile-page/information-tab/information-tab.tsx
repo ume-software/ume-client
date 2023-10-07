@@ -199,10 +199,10 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                 {user?.id != props.data?.id ? (
                   <div className="flex flex-col gap-5 my-10">
                     <CustomDrawer
-                      customOpenBtn={`rounded-full w-full h-full text-purple-700 border-2 border-purple-700 py-2 font-semibold text-2xl cursor-pointer hover:scale-105 text-center`}
+                      customOpenBtn={`rounded-full w-full h-full text-purple-700 border-2 border-purple-700 font-semibold text-2xl cursor-pointer hover:scale-105 text-center`}
                       openBtn={
                         <Button
-                          customCSS="bg-transparent"
+                          customCSS="bg-transparent w-full h-full py-2 focus:outline-none"
                           isLoading={createNewChatChannel.isLoading}
                           isActive={true}
                           isOutlinedButton={true}
@@ -219,12 +219,13 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                     {!props.data?.isBanned && (
                       <CustomDrawer
                         drawerTitle="Xác nhận đặt"
-                        customOpenBtn="rounded-full w-full text-white bg-purple-700 py-2 font-semibold text-2xl cursor-pointer hover:scale-105 text-center"
+                        customOpenBtn="rounded-full w-full text-white bg-purple-700 font-semibold text-2xl cursor-pointer hover:scale-105 text-center"
                         openBtn={
                           <Button
-                            customCSS="bg-transparent"
+                            customCSS="bg-transparent w-full h-full py-2 focus:outline-none"
+                            type="button"
                             isActive={true}
-                            isOutlinedButton={false}
+                            isOutlinedButton={true}
                             onClick={handleOrderOpen}
                           >
                             Order
