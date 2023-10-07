@@ -29,8 +29,6 @@ export const getAllVoucher = async (ctx, query: { page: string; where?: string; 
 }
 export const getVoucherDetails = async (ctx, query: { id; select }) => {
   try {
-    console.log('=========================' + query.select)
-
     const cookies = parse(ctx.req.headers.cookie ?? '')
     const response = await new AdminManageVoucherApi({
       basePath: getEnv().baseUmeServiceURL,
@@ -70,14 +68,14 @@ export const createNewVoucherAdmin = async (input: CreateVoucherRequest, ctx) =>
   }
 }
 
-export const updateVoucherAdmin = async (input: { id: string; voucherUpdate: any }, ctx) => {
+export const updateVoucherAdmin = async (input: { id: string; voucherUpdate: UpdateVoucherRequest }, ctx) => {
   const cookies = parse(ctx.req.headers.cookie)
   try {
     const response = await new AdminManageVoucherApi({
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).adminUpdateVoucher(input.id, input.voucherUpdate as UpdateVoucherRequest)
+    }).adminUpdateVoucher(input.id, input.voucherUpdate)
     return {
       data: response.data,
       success: true,
