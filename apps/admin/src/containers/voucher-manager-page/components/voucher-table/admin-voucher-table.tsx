@@ -118,7 +118,7 @@ const AdminVoucherTable = ({ data }) => {
       render: (record) => {
         return (
           <>
-            <div className="flex max-w-[5rem]">
+            <div className="flex max-w-[6rem]">
               <Eyes
                 onClick={() => {
                   openModalHandle('view', record.key)

@@ -96,8 +96,8 @@ const UserTable = ({ userList }) => {
             onSuccess: (data) => {
               if (data.success) {
                 notification.success({
-                  message: 'Chặn Người Cung Cấp thành công!',
-                  description: 'Người Cung Cấp Đã Bị Chặn',
+                  message: 'Chặn người dùng thành công!',
+                  description: 'người dùng đã bị chặn',
                   placement: 'bottomLeft',
                 })
                 utils.invalidateQueries('user.getUserList')
@@ -191,7 +191,7 @@ const UserTable = ({ userList }) => {
                 size="24"
                 fill="#fff"
               />
-              <Button onClick={() => handleOpenBan(record)}>
+              <Button isActive={false} onClick={() => handleOpenBan(record)}>
                 {record.isBanned ? (
                   <CheckOne className="rounded-full hover:bg-gray-500 p-2" theme="outline" size="20" fill="#22c55e" />
                 ) : (
