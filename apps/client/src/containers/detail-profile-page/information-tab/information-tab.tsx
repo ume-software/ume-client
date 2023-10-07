@@ -199,17 +199,21 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                 {user?.id != props.data?.id ? (
                   <div className="flex flex-col gap-5 my-10">
                     <CustomDrawer
-                      customOpenBtn={`rounded-full w-full h-full text-purple-700 border-2 border-purple-700 font-semibold text-2xl cursor-pointer hover:scale-105 text-center`}
+                      customOpenBtn={`rounded-full text-purple-700 border-2 border-purple-700 font-semibold text-2xl cursor-pointer hover:scale-105 text-center`}
                       openBtn={
-                        <Button
-                          customCSS="bg-transparent w-full h-full py-2 focus:outline-none"
-                          isLoading={createNewChatChannel.isLoading}
-                          isActive={true}
-                          isOutlinedButton={true}
+                        <button
+                          className="bg-transparent w-full h-full py-2 focus:outline-none"
+                          type="button"
                           onClick={handleChatOpen}
                         >
+                          {createNewChatChannel.isLoading && (
+                            <span
+                              className={`spinner h-5 w-5 animate-spin rounded-full border-[3px] border-r-transparent dark:border-navy-300 dark:border-r-transparent border-white
+`}
+                            />
+                          )}
                           Chat
-                        </Button>
+                        </button>
                       }
                       token={isAuthenticated}
                     >
@@ -219,17 +223,15 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                     {!props.data?.isBanned && (
                       <CustomDrawer
                         drawerTitle="Xác nhận đặt"
-                        customOpenBtn="rounded-full w-full text-white bg-purple-700 font-semibold text-2xl cursor-pointer hover:scale-105 text-center"
+                        customOpenBtn="rounded-full text-white bg-purple-700 font-semibold text-2xl cursor-pointer hover:scale-105 text-center"
                         openBtn={
-                          <Button
-                            customCSS="bg-transparent w-full h-full py-2 focus:outline-none"
+                          <button
+                            className="bg-transparent w-full h-full py-2 focus:outline-none"
                             type="button"
-                            isActive={true}
-                            isOutlinedButton={true}
                             onClick={handleOrderOpen}
                           >
                             Order
-                          </Button>
+                          </button>
                         }
                         token={isAuthenticated}
                       >

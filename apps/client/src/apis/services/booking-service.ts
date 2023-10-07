@@ -131,10 +131,11 @@ export const createBooking = async (provider: BookingProviderRequest, ctx) => {
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
     }).createBooking(provider)
+
     return {
       data: respone.data,
       success: true,
-      message: 'Booking success!',
+      message: respone.status,
     }
   } catch (error) {
     throw new TRPCError({

@@ -39,22 +39,22 @@ export const Button = ({
         {...props}
         type={type}
         disabled={isDisable}
-        className={`w-fit h-fit ${btnClass} btn ${
-          !isOutlinedButton ? 'bg-transparent' : 'bg-transparent cursor-pointer'
-        }`}
+        className={`w-fit h-fit btn ${!isOutlinedButton ? 'bg-transparent' : 'bg-transparent cursor-pointer'}`}
         tabIndex={99}
         style={{ borderRadius: 3 }}
       >
-        <div className="flex items-center justify-center">
-          {isLoading && (
-            <span
-              className={`spinner h-5 w-5 animate-spin rounded-full border-[3px] border-r-transparent dark:border-navy-300 dark:border-r-transparent ${
-                loadingIconColor === 'white' ? 'border-white' : 'border-black'
-              }`}
-            />
-          )}
-          {icon && <span>{icon}</span>}
-          {children}
+        <div className={btnClass}>
+          <div className="flex items-center justify-center">
+            {isLoading && (
+              <span
+                className={`spinner h-5 w-5 animate-spin rounded-full border-[3px] border-r-transparent dark:border-navy-300 dark:border-r-transparent ${
+                  loadingIconColor === 'white' ? 'border-white' : 'border-black'
+                }`}
+              />
+            )}
+            {icon && <span>{icon}</span>}
+            {children}
+          </div>
         </div>
       </button>
       {helper && <span className="button-helper">{helper}</span>}
