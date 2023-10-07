@@ -1,4 +1,4 @@
-import { BaseballBat, Eyes, ReduceOne } from '@icon-park/react'
+import { BaseballBat, CheckOne, Eyes, ReduceOne } from '@icon-park/react'
 import { Button } from '@ume/ui'
 import { BanProvider } from '~/api/services/provider-service'
 
@@ -165,14 +165,19 @@ export default function TableProviders({ data }) {
               <Eyes theme="outline" size="24" fill="#fff" />
             </Button>
           </Tooltip>
-          <Tooltip placement="top" title="Chặn" arrow={mergedArrow}>
+          <Tooltip placement="top" title={record.isBanned ? 'Bỏ chặn' : 'Chặn'} arrow={mergedArrow}>
             <Button
               isActive={false}
               onClick={(e) => {
                 banProviderHandle(record.id, record.name, record.isBanned)
               }}
             >
-              <ReduceOne theme="outline" size="24" fill={record.isBanned ? '#ff0000' : '#ffffff'} />
+              {/* <ReduceOne theme="outline" size="24" fill={record.isBanned ? '#ff0000' : '#ffffff'} /> */}
+              {record.isBanned ? (
+                <CheckOne className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="20" fill="#22c55e" />
+              ) : (
+                <ReduceOne className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="20" fill="#ff0000" />
+              )}
             </Button>
           </Tooltip>
         </Space>
