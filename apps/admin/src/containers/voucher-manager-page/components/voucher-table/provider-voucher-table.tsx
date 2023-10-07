@@ -2,13 +2,16 @@ import { CheckOne, CloseOne, Delete, Eyes, ReduceOne, Write } from '@icon-park/r
 
 import React, { useState } from 'react'
 
-import { Table, Tag } from 'antd'
+import { Table, Tag, notification } from 'antd'
 import Image from 'next/image'
 import { boolean, string } from 'zod'
 
 import EmptyErrorPic from '../../../../../public/empty_error.png'
+import VourcherModalView from '../vourcher-modal/vourcher-modal-view'
 
 import ComfirmModal from '~/components/modal-base/comfirm-modal'
+
+import { trpc } from '~/utils/trpc'
 
 const tableDataMapping = (data?) => {
   const list: {}[] = []
@@ -44,15 +47,27 @@ const mappingType = {
 
 const ProviderVoucherTable = ({ data }) => {
   const listData = tableDataMapping(data?.row)
+  const utils = trpc.useContext()
   const [openConfirm, setOpenConfirm] = useState(false)
+  const [openVourcherModalView, setOpenVourcherModalView] = useState(false)
+  const [voucherModalData, setVoucherModalData] = useState()
+  const updateVoucher = trpc.useMutation(['voucher.updateVoucherAdmin'])
   const [approveItem, setApproveItem] = useState({
     voucher: '',
     status: 'PENDING',
   })
 
+  function closeVourcherModalView() {
+    setOpenVourcherModalView(false)
+  }
+
+  function openModalHandle(record) {
+    setVoucherModalData(record.key)
+    setOpenVourcherModalView(true)
+  }
   function handleOpenComfirm(rowVoucher, changedStatus) {
     setApproveItem({
-      voucher: rowVoucher,
+      voucher: rowVoucher.key,
       status: changedStatus,
     })
     setOpenConfirm(true)
@@ -63,6 +78,25 @@ const ProviderVoucherTable = ({ data }) => {
   }
   function handleApproval() {
     console.log(approveItem)
+    try {
+      updateVoucher.mutate(
+        { id: approveItem.voucher, voucherUpdate: { status: approveItem.status } },
+        {
+          onSuccess(data, variables, context) {
+            if (data.success) {
+              notification.success({
+                message: 'Chặn Người Cung Cấp thành công!',
+                description: 'Người Cung Cấp Đã Bị Chặn',
+                placement: 'bottomLeft',
+              })
+              utils.invalidateQueries('voucher.getAllVoucher')
+            }
+          },
+        },
+      )
+    } catch (e) {
+      console.error(e)
+    }
     setOpenConfirm(false)
   }
   const columns = [
@@ -129,7 +163,9 @@ const ProviderVoucherTable = ({ data }) => {
           <>
             <div className="flex justify-center items-center max-w-[5rem]">
               <Eyes
-                onClick={() => {}}
+                onClick={() => {
+                  openModalHandle(record)
+                }}
                 className="p-2 rounded-full hover:bg-gray-500"
                 theme="outline"
                 size="18"
@@ -183,12 +219,23 @@ const ProviderVoucherTable = ({ data }) => {
   return (
     <div className="mt-5 ">
       <Table locale={locale} pagination={false} columns={columns} dataSource={listData} />
+      {openVourcherModalView && (
+        <VourcherModalView
+          vourcherId={voucherModalData}
+          closeFunction={closeVourcherModalView}
+          openValue={openVourcherModalView}
+        />
+      )}
       <ComfirmModal
         closeFunction={handleCloseComfirm}
         openValue={openConfirm}
         isComfirmFunction={handleApproval}
-        titleValue="Xác nhận duyệt mã khuyến mãi"
-      ></ComfirmModal>
+        titleValue={`Xác nhận ${approveItem.status == 'APPROVED' ? 'duyệt' : 'từ chối'}`}
+      >
+        <div className="text-white p-4 text-center">
+          Bạn có chắc chắn muốn {approveItem.status == 'APPROVED' ? 'duyệt' : 'từ chối'} mã khuyến mãi này không?
+        </div>
+      </ComfirmModal>
     </div>
   )
 }

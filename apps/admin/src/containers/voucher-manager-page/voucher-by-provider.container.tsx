@@ -15,8 +15,6 @@ import {
 } from 'ume-service-openapi'
 
 import ProviderVoucherTable from './components/voucher-table/provider-voucher-table'
-import VourcherModalCreate from './components/vourcher-modal/vourcher-modal-create'
-import VourcherModalView from './components/vourcher-modal/vourcher-modal-view'
 
 import FilterDropdown from '~/components/filter-dropdown'
 
@@ -178,26 +176,6 @@ const mappingRecipientTypes = {
 }
 
 const VoucherByProvider = () => {
-  // model variable and function
-
-  const [openVourcherModalView, setOpenVourcherModalView] = useState(false)
-  const [openVourcherModalCreate, setOpenVourcherModalCreate] = useState(false)
-  const [openVourcherModalUpdate, setOpenVourcherModalUpdate] = useState(false)
-
-  function closeVourcherModalView() {
-    setOpenVourcherModalView(false)
-  }
-  function closeVourcherModalCreate() {
-    setOpenVourcherModalCreate(false)
-  }
-  function closeVourcherModalUpdate() {
-    setOpenVourcherModalUpdate(false)
-  }
-  function addVourcherHandler() {
-    // setOpenVourcherModalView(true)
-    setOpenVourcherModalCreate(true)
-    // setOpenVourcherModalUpdate(true)
-  }
   // --------------------------
   const [adminVoucherList, setAdminVoucherList] = useState<VoucherPagingResponse>()
   const [page, setPage] = useState(1)
@@ -226,7 +204,7 @@ const VoucherByProvider = () => {
       },
     ],
 
-    adminId: null,
+    providerId: null,
     recipientType: filter.recipientType !== 'ALL' ? filter.recipientType : undefined,
     status: filter.status !== 'all' ? filter.status : undefined,
     discountUnit: filter.discountUnit !== 'all' ? filter.discountUnit : undefined,
@@ -370,9 +348,6 @@ const VoucherByProvider = () => {
           }}
         />
       </div>
-
-      <VourcherModalView closeFunction={closeVourcherModalView} openValue={openVourcherModalView} />
-      <VourcherModalCreate closeFunction={closeVourcherModalCreate} openValue={openVourcherModalCreate} />
     </div>
   )
 }

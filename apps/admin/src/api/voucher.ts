@@ -51,7 +51,7 @@ export const voucherRouter = createRouter()
       voucherUpdate: z.object({
         code: z.optional(z.string()),
         image: z.optional(z.string()),
-        name: z.string(),
+        name: z.optional(z.string()),
         description: z.optional(z.string()),
         numberIssued: z.optional(z.number()),
         dailyNumberIssued: z.optional(z.number()),
@@ -59,7 +59,7 @@ export const voucherRouter = createRouter()
         dailyUsageLimitPerBooker: z.optional(z.number()),
         isActivated: z.optional(z.boolean()),
         type: z.optional(z.string()), //CreateVoucherRequestTypeEnum
-        discountUnit: z.string(), //CreateVoucherRequestDiscountUnitEnum
+        discountUnit: z.optional(z.string()), //CreateVoucherRequestDiscountUnitEnum
         discountValue: z.optional(z.number()),
         maximumDiscountValue: z.optional(z.number()),
         minimumBookingTotalPriceForUsage: z.optional(z.number()),
@@ -67,9 +67,10 @@ export const voucherRouter = createRouter()
         startDate: z.optional(z.string()),
         endDate: z.optional(z.string()),
         applyISODayOfWeek: z.optional(z.array(z.number())),
-        recipientType: z.string(), //CreateVoucherRequestRecipientTypeEnum
+        recipientType: z.optional(z.string()), //CreateVoucherRequestRecipientTypeEnum
         selectiveBookerIds: z.optional(z.array(z.string())),
-        isHided: z.boolean(),
+        isHided: z.optional(z.string()),
+        status: z.optional(z.string()),
       }),
     }),
     resolve: async ({ input, ctx }) => {

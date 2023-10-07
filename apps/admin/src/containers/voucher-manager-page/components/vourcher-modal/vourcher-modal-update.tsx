@@ -12,6 +12,7 @@ import {
   CreateVoucherRequestDiscountUnitEnum,
   CreateVoucherRequestRecipientTypeEnum,
   CreateVoucherRequestTypeEnum,
+  VoucherResponse,
 } from 'ume-service-openapi'
 import * as Yup from 'yup'
 
@@ -19,6 +20,8 @@ import anhURL from '../../../../../public/anh.jpg'
 
 import ModalBase from '~/components/modal-base'
 import ComfirmModal from '~/components/modal-base/comfirm-modal'
+
+import { trpc } from '~/utils/trpc'
 
 const { Option } = Select
 
@@ -30,27 +33,47 @@ export interface IVourcherModalUpdateProps {
 
 export default function VourcherModalUpdate({ vourcherId, closeFunction, openValue }: IVourcherModalUpdateProps) {
   // call API by vourcherID and set to init value
-  const ImageInit = anhURL.src
-  const nameInit = 'ABC'
-  const vourcherCodeInit = 'TEST'
-  const issuer = 'ABC'
+  const [voucherDetails, setVoucherDetails] = useState<any>()
+  const SELECT = [
+    '$all',
+    {
+      provider: ['$all'],
+      admin: ['$all'],
+    },
+  ]
+  const { isLoading, isFetching } = trpc.useQuery(
+    ['voucher.getVoucherDetails', { id: vourcherId, select: JSON.stringify(SELECT) }],
+    {
+      onSuccess(data) {
+        setVoucherDetails(data.data)
+      },
+    },
+  )
+  const ImageInit = voucherDetails?.image
+  const nameInit = voucherDetails?.name || ''
+  const vourcherCodeInit = voucherDetails?.code
+  const issuer = voucherDetails?.admin?.name
   // const approverInit = 'ABC'
-  const statusInit = 'ABC'
-  const createAt = new Date().toLocaleDateString('en-GB')
-  const endDateInit = new Date().toISOString().split('T')[0]
-  const numVoucherInit = 10
-  const numUserCanUseInit = 11
-  const typeVoucherInit = CreateVoucherRequestTypeEnum.Discount
-  const applyTimeInit = [2, 3]
-  const numVoucherInDayInit = 11
-  const numUserCanUseInDayInit = 123
-  const minimizeInit = 123
-  const audienceInit = CreateVoucherRequestRecipientTypeEnum.All
-  const descriptionInit = 'ABC'
+  const statusInit = voucherDetails?.status
+  const createAt = new Date(voucherDetails?.createdAt!).toLocaleDateString('en-GB')
+  const endDateInit = voucherDetails?.endDate
+    ? new Date(voucherDetails?.endDate!).toISOString().split('T')[0]
+    : new Date().toISOString().split('T')[0]
+
+  const numVoucherInit = voucherDetails?.numberIssued
+  const numUserCanUseInit = voucherDetails?.numberUsablePerBooker
+  const typeVoucherInit = voucherDetails?.type
+  const applyTimeInit = voucherDetails?.applyISODayOfWeek
+  const numVoucherInDayInit = voucherDetails?.dailyNumberIssued
+  const numUserCanUseInDayInit = voucherDetails?.dailyUsageLimitPerBooker
+  const minimizeInit = voucherDetails?.discountValue
+  const audienceInit = voucherDetails?.recipientType
+  const descriptionInit = voucherDetails?.description
   const contentInit = 'SOME THING WRONG'
-  const discountUnitInit = CreateVoucherRequestDiscountUnitEnum.Percent
+  const discountUnitInit = voucherDetails?.discountUnit
 
   const titleValue = 'Thông Tin Khuyến Mãi'
+
   const [isSubmiting, setSubmiting] = useState(false)
   interface IFormValues {
     vourcherCode: string
@@ -108,6 +131,9 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
       resetForm()
     },
   })
+  // console.log(form.values.endDate)
+  // console.log(endDateInit)
+
   const mappingRecipientType = {
     ALL: 'Tất cả',
     FIRST_TIME_BOOKING: 'Người lần đầu thuê',
@@ -255,6 +281,7 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
     }
     return { imageUrl }
   }
+
   return (
     <div>
       <form onSubmit={form.handleSubmit} className="flex flex-col mb-4 gap-y-4">
@@ -315,12 +342,12 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                       className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 ml-4 border-opacity-30 ${
                         form.errors.name && form.touched.name ? 'placeholder:text-red-500' : ''
                       }`}
-                      placeholder={!!form.errors.name && form.touched.name ? form.errors.name : 'Nhập Tên '}
+                      placeholder={!!form.errors.name && form.touched.name ? form.errors.name?.toString() : 'Nhập Tên '}
                       disabled={false}
                       onChange={form.handleChange}
                       onBlur={form.handleBlur}
                       value={form.values.name}
-                      error={!!form.errors.name && form.touched.name}
+                      error={!!form.errors.name && !!form.touched.name}
                       errorMessage={''}
                     />
                   </div>
@@ -339,8 +366,8 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                       }}
                       onBlur={form.handleBlur}
                       value={form.values.vourcherCode}
-                      error={!!form.errors.vourcherCode && form.touched.vourcherCode}
-                      errorMessage={form.errors.vourcherCode}
+                      error={!!form.errors.vourcherCode && !!form.touched.vourcherCode}
+                      errorMessage={form.errors.vourcherCode?.toString()}
                       type="text"
                     />
                   </div>
@@ -364,9 +391,9 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                       onChange={form.handleChange}
                       onBlur={form.handleBlur}
                       value={form.values.endDate}
-                      error={!!form.errors.endDate && form.touched.endDate}
+                      error={!!form.errors.endDate && !!form.touched.endDate}
                       errorMessage={form.errors.endDate}
-                      min={new Date().toISOString().split('T')[0]}
+                      // min={new Date().toISOString().split('T')[0]}
                       required
                     />
                   </div>
@@ -386,8 +413,8 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                       placeholder="Số Lượng"
                       onBlur={form.handleBlur}
                       value={form.values.numVoucher}
-                      error={!!form.errors.numVoucher && form.touched.numVoucher}
-                      errorMessage={form.errors.numVoucher}
+                      error={!!form.errors.numVoucher && !!form.touched.numVoucher}
+                      errorMessage={form.errors.numVoucher?.toString()}
                       disabled={false}
                       onChange={(e) => {
                         const newValue = parseInt(e.target.value)
@@ -414,8 +441,8 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                       placeholder="Số Lượng"
                       value={form.values.numUserCanUse}
                       onBlur={form.handleBlur}
-                      error={!!form.errors.numUserCanUse && form.touched.numUserCanUse}
-                      errorMessage={form.errors.numUserCanUse}
+                      error={!!form.errors.numUserCanUse && !!form.touched.numUserCanUse}
+                      errorMessage={form.errors.numUserCanUse?.toString()}
                       onChange={(e) => {
                         const newValue = parseInt(e.target.value)
                         if (!isNaN(newValue) && newValue >= 0) {
@@ -511,8 +538,8 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                       placeholder="Số Lượng"
                       value={form.values.numVoucherInDay}
                       onBlur={form.handleBlur}
-                      error={!!form.errors.numVoucherInDay && form.touched.numVoucherInDay}
-                      errorMessage={form.errors.numVoucherInDay}
+                      error={!!form.errors.numVoucherInDay && !!form.touched.numVoucherInDay}
+                      errorMessage={form.errors.numVoucherInDay?.toString()}
                       onChange={(e) => {
                         const newValue = parseInt(e.target.value)
                         if (!isNaN(newValue) && newValue >= 0) {
@@ -537,8 +564,8 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                       placeholder="Số Lượng"
                       value={form.values.numUserCanUseInDay}
                       onBlur={form.handleBlur}
-                      error={!!form.errors.numUserCanUseInDay && form.touched.numUserCanUseInDay}
-                      errorMessage={form.errors.numUserCanUseInDay}
+                      error={!!form.errors.numUserCanUseInDay && !!form.touched.numUserCanUseInDay}
+                      errorMessage={form.errors.numUserCanUseInDay?.toString()}
                       onChange={(e) => {
                         const newValue = parseInt(e.target.value)
                         if (!isNaN(newValue) && newValue >= 0) {
@@ -563,8 +590,8 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                       placeholder="Số Lượng"
                       value={form.values.minimize}
                       onBlur={form.handleBlur}
-                      error={!!form.errors.minimize && form.touched.minimize}
-                      errorMessage={form.errors.minimize}
+                      error={!!form.errors.minimize && !!form.touched.minimize}
+                      errorMessage={form.errors.minimize?.toString()}
                       onChange={(e) => {
                         const newValue = parseInt(e.target.value)
                         if (!isNaN(newValue) && newValue >= 0) {
