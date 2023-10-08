@@ -131,7 +131,6 @@ export const createBooking = async (provider: BookingProviderRequest, ctx) => {
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
     }).createBooking(provider)
-
     return {
       data: respone.data,
       success: true,
@@ -139,8 +138,8 @@ export const createBooking = async (provider: BookingProviderRequest, ctx) => {
     }
   } catch (error) {
     throw new TRPCError({
-      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
-      message: error.message || 'Fail to create new booking',
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status),
+      message: error.response?.data.message || 'Fail to create new booking',
     })
   }
 }

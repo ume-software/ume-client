@@ -172,7 +172,13 @@ const CategoryGridSkeleton = () => {
 }
 
 const BGFullGridSkeleton = () => {
-  return <div className="w-full h-full animate-pulse flex-row items-center justify-center rounded-xl bg-gray-300"></div>
+  return (
+    <div className="w-full h-full animate-pulse flex-row items-center justify-center rounded-xl border-2 border-gray-300">
+      <div className="flex flex-col pl-5 pr-5 pb-5 gap-2">
+        <CommentSkeletonLoader />
+      </div>
+    </div>
+  )
 }
 
 const ChatSkeleton = () => {

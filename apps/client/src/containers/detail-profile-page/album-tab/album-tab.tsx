@@ -3,15 +3,11 @@ import { Modal } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
 import PostByID from '~/containers/community-page/components/post-by-ID'
 
-import { ReactNode, useEffect, useState } from 'react'
+import { ReactNode, useState } from 'react'
 
 import Image from 'next/legacy/image'
 import { useRouter } from 'next/router'
-import { DetailAlbumResponse, GetProfileProviderBySlugResponse, UserInformationResponse } from 'ume-service-openapi'
-
-import AlbumImage from './album-image'
-
-import { BGFullGridSkeleton } from '~/components/skeleton-load'
+import { DetailAlbumResponse, UserInformationResponse } from 'ume-service-openapi'
 
 import { trpc } from '~/utils/trpc'
 
@@ -20,6 +16,7 @@ const AlbumTab = (props: { data: UserInformationResponse }) => {
   const slug = router.query
 
   const [album, setAlbum] = useState<DetailAlbumResponse[] | undefined>()
+  const [formPost, setFormPost] = useState<ReactNode>(<></>)
 
   const { isLoading: isLoadingAlbum } = trpc.useQuery(
     ['booking.getAlbumByUserSlug', { slug: slug.profileId?.toString() || props.data.slug }],
@@ -44,7 +41,7 @@ const AlbumTab = (props: { data: UserInformationResponse }) => {
     onClose: handleClose,
     title: <p className="text-white">Hình ảnh</p>,
     show: isPostModal,
-    form: <></>,
+    form: formPost,
     backgroundColor: '#15151b',
     closeWhenClickOutSide: true,
     closeButtonOnConner: (
@@ -62,7 +59,8 @@ const AlbumTab = (props: { data: UserInformationResponse }) => {
     ),
   })
 
-  const handleOpenImageModal = () => {
+  const handleOpenImageModal = (postId: string) => {
+    setFormPost(<PostByID postId={postId} />)
     setIsPostModal(true)
   }
 
@@ -75,9 +73,9 @@ const AlbumTab = (props: { data: UserInformationResponse }) => {
             <div className="w-full grid grid-cols-8 gap-10">
               {album.map((item, index) => (
                 <div
-                  className="w-[100%] h-[350px] place-content-center relative col-span-2 cursor-pointer"
+                  className="w-[100%] h-[350px] place-content-center relative col-span-2 rounded-xl overflow-hidden border-2 border-white border-opacity-30 cursor-pointer"
                   key={index}
-                  onClick={handleOpenImageModal}
+                  onClick={() => handleOpenImageModal(item.postId)}
                 >
                   <Image
                     className="absolute top-0 left-0 right-0"
@@ -97,7 +95,7 @@ const AlbumTab = (props: { data: UserInformationResponse }) => {
                 <div className="w-full grid grid-cols-8 gap-10">
                   {[...Array(8)].map((_, index) => (
                     <div key={index} className="w-[100%] h-[350px] col-span-2">
-                      <BGFullGridSkeleton />
+                      <div className="w-full h-full animate-pulse flex-row items-center justify-center rounded-xl bg-gray-300"></div>
                     </div>
                   ))}
                 </div>

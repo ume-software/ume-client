@@ -174,20 +174,24 @@ export const RechargeModal = ({ setShowRechargeModal, showRechargeModal }: IRech
                             <span className="text-xs italic"> VND</span>
                           </div>
                         </div>
-                        <Button
-                          customCSS={`mt-10 !rounded-2xl w-full !text-white py-1 font-semibold text-lg text-center ${
-                            values.balance && 'hover:scale-105'
-                          }`}
-                          type="button"
-                          isActive={true}
-                          isOutlinedButton={!!values.balance}
-                          onClick={() => {
-                            handleSubmit()
-                          }}
-                          disabled={isSubmitting}
-                        >
-                          Xác nhận
-                        </Button>
+                        <div className="flex justify-center items-center mt-2">
+                          <div>
+                            <Button
+                              customCSS={`!rounded-2xl w-full !text-white py-2 px-3 font-semibold text-lg text-center ${
+                                values.balance && 'hover:scale-105'
+                              }`}
+                              type="button"
+                              isActive={true}
+                              isOutlinedButton={!!values.balance}
+                              onClick={() => {
+                                handleSubmit()
+                              }}
+                              disabled={isSubmitting}
+                            >
+                              Xác nhận
+                            </Button>
+                          </div>
+                        </div>
                       </div>
                     </form>
                   )}

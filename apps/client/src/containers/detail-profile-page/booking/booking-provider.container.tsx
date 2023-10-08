@@ -42,23 +42,22 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
     bookingPeriod: 1,
     voucherIds: [],
   })
+
   const [total, setTotal] = useState(0)
 
   const handleTotal = () => {
-    const selectedItem = props.data.providerServices?.find((item) => booking.providerServiceId == item.serviceId)
-    // const voucher = myVoucher?.row?.find((voucher) => voucher.code == booking?.voucherIds[0])
-    // const voucherValue =
-    //   voucher?.discountUnit == VoucherResponseDiscountUnitEnum.Cash
-    //     ? voucher.discountValue
-    //     : (voucher?.discountValue || 1) / 100
-
-    const voucherValue = undefined
+    const selectedItem = props.data.providerServices?.find((item) => booking.providerServiceId == item.id)
+    const voucher = myVoucher?.row?.find((voucher) => voucher.code == booking?.voucherIds)
+    const voucherValue =
+      voucher?.discountUnit == VoucherResponseDiscountUnitEnum.Cash
+        ? voucher.discountValue
+        : (voucher?.discountValue || 1) / 100
 
     setTotal(
-      (voucherValue! < 0
-        ? (selectedItem?.defaultCost || 1) * booking.bookingPeriod * (voucherValue || 1)
-        : (selectedItem?.defaultCost || 1) * booking.bookingPeriod - (voucherValue || 0)) ||
-        (selectedItem?.defaultCost || 1) * booking.bookingPeriod,
+      (voucher?.discountUnit == VoucherResponseDiscountUnitEnum.Cash
+        ? (selectedItem?.defaultCost || 0) * booking.bookingPeriod * (voucherValue || 1)
+        : (selectedItem?.defaultCost || 0) * booking.bookingPeriod - (voucherValue || 0)) ||
+        (selectedItem?.defaultCost || 0) * booking.bookingPeriod,
     )
   }
   useEffect(() => {
@@ -70,17 +69,19 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
       ...prevData,
       providerServiceId:
         props.data?.providerServices?.find((dataChoose) => dataChoose.service?.slug === slug.service)?.id || '',
+      voucherIds: myVoucher?.row && myVoucher?.row?.length > 0 ? [String(myVoucher.row[0].code)] : [],
     }))
-  }, [props.data, slug.service])
+  }, [props.data, slug.service, myVoucher?.row])
 
   const handleCreateBooking = (booking: BookingProviderRequest) => {
-    if (!props.data.isOnline || props.data.providerConfig?.status != ProviderConfigResponseStatusEnum.Activated) {
-      notification.warning({
-        message: 'Tài khoản chưa sẵn sàng',
-        description: 'Tài khoản hiện chưa sẵn sàng lúc này. Vui lòng thử lại vào lúc khác!',
-        placement: 'bottomLeft',
-      })
-    } else if (accountBalance.data?.data.totalCoinsAvailable! >= total) {
+    // if (!props.data.isOnline || props.data.providerConfig?.status != ProviderConfigResponseStatusEnum.Activated) {
+    //   notification.warning({
+    //     message: 'Tài khoản chưa sẵn sàng',
+    //     description: 'Tài khoản hiện chưa sẵn sàng lúc này. Vui lòng thử lại vào lúc khác!',
+    //     placement: 'bottomLeft',
+    //   })
+    // } else
+    if (accountBalance.data?.data.totalCoinsAvailable! >= total) {
       try {
         createBooking.mutate(booking, {
           onSuccess: (data) => {
@@ -94,10 +95,9 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
             }
           },
           onError: (error) => {
-            console.error(error)
-            notification.error({
+            notification.warning({
               message: 'Tạo đơn thất bại',
-              description: 'Đơn của bạn chưa được tạo thành công!',
+              description: `${error.message}`,
               placement: 'bottomLeft',
             })
           },
@@ -250,7 +250,7 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
                           myVoucher?.row?.map((data, index) => (
                             <div
                               className={`flex gap-5 items-center ${
-                                booking.voucherIds?.find((dataChoose) => dataChoose == data.code) && 'bg-gray-500'
+                                booking.voucherIds?.[0] == data.code && 'bg-gray-500'
                               } hover:bg-gray-700 cursor-pointer p-3 rounded-lg`}
                               key={index}
                               onClick={() => {

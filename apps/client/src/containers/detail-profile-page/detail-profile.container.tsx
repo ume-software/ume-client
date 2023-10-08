@@ -211,7 +211,7 @@ const DetailProfileContainer = () => {
 
       {!providerDetail && isProviderDetailLoading ? (
         <>
-          <div className="w-screen h-[380px] mx-70">
+          <div className="w-[98%] h-[380px] mx-70">
             <BGFullGridSkeleton />
           </div>
           <div className="grid mt-10 w-full h-screen grid-cols-10 gap-10 px-10">
