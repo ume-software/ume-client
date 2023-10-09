@@ -68,14 +68,14 @@ export const createNewVoucherAdmin = async (input: CreateVoucherRequest, ctx) =>
   }
 }
 
-export const updateVoucherAdmin = async (input: { id: string; voucherUpdate: any }, ctx) => {
+export const updateVoucherAdmin = async (input: { id: string; voucherUpdate: UpdateVoucherRequest }, ctx) => {
   const cookies = parse(ctx.req.headers.cookie)
   try {
     const response = await new AdminManageVoucherApi({
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).adminUpdateVoucher(input.id, input.voucherUpdate as UpdateVoucherRequest)
+    }).adminUpdateVoucher(input.id, input.voucherUpdate)
     return {
       data: response.data,
       success: true,
