@@ -189,6 +189,7 @@ const VoucherByAdmin = () => {
       })
     }
   }
+
   return (
     <div>
       <div className="flex justify-between">
@@ -253,7 +254,9 @@ const VoucherByAdmin = () => {
           }}
         />
       </div>
-      <VourcherModalCreate closeFunction={closeVourcherModalCreate} openValue={openVourcherModalCreate} />
+      {openVourcherModalCreate && (
+        <VourcherModalCreate closeFunction={closeVourcherModalCreate} openValue={openVourcherModalCreate} />
+      )}
     </div>
   )
 }

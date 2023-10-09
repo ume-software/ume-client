@@ -1,4 +1,10 @@
-import { CreateVoucherRequest, UpdateVoucherRequest } from 'ume-service-openapi'
+import {
+  CreateVoucherRequest,
+  UpdateVoucherRequest,
+  UpdateVoucherRequestDiscountUnitEnum,
+  UpdateVoucherRequestRecipientTypeEnum,
+  UpdateVoucherRequestTypeEnum,
+} from 'ume-service-openapi'
 import { z } from 'zod'
 
 import { createRouter } from './configurations'
@@ -28,7 +34,7 @@ export const voucherRouter = createRouter()
       numberUsablePerBooker: z.optional(z.number()),
       dailyUsageLimitPerBooker: z.optional(z.number()),
       isActivated: z.optional(z.boolean()),
-      type: z.optional(z.string()), //CreateVoucherRequestTypeEnum
+      type: z.string(), //CreateVoucherRequestTypeEnum
       discountUnit: z.string(), //CreateVoucherRequestDiscountUnitEnum
       discountValue: z.optional(z.number()),
       maximumDiscountValue: z.optional(z.number()),
@@ -58,8 +64,8 @@ export const voucherRouter = createRouter()
         numberUsablePerBooker: z.optional(z.number()),
         dailyUsageLimitPerBooker: z.optional(z.number()),
         isActivated: z.optional(z.boolean()),
-        type: z.optional(z.string()), //CreateVoucherRequestTypeEnum
-        discountUnit: z.optional(z.string()), //CreateVoucherRequestDiscountUnitEnum
+        type: z.optional(z.nativeEnum(UpdateVoucherRequestTypeEnum)),
+        discountUnit: z.optional(z.nativeEnum(UpdateVoucherRequestDiscountUnitEnum)),
         discountValue: z.optional(z.number()),
         maximumDiscountValue: z.optional(z.number()),
         minimumBookingTotalPriceForUsage: z.optional(z.number()),
@@ -67,9 +73,9 @@ export const voucherRouter = createRouter()
         startDate: z.optional(z.string()),
         endDate: z.optional(z.string()),
         applyISODayOfWeek: z.optional(z.array(z.number())),
-        recipientType: z.optional(z.string()), //CreateVoucherRequestRecipientTypeEnum
+        recipientType: z.optional(z.nativeEnum(UpdateVoucherRequestRecipientTypeEnum)),
         selectiveBookerIds: z.optional(z.array(z.string())),
-        isHided: z.optional(z.string()),
+        isHided: z.optional(z.boolean()),
         status: z.optional(z.string()),
       }),
     }),

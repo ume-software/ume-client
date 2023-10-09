@@ -34,6 +34,7 @@ export interface IVourcherModalCreateProps {
 export default function VourcherModalCreate({ closeFunction, openValue }: IVourcherModalCreateProps) {
   const titleValue = 'Thông Tin Khuyến Mãi'
   const issuer = 'ADMIN'
+  const MAX_NUMBER = '100000'
   const [createAt, setCreateAt] = useState<any>(new Date().toLocaleDateString('en-GB'))
   const [isSubmiting, setSubmiting] = useState(false)
   interface IFormValues {
@@ -222,20 +223,21 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                 description: 'đã được tạo thành công.',
                 placement: 'bottomLeft',
               })
-            } else {
-              notification.error({
-                message: 'Tạo thất bại!',
-                description: 'Tạo không thành công.',
-                placement: 'bottomLeft',
-              })
+              closeHandle()
             }
+          },
+          onError: () => {
+            notification.error({
+              message: 'Tạo thất bại!',
+              description: 'Tạo không thành công.',
+              placement: 'bottomLeft',
+            })
           },
         })
       } catch (error) {
         console.error('Failed to post voucher:', error)
       }
     }
-    closeHandle()
   }
   function closeHandleSmall() {
     openConfirmModalCancel()
@@ -397,7 +399,11 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                       onChange={(e) => {
                         const newValue = parseInt(e.target.value)
                         if (!isNaN(newValue) && newValue >= 0) {
-                          e.target.value = newValue.toString()
+                          if (newValue > parseInt(MAX_NUMBER)) {
+                            e.target.value = MAX_NUMBER
+                          } else {
+                            e.target.value = newValue.toString()
+                          }
                         } else {
                           e.target.value = '0'
                         }
@@ -424,7 +430,11 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                       onChange={(e) => {
                         const newValue = parseInt(e.target.value)
                         if (!isNaN(newValue) && newValue >= 0) {
-                          e.target.value = newValue.toString()
+                          if (newValue > parseInt(MAX_NUMBER)) {
+                            e.target.value = MAX_NUMBER
+                          } else {
+                            e.target.value = newValue.toString()
+                          }
                         } else {
                           e.target.value = '0'
                         }
@@ -548,7 +558,11 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                       onChange={(e) => {
                         const newValue = parseInt(e.target.value)
                         if (!isNaN(newValue) && newValue >= 0) {
-                          e.target.value = newValue.toString()
+                          if (newValue > parseInt(MAX_NUMBER)) {
+                            e.target.value = MAX_NUMBER
+                          } else {
+                            e.target.value = newValue.toString()
+                          }
                         } else {
                           e.target.value = '0'
                         }
@@ -574,7 +588,11 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                       onChange={(e) => {
                         const newValue = parseInt(e.target.value)
                         if (!isNaN(newValue) && newValue >= 0) {
-                          e.target.value = newValue.toString()
+                          if (newValue > parseInt(MAX_NUMBER)) {
+                            e.target.value = MAX_NUMBER
+                          } else {
+                            e.target.value = newValue.toString()
+                          }
                         } else {
                           e.target.value = '0'
                         }
@@ -600,7 +618,11 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                       onChange={(e) => {
                         const newValue = parseInt(e.target.value)
                         if (!isNaN(newValue) && newValue >= 0) {
-                          e.target.value = newValue.toString()
+                          if (newValue > parseInt(MAX_NUMBER)) {
+                            e.target.value = MAX_NUMBER
+                          } else {
+                            e.target.value = newValue.toString()
+                          }
                         } else {
                           e.target.value = '0'
                         }
