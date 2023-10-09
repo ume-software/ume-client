@@ -1,29 +1,18 @@
-import { Left, Right, Search } from '@icon-park/react';
-import { Button, Input } from '@ume/ui';
+import { Left, Right, Search } from '@icon-park/react'
+import { Button, Input } from '@ume/ui'
 
+import React, { useState } from 'react'
 
+import { Pagination, Tag } from 'antd'
+import Head from 'next/head'
+import { AdminGetUserPagingResponseResponse, FilterProviderPagingResponse } from 'ume-service-openapi'
+import { util } from 'zod'
 
-import React, { useState } from 'react';
+import TableProviders from './components/table-provider'
 
+import FilterDropdown from '~/components/filter-dropdown'
 
-
-import { Pagination, Tag } from 'antd';
-import Head from 'next/head';
-import { AdminGetUserPagingResponseResponse, FilterProviderPagingResponse } from 'ume-service-openapi';
-import { util } from 'zod';
-
-
-
-import TableProviders from './components/table-provider';
-
-
-
-import FilterDropdown from '~/components/filter-dropdown';
-
-
-
-import { trpc } from '~/utils/trpc';
-
+import { trpc } from '~/utils/trpc'
 
 interface LooseObject {
   [key: string]: any
@@ -40,7 +29,7 @@ const statusFilterItems = [
   {
     key: 'false',
     label: (
-      <Tag className="flex justify-center w-full px-3 py-2 text-white bg-green-500 rounded-lg hover:bg-green-600">
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
         Hoạt động
       </Tag>
     ),
@@ -48,7 +37,7 @@ const statusFilterItems = [
   {
     key: 'true',
     label: (
-      <Tag className="flex justify-center w-full px-3 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600">
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
         Tạm dừng
       </Tag>
     ),

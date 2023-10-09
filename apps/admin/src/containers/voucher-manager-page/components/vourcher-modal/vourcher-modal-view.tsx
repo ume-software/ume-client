@@ -1,43 +1,72 @@
-import { TextArea } from '@ume/ui'
+import { Button, TextArea } from '@ume/ui'
 
-import * as React from 'react'
+import { useState } from 'react'
 
 import Image from 'next/legacy/image'
-
-import anhURL from '../../../../../public/anh.jpg'
+import { prismaSelectToJsonString } from 'query-string-prisma-ume'
+import { VoucherResponse } from 'ume-service-openapi'
 
 import ModalBase from '~/components/modal-base'
+
+import { trpc } from '~/utils/trpc'
 
 export interface IVourcherModalViewProps {
   closeFunction: any
   openValue: boolean
-  vourcherId?: any
+  vourcherId: any
+}
+
+const mappingRecipientType = {
+  ALL: 'Tất cả',
+  FIRST_TIME_BOOKING: 'Người lần đầu thuê',
+  PREVIOUS_BOOKING: ' Người đã từng thuê',
+  TOP_5_BOOKER: ' Top 5 người thuê',
+  TOP_10_BOOKER: ' Top 10 người thuê',
+  SELECTIVE_BOOKER: 'Người đặt chọn',
+}
+
+const mappingType = {
+  DISCOUNT: 'Giảm giá',
+  CASHBACK: 'Hoàn tiền',
 }
 
 export default function VourcherModalView({ vourcherId, closeFunction, openValue }: IVourcherModalViewProps) {
-  //call api
+  const [voucherDetails, setVoucherDetails] = useState<any>()
+  const SELECT = [
+    '$all',
+    {
+      admin: ['$all'],
+      provider: ['$all'],
+    },
+  ]
+  const { isLoading, isFetching } = trpc.useQuery(
+    ['voucher.getVoucherDetails', { id: vourcherId, select: JSON.stringify(SELECT) }],
+    {
+      onSuccess(data) {
+        setVoucherDetails(data.data)
+      },
+    },
+  )
+  console.log(voucherDetails)
   const titleValue = 'Thông Tin Khuyến Mãi'
-  const avatarUrl = anhURL.src
-  const name = 'ABC'
-  const vourcherCode = ''
-  const issuer = 'ABC'
-  const approver = 'ABC'
-  const status = 'ABC'
-  const createAt = 'ABC'
-  const endDate = 'ABC'
+  const avatarUrl = voucherDetails?.image || ''
+  const name = voucherDetails?.name || ''
+  const vourcherCode = voucherDetails?.code || ''
+  const issuer = voucherDetails?.provider?.name || voucherDetails?.admin?.name
+  const approver = voucherDetails?.admin?.name || ''
+  const status = voucherDetails?.status || ''
+  const createAt = voucherDetails?.createdAt || ''
+  const endDate = voucherDetails?.endDate || ''
+  const numVoucher = voucherDetails?.numberIssued || ''
+  const numUserCanUse = voucherDetails?.numberUsablePerBooker || ''
+  const typeVoucher = voucherDetails?.type || ''
+  const applyTime = voucherDetails?.applyISODayOfWeek || ''
+  const numVoucherInDay = voucherDetails?.dailyNumberIssued || ''
+  const numUserCanUseInDay = voucherDetails?.dailyUsageLimitPerBooker || ''
+  const minimize = voucherDetails?.discountValue || ''
+  const audience = voucherDetails?.recipientType || ''
 
-  const numVoucher = 'ABC'
-  const numUserCanUse = 'ABC'
-  const typeVoucher = 'ABC'
-  const applyTime = 'ABC'
-
-  const numVoucherInDay = 'ABC'
-  const numUserCanUseInDay = 'ABC'
-  const minimize = 'ABC'
-  const audience = 'ABC'
-
-  const description = 'ABC'
-  const content = 'SOME THING WRONG'
+  const description = voucherDetails?.description || ''
   function closeHandle() {
     closeFunction()
   }
@@ -47,7 +76,7 @@ export default function VourcherModalView({ vourcherId, closeFunction, openValue
         <div className="flex-col w-auto bg-[#15151B] mt-5 px-4">
           <div className="flex w-auto px-4 border-b-2 border-[#FFFFFF80] pb-5">
             <div className="w-1/5 pr-4 mt-10">
-              <Image className="overflow-hidden rounded-2xl" width={150} height={200} src={avatarUrl} alt="" />
+              <Image className="overflow-hidden rounded-2xl" width={150} height={200} src={avatarUrl!} alt="" />
             </div>
             <div className="flex flex-col justify-end w-2/5 ">
               <div className="h-24 text-white">
@@ -69,10 +98,10 @@ export default function VourcherModalView({ vourcherId, closeFunction, openValue
                 Trạng thái: <span className="font-bold">{status}</span>
               </div>
               <div className="h-12 text-white">
-                Ngày phát hành: <span className="font-bold">{createAt}</span>
+                Ngày phát hành: <span className="font-bold">{new Date(createAt).toLocaleDateString('en-GB')}</span>
               </div>
               <div className="h-12 text-white">
-                Ngày kết thúc: <span className="font-bold">{endDate}</span>
+                Ngày kết thúc: <span className="font-bold">{new Date(endDate).toLocaleDateString('en-GB')}</span>
               </div>
             </div>
           </div>
@@ -87,7 +116,7 @@ export default function VourcherModalView({ vourcherId, closeFunction, openValue
                 Số lượng tối đa một người có thể dùng: <span className="font-bold">{numUserCanUse}</span>
               </div>
               <div className="h-12 text-white">
-                Loại: <span className="font-bold">{typeVoucher}</span>
+                Loại: <span className="font-bold">{typeVoucher && mappingType[typeVoucher]}</span>
               </div>
               <div className="h-12 text-white">
                 Thời gian áp dụng trong tuần: <span className="font-bold">{applyTime}</span>
@@ -105,21 +134,24 @@ export default function VourcherModalView({ vourcherId, closeFunction, openValue
                 Giảm tối đa: <span className="font-bold">{minimize}</span>
               </div>
               <div className="h-12 text-white">
-                Đối tượng: <span className="font-bold">{audience}</span>
+                Đối tượng: <span className="font-bold">{audience && mappingRecipientType[audience]}</span>
               </div>
             </div>
           </div>
           <div className="w-auto px-4 border-b-2 border-[#FFFFFF80] pb-5">
             <div className="flex flex-col justify-end mt-5">
-              <div className="h-12 text-white">
-                Mô tả: <span className="font-bold">{description}</span>
-              </div>
               <div className="flex h-32 text-white">
-                <span className="mr-4">Nội dung:</span>
-                <TextArea className="bg-[#413F4D] w-4/5" rows={5} value={content} />
+                <span className="w-16 mr-4">Mô tả: </span>
+                <TextArea name="description" className="bg-[#413F4D] w-4/5" rows={5} value={description} />
               </div>
             </div>
           </div>
+          {status == 'PENDING' && (
+            <div className="w-full flex justify-evenly items-center my-4">
+              <Button customCSS="py-1 px-2 "> Từ chối </Button>
+              <Button customCSS="py-1 px-2 bg-[#7463f0]"> Chấp nhận </Button>
+            </div>
+          )}
         </div>
       </ModalBase>
     </div>
