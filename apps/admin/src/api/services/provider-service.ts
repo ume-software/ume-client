@@ -1,8 +1,8 @@
 import { TRPCError } from '@trpc/server'
 import { getEnv } from '~/env'
 
-import { parse, serialize } from 'cookie'
-import { AdminManageProviderApi, AdminManageUserKYCRequestApi } from 'ume-service-openapi'
+import { parse } from 'cookie'
+import { AdminManageProviderApi, AdminManageUserKYCRequestApi, UserKYCRequestResponse } from 'ume-service-openapi'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
@@ -252,14 +252,19 @@ export const getListKYC = async (
       accessToken: cookies['accessToken'],
     }).adminGetListUserKYCRequest(query?.limit, query?.page, query?.select, query?.where, query?.order)
 
-    console.log(response.data)
+    const res = response.data.row?.map((data: UserKYCRequestResponse) => ({
+      ...data.user,
+      backSideCitizenIdImageUrl: data.backSideCitizenIdImageUrl,
+      frontSideCitizenIdImageUrl: data.frontSideCitizenIdImageUrl,
+      portraitImageUrl: data.portraitImageUrl,
+      status: data?.userKYCStatus,
+    }))
 
     return {
-      data: response.data.row,
+      data: res,
       successs: true,
     }
   } catch (error) {
-    console.log(error)
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
       message: error.message || 'Failed to get list KYC',

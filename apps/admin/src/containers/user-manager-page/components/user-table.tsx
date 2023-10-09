@@ -172,7 +172,9 @@ const UserTable = ({ userList }) => {
       title: <div className="flex justify-center items-center">Ngày tham gia</div>,
       key: 'createdAt',
       dataIndex: 'createdAt',
-      render: (date) => <div className="flex justify-center">{new Date(date).toLocaleDateString('en-GB')}</div>,
+      render: (date: string | number | Date) => (
+        <div className="flex justify-center">{new Date(date).toLocaleDateString('en-GB')}</div>
+      ),
     },
     {
       title: '',

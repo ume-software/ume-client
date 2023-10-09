@@ -52,11 +52,6 @@ export default function TransactionTable(props: ITransactionTableProps) {
       dataIndex: 'mountMoney',
       key: 'mountMoney',
     },
-    // {
-    //   title: 'Phản hồi',
-    //   dataIndex: 'feedback',
-    //   key: 'feedback',
-    // },
   ]
   return <Table locale={locale} pagination={false} columns={columnsService} dataSource={data} className="z-0" />
 }

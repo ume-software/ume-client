@@ -5,12 +5,7 @@ import React, { useState } from 'react'
 
 import { Pagination, Tag } from 'antd'
 import { PrismaWhereConditionType, prismaWhereConditionToJsonString } from 'query-string-prisma-ume'
-import {
-  VoucherPagingResponse,
-  VoucherResponse,
-  VoucherResponseRecipientTypeEnum,
-  VoucherResponseStatusEnum,
-} from 'ume-service-openapi'
+import { VoucherPagingResponse, VoucherResponse, VoucherResponseRecipientTypeEnum } from 'ume-service-openapi'
 
 import AdminVoucherTable from './components/voucher-table/admin-voucher-table'
 import VourcherModalCreate from './components/vourcher-modal/vourcher-modal-create'

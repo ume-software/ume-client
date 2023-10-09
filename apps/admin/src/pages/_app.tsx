@@ -16,7 +16,7 @@ function App({ Component, pageProps }: AppProps) {
 }
 
 const TRPCApp = withTRPC<RootRouterTypes>({
-  config({ ctx }) {
+  config({}) {
     const url = '/api/trpc'
 
     return {

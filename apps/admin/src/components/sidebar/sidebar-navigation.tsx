@@ -95,7 +95,7 @@ const SidebarNavigation: SidebarNavigationItem[] = [
       {
         label: (
           <Link href="/approve-provider" rel="noopener noreferrer">
-            Duyệt provider
+            KYC List
           </Link>
         ),
         key: 'approve-provider',

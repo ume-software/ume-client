@@ -155,9 +155,7 @@ const ApproveProviderVoucher = () => {
     setOpenVourcherModalUpdate(false)
   }
   function addVourcherHandler() {
-    // setOpenVourcherModalView(true)
     setOpenVourcherModalCreate(true)
-    // setOpenVourcherModalUpdate(true)
   }
   // --------------------------
   const [adminVoucherList, setAdminVoucherList] = useState<VoucherPagingResponse>()
@@ -192,7 +190,7 @@ const ApproveProviderVoucher = () => {
     type: filter.type !== 'all' ? filter.type : undefined,
   })
 
-  const { isLoading, isFetching } = trpc.useQuery(
+  trpc.useQuery(
     [
       'voucher.getAllVoucher',
       { page: page.toString(), where: prismaWhereConditionToJsonString(testQuerry), order: undefined },

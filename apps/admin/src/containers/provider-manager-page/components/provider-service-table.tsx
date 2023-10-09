@@ -41,11 +41,6 @@ export default function ProviderServiceTable(props: IProviderServiceTableProps) 
       dataIndex: 'totalBooking',
       key: 'totalBooking',
     },
-    // {
-    //   title: 'Đánh giá',
-    //   dataIndex: 'rating',
-    //   key: 'rating',
-    // },
     {
       title: 'Doanh thu',
       dataIndex: 'totalRevenue',
