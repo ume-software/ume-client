@@ -14,6 +14,7 @@ import {
   getUserBySlug,
   providerCreateVoucher,
   providerGetSelfVoucher,
+  registerBecomeProvider,
   requestRecharge,
   updateUserProfile,
   userKYC,
@@ -115,5 +116,10 @@ export const identityRouter = createRouter()
     }),
     resolve: async ({ input, ctx }) => {
       return await getMyVoucher(input, ctx)
+    },
+  })
+  .mutation('registerBecomeProvider', {
+    resolve: async ({ ctx }) => {
+      return await registerBecomeProvider(ctx)
     },
   })

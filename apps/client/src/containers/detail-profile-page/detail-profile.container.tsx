@@ -141,21 +141,18 @@ const DetailProfileContainer = () => {
 
   const [messageApi, contextHolder] = message.useMessage()
   const [providerDetail, setProviderDetail] = useState<UserInformationResponse | undefined>(undefined)
-  const { isLoading: isProviderDetailLoading, isFetching: isProviderDetailFetching } = trpc.useQuery(
-    ['booking.getUserBySlug', slug.profileId!.toString()],
-    {
-      onSuccess(data) {
-        if (data.data.id) {
-          setProviderDetail(data.data)
-        } else {
-          router.replace('/404')
-        }
-      },
-      onError() {
+  const { isLoading: isProviderDetailLoading } = trpc.useQuery(['booking.getUserBySlug', slug.profileId!.toString()], {
+    onSuccess(data) {
+      if (data.data.id) {
+        setProviderDetail(data.data)
+      } else {
         router.replace('/404')
-      },
+      }
     },
-  )
+    onError() {
+      router.replace('/404')
+    },
+  })
 
   const [selectedTab, setSelectedTab] = useState<TabDataProps>(
     tabDatas.find((tab) => {

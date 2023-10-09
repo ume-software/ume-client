@@ -6,17 +6,60 @@ warn  - Invalid next.config.js options detected:
 
 See more info here: https://nextjs.org/docs/messages/invalid-next-config
 info  - Linting and checking validity of types...
-Failed to compile.
 
-./src/containers/user-manager-page/components/user-table.tsx:158:8
-Type error: Property 'excuteFunction' is missing in type '{ name: string; closeFunction: () => void; openValue: boolean; }' but required in type 'IBanModalProps'.
+./src/containers/provider-manager-page/index.tsx
+1:55  Warning: Delete `;`  prettier/prettier
+2:40  Warning: Delete `;⏎`  prettier/prettier
+5:1  Warning: Replace `⏎import·React,·{·useState·}·from·'react';⏎` with `import·React,·{·useState·}·from·'react'`  prettier/prettier
+9:1  Warning: Replace `⏎import·{·Pagination,·Tag·}·from·'antd';` with `import·{·Pagination,·Tag·}·from·'antd'`  prettier/prettier
+11:29  Warning: Delete `;`  prettier/prettier
+12:103  Warning: Delete `;`  prettier/prettier
+13:27  Warning: Delete `;⏎⏎`  prettier/prettier
+17:57  Warning: Delete `;⏎⏎`  prettier/prettier
+21:58  Warning: Delete `;⏎⏎`  prettier/prettier
+25:36  Warning: Delete `;⏎`  prettier/prettier
+286:31  Warning: Insert `⏎`  prettier/prettier
 
-[0m [90m 156 | [39m[0m
-[0m [90m 157 | [39m      [33m<[39m[33mUserDetails[39m data[33m=[39m{userDetails} openValue[33m=[39m{openUserDetail} closeFunction[33m=[39m{handlecloseUserDetails} [33m/[39m[33m>[39m[0m
-[0m[31m[1m>[22m[39m[90m 158 | [39m      [33m<[39m[33mBanModal[39m name[33m=[39m{[32m'Que'[39m} closeFunction[33m=[39m{handlecloseBan} openValue[33m=[39m{openBanUser} [33m/[39m[33m>[39m[0m
-[0m [90m     | [39m       [31m[1m^[22m[39m[0m
-[0m [90m 159 | [39m    [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m[0m
-[0m [90m 160 | [39m  )[0m
-[0m [90m 161 | [39m}[0m
-error Command failed with exit code 1.
-info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules
+info  - Creating an optimized production build...
+info  - Compiled successfully
+info  - Collecting page data...
+warn  - Restarted collecting page data for /_error because it took more than 60 seconds
+warn  - See more info here https://nextjs.org/docs/messages/static-page-generation-timeout
+warn  - Restarted collecting page data for [object Object] because it took more than 60 seconds
+warn  - Restarted collecting page data for /_app because it took more than 60 seconds
+warn  - Restarted collecting page data for /_app because it took more than 60 seconds
+warn  - Restarted collecting page data for [object Object] because it took more than 60 seconds
+warn  - Restarted collecting page data for [object Object] because it took more than 60 seconds
+warn  - Restarted collecting page data for [object Object] because it took more than 60 seconds
+warn  - Restarted collecting page data for [object Object] because it took more than 60 seconds
+warn  - Restarted collecting page data for [object Object] because it took more than 60 seconds
+warn  - Restarted collecting page data for [object Object] because it took more than 60 seconds
+info  - Generating static pages (0/5)
+info  - Generating static pages (1/5)
+info  - Generating static pages (2/5)
+info  - Generating static pages (3/5)
+info  - Generating static pages (5/5)
+info  - Finalizing page optimization...
+
+Route (pages)                              Size     First Load JS
+┌ λ /                                      257 B           177 kB
+├   /_app                                  0 B             176 kB
+├ λ /404                                   334 B           177 kB
+├ λ /api/status                            0 B             176 kB
+├ λ /api/trpc/[trpc]                       0 B             176 kB
+├ ○ /dashboard                             1.8 kB          178 kB
+├ ○ /provider-manager                      1.82 kB         178 kB
+├ ○ /signin                                1.81 kB         178 kB
+├ ○ /user-manager                          1.83 kB         178 kB
+└ ○ /voucher-manager/[task] (6778 ms)      1.88 kB         178 kB
++ First Load JS shared by all              182 kB
+  ├ chunks/framework-22108eb722d84e59.js   45.4 kB
+  ├ chunks/main-1549b305685c3af3.js        26.7 kB
+  ├ chunks/pages/_app-9b5fc9e8f501b05e.js  102 kB
+  ├ chunks/webpack-718ca14898185628.js     1.97 kB
+  └ css/9ae524d01ede3cab.css               5.31 kB
+
+λ  (Server)  server-side renders at runtime (uses getInitialProps or getServerSideProps)
+○  (Static)  automatically rendered as static HTML (uses no initial props)
+

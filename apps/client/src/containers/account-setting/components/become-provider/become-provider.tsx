@@ -1,13 +1,29 @@
 import { CheckSmall, CloseSmall } from '@icon-park/react'
+import { useAuth } from '~/contexts/auth'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { Switch } from 'antd'
 
 import AddSkillForm from './add-skill-form'
 
+import { trpc } from '~/utils/trpc'
+
 const BecomeProvider = () => {
-  const [checked, setChecked] = useState<boolean>(false)
+  const { user } = useAuth()
+  // const utils = trpc.useContext()
+  const [checked, setChecked] = useState<boolean>(user!.isProvider)
+  const registerBecomeProvider = trpc.useMutation(['identity.registerBecomeProvider'])
+
+  const handleBecomeProvider = () => {
+    checked
+      ? setChecked(false)
+      : registerBecomeProvider.mutate(undefined, {
+          onSuccess() {
+            setChecked(true)
+          },
+        })
+  }
 
   return (
     <>
@@ -27,10 +43,8 @@ const BecomeProvider = () => {
               className="bg-red-600"
               checkedChildren={<CheckSmall theme="outline" size="23" fill="#fff" strokeLinejoin="bevel" />}
               unCheckedChildren={<CloseSmall theme="outline" size="23" fill="#fff" strokeLinejoin="bevel" />}
-              defaultChecked={false}
-              onChange={() => {
-                setChecked(!checked)
-              }}
+              defaultChecked={checked}
+              onChange={handleBecomeProvider}
             />
           </div>
           <div>{checked && <AddSkillForm />}</div>

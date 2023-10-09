@@ -1,15 +1,16 @@
 import { TRPCError } from '@trpc/server'
 import { getEnv } from '~/env'
 
-import { parse, serialize } from 'cookie'
+import { parse } from 'cookie'
 import {
   AuthApi,
+  BuyCoinRequestApi,
+  CoinApi,
   CreateVoucherRequest,
   UpdateUserProfileRequestGenderEnum,
   UserApi,
   VoucherApi,
 } from 'ume-service-openapi'
-import { BuyCoinRequestApi, CoinApi } from 'ume-service-openapi'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
@@ -233,6 +234,27 @@ export const getMyVoucher = async (input: { limit: string; page: string; where?:
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
       message: error.message || 'Fail to get data recharge',
+    })
+  }
+}
+
+export const registerBecomeProvider = async (ctx) => {
+  const cookies = parse(ctx.req.headers.cookie ?? '')
+  try {
+    const reponse = await new UserApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).userBecomeProvider()
+    return {
+      data: reponse.data,
+      success: true,
+      message: '',
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to register become provider',
     })
   }
 }

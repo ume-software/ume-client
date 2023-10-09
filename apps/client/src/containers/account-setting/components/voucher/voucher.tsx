@@ -1,7 +1,7 @@
 import { CloseSmall } from '@icon-park/react'
 import { Button, Modal } from '@ume/ui'
 
-import { ReactNode, useState } from 'react'
+import { useState } from 'react'
 
 import VourcherModalCreate from './voucher-modal'
 
@@ -21,7 +21,6 @@ const Voucher = () => {
     },
   )
   const [isModalVisible, setIsModalVisible] = useState(false)
-  const [titleForm, setTitleForm] = useState<ReactNode>(<></>)
 
   const handleClose = () => {
     setIsModalVisible(false)
@@ -30,12 +29,12 @@ const Voucher = () => {
   const createNewVoucher = Modal.useDisplayPost({
     onOK: () => {},
     onClose: handleClose,
-    title: titleForm,
+    title: 'Tạo mới khuyến mãi',
     show: isModalVisible,
     customModalCSS: 'w-fit top-5 overflow-y-auto custom-scrollbar',
     form: (
       <>
-        <VourcherModalCreate closeFunction={undefined} openValue={false}></VourcherModalCreate>
+        <VourcherModalCreate />
       </>
     ),
     backgroundColor: '#15151b',
