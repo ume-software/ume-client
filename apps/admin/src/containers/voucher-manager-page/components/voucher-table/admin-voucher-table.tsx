@@ -5,6 +5,7 @@ import React, { useState } from 'react'
 
 import { Table, Tag, notification } from 'antd'
 import Image from 'next/image'
+import { VoucherResponse } from 'ume-service-openapi'
 
 import EmptyErrorPic from '../../../../../public/empty_error.png'
 import VourcherModalUpdate from '../vourcher-modal/vourcher-modal-update'
@@ -43,7 +44,7 @@ const mappingType = {
 }
 const AdminVoucherTable = ({ data }) => {
   const listData = tableDataMapping(data?.row)
-  const [voucherModalData, setVoucherModalData] = useState()
+  const [voucherModalData, setVoucherModalData] = useState<any>()
   const [openVourcherModalView, setOpenVourcherModalView] = useState(false)
   const [openVourcherModalUpdate, setOpenVourcherModalUpdate] = useState(false)
   const [selectedVoucher, setSelectedVoucher] = useState<any>()
@@ -128,45 +129,43 @@ const AdminVoucherTable = ({ data }) => {
       key: 'description',
     },
     {
-      title: <div className="w-full flex justify-center">Loại</div>,
+      title: <div className="flex justify-center w-full">Loại</div>,
       dataIndex: 'type',
       key: 'type',
-      render: (type) => <div className="w-full flex justify-center ">{mappingType[type]}</div>,
+      render: (type) => <div className="flex justify-center w-full ">{mappingType[type]}</div>,
     },
     {
-      title: <div className="w-full flex justify-center">Giá trị</div>,
+      title: <div className="flex justify-center w-full">Giá trị</div>,
       key: 'discountValue',
       render: (record) => {
         if (record.discountUnit == 'PERCENT')
-          return <div className="w-full flex justify-center">{record.discountValue + '%'}</div>
+          return <div className="flex justify-center w-full">{record.discountValue + '%'}</div>
         else if (record.discountUnit == 'CASH')
-          return <div className="w-full flex justify-center">{record.discountValue + ' xu'}</div>
+          return <div className="flex justify-center w-full">{record.discountValue + ' xu'}</div>
       },
     },
     {
-      title: <div className="w-full flex justify-center">Bắt đầu</div>,
+      title: <div className="flex justify-center w-full">Bắt đầu</div>,
       key: 'startDate',
       dataIndex: 'startDate',
-      render: (date) => <div className="w-full flex justify-center">{new Date(date).toLocaleDateString('en-GB')}</div>,
+      render: (date) => <div className="flex justify-center w-full">{new Date(date).toLocaleDateString('en-GB')}</div>,
     },
     {
-      title: <div className="w-full flex justify-center">Kết thúc</div>,
+      title: <div className="flex justify-center w-full">Kết thúc</div>,
       key: 'endDate',
       dataIndex: 'endDate',
-      render: (date) => <div className="w-full flex justify-center">{new Date(date).toLocaleDateString('en-GB')}</div>,
+      render: (date) => <div className="flex justify-center w-full">{new Date(date).toLocaleDateString('en-GB')}</div>,
     },
     {
-      title: <div className="w-full flex justify-center">Đối tượng</div>,
+      title: <div className="flex justify-center w-full">Đối tượng</div>,
       key: 'recipientType',
       dataIndex: 'recipientType',
-      render: (text) => <div className="w-full flex justify-center">{mappingRecipientType[text]}</div>,
+      render: (text) => <div className="flex justify-center w-full">{mappingRecipientType[text]}</div>,
     },
     {
       title: '',
       key: 'action',
       render: (record) => {
-        console.log(record)
-
         return (
           <>
             <div className="flex max-w-[6rem]">
@@ -194,9 +193,9 @@ const AdminVoucherTable = ({ data }) => {
               </Button>
               <Button isActive={false} onClick={() => handleOpenConfirm(record)}>
                 {record.isActivated ? (
-                  <ReduceOne className="rounded-full hover:bg-gray-500 p-2" theme="outline" size="20" fill="#ff0000" />
+                  <ReduceOne className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="20" fill="#ff0000" />
                 ) : (
-                  <CheckOne className="rounded-full hover:bg-gray-500 p-2" theme="outline" size="20" fill="#22c55e" />
+                  <CheckOne className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="20" fill="#22c55e" />
                 )}
               </Button>
               {/* <Delete className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="18" fill="#ff0000" /> */}
@@ -238,7 +237,7 @@ const AdminVoucherTable = ({ data }) => {
         isComfirmFunction={handleConfirmFunction}
         titleValue={isActivated ? 'Xác nhận dừng hoạt động' : 'Xác nhận mở hoạt động'}
       >
-        <div className="text-white p-4">
+        <div className="p-4 text-white">
           Bạn có chắc chắn muốn {!isActivated ? ' mở hoạt động ' : ' dừng hoạt động '} khuyến mãi này?
         </div>
       </ComfirmModal>

@@ -1,4 +1,5 @@
 import { Button, TextArea } from '@ume/ui'
+import empty_img from 'public/empty_error.png'
 
 import { useState } from 'react'
 
@@ -47,9 +48,8 @@ export default function VourcherModalView({ vourcherId, closeFunction, openValue
       },
     },
   )
-  console.log(voucherDetails)
   const titleValue = 'Thông Tin Khuyến Mãi'
-  const avatarUrl = voucherDetails?.image || ''
+  const avatarUrl = voucherDetails?.image || empty_img
   const name = voucherDetails?.name || ''
   const vourcherCode = voucherDetails?.code || ''
   const issuer = voucherDetails?.provider?.name || voucherDetails?.admin?.name
@@ -79,11 +79,11 @@ export default function VourcherModalView({ vourcherId, closeFunction, openValue
               <Image className="overflow-hidden rounded-2xl" width={150} height={200} src={avatarUrl!} alt="" />
             </div>
             <div className="flex flex-col justify-end w-2/5 ">
-              <div className="h-24 text-white">
+              <div className="text-white h-14">
                 Tên: <span className="font-bold">{name}</span>
-                <div className="h-12 text-[#FFFFFF80]">
-                  Mã: <span className="font-bold">{vourcherCode}</span>
-                </div>
+              </div>
+              <div className="h-12 text-[#FFFFFF80]">
+                Mã: <span className="font-bold">{vourcherCode}</span>
               </div>
 
               <div className="h-12 text-white">

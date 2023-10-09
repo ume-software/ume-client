@@ -164,13 +164,13 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
       </div>
       <div className="flex h-10 mt-4">
         <div className="flex flex-col">
-          <Button onClick={handleSwitchTable} customCSS="hover:text-gray-400">
+          <Button isActive={false} onClick={handleSwitchTable} customCSS="hover:text-gray-400">
             Dịch vụ cung cấp
           </Button>
           {switchTable && <div className="border-b-2 border-[#7463F0] mx-4 mr-6"></div>}
         </div>
         <div className="flex flex-col w-40 ">
-          <Button onClick={handleSwitchTable} customCSS="hover:text-gray-400">
+          <Button isActive={false} onClick={handleSwitchTable} customCSS="hover:text-gray-400">
             Lịch sử giao dịch
           </Button>
           {!switchTable && <div className="border-b-2 border-[#7463F0] mx-4"></div>}
