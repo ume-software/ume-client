@@ -84,6 +84,7 @@ export const providerRouter = createRouter()
   .mutation('BanProvider', {
     input: z.object({
       slug: z.string(),
+      adminHandleBanProviderRequest: z.optional(z.object({ content: z.optional(z.string()) })),
     }),
     resolve: async ({ input, ctx }) => {
       return await BanProvider(input, ctx)

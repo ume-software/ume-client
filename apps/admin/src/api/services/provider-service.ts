@@ -1,8 +1,8 @@
 import { TRPCError } from '@trpc/server'
 import { getEnv } from '~/env'
 
-import { parse } from 'cookie'
-import { AdminManageProviderApi, AdminManageUserKYCRequestApi, UserKYCRequestResponse } from 'ume-service-openapi'
+import { parse, serialize } from 'cookie'
+import { AdminHandleBanProviderRequest, AdminManageProviderApi } from 'ume-service-openapi'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
@@ -194,14 +194,17 @@ export const getProviderTotalCoin = async (
     })
   }
 }
-export const BanProvider = async ({ slug }, ctx) => {
+export const BanProvider = async (
+  query: { slug: string; adminHandleBanProviderRequest?: AdminHandleBanProviderRequest },
+  ctx,
+) => {
   const cookies = parse(ctx.req.headers.cookie)
   try {
     const response = await new AdminManageProviderApi({
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).adminBanProviderBySlug(slug)
+    }).adminBanProviderBySlug(query.slug, query.adminHandleBanProviderRequest)
     return {
       data: response.data,
       success: true,
