@@ -93,7 +93,7 @@ export default function UserDetails({ details, openValue, closeFunction }: IUser
       </div>
       <div className="my-4 px-4">
         <Table pagination={false} locale={locale} columns={columns} dataSource={tableDataMapping(transaction?.row)} />
-        <div className="flex w-full justify-center pb-[200px] mt-5">
+        <div className="flex w-full justify-center mb-2 mt-5">
           <Pagination
             itemRender={(page, type) => (
               <div className="text-white">

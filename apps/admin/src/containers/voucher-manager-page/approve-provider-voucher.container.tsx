@@ -14,16 +14,11 @@ import {
 } from 'ume-service-openapi'
 
 import ApproveProviderVoucherTable from './components/voucher-table/approve-voucher-table'
-import VourcherModalCreate from './components/vourcher-modal/vourcher-modal-create'
-import VourcherModalView from './components/vourcher-modal/vourcher-modal-view'
 
 import FilterDropdown from '~/components/filter-dropdown'
 
 import { trpc } from '~/utils/trpc'
 
-interface LooseObject {
-  [key: string]: any
-}
 
 const typeFilter = [
   {
@@ -139,27 +134,6 @@ const mappingRecipientType = {
   TOP_10_BOOKER: ' Top 10 người thuê',
 }
 const ApproveProviderVoucher = () => {
-  // model variable and function
-
-  const [openVourcherModalView, setOpenVourcherModalView] = useState(false)
-  const [openVourcherModalCreate, setOpenVourcherModalCreate] = useState(false)
-  const [openVourcherModalUpdate, setOpenVourcherModalUpdate] = useState(false)
-
-  function closeVourcherModalView() {
-    setOpenVourcherModalView(false)
-  }
-  function closeVourcherModalCreate() {
-    setOpenVourcherModalCreate(false)
-  }
-  function closeVourcherModalUpdate() {
-    setOpenVourcherModalUpdate(false)
-  }
-  function addVourcherHandler() {
-    // setOpenVourcherModalView(true)
-    setOpenVourcherModalCreate(true)
-    // setOpenVourcherModalUpdate(true)
-  }
-  // --------------------------
   const [adminVoucherList, setAdminVoucherList] = useState<VoucherPagingResponse>()
   const [page, setPage] = useState(1)
   const [filter, setFilter] = useState({
@@ -186,16 +160,17 @@ const ApproveProviderVoucher = () => {
       },
     ],
 
-    adminId: null,
+    providerId: null,
     recipientType: filter.recipientType !== 'ALL' ? filter.recipientType : undefined,
-    status: filter.discountUnit !== 'all' ? filter.discountUnit : undefined,
+    status: 'PENDING',
     type: filter.type !== 'all' ? filter.type : undefined,
+    discountUnit: filter.discountUnit !== 'all' ? filter.discountUnit : undefined,
   })
 
   const { isLoading, isFetching } = trpc.useQuery(
     [
       'voucher.getAllVoucher',
-      { page: page.toString(), where: prismaWhereConditionToJsonString(testQuerry), order: undefined },
+      { page: page.toString(), where: prismaWhereConditionToJsonString(testQuerry, ['isUndefined']), order: undefined },
     ],
     {
       onSuccess(data) {
@@ -316,9 +291,6 @@ const ApproveProviderVoucher = () => {
           }}
         />
       </div>
-
-      <VourcherModalView closeFunction={closeVourcherModalView} openValue={openVourcherModalView} />
-      <VourcherModalCreate closeFunction={closeVourcherModalCreate} openValue={openVourcherModalCreate} />
     </div>
   )
 }

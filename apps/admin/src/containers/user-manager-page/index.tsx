@@ -5,7 +5,6 @@ import React, { useState } from 'react'
 
 import { Pagination, Tag } from 'antd'
 import Head from 'next/head'
-import { title } from 'process'
 import { PrismaWhereConditionType, prismaWhereConditionToJsonString } from 'query-string-prisma-ume'
 import {
   AdminGetUserPagingResponseResponse,
@@ -35,7 +34,7 @@ const statusFilterItems = [
   {
     key: 'false',
     label: (
-      <Tag className="bg-green-500 hover:bg-green-600 rounded-lg text-white px-3 py-2 w-full flex justify-center">
+      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white  px-3 py-2 w-full flex justify-center">
         Hoạt động
       </Tag>
     ),
@@ -43,7 +42,7 @@ const statusFilterItems = [
   {
     key: 'true',
     label: (
-      <Tag className="bg-red-500 hover:bg-red-600 rounded-lg text-white px-3 py-2 w-full flex justify-center">
+      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white  px-3 py-2 w-full flex justify-center">
         Tạm dừng
       </Tag>
     ),
@@ -83,11 +82,20 @@ const genderFilterItems = [
       </Tag>
     ),
   },
+  {
+    key: AdminGetUserResponseResponseGenderEnum.Private,
+    label: (
+      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white px-3 py-2 w-full flex justify-center">
+        <div className="flex justify-center items-center w-10">Ẩn</div>
+      </Tag>
+    ),
+  },
 ]
 const mappingGender = {
   ALL: 'Giới tính',
   MALE: 'Nam',
   FEMALE: ' Nữ',
+  PRIVATE: 'Ẩn',
   OTHER: ' Khác',
 }
 const mappingStatus = {
@@ -113,10 +121,11 @@ const UserManager = () => {
     gender: filter.gender !== 'ALL' ? filter.gender : undefined,
     isBanned: filter.isBanned !== 'all' ? (filter.isBanned == 'true' ? true : false) : undefined,
   })
+
   const { isLoading: isUserListLoading, isFetching: isUserListFetching } = trpc.useQuery(
     [
       'user.getUserList',
-      { page: page.toString(), where: prismaWhereConditionToJsonString(testQuerry), order: undefined },
+      { page: page.toString(), where: prismaWhereConditionToJsonString(testQuerry, ['isUndefined']), order: undefined },
     ],
     {
       onSuccess(data) {
