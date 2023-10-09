@@ -20,7 +20,7 @@ export default function BanModal({ isBanned, name, openValue, closeFunction, exc
   const [openConfirm, setOpenConfirm] = React.useState(false)
 
   function handleBanProvider() {
-    excuteFunction()
+    excuteFunction(content)
     setOpenConfirm(false)
     closeHandle()
   }

@@ -81,7 +81,7 @@ const genderFilterItems = [
 const ProviderManager = () => {
   const utils = trpc.useContext()
   const LIMIT = '10'
-  const SELECT = ['$all'] //['$all', { user: ['$all'] }]
+  const SELECT = ['$all', { providerConfig: ['$all'] }]
   const [page, setPage] = useState(1)
   const [filter, setFilter] = useState({
     gender: 'all',
@@ -93,6 +93,8 @@ const ProviderManager = () => {
   const [providerList, setProviderList] = useState<AdminGetUserPagingResponseResponse | undefined>()
   const generateQuery = () => {
     let query: LooseObject = {}
+    query.isBanned = false
+    query.isProvider = true
     if (filter.search !== 'all') {
       query.name = {
         contains: filter.search,
@@ -103,9 +105,10 @@ const ProviderManager = () => {
       query.gender = filter.gender.toUpperCase()
     }
     if (filter.isBanned !== 'all') {
-      filter.isBanned == 'true' ? (query.isBanned = true) : (query.isBanned = false)
+      filter.isBanned == 'true'
+        ? (query.providerConfig = { isBanned: true })
+        : (query.providerConfig = { isBanned: false })
     }
-
     return query
   }
   const { isLoading: isUserListLoading, isFetching: isUserListFetching } = trpc.useQuery(
@@ -130,15 +133,15 @@ const ProviderManager = () => {
   )
   const data = providerList?.row?.map((row: any) => {
     return {
+      ...row,
       key: row.id,
       id: row.id,
       name: row.name,
       Gmail: row.email,
       phone: row.phone,
       gender: row.gender,
-      isBanned: row.isBanned,
-      joinDate: row.createdAt,
-      ...row,
+      isBanned: row.providerConfig.isBanned,
+      joinDate: row.providerConfig.createdAt,
     }
   })
   const mapingGender = {
