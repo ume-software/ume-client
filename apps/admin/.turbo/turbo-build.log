@@ -7,18 +7,14 @@ warn  - Invalid next.config.js options detected:
 See more info here: https://nextjs.org/docs/messages/invalid-next-config
 info  - Linting and checking validity of types...
 
-./src/containers/provider-manager-page/index.tsx
-1:55  Warning: Delete `;`  prettier/prettier
-2:40  Warning: Delete `;⏎`  prettier/prettier
-5:1  Warning: Replace `⏎import·React,·{·useState·}·from·'react';⏎` with `import·React,·{·useState·}·from·'react'`  prettier/prettier
-9:1  Warning: Replace `⏎import·{·Pagination,·Tag·}·from·'antd';` with `import·{·Pagination,·Tag·}·from·'antd'`  prettier/prettier
-11:29  Warning: Delete `;`  prettier/prettier
-12:103  Warning: Delete `;`  prettier/prettier
-13:27  Warning: Delete `;⏎⏎`  prettier/prettier
-17:57  Warning: Delete `;⏎⏎`  prettier/prettier
-21:58  Warning: Delete `;⏎⏎`  prettier/prettier
-25:36  Warning: Delete `;⏎`  prettier/prettier
-286:31  Warning: Insert `⏎`  prettier/prettier
+./src/containers/voucher-manager-page/approve-provider-voucher.container.tsx
+22:1  Warning: Delete `⏎`  prettier/prettier
+
+./src/containers/voucher-manager-page/components/vourcher-modal/vourcher-modal-update.tsx
+154:6  Warning: React Hook React.useEffect has missing dependencies: 'ImageInit', 'applyTimeInit', 'audienceInit', 'descriptionInit', 'discountUnitInit', 'form', 'minimizeInit', 'nameInit', 'numUserCanUseInDayInit', 'numUserCanUseInit', 'numVoucherInDayInit', 'numVoucherInit', 'statusInit', 'typeVoucherInit', and 'vourcherCodeInit'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/containers/voucher-manager-page/voucher-by-admin.container.tsx
+8:9  Warning: Replace `⏎··VoucherPagingResponse,⏎··VoucherResponse,⏎··VoucherResponseRecipientTypeEnum,⏎` with `·VoucherPagingResponse,·VoucherResponse,·VoucherResponseRecipientTypeEnum·`  prettier/prettier
 
 info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules
 info  - Creating an optimized production build...
@@ -44,21 +40,21 @@ info  - Finalizing page optimization...
 
 Route (pages)                              Size     First Load JS
 ┌ λ /                                      257 B           177 kB
-├   /_app                                  0 B             176 kB
+├   /_app                                  0 B             177 kB
 ├ λ /404                                   334 B           177 kB
-├ λ /api/status                            0 B             176 kB
-├ λ /api/trpc/[trpc]                       0 B             176 kB
-├ ○ /dashboard                             1.8 kB          178 kB
-├ ○ /provider-manager                      1.82 kB         178 kB
+├ λ /api/status                            0 B             177 kB
+├ λ /api/trpc/[trpc]                       0 B             177 kB
+├ ○ /dashboard (7704 ms)                   1.8 kB          178 kB
+├ ○ /provider-manager (370 ms)             1.82 kB         178 kB
 ├ ○ /signin                                1.81 kB         178 kB
-├ ○ /user-manager                          1.83 kB         178 kB
-└ ○ /voucher-manager/[task] (6778 ms)      1.88 kB         178 kB
+├ ○ /user-manager (362 ms)                 1.83 kB         178 kB
+└ ○ /voucher-manager/[task] (358 ms)       1.89 kB         179 kB
 + First Load JS shared by all              182 kB
   ├ chunks/framework-22108eb722d84e59.js   45.4 kB
   ├ chunks/main-1549b305685c3af3.js        26.7 kB
-  ├ chunks/pages/_app-9b5fc9e8f501b05e.js  102 kB
-  ├ chunks/webpack-718ca14898185628.js     1.97 kB
-  └ css/9ae524d01ede3cab.css               5.31 kB
+  ├ chunks/pages/_app-dc9c55d2b955d3a3.js  102 kB
+  ├ chunks/webpack-e4bd7b27175d8958.js     2.06 kB
+  └ css/73ed009233a187c7.css               5.41 kB
 
 λ  (Server)  server-side renders at runtime (uses getInitialProps or getServerSideProps)
 ○  (Static)  automatically rendered as static HTML (uses no initial props)

@@ -1,11 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Transition } from '@headlessui/react'
-import { DeleteFive, Down, Plus, Save, Time } from '@icon-park/react'
-import { Button, Input, InputWithAffix } from '@ume/ui'
+import { DeleteFive, Down, Plus, Save } from '@icon-park/react'
+import { Button, Input, InputWithAffix, TextArea } from '@ume/ui'
 import coin from 'public/coin-icon.png'
 import { MenuModalEnum } from '~/enumVariable/enumVariable'
 
-import { Fragment, useEffect, useRef, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 
 import { notification } from 'antd'
 import Image from 'next/legacy/image'
@@ -271,6 +271,10 @@ const AddSkillForm = () => {
                     >
                       <DeleteFive theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />
                     </Button>
+                  </div>
+                  <div className="flex flex-col gap-1 mb-5">
+                    <label>Giới thiệu về tôi: </label>
+                    <TextArea name="description" className="bg-[#413F4D] w-4/5 max-h-[140px]" rows={5} />
                   </div>
                   <div className="flex flex-col gap-1 mb-5">
                     <label>Dịch vụ: </label>

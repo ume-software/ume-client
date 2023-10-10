@@ -262,7 +262,7 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
                             >
                               <div className="min-w-[500px] grid grid-cols-5 gap-5">
                                 <p className="col-span-1 text-md font-semibold">{data.code}</p>
-                                <p className="col-span-3 text-md font-semibold">{data.content}</p>
+                                <p className="col-span-3 text-md font-semibold">{data.description}</p>
                                 <p className="col-span-1 text-md font-semibold">
                                   {data.discountValue} {data.discountUnit}
                                 </p>

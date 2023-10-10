@@ -146,14 +146,20 @@ export default function VourcherModalCreate() {
   const [isModalConfirmationVisible, setIsModalConfirmationVisible] = useState<boolean>(false)
   const providerCreateVoucher = trpc.useMutation(['identity.providerCreateVoucher'])
 
-  const checkFieldRequỉed = !!(
-    form.values.name &&
-    form.values.typeVoucher &&
-    form.values.discountUnit &&
-    form.values.audience &&
-    form.values.endDate &&
-    form.values.endDate < form.values.startDate
-  )
+  const [checkFieldRequỉed, setCheckFieldRequire] = useState<boolean>(false)
+
+  React.useEffect(() => {
+    setCheckFieldRequire(
+      !!(
+        form.values.name &&
+        form.values.typeVoucher &&
+        form.values.discountUnit &&
+        form.values.audience &&
+        form.values.endDate &&
+        new Date(form.values.endDate) >= new Date(form.values.startDate)
+      ),
+    )
+  }, [form.values])
 
   function clearData() {
     form.resetForm()
@@ -225,7 +231,7 @@ export default function VourcherModalCreate() {
           description="Bạn có chấp nhận tạo khuyến mãi mới hay không?"
           onClose={handleClose}
           onOk={() => {
-            submitHandle()
+            handleSubmitCreateVoucher()
           }}
         />
       </>
@@ -247,11 +253,11 @@ export default function VourcherModalCreate() {
     ),
   })
 
-  async function submitHandle() {
+  async function handleSubmitCreateVoucher() {
     if (createVoucherFormRef.current && checkFieldRequỉed) {
       if (form.values.selectedImage) {
         const formData = new FormData(createVoucherFormRef.current)
-        const responseData = await uploadImageBooking(formData)
+        const responseData = await uploadImageBooking(formData.getAll('files'))
 
         if (responseData?.data?.data?.results) {
           try {
@@ -308,7 +314,7 @@ export default function VourcherModalCreate() {
           })
         }
       } else {
-        notification.error({
+        notification.warning({
           message: 'Chưa cập nhật ảnh!',
           description: 'Vui lòng kiểm tra lại hình ảnh.',
           placement: 'bottomLeft',
@@ -377,6 +383,7 @@ export default function VourcherModalCreate() {
                 <div className="inline-block w-2/3 ">
                   <FormInput
                     name="name"
+                    type="text"
                     className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 ml-4 border-opacity-30 ${
                       form.errors.name && form.touched.name ? 'placeholder:text-red-500' : ''
                     }`}

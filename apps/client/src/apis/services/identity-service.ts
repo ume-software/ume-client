@@ -7,6 +7,8 @@ import {
   BuyCoinRequestApi,
   CoinApi,
   CreateVoucherRequest,
+  ServiceApi,
+  ServiceAttributeApi,
   UpdateUserProfileRequestGenderEnum,
   UserApi,
   VoucherApi,
@@ -255,6 +257,48 @@ export const registerBecomeProvider = async (ctx) => {
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
       message: error.message || 'Fail to register become provider',
+    })
+  }
+}
+
+export const getServiceAttributeByServiceSlug = async (slug: string, ctx) => {
+  const cookies = parse(ctx.req.headers.cookie ?? '')
+  try {
+    const reponse = await new ServiceApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).getServiceBySlug(slug)
+    return {
+      data: reponse.data,
+      success: true,
+      message: '',
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to get data recharge',
+    })
+  }
+}
+
+export const getServiceAttributeValueByServiceAttributeId = async (slug: string, ctx) => {
+  const cookies = parse(ctx.req.headers.cookie ?? '')
+  try {
+    const reponse = await new ServiceAttributeApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).getServiceAttributeValueByServiceAttributeId(slug)
+    return {
+      data: reponse.data,
+      success: true,
+      message: '',
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to get data recharge',
     })
   }
 }

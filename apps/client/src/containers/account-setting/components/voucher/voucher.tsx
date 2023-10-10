@@ -29,7 +29,7 @@ const Voucher = () => {
   const createNewVoucher = Modal.useDisplayPost({
     onOK: () => {},
     onClose: handleClose,
-    title: 'Tạo mới khuyến mãi',
+    title: <p className="text-white">Tạo mới khuyến mãi</p>,
     show: isModalVisible,
     customModalCSS: 'w-fit top-5 overflow-y-auto custom-scrollbar',
     form: (
