@@ -53,7 +53,7 @@ const tableDataMapping = (data) => {
   return list
 }
 
-const UserTable = ({ userList }) => {
+const UserTable = ({ userList, isLoading }) => {
   const utils = trpc.useContext()
   const [openUserDetail, setOpenUserDetail] = useState(false)
   const [openBanUser, setOpenBanUser] = useState(false)
@@ -215,7 +215,7 @@ const UserTable = ({ userList }) => {
 
   return (
     <div className="mt-5 ">
-      <Table locale={locale} pagination={false} columns={columns} dataSource={listData} />
+      <Table loading={isLoading} locale={locale} pagination={false} columns={columns} dataSource={listData} />
 
       {openUserDetail && (
         <UserDetails details={userDetails} openValue={openUserDetail} closeFunction={handlecloseUserDetails} />

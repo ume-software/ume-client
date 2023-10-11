@@ -44,7 +44,7 @@ const mappingType = {
   CASHBACK: 'Hoàn tiền',
 }
 
-const ProviderVoucherTable = ({ data }) => {
+const ProviderVoucherTable = ({ data, isLoading }) => {
   const listData = tableDataMapping(data?.row)
   const utils = trpc.useContext()
   const [openConfirm, setOpenConfirm] = useState(false)
@@ -216,7 +216,7 @@ const ProviderVoucherTable = ({ data }) => {
 
   return (
     <div className="mt-5 ">
-      <Table locale={locale} pagination={false} columns={columns} dataSource={listData} />
+      <Table loading={isLoading} locale={locale} pagination={false} columns={columns} dataSource={listData} />
       {openVourcherModalView && (
         <VourcherModalView
           vourcherId={voucherModalData}

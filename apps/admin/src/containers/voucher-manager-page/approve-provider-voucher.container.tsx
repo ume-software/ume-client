@@ -19,7 +19,6 @@ import FilterDropdown from '~/components/filter-dropdown'
 
 import { trpc } from '~/utils/trpc'
 
-
 const typeFilter = [
   {
     key: 'all',
@@ -134,7 +133,7 @@ const mappingRecipientType = {
   TOP_10_BOOKER: ' Top 10 người thuê',
 }
 const ApproveProviderVoucher = () => {
-  const [adminVoucherList, setAdminVoucherList] = useState<VoucherPagingResponse>()
+  const [voucherList, setVoucherList] = useState<VoucherPagingResponse>()
   const [page, setPage] = useState(1)
   const [filter, setFilter] = useState({
     recipientType: 'ALL',
@@ -160,7 +159,7 @@ const ApproveProviderVoucher = () => {
       },
     ],
 
-    providerId: null,
+    adminId: null,
     recipientType: filter.recipientType !== 'ALL' ? filter.recipientType : undefined,
     status: 'PENDING',
     type: filter.type !== 'all' ? filter.type : undefined,
@@ -174,7 +173,7 @@ const ApproveProviderVoucher = () => {
     ],
     {
       onSuccess(data) {
-        setAdminVoucherList(data.data)
+        setVoucherList(data.data)
       },
     },
   )
@@ -256,7 +255,7 @@ const ApproveProviderVoucher = () => {
             />
           </div>
 
-          <div className="flex items-center pl-2 border-2 border-white rounded-lg w-fit bg-umeHeader">
+          <div className="flex items-center border-2 border-white rounded-lg w-fit bg-umeHeader">
             <Search className="p-2 rounded-full active:bg-gray-700" theme="outline" size="24" fill="#fff" />
             <Input
               placeholder="Tìm kiếm tên khuyến mãi"
@@ -269,7 +268,11 @@ const ApproveProviderVoucher = () => {
           </div>
         </div>
       </div>
-      <ApproveProviderVoucherTable data={adminVoucherList} />
+      <div className="flex justify-end mb-5 text-gray-500">
+        {10 * (page - 1) + 1}-{page * 10 > voucherList?.count!! ? voucherList?.count : page * 10} trên{' '}
+        {voucherList?.count} khuyến mãi
+      </div>
+      <ApproveProviderVoucherTable isLoading={isLoading || isFetching} data={voucherList} />
       <div className="flex w-full justify-center pb-[200px] mt-5">
         <Pagination
           itemRender={(page, type) => (
@@ -285,7 +288,7 @@ const ApproveProviderVoucher = () => {
           )}
           pageSize={10}
           current={page}
-          total={adminVoucherList?.count}
+          total={voucherList?.count}
           onChange={(page) => {
             handlePageChange(page)
           }}

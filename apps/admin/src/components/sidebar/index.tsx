@@ -12,7 +12,7 @@ const Sidebar = () => {
       </Space>
       <Menu
         theme="dark"
-        defaultOpenKeys={['admin', 'account', 'skill', 'transaction', 'voucher']}
+        defaultOpenKeys={['admin', 'account', 'service', 'transaction', 'voucher']}
         mode="inline"
         items={SidebarNavigation}
       />
