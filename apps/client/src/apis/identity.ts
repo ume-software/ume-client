@@ -8,9 +8,12 @@ import { z } from 'zod'
 
 import { createRouter } from './configurations'
 import {
+  createServiceProvider,
   getAccountBalance,
   getIdentityInfo,
   getMyVoucher,
+  getServiceAttributeByServiceSlug,
+  getServiceAttributeValueByServiceAttributeId,
   getUserBySlug,
   providerCreateVoucher,
   providerGetSelfVoucher,
@@ -121,5 +124,38 @@ export const identityRouter = createRouter()
   .mutation('registerBecomeProvider', {
     resolve: async ({ ctx }) => {
       return await registerBecomeProvider(ctx)
+    },
+  })
+  .query('getServiceAttributeByServiceSlug', {
+    input: z.string(),
+    resolve: async ({ input, ctx }) => {
+      return await getServiceAttributeByServiceSlug(input, ctx)
+    },
+  })
+  .query('getServiceAttributeValueByServiceAttributeId', {
+    input: z.string(),
+    resolve: async ({ input, ctx }) => {
+      return await getServiceAttributeValueByServiceAttributeId(input, ctx)
+    },
+  })
+  .mutation('createServiceProvider', {
+    input: z.object({
+      serviceId: z.string(),
+      defaultCost: z.number(),
+      description: z.optional(z.string()),
+      createBookingCosts: z.optional(
+        z.array(z.object({ startTimeOfDay: z.string(), endTimeOfDay: z.string(), amount: z.number() })),
+      ),
+      createServiceAttributes: z.optional(
+        z.array(
+          z.object({
+            id: z.string(),
+            serviceAttributeValueIds: z.string(),
+          }),
+        ),
+      ),
+    }),
+    resolve: async ({ input, ctx }) => {
+      return await createServiceProvider(input, ctx)
     },
   })

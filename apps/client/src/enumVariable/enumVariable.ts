@@ -11,6 +11,7 @@ export enum GenderEnum {
 }
 
 export enum MenuModalEnum {
+  SERVICE = 'SERVICE',
   ATTRIBUTE = 'ATTRIBUTE',
   SUB_ATTRIBUTE = 'SUB_ATTRIBUTE',
 }

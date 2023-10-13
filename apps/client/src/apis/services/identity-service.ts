@@ -7,6 +7,7 @@ import {
   BuyCoinRequestApi,
   CoinApi,
   CreateVoucherRequest,
+  ProviderServiceApi,
   ServiceApi,
   ServiceAttributeApi,
   UpdateUserProfileRequestGenderEnum,
@@ -268,7 +269,7 @@ export const getServiceAttributeByServiceSlug = async (slug: string, ctx) => {
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).getServiceBySlug(slug)
+    }).getServiceAttributeByServiceSlug(slug, undefined, undefined, '["$all"]')
     return {
       data: reponse.data,
       success: true,
@@ -289,7 +290,37 @@ export const getServiceAttributeValueByServiceAttributeId = async (slug: string,
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).getServiceAttributeValueByServiceAttributeId(slug)
+    }).getServiceAttributeValueByServiceAttributeId(slug, undefined, undefined, '["$all"]')
+    return {
+      data: reponse.data,
+      success: true,
+      message: '',
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to get data recharge',
+    })
+  }
+}
+
+export const createServiceProvider = async (
+  query: {
+    serviceId: string
+    defaultCost: number
+    description?: string
+    createBookingCosts?: { startTimeOfDay: string; endTimeOfDay: string; amount: number }[]
+    createServiceAttributes?: { id: string; serviceAttributeValueIds: string }[]
+  },
+  ctx,
+) => {
+  const cookies = parse(ctx.req.headers.cookie ?? '')
+  try {
+    const reponse = await new ProviderServiceApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).createProviderService(query)
     return {
       data: reponse.data,
       success: true,

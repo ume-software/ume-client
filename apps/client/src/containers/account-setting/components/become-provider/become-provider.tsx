@@ -4,20 +4,25 @@ import { useAuth } from '~/contexts/auth'
 import { useEffect, useState } from 'react'
 
 import { Switch } from 'antd'
+import { ServicePagingResponse } from 'ume-service-openapi'
 
 import AddSkillForm from './add-skill-form'
+import ServiceForm from './service-form'
 
 import { trpc } from '~/utils/trpc'
 
 const BecomeProvider = () => {
   const { user } = useAuth()
-  // const utils = trpc.useContext()
   const [checked, setChecked] = useState<boolean>(user!.isProvider)
   const registerBecomeProvider = trpc.useMutation(['identity.registerBecomeProvider'])
 
   const handleBecomeProvider = () => {
     checked
-      ? setChecked(false)
+      ? registerBecomeProvider.mutate(undefined, {
+          onSuccess() {
+            setChecked(false)
+          },
+        })
       : registerBecomeProvider.mutate(undefined, {
           onSuccess() {
             setChecked(true)
@@ -47,7 +52,7 @@ const BecomeProvider = () => {
               onChange={handleBecomeProvider}
             />
           </div>
-          <div>{checked && <AddSkillForm />}</div>
+          <div>{checked && <ServiceForm />}</div>
         </div>
       </div>
     </>
