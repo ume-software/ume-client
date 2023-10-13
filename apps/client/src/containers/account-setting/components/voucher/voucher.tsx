@@ -1,7 +1,9 @@
 import { CloseSmall } from '@icon-park/react'
 import { Button, Modal } from '@ume/ui'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+
+import { VoucherPagingResponse } from 'ume-service-openapi'
 
 import VourcherModalCreate from './voucher-modal'
 
@@ -11,7 +13,8 @@ import { trpc } from '~/utils/trpc'
 
 const Voucher = () => {
   const [page, setPage] = useState<string>('1')
-  const [voucherForProvider, setVoucherForProvider] = useState<any>(undefined)
+  const [voucherForProvider, setVoucherForProvider] = useState<VoucherPagingResponse | undefined>(undefined)
+  const [voucherForProviderArray, setVoucherForProviderArray] = useState<any[] | undefined>(undefined)
   const { isLoading: isVoucherLoading } = trpc.useQuery(
     ['identity.providerGetSelfVoucher', { page: page, limit: '10' }],
     {
@@ -26,6 +29,30 @@ const Voucher = () => {
     setIsModalVisible(false)
   }
 
+  useEffect(() => {
+    const resultArray = voucherForProvider?.row?.map((voucher) => {
+      const voucherArray = Object.values(voucher)
+      const newVoucherArray = [
+        <span>
+          <p>{voucherArray[8]}</p>
+          <p className="opacity-30">{voucherArray[6]}</p>
+        </span>,
+        voucherArray[9],
+        voucherArray[15],
+        new Date(voucherArray[21]).toLocaleDateString('en-GB'),
+        new Date(voucherArray[22]).toLocaleDateString('en-GB'),
+        voucherArray[27],
+        voucherArray[24],
+      ]
+      return newVoucherArray
+    })
+    setVoucherForProviderArray(resultArray)
+  }, [voucherForProvider])
+
+  const handleViewVoucherDetail = () => {
+    console.log('asdasdasdasd')
+  }
+
   const createNewVoucher = Modal.useDisplayPost({
     onOK: () => {},
     onClose: handleClose,
@@ -34,7 +61,7 @@ const Voucher = () => {
     customModalCSS: 'w-fit top-5 overflow-y-auto custom-scrollbar',
     form: (
       <>
-        <VourcherModalCreate />
+        <VourcherModalCreate handleCloseModalVoucher={handleClose} />
       </>
     ),
     backgroundColor: '#15151b',
@@ -73,28 +100,19 @@ const Voucher = () => {
                 Tạo khuyến mãi
               </Button>
             </div>
-            {!isVoucherLoading && (
+            {!isVoucherLoading && voucherForProviderArray && (
               <Table
-                dataHeader={['1', '2', '3']}
-                dataBody={[
-                  [
-                    'apple',
-                    <span>
-                      asdasdsad <p>asdasdasd</p>
-                      <p>asdasdasd</p>
-                    </span>,
-                    'cherry',
-                  ],
-                  ['dog', 'cat', undefined],
-                  ['elephant', 'lion', 'zebra'],
-                ]}
-                pageCount={10}
+                dataHeader={['Tên', 'Mô tả', 'Loại', 'Bắt đầu', 'Kết thúc', 'Trạng thái', 'Đối tượng']}
+                dataBody={voucherForProviderArray}
                 page={page}
                 setPage={setPage}
-                limit={'5'}
-                totalItem={voucherForProvider?.count || 0}
+                limit={'10'}
+                totalItem={voucherForProvider?.count ?? 0}
+                contentItem="khuyến mãi"
                 watchAction={true}
+                onWatch={handleViewVoucherDetail}
                 deleteAction={false}
+                onDelete={() => {}}
               />
             )}
           </div>

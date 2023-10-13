@@ -1,5 +1,5 @@
 import { Menu, Transition } from '@headlessui/react'
-import { Check, Down } from '@icon-park/react'
+import { Down } from '@icon-park/react'
 
 import { Fragment, ReactNode } from 'react'
 

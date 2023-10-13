@@ -103,7 +103,7 @@ const timeInWeekType: IEnumType[] = [
   },
 ]
 
-export default function VourcherModalCreate() {
+export default function VourcherModalCreate(props: { handleCloseModalVoucher }) {
   const { user } = useAuth()
   const issuer = user?.name
   const today = new Date().toISOString().split('T')[0]
@@ -289,6 +289,7 @@ export default function VourcherModalCreate() {
                       placement: 'bottomLeft',
                     })
                     clearData()
+                    props.handleCloseModalVoucher()
                   } else {
                     notification.error({
                       message: 'Tạo khuyến mãi thất bại!',

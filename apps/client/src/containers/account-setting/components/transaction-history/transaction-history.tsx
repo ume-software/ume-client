@@ -24,13 +24,15 @@ const TransactionHistory = () => {
                 ['dog', 'cat', undefined],
                 ['elephant', 'lion', 'zebra'],
               ]}
-              pageCount={10}
               page={page}
               setPage={setPage}
-              limit={'5'}
-              totalItem={50}
+              limit={'10'}
+              totalItem={80}
+              contentItem={'giao dịch'}
               watchAction={true}
+              onWatch={() => {}}
               deleteAction={false}
+              onDelete={() => {}}
             />
           </div>
         </div>

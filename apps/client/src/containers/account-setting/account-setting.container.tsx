@@ -14,7 +14,7 @@ import BecomeProvider from './components/become-provider/become-provider'
 import EditNotificated from './components/edit-notificated'
 import EditProfile from './components/edit-profile'
 import Privacy from './components/privacy'
-import ReportTicket from './components/report-ticket'
+import ReportTicket from './components/report-ticket/report-ticket'
 import TransactionHistory from './components/transaction-history/transaction-history'
 import Voucher from './components/voucher/voucher'
 
