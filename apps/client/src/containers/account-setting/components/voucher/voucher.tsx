@@ -49,8 +49,8 @@ const Voucher = () => {
     setVoucherForProviderArray(resultArray)
   }, [voucherForProvider])
 
-  const handleViewVoucherDetail = () => {
-    console.log('asdasdasdasd')
+  const handleViewVoucherDetail = (id?: number) => {
+    if (voucherForProvider?.row && id) console.log(voucherForProvider?.row[id])
   }
 
   const createNewVoucher = Modal.useDisplayPost({
@@ -110,7 +110,7 @@ const Voucher = () => {
                 totalItem={voucherForProvider?.count ?? 0}
                 contentItem="khuyến mãi"
                 watchAction={true}
-                onWatch={handleViewVoucherDetail}
+                onWatch={(id) => handleViewVoucherDetail(id)}
                 deleteAction={false}
                 onDelete={() => {}}
               />

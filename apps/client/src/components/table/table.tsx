@@ -14,7 +14,7 @@ interface ITable {
   totalItem: number
   contentItem: string
   watchAction: boolean
-  onWatch: () => void
+  onWatch: (id?: number) => void
   onDelete: () => void
   deleteAction: boolean
 }
@@ -33,14 +33,12 @@ const Table = ({
   deleteAction,
 }: ITable) => {
   const [position, setPosition] = useState<number>(1)
-  const [pageCount, setPageCount] = useState<number>(totalItem - Number(page) * Number(limit))
 
   const handleChangePage = (newPage: number) => {
     if (newPage > Number(newPage) * Number(limit)) {
       return
     }
     setPage(String(newPage))
-    setPageCount(totalItem - Number(newPage) * Number(limit))
   }
 
   const handleSlideLeft = () => {
@@ -107,7 +105,7 @@ const Table = ({
                           fill="#fff"
                           strokeLinejoin="bevel"
                           className="cursor-pointer"
-                          onClick={() => onWatch()}
+                          onClick={() => onWatch(Number(page) * indexRow)}
                         />
                         {deleteAction && (
                           <DeleteFive
