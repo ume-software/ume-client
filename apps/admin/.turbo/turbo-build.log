@@ -20,17 +20,6 @@ info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/d
 info  - Creating an optimized production build...
 info  - Compiled successfully
 info  - Collecting page data...
-warn  - Restarted collecting page data for /_error because it took more than 60 seconds
-warn  - See more info here https://nextjs.org/docs/messages/static-page-generation-timeout
-warn  - Restarted collecting page data for [object Object] because it took more than 60 seconds
-warn  - Restarted collecting page data for /_app because it took more than 60 seconds
-warn  - Restarted collecting page data for /_app because it took more than 60 seconds
-warn  - Restarted collecting page data for [object Object] because it took more than 60 seconds
-warn  - Restarted collecting page data for [object Object] because it took more than 60 seconds
-warn  - Restarted collecting page data for [object Object] because it took more than 60 seconds
-warn  - Restarted collecting page data for [object Object] because it took more than 60 seconds
-warn  - Restarted collecting page data for [object Object] because it took more than 60 seconds
-warn  - Restarted collecting page data for [object Object] because it took more than 60 seconds
 info  - Generating static pages (0/5)
 info  - Generating static pages (1/5)
 info  - Generating static pages (2/5)
@@ -40,20 +29,20 @@ info  - Finalizing page optimization...
 
 Route (pages)                              Size     First Load JS
 ┌ λ /                                      257 B           177 kB
-├   /_app                                  0 B             177 kB
+├   /_app                                  0 B             176 kB
 ├ λ /404                                   334 B           177 kB
-├ λ /api/status                            0 B             177 kB
-├ λ /api/trpc/[trpc]                       0 B             177 kB
-├ ○ /dashboard (7704 ms)                   1.8 kB          178 kB
-├ ○ /provider-manager (370 ms)             1.82 kB         178 kB
-├ ○ /signin                                1.81 kB         178 kB
-├ ○ /user-manager (362 ms)                 1.83 kB         178 kB
-└ ○ /voucher-manager/[task] (358 ms)       1.89 kB         179 kB
+├ λ /api/status                            0 B             176 kB
+├ λ /api/trpc/[trpc]                       0 B             176 kB
+├ ○ /dashboard                             1.8 kB          178 kB
+├ ○ /provider-manager (308 ms)             1.82 kB         178 kB
+├ ○ /signin (6564 ms)                      1.81 kB         178 kB
+├ ○ /user-manager (308 ms)                 1.83 kB         178 kB
+└ ○ /voucher-manager/[task] (346 ms)       1.9 kB          178 kB
 + First Load JS shared by all              182 kB
   ├ chunks/framework-22108eb722d84e59.js   45.4 kB
   ├ chunks/main-1549b305685c3af3.js        26.7 kB
-  ├ chunks/pages/_app-dc9c55d2b955d3a3.js  102 kB
-  ├ chunks/webpack-e4bd7b27175d8958.js     2.06 kB
+  ├ chunks/pages/_app-9ec25a15d429ba0b.js  102 kB
+  ├ chunks/webpack-77194705dff0053d.js     2.06 kB
   └ css/73ed009233a187c7.css               5.41 kB
 
 λ  (Server)  server-side renders at runtime (uses getInitialProps or getServerSideProps)

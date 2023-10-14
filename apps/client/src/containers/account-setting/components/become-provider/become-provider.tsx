@@ -1,12 +1,10 @@
 import { CheckSmall, CloseSmall } from '@icon-park/react'
 import { useAuth } from '~/contexts/auth'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import { Switch } from 'antd'
-import { ServicePagingResponse } from 'ume-service-openapi'
 
-import AddSkillForm from './add-skill-form'
 import ServiceForm from './service-form'
 
 import { trpc } from '~/utils/trpc'
