@@ -5,7 +5,6 @@ import { AuthProvider, useAuth } from '~/contexts/auth'
 import { Dispatch, PropsWithChildren, ReactNode, SetStateAction, createContext, useEffect, useState } from 'react'
 
 import { parse } from 'cookie'
-import { UserInformationResponse } from 'ume-service-openapi'
 
 import { Header } from '~/components/header/header.component'
 import { Sidebar } from '~/components/sidebar'

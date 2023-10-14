@@ -11,16 +11,15 @@ import {
   ServiceApi,
   UserApi,
 } from 'ume-service-openapi'
-import { optional } from 'zod'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
-export const getListService = async () => {
+export const getListService = async (query?: { where?: string }) => {
   try {
     const response = await new ServiceApi({
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
-    }).findAndCountAll('unlimited', '1', '["$all"]')
+    }).findAndCountAll('unlimited', '1', '["$all"]', `"name":{"contains":${query?.where}}`)
 
     return {
       data: response.data,
@@ -134,12 +133,12 @@ export const createBooking = async (provider: BookingProviderRequest, ctx) => {
     return {
       data: respone.data,
       success: true,
-      message: 'Booking success!',
+      message: respone.status,
     }
   } catch (error) {
     throw new TRPCError({
-      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
-      message: error.message || 'Fail to create new booking',
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status),
+      message: error.response?.data.message || 'Fail to create new booking',
     })
   }
 }

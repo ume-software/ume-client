@@ -74,6 +74,7 @@ const CommunityPost = (props: CommunityPostProps) => {
     show: isModalVisible,
     form: modalForm,
     backgroundColor: '#15151b',
+    closeWhenClickOutSide: true,
     closeButtonOnConner: (
       <>
         <CloseSmall
@@ -93,8 +94,9 @@ const CommunityPost = (props: CommunityPostProps) => {
     onClose: handleClose,
     title: titleForm,
     show: isModalVisible,
-    form: <PostByID postData={props.data} />,
+    form: <PostByID postId={props.data.id} />,
     backgroundColor: '#15151b',
+    closeWhenClickOutSide: true,
     closeButtonOnConner: (
       <>
         <CloseSmall

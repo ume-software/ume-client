@@ -1,4 +1,5 @@
 import { Left, Right } from '@icon-park/react'
+import ImgForEmpty from 'public/img-for-empty.png'
 
 import { useState } from 'react'
 
@@ -7,10 +8,13 @@ import { ThumbnailResponseTypeEnum } from 'ume-service-openapi'
 
 import { TimeFormat } from '~/components/time-format'
 
-const PostByID = (props) => {
-  const [imageIndex, setImageIndex] = useState(0)
+import { trpc } from '~/utils/trpc'
 
-  const thumbnailsLength = props.postData?.thumbnails?.length - 1
+const PostByID = (props: { postId: string }) => {
+  const [imageIndex, setImageIndex] = useState(0)
+  const getPostById = trpc.useQuery(['community.getPostByID', props.postId])
+
+  const thumbnailsLength = (getPostById?.data?.data.thumbnails?.length ?? 1) - 1
 
   const handleNextImage = () => {
     if (imageIndex < thumbnailsLength) {
@@ -29,18 +33,18 @@ const PostByID = (props) => {
       <div className="grid grid-cols-10">
         <div className="col-span-8">
           <div className="h-screen w-full relative">
-            {props.postData?.thumbnails[imageIndex]?.type == ThumbnailResponseTypeEnum.Image ? (
+            {getPostById?.data?.data?.thumbnails[imageIndex]?.type == ThumbnailResponseTypeEnum.Image ? (
               <Image
-                src={props.postData?.thumbnails[imageIndex]?.url}
-                alt={`${props.postData?.thumbnails[imageIndex]?.type}`}
+                src={getPostById?.data?.data?.thumbnails[imageIndex]?.url ?? ImgForEmpty}
+                alt={`${getPostById?.data?.data?.thumbnails[imageIndex]?.type}`}
                 layout="fill"
                 objectFit="scale-down"
               />
             ) : (
               <div className="h-[90%] flex justify-center items-center">
                 <video controls autoPlay>
-                  <source src={props.postData?.thumbnails[imageIndex]?.url} type="video/mp4" />
-                  <source src={props.postData?.thumbnails[imageIndex]?.url} type="video/ogg" />
+                  <source src={getPostById?.data?.data?.thumbnails[imageIndex]?.url} type="video/mp4" />
+                  <source src={getPostById?.data?.data?.thumbnails[imageIndex]?.url} type="video/ogg" />
                 </video>
               </div>
             )}
@@ -62,17 +66,19 @@ const PostByID = (props) => {
                 className="absolute rounded-full"
                 layout="fill"
                 objectFit="cover"
-                src={props.postData?.user.avatarUrl}
+                src={getPostById?.data?.data?.user.avatarUrl ?? ImgForEmpty}
                 alt="Provider Image"
               />
             </div>
             <div className="flex flex-col">
-              <p className="font-semibold text-xl">{props.postData?.user.name}</p>
-              <p className="font-normal text-lg opacity-40">{TimeFormat({ date: props.postData?.createdAt })}</p>
+              <p className="font-semibold text-xl">{getPostById?.data?.data?.user.name}</p>
+              <p className="font-normal text-lg opacity-40">
+                {TimeFormat({ date: getPostById?.data?.data?.createdAt || 0 })}
+              </p>
             </div>
           </div>
           <div>
-            <p className="font-normal text-lg">{props.postData?.content}</p>
+            <p className="font-normal text-lg">{getPostById?.data?.data?.content}</p>
           </div>
         </div>
       </div>

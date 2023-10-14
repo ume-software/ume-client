@@ -52,6 +52,7 @@ const genderData: GenderProps[] = [
 ]
 
 const EditProfile = () => {
+  const today = new Date().toISOString().split('T')[0]
   const [userSettingData, setUserSettingData] = useState<UserInformationResponse | undefined>(undefined)
   const { isLoading: isLoadingUserSettingData, isFetching: isFetchingUserSettingData } = trpc.useQuery(
     ['identity.identityInfo'],
@@ -64,6 +65,8 @@ const EditProfile = () => {
   const utils = trpc.useContext()
 
   const updateInformation = trpc.useMutation(['identity.updateUserProfile'])
+  const userKYC = trpc.useMutation(['identity.userKYC'])
+
   const [selectedImage, setSelectedImage] = useState<SelectedImageProps>({
     avatarURL: undefined,
     frontVertificationImage: undefined,
@@ -166,19 +169,37 @@ const EditProfile = () => {
       try {
         const responseData = await uploadImageBooking(formData)
         if (responseData?.data?.data?.results) {
-          setSelectedImage((image) => ({
-            ...image,
-            frontVertificationImage: undefined,
-            backVertificationImage: undefined,
-            faceImage: undefined,
-          }))
-          setIsModaVertificationlVisible(false)
-          utils.invalidateQueries('identity.identityInfo')
-          notification.success({
-            message: 'Cập nhật thông tin thành công',
-            description: 'Thông tin vừa được cập nhật',
-            placement: 'bottomLeft',
-          })
+          userKYC.mutate(
+            {
+              frontSideCitizenIdImageUrl: responseData.data.data.results[0],
+              backSideCitizenIdImageUrl: responseData.data.data.results[1],
+              portraitImageUrl: responseData.data.data.results[2],
+            },
+            {
+              onSuccess() {
+                setSelectedImage((image) => ({
+                  ...image,
+                  frontVertificationImage: undefined,
+                  backVertificationImage: undefined,
+                  faceImage: undefined,
+                }))
+                setIsModaVertificationlVisible(false)
+                utils.invalidateQueries('identity.identityInfo')
+                notification.success({
+                  message: 'Cập nhật thông tin thành công',
+                  description: 'Thông tin vừa được cập nhật',
+                  placement: 'bottomLeft',
+                })
+              },
+              onError() {
+                notification.error({
+                  message: 'Cập nhật thông tin thất bại',
+                  description: 'Có lỗi trong quá tring cập nhật thông tin. Vui lòng thử lại sau!',
+                  placement: 'bottomLeft',
+                })
+              },
+            },
+          )
         } else {
           notification.error({
             message: 'Cập nhật thông tin thất bại',
@@ -204,7 +225,7 @@ const EditProfile = () => {
 
   const handleUpdateInformation = async () => {
     if (editAccountInforFormRef.current) {
-      if (selectedImage) {
+      if (selectedImage.avatarURL) {
         const formData = new FormData(editAccountInforFormRef.current)
         const responseData = await uploadImageBooking(formData)
 
@@ -215,8 +236,8 @@ const EditProfile = () => {
                 avatarUrl: String(responseData.data.data.results),
                 dob: settingAccount.dob || undefined,
                 gender: settingAccount.gender.key,
-                name: settingAccount.name,
-                slug: settingAccount.slug || undefined,
+                name: settingAccount.name?.trim(),
+                slug: settingAccount.slug?.trim() || undefined,
               },
               {
                 onSuccess() {
@@ -250,12 +271,12 @@ const EditProfile = () => {
         }
       } else {
         try {
-          await updateInformation.mutate(
+          updateInformation.mutate(
             {
               dob: settingAccount.dob || undefined,
               gender: settingAccount.gender.key,
-              name: settingAccount.name,
-              slug: settingAccount.slug || undefined,
+              name: settingAccount.name?.trim(),
+              slug: settingAccount.slug?.trim() || undefined,
             },
             {
               onSuccess() {
@@ -297,6 +318,7 @@ const EditProfile = () => {
       </>
     ),
     backgroundColor: '#15151b',
+    closeWhenClickOutSide: true,
     closeButtonOnConner: (
       <>
         <CloseSmall
@@ -321,7 +343,8 @@ const EditProfile = () => {
     onOK: () => {},
     onClose: handleClose,
     show: isModalVertificationVisible,
-    customModalCSS: 'top-0  overflow-y-auto custom-scrollbar',
+    customModalCSS: 'top-0 overflow-y-auto custom-scrollbar',
+    closeWhenClickOutSide: true,
     form: (
       <>
         <form
@@ -335,9 +358,11 @@ const EditProfile = () => {
               <label>Ảnh mặt trước</label>
               <div className="relative">
                 <div className="relative w-full h-[300px] bg-white bg-opacity-30 rounded-xl">
-                  <div className="w-full h-full absolute flex justify-center items-center top-0 left-0 right-0 bottom-0 border-dashed border-2 border-white rounded-xl z-10">
-                    <p className="text-white text-4xl font-bold">+</p>
-                  </div>
+                  {!selectedImage.frontVertificationImage && (
+                    <div className="w-full h-full absolute flex justify-center items-center top-0 left-0 right-0 bottom-0 border-dashed border-2 border-white rounded-xl z-10">
+                      <p className="text-white text-4xl font-bold">+</p>
+                    </div>
+                  )}
                   <Image
                     className="rounded-lg"
                     layout="fill"
@@ -526,6 +551,7 @@ const EditProfile = () => {
                         className={`${
                           settingAccount.dob == userSettingData.dob ? 'bg-zinc-800' : 'bg-gray-700'
                         } border border-white border-opacity-30`}
+                        max={today}
                         value={settingAccount.dob}
                         onChange={(e) => setSettingAccount((prevData) => ({ ...prevData, dob: e.target.value }))}
                       />
