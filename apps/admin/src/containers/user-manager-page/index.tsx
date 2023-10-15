@@ -16,17 +16,14 @@ import UserTable from './components/user-table'
 
 import FilterDropdown from '~/components/filter-dropdown'
 
+import { LIMIT_PAGE_SIZE } from '~/utils/constant'
 import { trpc } from '~/utils/trpc'
-
-interface LooseObject {
-  [key: string]: any
-}
 
 const statusFilterItems = [
   {
     key: 'all',
     label: (
-      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white px-3 py-2 w-full flex justify-center">
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
         Tất cả
       </Tag>
     ),
@@ -34,7 +31,7 @@ const statusFilterItems = [
   {
     key: 'false',
     label: (
-      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white  px-3 py-2 w-full flex justify-center">
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
         Hoạt động
       </Tag>
     ),
@@ -42,7 +39,7 @@ const statusFilterItems = [
   {
     key: 'true',
     label: (
-      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white  px-3 py-2 w-full flex justify-center">
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
         Tạm dừng
       </Tag>
     ),
@@ -53,40 +50,40 @@ const genderFilterItems = [
   {
     key: 'ALL',
     label: (
-      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white px-3 py-2 w-full flex justify-center">
-        <div className="flex justify-center items-center w-10">Tất cả</div>
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
+        <div className="flex items-center justify-center w-10">Tất cả</div>
       </Tag>
     ),
   },
   {
     key: AdminGetUserResponseResponseGenderEnum.Male,
     label: (
-      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white px-3 py-2 w-full flex justify-center">
-        <div className="flex justify-center items-center w-10">Nam</div>
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
+        <div className="flex items-center justify-center w-10">Nam</div>
       </Tag>
     ),
   },
   {
     key: AdminGetUserResponseResponseGenderEnum.Female,
     label: (
-      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white px-3 py-2 w-full flex justify-center">
-        <div className="flex justify-center items-center w-10">Nữ</div>
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
+        <div className="flex items-center justify-center w-10">Nữ</div>
       </Tag>
     ),
   },
   {
     key: AdminGetUserResponseResponseGenderEnum.Other,
     label: (
-      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white px-3 py-2 w-full flex justify-center">
-        <div className="flex justify-center items-center w-10">Khác</div>
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
+        <div className="flex items-center justify-center w-10">Khác</div>
       </Tag>
     ),
   },
   {
     key: AdminGetUserResponseResponseGenderEnum.Private,
     label: (
-      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white px-3 py-2 w-full flex justify-center">
-        <div className="flex justify-center items-center w-10">Ẩn</div>
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
+        <div className="flex items-center justify-center w-10">Ẩn</div>
       </Tag>
     ),
   },
@@ -112,6 +109,7 @@ const UserManager = () => {
     search: '',
   })
   const [searchChange, setSearchChange] = useState('')
+
   const testQuerry: PrismaWhereConditionType<AdminGetUserResponseResponse> = Object.assign({
     name: {
       contains: filter.search,
@@ -122,7 +120,7 @@ const UserManager = () => {
     isBanned: filter.isBanned !== 'all' ? (filter.isBanned == 'true' ? true : false) : undefined,
   })
 
-  const { isLoading: isUserListLoading, isFetching: isUserListFetching } = trpc.useQuery(
+  trpc.useQuery(
     [
       'user.getUserList',
       { page: page.toString(), where: prismaWhereConditionToJsonString(testQuerry, ['isUndefined']), order: undefined },
@@ -181,7 +179,7 @@ const UserManager = () => {
       <div className="pb-10">
         <span className="content-title">Quản Lý người dùng</span>
         <div className="flex flex-col my-10">
-          <div className="flex justify-between items-center">
+          <div className="flex items-center justify-between">
             <div className="flex">
               <FilterDropdown
                 id={'gender'}
@@ -199,8 +197,8 @@ const UserManager = () => {
               />
             </div>
 
-            <div className="flex items-center rounded-lg pl-2 bg-umeHeader border-2 border-white">
-              <Search className=" active:bg-gray-700 p-2 rounded-full mr-3" theme="outline" size="24" fill="#fff" />
+            <div className="flex items-center pl-2 border-2 border-white rounded-lg bg-umeHeader">
+              <Search className="p-2 mr-3 rounded-full active:bg-gray-700" theme="outline" size="24" fill="#fff" />
               <Input
                 placeholder="Tìm kiếm tên người dùng"
                 onKeyUp={handleKeyPress}
@@ -227,7 +225,7 @@ const UserManager = () => {
                 )}
               </div>
             )}
-            pageSize={10}
+            pageSize={Number(LIMIT_PAGE_SIZE)}
             current={page}
             total={userList?.count}
             onChange={(page) => {
