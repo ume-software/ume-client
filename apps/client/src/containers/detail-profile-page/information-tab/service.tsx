@@ -8,6 +8,8 @@ import { Carousel, Rate } from 'antd'
 import Image from 'next/legacy/image'
 import { FeedbackPagingResponse, ProviderServiceResponse } from 'ume-service-openapi'
 
+import { CommentSkeletonLoader } from '~/components/skeleton-load'
+
 import { trpc } from '~/utils/trpc'
 
 interface PostFeedbackProps {
@@ -41,7 +43,7 @@ const Service = (props: { data: ProviderServiceResponse }) => {
   return (
     <>
       <div className="p-10 bg-zinc-800 rounded-3xl">
-        <p className="text-3xl font-bold text-white font-roboto">{props.data.service?.name}</p>
+        <p className="text-2xl font-bold text-white font-roboto">{props.data.service?.name}</p>
         {/* <Carousel autoplay>
           {props.data.images?.map((item, index) => <Image key={index} src={item} alt="Game Image" />) || (
             <>
@@ -58,7 +60,7 @@ const Service = (props: { data: ProviderServiceResponse }) => {
         <>
           <div className="relative p-5 bg-zinc-800 rounded-3xl">
             <div className="h-[600px] flex flex-col gap-5 p-3 overflow-y-auto">
-              <p className="text-4xl font-bold font-inter">Đánh giá</p>
+              <p className="text-2xl font-bold font-inter">Đánh giá</p>
 
               {Number(feedbackGame.data.data.row?.length || 0) > 0 ? (
                 feedbackGame.data.data.row?.map((feedback) => (
@@ -123,7 +125,11 @@ const Service = (props: { data: ProviderServiceResponse }) => {
           </div>
         </>
       ) : (
-        <></>
+        <>
+          <div className="relative p-5 bg-zinc-800 rounded-3xl">
+            <CommentSkeletonLoader />
+          </div>
+        </>
       )}
     </>
   )

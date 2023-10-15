@@ -76,7 +76,7 @@ export const Header: React.FC = () => {
   }
 
   return (
-    <div className="fixed z-10 flex items-center justify-between w-full h-16 bg-umeHeader ">
+    <div className="fixed z-50 flex items-center justify-between w-full h-16 bg-umeHeader ">
       <LoginModal isModalLoginVisible={isModalLoginVisible} setIsModalLoginVisible={setIsModalLoginVisible} />
       <RechargeModal showRechargeModal={showRechargeModal} setShowRechargeModal={setShowRechargeModal} />
       <div className="flex items-center">
@@ -181,7 +181,7 @@ export const Header: React.FC = () => {
               <>
                 <Button
                   name="register"
-                  customCSS="bg-[#37354F]  py-2 hover:bg-slate-500 duration-300 !rounded-3xl max-h-10 w-[120px] text-[15px] "
+                  customCSS="bg-[#37354F] py-2 hover:bg-slate-500 duration-300 !rounded-3xl max-h-10 w-[120px] text-[15px] "
                   type="button"
                   onClick={() => {
                     setIsModalLoginVisible(true)
@@ -242,7 +242,7 @@ export const Header: React.FC = () => {
                       <Menu.Item as="div">
                         {({ active }) => (
                           <Link
-                            href={`/account-setting?user=${user?.name}`}
+                            href={`/account-setting?user=${user?.name}&tab=settingInformation`}
                             className={`${
                               active ? 'bg-violet-500 text-white' : 'text-gray-900'
                             } group flex w-full items-center rounded-md px-2 py-2 text-sm`}

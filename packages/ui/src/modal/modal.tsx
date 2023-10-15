@@ -99,6 +99,7 @@ const useDisplayPost = ({
   closeButtonOnConner,
   backgroundColor,
   closeWhenClickOutSide,
+  customModalCSS,
 }: EditableFormProps) => {
   const cancelButtonRef = useRef(null)
   const handleClose = () => {
@@ -126,7 +127,7 @@ const useDisplayPost = ({
             <div className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" />
           </Transition.Child>
 
-          <div className="fixed inset-0 top-0 z-50 overflow-y-auto">
+          <div className="fixed inset-0 top-0 z-50 overflow-y-auto custom-scrollbar">
             <div className="flex justify-center text-center min-h-fit sm:p-0">
               <Transition.Child
                 as={Fragment}
@@ -138,7 +139,9 @@ const useDisplayPost = ({
                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               >
                 <Dialog.Panel
-                  className={`relative overflow-hidden text-left ml-3 mr-3 transition-all transform rounded-3xl shadow-xl sm:my-5 sm:h-[95vh] sm:w-full ${
+                  className={`relative ${
+                    customModalCSS ? customModalCSS : 'overflow-hidden sm:my-5 sm:h-[95vh] sm:w-full'
+                  } text-left ml-3 mr-3 transition-all transform rounded-3xl shadow-xl  ${
                     backgroundColor ? `bg-[${backgroundColor}]` : 'bg-white'
                   }`}
                 >

@@ -35,16 +35,16 @@ export const Button = ({
 
   return (
     <>
-      <div className={btnClass}>
-        <button
-          {...props}
-          type={type}
-          disabled={isDisable}
-          className={`w-full h-full btn ${!isOutlinedButton ? 'bg-transparent' : 'bg-transparent cursor-pointer'}`}
-          tabIndex={99}
-          style={{ borderRadius: 3 }}
-        >
-          <div className="flex items-center justify-center gap-x-2">
+      <button
+        {...props}
+        type={type}
+        disabled={isDisable}
+        className={`w-fit h-fit btn ${!isOutlinedButton ? 'bg-transparent' : 'bg-transparent cursor-pointer'}`}
+        tabIndex={99}
+        style={{ borderRadius: 3 }}
+      >
+        <div className={btnClass}>
+          <div className="flex items-center justify-center">
             {isLoading && (
               <span
                 className={`spinner h-5 w-5 animate-spin rounded-full border-[3px] border-r-transparent dark:border-navy-300 dark:border-r-transparent ${
@@ -55,8 +55,8 @@ export const Button = ({
             {icon && <span>{icon}</span>}
             {children}
           </div>
-        </button>
-      </div>
+        </div>
+      </button>
       {helper && <span className="button-helper">{helper}</span>}
     </>
   )

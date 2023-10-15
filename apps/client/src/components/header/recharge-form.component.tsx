@@ -48,7 +48,11 @@ export const RechargeModal = ({ setShowRechargeModal, showRechargeModal }: IRech
   }
 
   const validationSchema = Yup.object().shape({
-    balance: Yup.string().required('Xin hãy nhập số tiền'),
+    balance: Yup.string()
+      .required('Xin hãy nhập số tiền')
+      .matches(/^[0-9]+$/)
+      .min(1)
+      .max(7, 'Chỉ được nhập nhiều nhất 7 chữ số'),
   })
 
   const requestRecharge = trpc.useMutation(['identity.request-recharge'])
@@ -85,7 +89,7 @@ export const RechargeModal = ({ setShowRechargeModal, showRechargeModal }: IRech
               {!qrContent && (
                 <Formik
                   initialValues={{
-                    balance: '',
+                    balance: '10',
                   }}
                   onSubmit={(values) => {
                     setSubmiting(true)
@@ -156,20 +160,38 @@ export const RechargeModal = ({ setShowRechargeModal, showRechargeModal }: IRech
                             autoComplete="off"
                           />
                         </div>
-                        <Button
-                          customCSS={`mt-10 !rounded-2xl w-full !text-white py-1 font-semibold text-lg text-center ${
-                            values.balance && 'hover:scale-105'
-                          }`}
-                          type="button"
-                          isActive={true}
-                          isOutlinedButton={!!values.balance}
-                          onClick={() => {
-                            handleSubmit()
-                          }}
-                          disabled={isSubmitting}
-                        >
-                          Xác nhận
-                        </Button>
+                        <div className="my-5 flex justify-between items-center">
+                          <p className="text-xl font-semibold">Tổng:</p>
+                          <div className="flex items-center gap-1">
+                            <p className="text-xl font-semibold">
+                              {((Number(values.balance) + Number(values.balance) * platform.tax) * 1000).toLocaleString(
+                                'en-US',
+                                {
+                                  currency: 'VND',
+                                },
+                              )}
+                            </p>
+                            <span className="text-xs italic"> VND</span>
+                          </div>
+                        </div>
+                        <div className="flex justify-center items-center mt-2">
+                          <div>
+                            <Button
+                              customCSS={`!rounded-2xl w-full !text-white py-2 px-3 font-semibold text-lg text-center ${
+                                values.balance && 'hover:scale-105'
+                              }`}
+                              type="button"
+                              isActive={true}
+                              isOutlinedButton={!!values.balance}
+                              onClick={() => {
+                                handleSubmit()
+                              }}
+                              disabled={isSubmitting}
+                            >
+                              Xác nhận
+                            </Button>
+                          </div>
+                        </div>
                       </div>
                     </form>
                   )}

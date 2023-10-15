@@ -18,7 +18,7 @@ import Service from './service'
 
 import { LoginModal } from '~/components/header/login-modal.component'
 import { DrawerContext } from '~/components/layouts/app-layout/app-layout'
-import { ChatSkeleton } from '~/components/skeleton-load'
+import { BGFullGridSkeleton, ChatSkeleton } from '~/components/skeleton-load'
 
 import { trpc } from '~/utils/trpc'
 
@@ -115,7 +115,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
       <div>
         <LoginModal isModalLoginVisible={isModalLoginVisible} setIsModalLoginVisible={setIsModalLoginVisible} />
       </div>
-      {props.data && (
+      {props.data ? (
         <>
           <div className="grid w-full grid-cols-10 gap-10 px-10">
             <div className="col-span-2">
@@ -199,17 +199,21 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                 {user?.id != props.data?.id ? (
                   <div className="flex flex-col gap-5 my-10">
                     <CustomDrawer
-                      customOpenBtn={`rounded-full w-full h-full text-purple-700 border-2 border-purple-700 py-2 font-semibold text-2xl cursor-pointer hover:scale-105 text-center`}
+                      customOpenBtn={`rounded-full text-purple-700 border-2 border-purple-700 font-semibold text-2xl cursor-pointer hover:scale-105 text-center`}
                       openBtn={
-                        <Button
-                          customCSS="bg-transparent"
-                          isLoading={createNewChatChannel.isLoading}
-                          isActive={true}
-                          isOutlinedButton={true}
+                        <button
+                          className="bg-transparent w-full h-full py-2 focus:outline-none"
+                          type="button"
                           onClick={handleChatOpen}
                         >
+                          {createNewChatChannel.isLoading && (
+                            <span
+                              className={`spinner h-5 w-5 animate-spin rounded-full border-[3px] border-r-transparent dark:border-navy-300 dark:border-r-transparent border-white
+`}
+                            />
+                          )}
                           Chat
-                        </Button>
+                        </button>
                       }
                       token={isAuthenticated}
                     >
@@ -219,16 +223,15 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                     {!props.data?.isBanned && (
                       <CustomDrawer
                         drawerTitle="Xác nhận đặt"
-                        customOpenBtn="rounded-full w-full text-white bg-purple-700 py-2 font-semibold text-2xl cursor-pointer hover:scale-105 text-center"
+                        customOpenBtn="rounded-full text-white bg-purple-700 font-semibold text-2xl cursor-pointer hover:scale-105 text-center"
                         openBtn={
-                          <Button
-                            customCSS="bg-transparent"
-                            isActive={true}
-                            isOutlinedButton={false}
+                          <button
+                            className="bg-transparent w-full h-full py-2 focus:outline-none"
+                            type="button"
                             onClick={handleOrderOpen}
                           >
                             Order
-                          </Button>
+                          </button>
                         }
                         token={isAuthenticated}
                       >
@@ -240,6 +243,20 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                   <></>
                 )}
               </div>
+            </div>
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="grid w-screen h-screen grid-cols-10 gap-10 px-10">
+            <div className="col-span-2">
+              <BGFullGridSkeleton />
+            </div>
+            <div className="col-span-5">
+              <BGFullGridSkeleton />
+            </div>
+            <div className="col-span-3">
+              <BGFullGridSkeleton />
             </div>
           </div>
         </>
