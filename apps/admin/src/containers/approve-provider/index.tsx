@@ -125,9 +125,9 @@ const ApproveProvider = () => {
   }
   const pendingTable: ColumnsType<KYCTableProps> = [
     {
-      title: 'Avatar',
+      title: 'Hình đại diện',
       dataIndex: 'avatarUrl',
-      width: '10%',
+      width: '15%',
       align: 'center',
       render(value, record, index) {
         return (
@@ -138,7 +138,7 @@ const ApproveProvider = () => {
       },
     },
     {
-      title: <div className="ml-4">Client Infomation</div>,
+      title: <div className="ml-4">Thông tin người dùng</div>,
       dataIndex: 'name',
       width: '25%',
       align: 'left',
@@ -152,13 +152,13 @@ const ApproveProvider = () => {
       },
     },
     {
-      title: 'Phone Number',
+      title: 'Số điện thoại',
       dataIndex: 'phone',
       width: '15%',
       align: 'center',
     },
     {
-      title: <div className="ml-5">Status</div>,
+      title: <div className="ml-5">Trạng thái</div>,
       width: '10%',
       dataIndex: 'status',
       render(value) {
@@ -166,7 +166,7 @@ const ApproveProvider = () => {
       },
     },
     {
-      title: <div className="flex">Request Day</div>,
+      title: <div className="flex">Ngày tạo đơn</div>,
       dataIndex: 'createdAt',
       width: '10%',
       render: (value) => <div className="">{new Date(value).toLocaleDateString('en-GB')}</div>,
@@ -185,17 +185,17 @@ const ApproveProvider = () => {
                   setKYCModal(true)
                 }}
               >
-                View Form
+                Xem đơn
               </Button>
               {record.slug && (
-                <Button customCSS="p-2 hover:bg-green-400 hover:text-black" type="button" isDisable={!record.slug}>
+                <Button customCSS="p-2 bg-green-600 hover:text-black" type="button" isDisable={!record.slug}>
                   <a
                     className="hover:text-black"
                     target="_blank"
                     href={`https://facebook.com`}
                     rel="noopener noreferrer"
                   >
-                    View profile
+                    Xem trang cá nhân
                   </a>
                 </Button>
               )}
@@ -208,7 +208,7 @@ const ApproveProvider = () => {
 
   const kycTable: ColumnsType<KYCTableProps> = [
     {
-      title: 'Avatar',
+      title: 'Hình đại diện',
       dataIndex: 'avatarUrl',
       width: '10%',
       align: 'center',
@@ -221,7 +221,7 @@ const ApproveProvider = () => {
       },
     },
     {
-      title: <div className="ml-4">Client Infomation</div>,
+      title: <div className="ml-4">Thông tin người dùng</div>,
       dataIndex: 'name',
       width: '25%',
       align: 'left',
@@ -235,13 +235,13 @@ const ApproveProvider = () => {
       },
     },
     {
-      title: 'Phone Number',
+      title: 'Số điện thoại',
       dataIndex: 'phone',
       width: '15%',
       align: 'center',
     },
     {
-      title: <div className="ml-5">Status</div>,
+      title: <div className="ml-5">Trạng thái</div>,
       width: '10%',
       dataIndex: 'status',
       render(value) {
@@ -249,10 +249,11 @@ const ApproveProvider = () => {
       },
     },
     {
-      title: <div className="flex">Response Day</div>,
+      title: <div className="flex">Ngày duyệt đơn</div>,
       dataIndex: 'updatedAt',
-      width: '10%',
-      render: (value) => <div className="">{new Date(value).toLocaleDateString('en-GB')}</div>,
+      width: '12%',
+
+      render: (value) => <div>{new Date(value).toLocaleDateString('en-GB')}</div>,
     },
     {
       title: '',
@@ -260,9 +261,9 @@ const ApproveProvider = () => {
         return (
           <div className="flex justify-start">
             <div className="flex flex-row justify-center gap-2">
-              <Button customCSS="p-2 hover:bg-green-400 hover:text-black" type="button" isDisable={!record.slug}>
+              <Button customCSS="p-2 bg-green-600 hover:text-black" type="button" isDisable={!record.slug}>
                 <a className="hover:text-black" target="_blank" href={`https://facebook.com`} rel="noopener noreferrer">
-                  View profile
+                  Xem trang cá nhân
                 </a>
               </Button>
             </div>
@@ -280,7 +281,7 @@ const ApproveProvider = () => {
       <div>
         <div className="flex flex-col gap-1">
           <div className="mb-5">
-            <span className="content-title">Waiting KYC</span>
+            <span className="content-title">Hàng chờ</span>
           </div>
           <div>
             <CommonTable
@@ -297,7 +298,7 @@ const ApproveProvider = () => {
           </div>
           <div>
             <div className="mb-5">
-              <span className="content-title">List KYC</span>
+              <span className="content-title">Đơn đã duyệt</span>
             </div>
             <div>
               <CommonTable

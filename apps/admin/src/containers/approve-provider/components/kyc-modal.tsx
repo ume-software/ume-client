@@ -38,7 +38,7 @@ export type KYCFormType = {
 
 const kycForm = (record: KYCFormType, handleAction: (action: KYCAction) => void, handleOpenConfimModal: () => void) => {
   return (
-    <div className="flex flex-col w-full p-6 gap-4 bg-[#15151b] text-white border-t ">
+    <div className="flex flex-col w-full p-6 gap-4 bg-[#15151b] text-white ">
       <div className="flex flex-row gap-4">
         <div className="flex flex-row justify-start gap-4">
           <div className="text-lg font-medium">Tên:</div>
@@ -106,24 +106,24 @@ const kycForm = (record: KYCFormType, handleAction: (action: KYCAction) => void,
 
       <div className="flex flex-row justify-center gap-4">
         <Button
-          customCSS="px-3 w-24 py-2 hover:bg-green-400 hover:text-black"
+          customCSS="px-3 w-28 py-2 bg-green-600 hover:bg-green-400 hover:text-black"
           type="button"
           onClick={() => {
             handleAction(KYCAction.APPROVE)
             handleOpenConfimModal()
           }}
         >
-          Approve
+          Chấp thuận
         </Button>
         <Button
-          customCSS="px-3 w-24 py-2 hover:bg-red-400 hover:text-black"
+          customCSS="px-3 w-28 py-2 bg-red-600 hover:bg-red-400 hover:text-black"
           type="button"
           onClick={() => {
             handleAction(KYCAction.REJECT)
             handleOpenConfimModal()
           }}
         >
-          Reject
+          Từ chối
         </Button>
       </div>
     </div>
@@ -193,7 +193,7 @@ export const KYCModal = ({ visible, handleClose, data }: KYCModalType) => {
               handleAction(data?.requestId)
             }}
           >
-            Confirm
+            Xác nhận
           </Button>
           <Button
             customCSS="px-3 w-24 py-2 hover:bg-red-400 hover:text-black"
@@ -202,12 +202,12 @@ export const KYCModal = ({ visible, handleClose, data }: KYCModalType) => {
               handelCloseConfirm()
             }}
           >
-            Cancel
+            Hủy bỏ
           </Button>
         </div>
       </div>
     ),
-    title: <span className="text-white">Confirm Modal</span>,
+    title: <span className="text-white">Xác nhận</span>,
     backgroundColor: '#15151b',
     closeWhenClickOutSide: false,
     closeButtonOnConner: (
@@ -230,7 +230,7 @@ export const KYCModal = ({ visible, handleClose, data }: KYCModalType) => {
     onClose: handleClose,
     show: visible,
     form: kycForm(data, handleActionConfirm, handleVisibleConfirm),
-    title: <span className="text-white">KYC Form</span>,
+    title: <span className="text-white">Thông tin xác thực người dùng</span>,
     backgroundColor: '#15151b',
     closeWhenClickOutSide: false,
     closeButtonOnConner: (
