@@ -1,9 +1,11 @@
 import { DeleteOne, Plus } from '@icon-park/react'
 import { Button, FormInput } from '@ume/ui'
+import { uploadImageServices } from '~/api/upload-media'
 
 import * as React from 'react'
 import { useRef, useState } from 'react'
 
+import { notification } from 'antd'
 import { FormikErrors, useFormik } from 'formik'
 import Image from 'next/legacy/image'
 import * as Yup from 'yup'
@@ -12,6 +14,8 @@ import ServiceAttributes from './services-attribute-childrend'
 
 import ModalBase from '~/components/modal-base'
 import ComfirmModal from '~/components/modal-base/comfirm-modal'
+
+import { trpc } from '~/utils/trpc'
 
 export interface IServicesModalCreateProps {
   closeFunction: any
@@ -25,7 +29,7 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
   const [isSubmiting, setSubmiting] = useState(false)
   const imageInputRef = useRef<HTMLInputElement>(null)
   const [children, setChildren] = useState<JSX.Element[]>([])
-
+  const createService = trpc.useMutation(['services.createService'])
   const form = useFormik({
     initialValues: {
       name: '',
@@ -77,9 +81,12 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
     setOpenConfirm(false)
     setIsCreate(false)
   }
+  function clearData() {
+    form.resetForm()
+  }
   function closeHandle() {
     setOpenConfirm(false)
-    // clearData()
+    clearData()
     closeFunction()
   }
   const handleImageClick = () => {
@@ -115,6 +122,91 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
     const updatedSubChildData = [...form.values.serviceAttributes]
     updatedSubChildData.splice(index, 1)
     form.setFieldValue(`serviceAttributes`, updatedSubChildData)
+  }
+
+  const uploadImage = async () => {
+    let imageUrl = ''
+    try {
+      if (form.values.selectedImage) {
+        const formData = new FormData()
+        formData.append('image', form.values.selectedImage)
+        const responseData = await uploadImageServices(formData)
+        if (responseData?.data?.data?.results) {
+          responseData?.data?.data?.results.map((image) => {
+            imageUrl = image
+          })
+        }
+      }
+    } catch (error) {
+      console.error('Error uploading image:', error)
+    }
+    return { imageUrl }
+  }
+  function checkFieldRequỉed() {
+    if (form.values.name && form.values.imageUrl) {
+      return true
+    } else {
+      return false
+    }
+  }
+  async function submitHandle() {
+    if (await checkFieldRequỉed()) {
+      const img = await uploadImage()
+      if (img.imageUrl) {
+        try {
+          const req = {
+            viName: form.values.viName,
+            isActivated: form.values.isActivated,
+            serviceAttributes: form.values.serviceAttributes,
+          }
+          let reqWithValuesNotNull = {
+            name: form.values.name,
+            imageUrl: img.imageUrl,
+          }
+          for (let key in req) {
+            if (req[key]) {
+              reqWithValuesNotNull[key] = req[key]
+            }
+          }
+          createService.mutate(reqWithValuesNotNull, {
+            onSuccess: (data) => {
+              if (data.success) {
+                notification.success({
+                  message: 'Tạo thành công!',
+                  description: 'đã được tạo thành công.',
+                  placement: 'bottomLeft',
+                })
+                console.log('zo1')
+                closeHandle()
+              }
+            },
+            onError: () => {
+              console.log('zo2')
+              notification.error({
+                message: 'Tạo thất bại!',
+                description: 'Tạo không thành công.',
+                placement: 'bottomLeft',
+              })
+            },
+          })
+        } catch (error) {
+          console.error('Failed to create services:', error)
+          notification.error({
+            message: 'Tạo thất bại!',
+            description: 'Tạo không thành công.',
+            placement: 'bottomLeft',
+          })
+        }
+      } else {
+        console.error('Failed to to create services cause dont have image')
+        notification.error({
+          message: 'Tạo thất bại!',
+          description: 'Tạo không thành công vì thiếu ảnh',
+          placement: 'bottomLeft',
+        })
+      }
+    }
+    closeHandle()
   }
 
   return (
@@ -265,7 +357,7 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
         <ComfirmModal
           closeFunction={closeComfirmFormHandle}
           openValue={true}
-          isComfirmFunction={isCreate ? closeHandle : closeHandle}
+          isComfirmFunction={isCreate ? submitHandle : closeHandle}
           titleValue={isCreate ? 'Xác nhận Tạo' : 'Xác nhận hủy'}
         ></ComfirmModal>
       )}

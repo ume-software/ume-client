@@ -8,6 +8,7 @@ import { useRef, useState } from 'react'
 import { Select } from 'antd'
 import { FormikErrors, useFormik } from 'formik'
 import Image from 'next/legacy/image'
+import { ServiceResponse } from 'ume-service-openapi'
 import * as Yup from 'yup'
 
 import ServiceAttributes from './services-attribute-childrend'
@@ -16,6 +17,8 @@ import FilterDropdown from '~/components/filter-dropdown'
 import ModalBase from '~/components/modal-base'
 import ComfirmModal from '~/components/modal-base/comfirm-modal'
 
+import { trpc } from '~/utils/trpc'
+
 export interface IServicesModalUpdateProps {
   closeFunction: any
   openValue: boolean
@@ -23,47 +26,46 @@ export interface IServicesModalUpdateProps {
 }
 
 export default function ServicesModalUpdate({ idService, closeFunction, openValue }: IServicesModalUpdateProps) {
-  const data = {
-    id: 'a1da9857-355e-43f1-8fdb-26a8a0ace6bd',
-    createdAt: '2023-05-10T07:08:46.083Z',
-    updatedAt: '2023-05-10T07:08:46.083Z',
-    deletedAt: 'Unknown Type: date',
-    name: 'Liên Minh Huyền Thoại',
-    slug: 'lien-minh-huyen-thoai',
-    imageUrl:
-      'https://cdn.tgdd.vn/2020/06/content/hinh-nen-lien-minh-huyen-thoai-dep-mat-cho-pc-va-dien-thoai-background-800x450.jpg',
-    serviceAttributes: [
-      {
-        id: '42ac81c2-1815-45f7-b598-412487161e1f',
-        attribute: 'Rank',
-        viAttribute: 'Hạng',
-        isActivated: true,
-        serviceAttributeValues: [
-          {
-            id: '42ac81c2-1815-45f7-b598-412487161e1f',
-            value: 'Iron',
-            viValue: 'Sắt',
-            isActivated: true,
-            serviceAttributeId: '42ac81c2-1815-45f7-b598-412487161e1f',
-          },
-        ],
+  console.log(idService)
+  const [servicesDetails, setServicesDetails] = useState<ServiceResponse>()
+  const SELECT = [
+    '$all',
+    {
+      serviceAttributes: [
+        '$all',
+        {
+          serviceAttributeValues: ['$all'],
+        },
+      ],
+    },
+  ]
+  const { isLoading, isFetching } = trpc.useQuery(
+    ['services.getServiceDetails', { id: idService, select: JSON.stringify(SELECT) }],
+    {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: 'always',
+      // refetchOnMount: false,
+      // refetchInterval: false,
+      // refetchIntervalInBackground: false,
+      onSuccess(data) {
+        setServicesDetails(data.data)
       },
-    ],
-  }
-
+    },
+  )
   const titleValue = 'Chỉnh sửa dịch vụ'
   const [openConfirm, setOpenConfirm] = useState(false)
   const [isCreate, setIsCreate] = useState<boolean>(false)
   const [isSubmiting, setSubmiting] = useState(false)
   const imageInputRef = useRef<HTMLInputElement>(null)
-
   const nameInit = 'Test ne'
-  const viNameInit = data.name
-  const imageUrlInit = data.imageUrl || empty_img
+  const viNameInit = servicesDetails?.name
+  const imageUrlInit = servicesDetails?.imageUrl || empty_img
   const isActivatedInit = true
   const numberUsedInit = 100
-  const createdAtInit = data?.createdAt ? new Date(data?.createdAt).toLocaleDateString('en-GB') : ''
-  const serviceAttributesInit = data.serviceAttributes || []
+  const createdAtInit = servicesDetails?.createdAt
+    ? new Date(servicesDetails?.createdAt).toLocaleDateString('en-GB')
+    : ''
+  const serviceAttributesInit = servicesDetails?.serviceAttributes || []
 
   const form = useFormik({
     initialValues: {
@@ -104,6 +106,17 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
       resetForm()
     },
   })
+
+  React.useEffect(() => {
+    form.setFieldValue('name', nameInit)
+    form.setFieldValue('viName', viNameInit)
+    form.setFieldValue('imageUrl', imageUrlInit)
+    form.setFieldValue('isActivated', isActivatedInit)
+    form.setFieldValue('serviceAttributes', serviceAttributesInit)
+    form.setFieldValue('numberUsed', numberUsedInit)
+    form.setFieldValue('createdAt', createdAtInit)
+  }, [servicesDetails])
+
   function closeHandleSmall() {
     openConfirmModalCancel()
   }
@@ -118,9 +131,12 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
     setOpenConfirm(false)
     setIsCreate(false)
   }
+  function clearData() {
+    form.resetForm()
+  }
   function closeHandle() {
     setOpenConfirm(false)
-    // clearData()
+    clearData()
     closeFunction()
   }
   const handleImageClick = () => {
@@ -167,6 +183,9 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
   const mappingStatus = {
     false: 'Tạm dừng',
     true: 'Hoạt động',
+  }
+  async function submitHandle() {
+    closeHandle()
   }
   return (
     <div>
@@ -328,21 +347,21 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
               </div>
             </div>
           </div>
-          {/* compent-child */}
-
           <div className="flex justify-center pb-4 mt-6">
             <Button customCSS="mx-6 px-4 py-1 border-2 hover:scale-110" onClick={openConfirmModalCancel}>
               Hủy
             </Button>
             <Button
-              customCSS={`mx-6 px-4 py-1 border-2 `}
+              customCSS={`mx-6 px-4 py-1 border-2 ${
+                form.isValid && form.values.name != '' && 'hover:scale-110 bg-[#7463F0] border-[#7463F0]'
+              }`}
               onClick={(e) => {
                 e.preventDefault()
                 openConfirmModal()
               }}
               isDisable={!form.isValid || form.values.name === ''}
             >
-              {'Tạo'}
+              {'Sửa'}
             </Button>
           </div>
         </ModalBase>
@@ -351,8 +370,8 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
         <ComfirmModal
           closeFunction={closeComfirmFormHandle}
           openValue={true}
-          isComfirmFunction={isCreate ? closeHandle : closeHandle}
-          titleValue={isCreate ? 'Xác nhận Tạo' : 'Xác nhận hủy'}
+          isComfirmFunction={isCreate ? submitHandle : closeHandle}
+          titleValue={isCreate ? 'Xác nhận sửa' : 'Xác nhận hủy'}
         ></ComfirmModal>
       )}
     </div>

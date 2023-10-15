@@ -17,8 +17,6 @@ import {
 } from 'ume-service-openapi'
 import * as Yup from 'yup'
 
-import anhURL from '../../../../../public/anh.jpg'
-
 import ModalBase from '~/components/modal-base'
 import ComfirmModal from '~/components/modal-base/comfirm-modal'
 
@@ -213,7 +211,6 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
             reqWithValuesNotNull[key] = req[key]
           }
         }
-        console.log(reqWithValuesNotNull)
 
         createNewVoucherAdmin.mutate(reqWithValuesNotNull, {
           onSuccess: (data) => {

@@ -135,8 +135,8 @@ const ServicesManagerPage = () => {
     }
   }
   function addServicesHandler() {
-    // setOpenServicesModalCreate(true)
-    setOpenServicesModalUpdate(true)
+    setOpenServicesModalCreate(true)
+    // setOpenServicesModalUpdate(true)
   }
   function closeServicesModalCreate() {
     setOpenServicesModalCreate(false)

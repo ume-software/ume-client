@@ -7,6 +7,8 @@ import React, { useState } from 'react'
 import { Table, Tag, notification } from 'antd'
 import Image from 'next/image'
 
+import ServicesModalUpdate from './services-modal/services-modal-update'
+
 import ComfirmModal from '~/components/modal-base/comfirm-modal'
 
 import { trpc } from '~/utils/trpc'
@@ -26,65 +28,20 @@ const tableDataMapping = (data?) => {
 }
 const ServicesTable = ({ servicesList, isLoading }) => {
   const utils = trpc.useContext()
-
   const listData = tableDataMapping(servicesList?.row)
-
-  // const handleBanFunction = () => {
-  //   if (!isBannedUser) {
-  //     try {
-  //       banUser.mutate(
-  //         {
-  //           slug: userId!!,
-  //         },
-  //         {
-  //           onSuccess: (data) => {
-  //             if (data.success) {
-  //               notification.success({
-  //                 message: 'Dừng hoạt động dịch vụ thành công!',
-  //                 description: 'dịch vụ đã bị dừng hoạt động',
-  //                 placement: 'bottomLeft',
-  //               })
-  //               utils.invalidateQueries('services.getServiceList')
-  //             }
-  //           },
-  //         },
-  //       )
-  //     } catch (error) {
-  //       console.error('Failed to Handle Ban/Unban User', error)
-  //     }
-  //   } else {
-  //     try {
-  //       unBanUser.mutate(
-  //         {
-  //           slug: userId!!,
-  //         },
-  //         {
-  //           onSuccess: (data) => {
-  //             if (data.success) {
-  //               notification.success({
-  //                 message: 'Kích hoạt dịch vụ thành công!',
-  //                 description: 'dịch vụ đã được kích hoạt',
-  //                 placement: 'bottomLeft',
-  //               })
-  //               utils.invalidateQueries('services.getServiceList')
-  //             }
-  //           },
-  //         },
-  //       )
-  //     } catch (error) {
-  //       console.error('Failed to Handle Ban/Unban User:', error)
-  //     }
-  //   }
-  //   setOpenBanUser(false)
-  // }
+  const [servicesModalData, setServicesModalData] = useState<any>()
+  const [openServicesModalView, setOpenServicesModalView] = useState(false)
+  const [openServicesModalUpdate, setOpenServicesModalUpdate] = useState(false)
+  const [openConfirm, setOpenConfirm] = useState(false)
+  const [isActivated, setIsActivate] = useState()
 
   const columns = [
     {
-      title: <div className="w-full flex justify-center">Hình ảnh</div>,
+      title: <div className="flex justify-center w-full">Hình ảnh</div>,
       dataIndex: 'imageUrl',
       key: 'imageUrl',
       render: (imageUrl) => (
-        <div className="w-full flex justify-center">
+        <div className="flex justify-center w-full">
           <Image src={imageUrl} width={70} height={100} alt={imageUrl} className="rounded-lg" />
         </div>
       ),
@@ -134,7 +91,9 @@ const ServicesTable = ({ servicesList, isLoading }) => {
             <div className="flex justify-end w-full">
               <Button isActive={false}>
                 <Eyes
-                  onClick={() => {}}
+                  onClick={() => {
+                    openModalHandle('view', record.key)
+                  }}
                   className="p-2 mr-2 rounded-full hover:bg-gray-500"
                   theme="outline"
                   size="18"
@@ -143,7 +102,9 @@ const ServicesTable = ({ servicesList, isLoading }) => {
               </Button>
               <Button isActive={false}>
                 <Write
-                  onClick={() => {}}
+                  onClick={() => {
+                    openModalHandle('update', record.key)
+                  }}
                   className="p-2 rounded-full hover:bg-gray-500"
                   theme="outline"
                   size="18"
@@ -171,22 +132,55 @@ const ServicesTable = ({ servicesList, isLoading }) => {
       </div>
     ),
   }
+  function closeModalView() {
+    setOpenServicesModalView(false)
+  }
+  function closeModalUpdate() {
+    setOpenServicesModalUpdate(false)
+  }
+  function openModalHandle(action, record) {
+    setServicesModalData(record)
+    switch (action) {
+      case 'view':
+        setOpenServicesModalView(true)
+        break
+      case 'update':
+        setOpenServicesModalUpdate(true)
+        break
+    }
+  }
+  const handlecloseConfirm = () => {
+    setOpenConfirm(false)
+  }
+  function handleConfirmFunction() {}
 
   return (
     <div className="mt-5 ">
       <Table loading={isLoading} locale={locale} pagination={false} columns={columns} dataSource={listData} />
-
-      {/* <ComfirmModal
-        closeFunction={handlecloseBan}
-        openValue={openBanUser}
-        isComfirmFunction={handleBanFunction}
-        titleValue={!isBannedUser ? 'Xác nhận chặn' : 'Xác nhận bỏ chặn'}
+      {/* {openServicesModalView && (
+        <VourcherModalView
+          vourcherId={servicesModalData}
+          closeFunction={closeModalView}
+          openValue={openServicesModalView}
+        />
+      )} */}
+      {openServicesModalUpdate && (
+        <ServicesModalUpdate
+          idService={servicesModalData}
+          closeFunction={closeModalUpdate}
+          openValue={openServicesModalUpdate}
+        />
+      )}
+      <ComfirmModal
+        closeFunction={handlecloseConfirm}
+        openValue={openConfirm}
+        isComfirmFunction={handleConfirmFunction}
+        titleValue={isActivated ? 'Xác nhận dừng hoạt động' : 'Xác nhận mở hoạt động'}
       >
         <div className="p-4 text-white">
-          Bạn có chắc chắn muốn {!isBannedUser ? ' chặn ' : ' bỏ chặn '}
-          {userName}
+          Bạn có chắc chắn muốn {!isActivated ? ' mở hoạt động ' : ' dừng hoạt động '} Dịch vụ này?
         </div>
-      </ComfirmModal> */}
+      </ComfirmModal>
     </div>
   )
 }
