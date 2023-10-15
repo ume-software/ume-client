@@ -5,11 +5,7 @@ import React, { useState } from 'react'
 
 import { Pagination, Tag } from 'antd'
 import { PrismaWhereConditionType, prismaWhereConditionToJsonString } from 'query-string-prisma-ume'
-import {
-  VoucherPagingResponse,
-  VoucherResponse,
-  VoucherResponseRecipientTypeEnum,
-} from 'ume-service-openapi'
+import { VoucherPagingResponse, VoucherResponse, VoucherResponseRecipientTypeEnum } from 'ume-service-openapi'
 
 import AdminVoucherTable from './components/voucher-table/admin-voucher-table'
 import VourcherModalCreate from './components/vourcher-modal/vourcher-modal-create'
@@ -219,7 +215,7 @@ const VoucherByAdmin = () => {
             />
           </div>
 
-          <div className="flex items-center pl-2 border-2 border-white rounded-lg w-fit bg-umeHeader">
+          <div className="flex items-center border-2 border-white rounded-lg w-fit bg-umeHeader">
             <Search className="p-2 rounded-full active:bg-gray-700" theme="outline" size="24" fill="#fff" />
             <Input
               placeholder="Tìm kiếm tên khuyến mãi"
@@ -232,7 +228,11 @@ const VoucherByAdmin = () => {
           </div>
         </div>
       </div>
-      <AdminVoucherTable data={adminVoucherList} />
+      <div className="flex justify-end mb-5 text-gray-500">
+        {10 * (page - 1) + 1}-{page * 10 > adminVoucherList?.count!! ? adminVoucherList?.count : page * 10} trên{' '}
+        {adminVoucherList?.count} khuyến mãi
+      </div>
+      <AdminVoucherTable isLoading={isLoading || isFetching} data={adminVoucherList} />
       <div className="flex w-full justify-center pb-[200px] mt-5">
         <Pagination
           itemRender={(page, type) => (

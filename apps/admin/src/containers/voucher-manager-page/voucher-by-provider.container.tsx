@@ -177,7 +177,7 @@ const mappingRecipientTypes = {
 
 const VoucherByProvider = () => {
   // --------------------------
-  const [adminVoucherList, setAdminVoucherList] = useState<VoucherPagingResponse>()
+  const [voucherList, setVoucherList] = useState<VoucherPagingResponse>()
   const [page, setPage] = useState(1)
   const [filter, setFilter] = useState({
     recipientType: 'ALL',
@@ -204,7 +204,7 @@ const VoucherByProvider = () => {
       },
     ],
 
-    providerId: null,
+    adminId: null,
     recipientType: filter.recipientType !== 'ALL' ? filter.recipientType : undefined,
     status: filter.status !== 'all' ? filter.status : undefined,
     discountUnit: filter.discountUnit !== 'all' ? filter.discountUnit : undefined,
@@ -218,7 +218,7 @@ const VoucherByProvider = () => {
     ],
     {
       onSuccess(data) {
-        setAdminVoucherList(data.data)
+        setVoucherList(data.data)
       },
     },
   )
@@ -313,7 +313,7 @@ const VoucherByProvider = () => {
             />
           </div>
 
-          <div className="flex items-center pl-2 border-2 border-white rounded-lg w-fit bg-umeHeader">
+          <div className="flex items-center border-2 border-white rounded-lg w-fit bg-umeHeader">
             <Search className="p-2 rounded-full active:bg-gray-700" theme="outline" size="24" fill="#fff" />
             <Input
               placeholder="Tìm kiếm tên khuyến mãi"
@@ -326,7 +326,11 @@ const VoucherByProvider = () => {
           </div>
         </div>
       </div>
-      <ProviderVoucherTable data={adminVoucherList} />
+      <div className="flex justify-end mb-5 text-gray-500">
+        {10 * (page - 1) + 1}-{page * 10 > voucherList?.count!! ? voucherList?.count : page * 10} trên{' '}
+        {voucherList?.count} khuyến mãi
+      </div>
+      <ProviderVoucherTable data={voucherList} isLoading={isLoading || isFetching} />
       <div className="flex w-full justify-center pb-[200px] mt-5">
         <Pagination
           itemRender={(page, type) => (
@@ -342,7 +346,7 @@ const VoucherByProvider = () => {
           )}
           pageSize={10}
           current={page}
-          total={adminVoucherList?.count}
+          total={voucherList?.count}
           onChange={(page) => {
             handlePageChange(page)
           }}

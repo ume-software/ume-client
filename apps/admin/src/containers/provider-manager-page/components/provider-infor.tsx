@@ -177,8 +177,12 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
         </div>
       </div>
       <div>
-        {switchTable && <ProviderServiceTable data={dataProviderSkills} />}
-        {!switchTable && <TransactionTable data={dataProviderTranHistory} />}
+        {switchTable && (
+          <ProviderServiceTable isLoading={isListSkillLoading || isListSkillFetching} data={dataProviderSkills} />
+        )}
+        {!switchTable && (
+          <TransactionTable isLoading={isListTransLoading || isListTransFetching} data={dataProviderTranHistory} />
+        )}
         <div className="flex w-full justify-center pb-[200px] mt-5">
           <Pagination
             itemRender={(page, type) => (

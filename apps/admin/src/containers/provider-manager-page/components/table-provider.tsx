@@ -16,7 +16,7 @@ import BanModal from '~/components/modal-base/ban-modal'
 
 import { trpc } from '~/utils/trpc'
 
-export default function TableProviders({ data }) {
+export default function TableProviders({ data, isLoading }) {
   const utils = trpc.useContext()
   const [openProviderDetail, setOpenProviderDetail] = useState(false)
   const [providerId, setProviderId] = useState(null)
@@ -189,7 +189,14 @@ export default function TableProviders({ data }) {
 
   return (
     <div>
-      <Table locale={locale} pagination={false} columns={columnsProvider} dataSource={data} className="z-0" />
+      <Table
+        loading={isLoading}
+        locale={locale}
+        pagination={false}
+        columns={columnsProvider}
+        dataSource={data}
+        className="z-0"
+      />
       {openProviderDetail && (
         <ProviderDetail
           providerInfo={data}

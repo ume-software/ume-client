@@ -42,7 +42,7 @@ const mappingType = {
   DISCOUNT: 'Giảm giá',
   CASHBACK: 'Hoàn tiền',
 }
-const AdminVoucherTable = ({ data }) => {
+const AdminVoucherTable = ({ data, isLoading }) => {
   const listData = tableDataMapping(data?.row)
   const [voucherModalData, setVoucherModalData] = useState<any>()
   const [openVourcherModalView, setOpenVourcherModalView] = useState(false)
@@ -216,7 +216,7 @@ const AdminVoucherTable = ({ data }) => {
 
   return (
     <div className="mt-5 ">
-      <Table locale={locale} pagination={false} columns={columns} dataSource={listData} />
+      <Table loading={isLoading} locale={locale} pagination={false} columns={columns} dataSource={listData} />
       {openVourcherModalView && (
         <VourcherModalView
           vourcherId={voucherModalData}

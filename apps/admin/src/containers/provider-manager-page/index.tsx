@@ -249,7 +249,7 @@ const ProviderManager = () => {
           {10 * (page - 1) + 1}-{page * 10 > providerList?.count!! ? providerList?.count : page * 10} trên{' '}
           {providerList?.count} user
         </div>
-        <TableProviders data={data} />
+        <TableProviders data={data} isLoading={isUserListFetching || isUserListFetching} />
         <div className="flex w-full justify-center pb-[200px] mt-5">
           <Pagination
             itemRender={(page, type) => (

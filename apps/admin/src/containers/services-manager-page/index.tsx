@@ -10,9 +10,10 @@ import {
   AdminGetUserPagingResponseResponse,
   AdminGetUserResponseResponse,
   AdminGetUserResponseResponseGenderEnum,
+  ServicePagingResponse,
 } from 'ume-service-openapi'
 
-import UserTable from './components/user-table'
+import ServicesTable from './components/services-table'
 
 import FilterDropdown from '~/components/filter-dropdown'
 
@@ -32,7 +33,7 @@ const statusFilterItems = [
     ),
   },
   {
-    key: 'false',
+    key: 'true',
     label: (
       <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white  px-3 py-2 w-full flex justify-center">
         Hoạt động
@@ -40,7 +41,7 @@ const statusFilterItems = [
     ),
   },
   {
-    key: 'true',
+    key: 'false',
     label: (
       <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white  px-3 py-2 w-full flex justify-center">
         Tạm dừng
@@ -49,90 +50,47 @@ const statusFilterItems = [
   },
 ]
 
-const genderFilterItems = [
-  {
-    key: 'ALL',
-    label: (
-      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white px-3 py-2 w-full flex justify-center">
-        <div className="flex justify-center items-center w-10">Tất cả</div>
-      </Tag>
-    ),
-  },
-  {
-    key: AdminGetUserResponseResponseGenderEnum.Male,
-    label: (
-      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white px-3 py-2 w-full flex justify-center">
-        <div className="flex justify-center items-center w-10">Nam</div>
-      </Tag>
-    ),
-  },
-  {
-    key: AdminGetUserResponseResponseGenderEnum.Female,
-    label: (
-      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white px-3 py-2 w-full flex justify-center">
-        <div className="flex justify-center items-center w-10">Nữ</div>
-      </Tag>
-    ),
-  },
-  {
-    key: AdminGetUserResponseResponseGenderEnum.Other,
-    label: (
-      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white px-3 py-2 w-full flex justify-center">
-        <div className="flex justify-center items-center w-10">Khác</div>
-      </Tag>
-    ),
-  },
-  {
-    key: AdminGetUserResponseResponseGenderEnum.Private,
-    label: (
-      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white px-3 py-2 w-full flex justify-center">
-        <div className="flex justify-center items-center w-10">Ẩn</div>
-      </Tag>
-    ),
-  },
-]
-const mappingGender = {
-  ALL: 'Giới tính',
-  MALE: 'Nam',
-  FEMALE: ' Nữ',
-  PRIVATE: 'Ẩn',
-  OTHER: ' Khác',
-}
 const mappingStatus = {
   all: 'Trạng thái',
-  false: 'Hoạt động',
-  true: 'Tạm dừng',
+  false: 'Tạm dừng',
+  true: 'Hoạt động',
 }
-const UserManager = () => {
-  const [userList, setUserList] = useState<AdminGetUserPagingResponseResponse | undefined>()
+const ServicesManagerPage = () => {
+  const [serviceList, setServiceList] = useState<ServicePagingResponse | undefined>()
   const [page, setPage] = useState(1)
   const [filter, setFilter] = useState({
     gender: 'ALL',
-    isBanned: 'all',
+    isActivated: 'all',
     search: '',
   })
   const [searchChange, setSearchChange] = useState('')
-  const testQuerry: PrismaWhereConditionType<AdminGetUserResponseResponse> = Object.assign({
+  const testQuerry: PrismaWhereConditionType<ServicePagingResponse> = Object.assign({
     name: {
       contains: filter.search,
       mode: 'insensitive',
     },
 
     gender: filter.gender !== 'ALL' ? filter.gender : undefined,
-    isBanned: filter.isBanned !== 'all' ? (filter.isBanned == 'true' ? true : false) : undefined,
+    isActivated: filter.isActivated !== 'all' ? (filter.isActivated == 'true' ? true : false) : undefined,
   })
 
-  const { isLoading: isUserListLoading, isFetching: isUserListFetching } = trpc.useQuery(
+  const { isLoading, isFetching } = trpc.useQuery(
     [
-      'user.getUserList',
-      { page: page.toString(), where: prismaWhereConditionToJsonString(testQuerry, ['isUndefined']), order: undefined },
+      'services.getServiceList',
+      {
+        page: page.toString(),
+        select: undefined,
+        where: prismaWhereConditionToJsonString(testQuerry, ['isUndefined']),
+        order: undefined,
+      },
     ],
     {
       onSuccess(data) {
-        setUserList(data?.data as any)
+        setServiceList(data?.data as any)
       },
     },
   )
+  console.log(serviceList)
 
   const handleFilter = (title, key) => {
     setPage(1)
@@ -144,7 +102,7 @@ const UserManager = () => {
     } else if (title == 'status') {
       setFilter({
         ...filter,
-        isBanned: key,
+        isActivated: key,
       })
     }
   }
@@ -176,33 +134,26 @@ const UserManager = () => {
   return (
     <div>
       <Head>
-        <title>Admin | User Manager</title>
+        <title>Admin | Services Manager</title>
       </Head>
       <div className="pb-10">
-        <span className="content-title">Quản Lý người dùng</span>
+        <span className="content-title">Quản Lý Dịch Vụ</span>
         <div className="flex flex-col my-10">
           <div className="flex justify-between items-center">
             <div className="flex">
               <FilterDropdown
-                id={'gender'}
-                CustomCss="min-w-[6rem]"
-                title={`${mappingGender[filter.gender]}`}
-                items={genderFilterItems}
-                handleFilter={handleFilter}
-              />
-              <FilterDropdown
                 id={'status'}
                 CustomCss="min-w-[7rem]"
-                title={`${mappingStatus[filter.isBanned]}`}
+                title={`${mappingStatus[filter.isActivated]}`}
                 items={statusFilterItems}
                 handleFilter={handleFilter}
               />
             </div>
 
-            <div className="flex items-center rounded-lg bg-umeHeader border-2 border-white">
+            <div className="flex pl-1 items-center rounded-lg bg-umeHeader border-2 border-white">
               <Search className=" active:bg-gray-700 p-2 rounded-full" theme="outline" size="24" fill="#fff" />
               <Input
-                placeholder="Tìm kiếm tên người dùng"
+                placeholder="Tìm kiếm tên dịch vụ"
                 onKeyUp={handleKeyPress}
                 value={searchChange}
                 onChange={handleSearchChange}
@@ -213,10 +164,10 @@ const UserManager = () => {
           </div>
         </div>
         <div className="flex justify-end mb-5 text-gray-500">
-          {10 * (page - 1) + 1}-{page * 10 > userList?.count!! ? userList?.count : page * 10} trên {userList?.count}{' '}
-          người dùng
+          {10 * (page - 1) + 1}-{page * 10 > serviceList?.count!! ? serviceList?.count : page * 10} trên{' '}
+          {serviceList?.count} dịch vụ
         </div>
-        <UserTable isLoading={isUserListLoading || isUserListFetching} userList={userList} />
+        <ServicesTable isLoading={isLoading || isFetching} servicesList={serviceList} />
         <div className="flex w-full justify-center pb-[200px] mt-5">
           <Pagination
             itemRender={(page, type) => (
@@ -232,7 +183,7 @@ const UserManager = () => {
             )}
             pageSize={10}
             current={page}
-            total={userList?.count}
+            total={serviceList?.count}
             onChange={(page) => {
               handlePageChange(page)
             }}
@@ -243,4 +194,4 @@ const UserManager = () => {
   )
 }
 
-export default UserManager
+export default ServicesManagerPage

@@ -7,6 +7,7 @@ import EmptyErrorPic from '../../../../public/empty_error.png'
 
 export interface IProviderServiceTableProps {
   data: any
+  isLoading: boolean
 }
 
 export default function ProviderServiceTable(props: IProviderServiceTableProps) {
@@ -59,5 +60,14 @@ export default function ProviderServiceTable(props: IProviderServiceTableProps) 
       </div>
     ),
   }
-  return <Table locale={locale} pagination={false} columns={columnsService} dataSource={data} className="z-0" />
+  return (
+    <Table
+      loading={props.isLoading}
+      locale={locale}
+      pagination={false}
+      columns={columnsService}
+      dataSource={data}
+      className="z-0"
+    />
+  )
 }
