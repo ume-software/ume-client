@@ -36,7 +36,7 @@ export type KYCFormType = {
   requestId?: string
 }
 
-const kycForm = (record: KYCFormType, handleButton: (requestId: string, action: KYCAction) => void) => {
+const kycForm = (record: KYCFormType, handleAction: (action: KYCAction) => void, handleOpenConfimModal: () => void) => {
   return (
     <div className="flex flex-col w-full p-6 gap-4 bg-[#15151b] text-white border-t ">
       <div className="flex flex-row gap-4">
@@ -109,7 +109,8 @@ const kycForm = (record: KYCFormType, handleButton: (requestId: string, action: 
           customCSS="px-3 w-24 py-2 hover:bg-green-400 hover:text-black"
           type="button"
           onClick={() => {
-            handleButton(record?.requestId ?? '', KYCAction.APPROVE)
+            handleAction(KYCAction.APPROVE)
+            handleOpenConfimModal()
           }}
         >
           Approve
@@ -118,7 +119,8 @@ const kycForm = (record: KYCFormType, handleButton: (requestId: string, action: 
           customCSS="px-3 w-24 py-2 hover:bg-red-400 hover:text-black"
           type="button"
           onClick={() => {
-            handleButton(record?.requestId ?? '', KYCAction.REJECT)
+            handleAction(KYCAction.REJECT)
+            handleOpenConfimModal()
           }}
         >
           Reject
@@ -131,10 +133,26 @@ const kycForm = (record: KYCFormType, handleButton: (requestId: string, action: 
 export const KYCModal = ({ visible, handleClose, data }: KYCModalType) => {
   const utils = trpc.useContext()
   const actionKYC = trpc.useMutation(['provider.actionKYC'])
+
   const [visibleConfirm, setVisibleConfirm] = useState(false)
+  const [action, setAction] = useState<KYCAction>(KYCAction.APPROVE)
+
+  const handleVisibleConfirm = useCallback(() => {
+    setVisibleConfirm(true)
+  }, [setVisibleConfirm])
+  const handelCloseConfirm = useCallback(() => {
+    setVisibleConfirm(false)
+  }, [setVisibleConfirm])
+
+  const handleActionConfirm = useCallback(
+    (action: KYCAction) => {
+      setAction(action)
+    },
+    [setAction],
+  )
 
   const handleAction = useCallback(
-    (id: string, action: KYCAction) => {
+    (id: string) => {
       actionKYC.mutate(
         { id, action },
         {
@@ -142,37 +160,61 @@ export const KYCModal = ({ visible, handleClose, data }: KYCModalType) => {
             if (success) {
               notification.success({
                 message: 'Success',
-                description: 'Action KYC Success',
+                description: `${action} KYC Success`,
               })
               utils.invalidateQueries(['provider.getListRequestKYC'])
+              handelCloseConfirm()
               handleClose()
             }
           },
           onError: (error, data) => {
             notification.error({
               message: 'Error',
-              description: error.message || 'Action KYC Failed',
+              description: error.message || `${action} KYC Failed`,
             })
           },
         },
       )
     },
-    [actionKYC, handleClose, utils],
+    [action, actionKYC, handelCloseConfirm, handleClose, utils],
   )
 
   const confirmModal = Modal.useEditableForm({
     onOK: () => {},
-    onClose: () => setVisibleConfirm(false),
+    onClose: handelCloseConfirm,
     show: visibleConfirm,
-    form: <></>,
+    form: (
+      <div>
+        <div className="flex flex-row justify-center gap-4 p-5">
+          <Button
+            customCSS="px-3 w-24 py-2 hover:bg-green-400 hover:text-black"
+            type="button"
+            onClick={() => {
+              handleAction(data?.requestId)
+            }}
+          >
+            Confirm
+          </Button>
+          <Button
+            customCSS="px-3 w-24 py-2 hover:bg-red-400 hover:text-black"
+            type="button"
+            onClick={() => {
+              handelCloseConfirm()
+            }}
+          >
+            Cancel
+          </Button>
+        </div>
+      </div>
+    ),
     title: <span className="text-white">Confirm Modal</span>,
     backgroundColor: '#15151b',
     closeWhenClickOutSide: false,
     closeButtonOnConner: (
       <>
         <CloseSmall
-          onClick={handleClose}
-          onKeyDown={(e) => e.key === 'Esc' && handleClose()}
+          onClick={handelCloseConfirm}
+          onKeyDown={(e) => e.key === 'Esc' && handelCloseConfirm()}
           tabIndex={1}
           className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
           theme="outline"
@@ -187,7 +229,7 @@ export const KYCModal = ({ visible, handleClose, data }: KYCModalType) => {
     onOK: () => {},
     onClose: handleClose,
     show: visible,
-    form: kycForm(data, handleAction),
+    form: kycForm(data, handleActionConfirm, handleVisibleConfirm),
     title: <span className="text-white">KYC Form</span>,
     backgroundColor: '#15151b',
     closeWhenClickOutSide: false,
@@ -208,7 +250,7 @@ export const KYCModal = ({ visible, handleClose, data }: KYCModalType) => {
   return (
     <>
       {kycModal}
-      {visibleConfirm}
+      {confirmModal}
     </>
   )
 }
