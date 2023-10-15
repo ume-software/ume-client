@@ -152,6 +152,7 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
     form.setFieldValue('numUserCanUse', numUserCanUseInit)
     form.setFieldValue('numUserCanUseInDay', numUserCanUseInDayInit)
   }, [endDateInit])
+
   const mappingRecipientType = {
     ALL: 'Tất cả',
     FIRST_TIME_BOOKING: 'Người lần đầu thuê',
@@ -160,6 +161,7 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
     TOP_10_BOOKER: ' Top 10 người thuê',
     SELECTIVE_BOOKER: 'Người đặt chọn',
   }
+
   const mappingType = {
     DISCOUNT: 'Giảm giá',
     CASHBACK: 'Hoàn tiền',

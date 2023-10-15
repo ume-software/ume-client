@@ -33,7 +33,7 @@ export const Header: React.FC = () => {
 
   const { isAuthenticated, user, logout, login } = useAuth()
 
-  const { isLoading: loadingUserInfo } = trpc.useQuery(['identity.identityInfo'], {
+  trpc.useQuery(['identity.identityInfo'], {
     onSuccess(data) {
       login({ ...data.data })
     },

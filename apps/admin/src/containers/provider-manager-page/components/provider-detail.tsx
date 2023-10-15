@@ -4,10 +4,8 @@ import ProviderInfo from './provider-infor'
 
 import ModalBase from '~/components/modal-base'
 
-// import PersionalInfo from '../persional-info'
-
 export interface IProviderDetailProps {
-  closeFunction: any | undefined
+  closeFunction: any
   openValue: boolean
   providerId: any
   providerInfo: any

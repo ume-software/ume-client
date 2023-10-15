@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 import { createRouter } from './configurations'
+import { kcyAction } from './services/provider-service'
 import {
   BanProvider,
   UnBanProvider,
@@ -108,5 +109,14 @@ export const providerRouter = createRouter()
     }),
     resolve: async ({ ctx, input }) => {
       return await getListKYC(ctx, input)
+    },
+  })
+  .mutation('actionKYC', {
+    input: z.object({
+      id: z.string(),
+      action: z.string(),
+    }),
+    resolve: async ({ input, ctx }) => {
+      return await kcyAction(ctx, { id: input.id, action: input.action })
     },
   })

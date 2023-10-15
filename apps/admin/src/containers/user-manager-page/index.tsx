@@ -16,6 +16,7 @@ import UserTable from './components/user-table'
 
 import FilterDropdown from '~/components/filter-dropdown'
 
+import { LIMIT_PAGE_SIZE } from '~/utils/constant'
 import { trpc } from '~/utils/trpc'
 
 const statusFilterItems = [
@@ -30,7 +31,7 @@ const statusFilterItems = [
   {
     key: 'false',
     label: (
-      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white  px-3 py-2 w-full flex justify-center">
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
         Hoạt động
       </Tag>
     ),
@@ -38,7 +39,7 @@ const statusFilterItems = [
   {
     key: 'true',
     label: (
-      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white  px-3 py-2 w-full flex justify-center">
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
         Tạm dừng
       </Tag>
     ),
@@ -81,8 +82,8 @@ const genderFilterItems = [
   {
     key: AdminGetUserResponseResponseGenderEnum.Private,
     label: (
-      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white px-3 py-2 w-full flex justify-center">
-        <div className="flex justify-center items-center w-10">Ẩn</div>
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
+        <div className="flex items-center justify-center w-10">Ẩn</div>
       </Tag>
     ),
   },
@@ -119,7 +120,7 @@ const UserManager = () => {
     isBanned: filter.isBanned !== 'all' ? (filter.isBanned == 'true' ? true : false) : undefined,
   })
 
-  const { isLoading: isUserListLoading, isFetching: isUserListFetching } = trpc.useQuery(
+  trpc.useQuery(
     [
       'user.getUserList',
       { page: page.toString(), where: prismaWhereConditionToJsonString(testQuerry, ['isUndefined']), order: undefined },
@@ -224,7 +225,7 @@ const UserManager = () => {
                 )}
               </div>
             )}
-            pageSize={10}
+            pageSize={Number(LIMIT_PAGE_SIZE)}
             current={page}
             total={userList?.count}
             onChange={(page) => {

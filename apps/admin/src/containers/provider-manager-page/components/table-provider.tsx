@@ -1,4 +1,4 @@
-import { BaseballBat, CheckOne, Eyes, ReduceOne } from '@icon-park/react'
+import { Eyes, ReduceOne } from '@icon-park/react'
 import { Button } from '@ume/ui'
 
 import * as React from 'react'
@@ -6,7 +6,6 @@ import { useState } from 'react'
 
 import { Space, Table, Tag, Tooltip, notification } from 'antd'
 import Image from 'next/image'
-import { AdminHandleBanProviderRequest } from 'ume-service-openapi'
 
 import EmptyErrorPic from '../../../../public/empty_error.png'
 import ProviderDetail from './provider-detail'
@@ -89,7 +88,7 @@ export default function TableProviders({ data }) {
     setOpenBanProvider(true)
     setIsBanedProvider(isBanned)
   }
-  const [arrow, setArrow] = useState('Show')
+  const [arrow] = useState('Show')
   const mergedArrow = React.useMemo(() => {
     if (arrow === 'Hide') {
       return false

@@ -1,8 +1,13 @@
 import { TRPCError } from '@trpc/server'
 import { getEnv } from '~/env'
 
-import { parse, serialize } from 'cookie'
-import { AdminHandleBanProviderRequest, AdminManageProviderApi } from 'ume-service-openapi'
+import { parse } from 'cookie'
+import {
+  AdminHandleBanProviderRequest,
+  AdminManageProviderApi,
+  AdminManageUserKYCRequestApi,
+  UserKYCRequestResponse,
+} from 'ume-service-openapi'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
@@ -261,16 +266,44 @@ export const getListKYC = async (
       frontSideCitizenIdImageUrl: data.frontSideCitizenIdImageUrl,
       portraitImageUrl: data.portraitImageUrl,
       status: data?.userKYCStatus,
+      requestId: data.id,
     }))
 
     return {
       data: res,
       successs: true,
+      count: response.data.count,
+      pagination: response.data.pagination,
     }
   } catch (error) {
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
-      message: error.message || 'Failed to get list KYC',
+      message: error.message || 'Failed to get list KYC.',
+    })
+  }
+}
+
+export const kcyAction = async (ctx, { id, action }) => {
+  const cookies = parse(ctx.req.headers.cookie)
+  try {
+    let response = await new AdminManageUserKYCRequestApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    })
+    if (action === 'APPROVE') {
+      response.adminApprovedUserKYCRequest(id)
+    } else if (action === 'REJECT') {
+      response.adminRejectedUserKYCRequest(id)
+    }
+    return {
+      data: response,
+      successs: true,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.message || `Failed to ${action} KYC for user have ${id}.`,
     })
   }
 }

@@ -18,7 +18,7 @@ const Layout = ({ children }: ILayout) => {
       </div>
       <div>
         <Sidebar />
-        <div className="mt-16 pl-[23%] w-full pr-[2%] py-5 min-h-screen bg-[#15151b] text-white fixed">{children}</div>
+        <div className="mt-16 pl-[23%] w-full pr-[2%] py-5 min-h-screen bg-[#15151b] text-white">{children}</div>
       </div>
     </>
   )

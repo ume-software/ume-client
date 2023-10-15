@@ -40,7 +40,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
   const selectedService =
     props.data?.providerServices!.find(
       (providerSkill) => gameSelected == providerSkill?.service?.slug || gameSelected == providerSkill.serviceId,
-    ) || undefined
+    ) ?? undefined
 
   const handleGamesToggle = () => {
     setGamesToggle(!gamesToggle)
@@ -73,7 +73,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
         </>,
       )
       try {
-        await createNewChatChannel.mutate(
+        createNewChatChannel.mutate(
           {
             receiverId: channelId,
           },
@@ -155,9 +155,9 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                               ? 'bg-gray-700'
                               : ''
                           }`}
-                          onClick={() => handleSelected(item.service?.slug || item.serviceId)}
+                          onClick={() => handleSelected(item.service?.slug ?? item.serviceId)}
                         >
-                          <Image src={item?.service?.imageUrl || ImgForEmpty} alt="Game Image" width={60} height={80} />
+                          <Image src={item?.service?.imageUrl ?? ImgForEmpty} alt="Game Image" width={60} height={80} />
                           <div className="max-w-[150px] min-w-[150px]">
                             <p className="font-semibold text-lg text-white z-[4] truncate group-hover:w-fit">
                               {item?.service?.name}
@@ -192,7 +192,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                     className="absolute rounded-xl"
                     layout="fill"
                     objectFit="cover"
-                    src={props.data?.avatarUrl || ImgForEmpty}
+                    src={props.data?.avatarUrl ?? ImgForEmpty}
                     alt="Empty Image"
                   />
                 </div>

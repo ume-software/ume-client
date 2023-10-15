@@ -1,5 +1,5 @@
 import { Plus } from '@icon-park/react'
-import { Button, FormInput, Input, TextArea } from '@ume/ui'
+import { Button, FormInput, TextArea } from '@ume/ui'
 import { uploadImageVoucher } from '~/api/upload-media'
 
 import * as React from 'react'
@@ -7,8 +7,6 @@ import { useRef, useState } from 'react'
 
 import { Select, Space, notification } from 'antd'
 import { FormikErrors, useFormik } from 'formik'
-import { ErrorMessage } from 'formik'
-import { values } from 'lodash'
 import Image from 'next/legacy/image'
 import {
   CreateVoucherRequestDiscountUnitEnum,
@@ -33,7 +31,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
   const titleValue = 'Thông Tin Khuyến Mãi'
   const issuer = 'ADMIN'
   const MAX_NUMBER = '100000'
-  const [createAt, setCreateAt] = useState<any>(new Date().toLocaleDateString('en-GB'))
+  const [createAt] = useState<any>(new Date().toLocaleDateString('en-GB'))
   const [isSubmiting, setSubmiting] = useState(false)
   interface IFormValues {
     vourcherCode: string
@@ -54,10 +52,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
     numUserCanUse: number
     numUserCanUseInDay: number
   }
-  const validate = (values: IFormValues): FormikErrors<IFormValues> => {
-    const errors: FormikErrors<IFormValues> = {}
-    return errors
-  }
+
   const form = useFormik({
     initialValues: {
       vourcherCode: '',
@@ -83,7 +78,6 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
       typeVoucher: Yup.string().required('Loại là bắt buộc'),
       discountUnit: Yup.string().required('discountUnit là bắt buộc'),
       audience: Yup.string().required('Đối tượng là bắt buộc'),
-      // email: Yup.string().email('Invalid email address').required('Email is required'),
     }),
     onSubmit: (values, { resetForm }) => {
       setSubmiting(true)
