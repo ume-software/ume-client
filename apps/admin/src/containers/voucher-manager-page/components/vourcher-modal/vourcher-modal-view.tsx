@@ -142,12 +142,17 @@ export default function VourcherModalView({ vourcherId, closeFunction, openValue
             <div className="flex flex-col justify-end mt-5">
               <div className="flex h-32 text-white">
                 <span className="w-16 mr-4">Mô tả: </span>
-                <TextArea name="description" className="bg-[#413F4D] w-4/5" rows={5} value={description} />
+                <TextArea
+                  name="description"
+                  className="bg-[#413F4D] w-4/5 max-h-[140px]"
+                  rows={5}
+                  value={description}
+                />
               </div>
             </div>
           </div>
           {status == 'PENDING' && (
-            <div className="w-full flex justify-evenly items-center my-4">
+            <div className="flex items-center w-full my-4 justify-evenly">
               <Button customCSS="py-1 px-2 "> Từ chối </Button>
               <Button customCSS="py-1 px-2 bg-[#7463f0]"> Chấp nhận </Button>
             </div>

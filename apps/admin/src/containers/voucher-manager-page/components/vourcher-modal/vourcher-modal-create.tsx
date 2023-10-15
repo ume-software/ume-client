@@ -707,7 +707,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                   <span className="w-16 mr-4">Mô tả: </span>
                   <TextArea
                     name="description"
-                    className="bg-[#413F4D] w-4/5"
+                    className="bg-[#413F4D] w-4/5 max-h-[140px]"
                     rows={5}
                     value={form.values.description}
                     onChange={form.handleChange}
