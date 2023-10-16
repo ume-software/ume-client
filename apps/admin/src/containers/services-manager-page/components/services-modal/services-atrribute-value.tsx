@@ -25,7 +25,7 @@ export default function ServiceAttributeValues({
     },
     validationSchema: Yup.object({
       value: Yup.string().required('Thuộc tính là bắt buộc'),
-      viValue: Yup.string().required('Thuộc tính là bắt buộc'),
+      viValue: Yup.string(),
       serviceAttributeValues: Yup.array().min(0, ''),
     }),
     onSubmit: (values) => {
@@ -53,7 +53,7 @@ export default function ServiceAttributeValues({
             className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 
             ${form.errors.value && form.touched.value ? 'placeholder:text-red-500' : ''}
             `}
-            placeholder={'Tên tiếng việt: Trống'}
+            placeholder={'Tên thuộc tính: Trống'}
             error={undefined}
             value={form.values.value}
             errorMessage={undefined}
@@ -66,7 +66,7 @@ export default function ServiceAttributeValues({
             className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 
             ${form.errors.value && form.touched.value ? 'placeholder:text-red-500' : ''}
             `}
-            placeholder={form.errors.value && form.touched.value ? form.errors.value : 'Tên tiếng việt: Bạc'}
+            placeholder={form.errors.value && form.touched.value ? form.errors.value : 'Tên thuộc tính: Silver'}
             disabled={false}
             onChange={(e) => {
               handleChange('value', e)
@@ -88,7 +88,7 @@ export default function ServiceAttributeValues({
             className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 
             ${form.errors.viValue && form.touched.viValue ? 'placeholder:text-red-500' : ''}
             `}
-            placeholder={'Tên tiếng anh: Trống '}
+            placeholder={'Tên tiếng việt: Trống '}
             errorMessage={''}
             value={form.values.viValue}
             error={undefined}
@@ -101,7 +101,7 @@ export default function ServiceAttributeValues({
             className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 
             ${form.errors.viValue && form.touched.viValue ? 'placeholder:text-red-500' : ''}
             `}
-            placeholder={form.errors.viValue && form.touched.viValue ? form.errors.viValue : 'Tên tiếng anh: Silver '}
+            placeholder={form.errors.viValue && form.touched.viValue ? form.errors.viValue : 'Tên tiếng việt: Bạc '}
             disabled={false}
             onChange={(e) => {
               handleChange('viValue', e)

@@ -35,6 +35,8 @@ const ServicesTable = ({ servicesList, isLoading }) => {
   const [openServicesModalUpdate, setOpenServicesModalUpdate] = useState(false)
   const [openConfirm, setOpenConfirm] = useState(false)
   const [isActivated, setIsActivate] = useState()
+  const [selectedService, setSelectedService] = useState<any>()
+  const updateService = trpc.useMutation(['services.updateService'])
 
   const columns = [
     {
@@ -65,11 +67,11 @@ const ServicesTable = ({ servicesList, isLoading }) => {
     },
     {
       title: <div className="flex items-center justify-center">Trạng thái</div>,
-      key: 'isBanned',
-      dataIndex: 'isBanned',
+      key: 'isActivated',
+      dataIndex: 'isActivated',
       render: (text) => (
         <div className="flex items-center justify-center">
-          {!text ? (
+          {text ? (
             <Tag className="px-3 py-2 m-0 text-white bg-green-500 rounded-lg">Hoạt động</Tag>
           ) : (
             <Tag className="px-3 py-2 m-0 text-white bg-red-500 rounded-lg">Tạm dừng</Tag>
@@ -112,7 +114,7 @@ const ServicesTable = ({ servicesList, isLoading }) => {
                   fill="#1677ff"
                 />
               </Button>
-              <Button isActive={false} onClick={() => {}}>
+              <Button isActive={false} onClick={() => handleOpenConfirm(record)}>
                 {record.isActivated ? (
                   <ReduceOne className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="20" fill="#ff0000" />
                 ) : (
@@ -153,8 +155,50 @@ const ServicesTable = ({ servicesList, isLoading }) => {
   const handlecloseConfirm = () => {
     setOpenConfirm(false)
   }
-  function handleConfirmFunction() {}
+  function handleConfirmFunction() {
+    console.log(selectedService)
+    try {
+      updateService.mutate(
+        {
+          id: selectedService?.id,
+          updateServiceRequest: {
+            isActivated: !isActivated,
+            name: selectedService?.name,
+            imageUrl: selectedService?.imageUrl,
+          },
+        },
+        {
+          onSuccess(data, variables, context) {
+            if (data.success) {
+              if (isActivated) {
+                notification.success({
+                  message: 'Dừng hoạt động thành công!',
+                  description: 'Dịch vụ đã bị dừng hoạt động',
+                  placement: 'bottomLeft',
+                })
+              } else {
+                notification.success({
+                  message: 'Kích hoạt thành công!',
+                  description: 'Dịch vụ đã được kích hoạt lại',
+                  placement: 'bottomLeft',
+                })
+              }
+              utils.invalidateQueries('services.getServiceList')
+            }
+          },
+        },
+      )
+    } catch (e) {
+      console.error(e)
+    }
+    setOpenConfirm(false)
+  }
 
+  function handleOpenConfirm(record) {
+    setSelectedService(record)
+    setIsActivate(record.isActivated)
+    setOpenConfirm(true)
+  }
   return (
     <div className="mt-5 ">
       <Table loading={isLoading} locale={locale} pagination={false} columns={columns} dataSource={listData} />

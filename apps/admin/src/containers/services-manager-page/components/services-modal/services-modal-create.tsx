@@ -40,18 +40,19 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
       selectedImage: null,
     },
     validationSchema: Yup.object({
-      name: Yup.string().required('Tên là bắt buộc'),
-      viName: Yup.string().required('Tên là bắt buộc'),
+      name: Yup.string().required('Tên dịch vụ bắt buộc'),
+      viName: Yup.string(),
+      imageUrl: Yup.string().required('Hình là bắt buộc'),
       serviceAttributes: Yup.array()
         .of(
           Yup.object({
-            attribute: Yup.string(),
+            attribute: Yup.string().required('Thuộc tính là bắt buộc'),
             viAttribute: Yup.string(),
             isActivated: Yup.boolean(),
             serviceAttributeValues: Yup.array()
               .of(
                 Yup.object({
-                  value: Yup.string(),
+                  value: Yup.string().required('Thuộc tính là bắt buộc'),
                   viValue: Yup.string(),
                   isActivated: Yup.boolean(),
                 }),
@@ -210,7 +211,7 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
       <form onSubmit={form.handleSubmit} className="flex flex-col mb-4 gap-y-4">
         <ModalBase
           titleValue={titleValue}
-          closeFunction={closeFunction}
+          closeFunction={closeHandleSmall}
           openValue={openValue}
           className="w-auto bg-black"
           width={1100}
@@ -257,26 +258,7 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
               </div>
               <div className="flex flex-col justify-center w-2/6 ">
                 <div className="w-full h-24 text-white">
-                  <div className="inline-block w-full h-8">Tên tiếng việt:</div>
-                  <div className="inline-block w-full ">
-                    <FormInput
-                      autoComplete="off"
-                      name="viName"
-                      className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 ${
-                        form.errors.viName && form.touched.viName ? 'placeholder:text-red-500' : ''
-                      }`}
-                      placeholder={!!form.errors.viName && form.touched.viName ? form.errors.viName : 'Tên kỹ năng '}
-                      disabled={false}
-                      onChange={form.handleChange}
-                      onBlur={form.handleBlur}
-                      value={form.values.viName}
-                      error={!!form.errors.viName && form.touched.viName}
-                      errorMessage={''}
-                    />
-                  </div>
-                </div>
-                <div className="h-12 text-white">
-                  <div className="inline-block w-full h-8">Tên tiếng anh:</div>
+                  <div className="inline-block w-full h-8">Tên dịch vụ:</div>
                   <div className="inline-block w-full ">
                     <FormInput
                       autoComplete="off"
@@ -284,12 +266,33 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
                       className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 ${
                         form.errors.name && form.touched.name ? 'placeholder:text-red-500' : ''
                       }`}
-                      placeholder={!!form.errors.name && form.touched.name ? form.errors.name : 'Tên kỹ năng '}
+                      placeholder={!!form.errors.name && form.touched.name ? form.errors.name : 'Tên dịch vụ bắt buộc '}
                       disabled={false}
                       onChange={form.handleChange}
                       onBlur={form.handleBlur}
                       value={form.values.name}
                       error={!!form.errors.name && form.touched.name}
+                      errorMessage={''}
+                    />
+                  </div>
+                </div>
+                <div className="h-12 text-white">
+                  <div className="inline-block w-full h-8">Tên dịch vụ tiếng việt:</div>
+                  <div className="inline-block w-full ">
+                    <FormInput
+                      autoComplete="off"
+                      name="viName"
+                      className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 ${
+                        form.errors.viName && form.touched.viName ? 'placeholder:text-red-500' : ''
+                      }`}
+                      placeholder={
+                        !!form.errors.viName && form.touched.viName ? form.errors.viName : 'Tên dịch vụ nếu có '
+                      }
+                      disabled={false}
+                      onChange={form.handleChange}
+                      onBlur={form.handleBlur}
+                      value={form.values.viName}
+                      error={!!form.errors.viName && form.touched.viName}
                       errorMessage={''}
                     />
                   </div>
@@ -324,7 +327,7 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
                     onClick={addChildComponent}
                   >
                     <Plus theme="outline" size="24" fill="#fff" />
-                    Thêm dịch vụ
+                    Thêm thuộc tính
                   </Button>
                 </div>
               </div>
@@ -337,7 +340,9 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
               Hủy
             </Button>
             <Button
-              customCSS={`mx-6 px-4 py-1 border-2 `}
+              customCSS={`mx-6 px-4 py-1 border-2 ${
+                form.isValid && form.values.name != '' && 'hover:scale-110 bg-[#7463F0] border-[#7463F0]'
+              }`}
               onClick={(e) => {
                 e.preventDefault()
                 openConfirmModal()

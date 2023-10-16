@@ -1,4 +1,8 @@
-import { CreateServiceRequest, HandleServiceAttributeRequestHandleTypeEnum } from 'ume-service-openapi'
+import {
+  CreateServiceRequest,
+  HandleServiceAttributeRequestHandleTypeEnum,
+  HandleServiceAttributeValueRequestHandleTypeEnum,
+} from 'ume-service-openapi'
 import { z } from 'zod'
 
 import { createRouter } from './configurations'
@@ -51,38 +55,39 @@ export const servicesRouter = createRouter()
       return await createService(input as CreateServiceRequest, ctx)
     },
   })
-// .mutation('updateService', {
-//   input: z.object({
-//     id: z.string(),
-//     updateServiceRequest: z.object({
-//       name: z.string(),
-//       viName: z.optional(z.string()),
-//       imageUrl: z.string(),
-//       isActivated: z.optional(z.boolean()),
-//       serviceAttributes: z.optional(
-//         z.array(
-//           z.object({
-//             id: z.optional(z.string()),
-//             attribute: z.optional(z.string()),
-//             viAttribute: z.optional(z.string()),
-//             isActivated: z.optional(z.boolean()),
-//             handleType: z.nativeEnum(HandleServiceAttributeRequestHandleTypeEnum),
-//             serviceAttributeValues: z.optional(
-//               z.array(
-//                 z.object({
-//                   id: z.optional(z.string()),
-//                   value: z.string(),
-//                   viValue: z.optional(z.string()),
-//                   isActivated: z.optional(z.boolean()),
-//                 }),
-//               ),
-//             ),
-//           }),
-//         ),
-//       ),
-//     }),
-//   }),
-//   resolve: async ({ input, ctx }) => {
-//     return await updateService(input, ctx)
-//   },
-// })
+  .mutation('updateService', {
+    input: z.object({
+      id: z.string(),
+      updateServiceRequest: z.object({
+        name: z.string(),
+        viName: z.optional(z.string()),
+        imageUrl: z.string(),
+        isActivated: z.optional(z.boolean()),
+        serviceAttributes: z.optional(
+          z.array(
+            z.object({
+              id: z.optional(z.string()),
+              attribute: z.optional(z.string()),
+              viAttribute: z.optional(z.string()),
+              isActivated: z.optional(z.boolean()),
+              handleType: z.nativeEnum(HandleServiceAttributeRequestHandleTypeEnum),
+              serviceAttributeValues: z.optional(
+                z.array(
+                  z.object({
+                    id: z.optional(z.string()),
+                    value: z.optional(z.string()),
+                    viValue: z.optional(z.string()),
+                    isActivated: z.optional(z.boolean()),
+                    handleType: z.nativeEnum(HandleServiceAttributeValueRequestHandleTypeEnum),
+                  }),
+                ),
+              ),
+            }),
+          ),
+        ),
+      }),
+    }),
+    resolve: async ({ input, ctx }) => {
+      return await updateService(input, ctx)
+    },
+  })

@@ -32,11 +32,11 @@ export default function ServiceAttributes({
     },
     validationSchema: Yup.object({
       attribute: Yup.string().required('Thuộc tính là bắt buộc'),
-      viAttribute: Yup.string().required('Thuộc tính là bắt buộc'),
+      viAttribute: Yup.string(),
       serviceAttributeValues: Yup.array()
         .of(
           Yup.object({
-            value: Yup.string(),
+            value: Yup.string().required('Thuộc tính là bắt buộc'),
             viValue: Yup.string(),
             isActivated: Yup.boolean(),
           }),
@@ -98,6 +98,45 @@ export default function ServiceAttributes({
         <div className="inline-block w-2/5">
           {isReadOnly ? (
             <FormInput
+              autoComplete="off"
+              name="attribute"
+              className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 
+            ${form.errors.attribute && form.touched.attribute ? 'placeholder:text-red-500' : ''}
+            `}
+              placeholder={'Tên thuộc tính: Trống'}
+              disabled={false}
+              value={form.values.attribute}
+              error={!!form.errors.attribute && form.touched.attribute}
+              errorMessage={''}
+              readOnly
+            />
+          ) : (
+            <FormInput
+              autoComplete="off"
+              name="attribute"
+              className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 
+            ${form.errors.attribute && form.touched.attribute ? 'placeholder:text-red-500' : ''}
+            `}
+              placeholder={
+                !!form.errors.attribute && form.touched.attribute ? form.errors.attribute : 'Tên thuộc tính: Rank'
+              }
+              disabled={false}
+              onChange={(e) => {
+                handleChange('attribute', e)
+              }}
+              onBlur={form.handleBlur}
+              value={form.values.attribute}
+              error={!!form.errors.attribute && form.touched.attribute}
+              errorMessage={''}
+            />
+          )}
+        </div>
+        <div className="inline-block text-white">
+          <Minus theme="filled" size="14" fill="#ffffff" />
+        </div>
+        <div className="inline-block w-2/5">
+          {isReadOnly ? (
+            <FormInput
               name="viAttribute"
               className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 
             ${form.errors.viAttribute && form.touched.viAttribute ? 'placeholder:text-red-500' : ''}
@@ -125,45 +164,6 @@ export default function ServiceAttributes({
               onBlur={form.handleBlur}
               value={form.values.viAttribute}
               error={!!form.errors.viAttribute && !!form.touched.viAttribute}
-              errorMessage={''}
-            />
-          )}
-        </div>
-        <div className="inline-block text-white">
-          <Minus theme="filled" size="14" fill="#ffffff" />
-        </div>
-        <div className="inline-block w-2/5">
-          {isReadOnly ? (
-            <FormInput
-              autoComplete="off"
-              name="attribute"
-              className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 
-            ${form.errors.attribute && form.touched.attribute ? 'placeholder:text-red-500' : ''}
-            `}
-              placeholder={'Tên tiếng anh: Trống'}
-              disabled={false}
-              value={form.values.attribute}
-              error={!!form.errors.attribute && form.touched.attribute}
-              errorMessage={''}
-              readOnly
-            />
-          ) : (
-            <FormInput
-              autoComplete="off"
-              name="attribute"
-              className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 
-            ${form.errors.attribute && form.touched.attribute ? 'placeholder:text-red-500' : ''}
-            `}
-              placeholder={
-                !!form.errors.attribute && form.touched.attribute ? form.errors.attribute : 'Tên tiếng anh: Rank'
-              }
-              disabled={false}
-              onChange={(e) => {
-                handleChange('attribute', e)
-              }}
-              onBlur={form.handleBlur}
-              value={form.values.attribute}
-              error={!!form.errors.attribute && form.touched.attribute}
               errorMessage={''}
             />
           )}
