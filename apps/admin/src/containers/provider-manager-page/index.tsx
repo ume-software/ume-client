@@ -5,12 +5,12 @@ import React, { useState } from 'react'
 
 import { Pagination, Tag } from 'antd'
 import Head from 'next/head'
-import { AdminGetUserPagingResponseResponse, FilterProviderPagingResponse } from 'ume-service-openapi'
-import { util } from 'zod'
+import { AdminGetUserPagingResponseResponse } from 'ume-service-openapi'
 
 import TableProviders from './components/table-provider'
 
 import FilterDropdown from '~/components/filter-dropdown'
+import { genderFilterItems, mappingGender } from '~/components/filter-items'
 
 import { trpc } from '~/utils/trpc'
 
@@ -44,47 +44,13 @@ const statusFilterItems = [
   },
 ]
 
-const genderFilterItems = [
-  {
-    key: 'all',
-    label: (
-      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
-        <div className="flex items-center justify-center w-10">Tất cả</div>
-      </Tag>
-    ),
-  },
-  {
-    key: 'male',
-    label: (
-      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
-        <div className="flex items-center justify-center w-10">Nam</div>
-      </Tag>
-    ),
-  },
-  {
-    key: 'female',
-    label: (
-      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
-        <div className="flex items-center justify-center w-10">Nữ</div>
-      </Tag>
-    ),
-  },
-  {
-    key: 'orther',
-    label: (
-      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
-        <div className="flex items-center justify-center w-10">Khác</div>
-      </Tag>
-    ),
-  },
-]
 const ProviderManager = () => {
   const utils = trpc.useContext()
   const LIMIT = '10'
   const SELECT = ['$all', { providerConfig: ['$all'] }]
   const [page, setPage] = useState(1)
   const [filter, setFilter] = useState({
-    gender: 'all',
+    gender: 'ALL',
     isBanned: 'all',
     search: 'all',
   })
@@ -102,7 +68,7 @@ const ProviderManager = () => {
         mode: 'insensitive',
       }
     }
-    if (filter.gender !== 'all') {
+    if (filter.gender !== 'ALL') {
       query.gender = filter.gender.toUpperCase()
     }
     if (filter.isBanned !== 'all') {
@@ -145,16 +111,11 @@ const ProviderManager = () => {
       joinDate: row.providerConfig.createdAt,
     }
   })
-  const mapingGender = {
-    all: 'Tất Cả',
-    male: 'Nam',
-    female: ' Nữ',
-    orther: ' Khác',
-  }
+
   const mapingStatus = {
     all: 'Tất Cả',
-    false: 'HOẠT ĐỘNG',
-    true: 'TẠM DỪNG',
+    false: 'Hoạt động',
+    true: 'Tạm dừng',
   }
   const handleSearchChange = (e) => {
     if (e.target.value == '') {
@@ -209,12 +170,14 @@ const ProviderManager = () => {
             <div className="flex">
               <FilterDropdown
                 id="gender"
-                title={'Giới tính: ' + mapingGender[filter.gender]}
+                CustomCss="w-[9rem]"
+                title={'Giới tính: ' + mappingGender[filter.gender]}
                 items={genderFilterItems}
                 handleFilter={handleFilter}
               />
               <FilterDropdown
                 id="status"
+                CustomCss="w-[12rem]"
                 title={'Trạng thái: ' + mapingStatus[filter.isBanned]}
                 items={statusFilterItems}
                 handleFilter={handleFilter}
@@ -249,7 +212,7 @@ const ProviderManager = () => {
           {10 * (page - 1) + 1}-{page * 10 > providerList?.count!! ? providerList?.count : page * 10} trên{' '}
           {providerList?.count} user
         </div>
-        <TableProviders data={data} isLoading={isUserListFetching || isUserListFetching} />
+        <TableProviders data={data} isLoading={isUserListLoading || isUserListFetching} />
         <div className="flex w-full justify-center pb-[200px] mt-5">
           <Pagination
             itemRender={(page, type) => (

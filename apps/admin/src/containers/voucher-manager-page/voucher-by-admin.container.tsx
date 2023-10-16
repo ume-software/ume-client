@@ -5,97 +5,20 @@ import React, { useState } from 'react'
 
 import { Pagination, Tag } from 'antd'
 import { PrismaWhereConditionType, prismaWhereConditionToJsonString } from 'query-string-prisma-ume'
-import { VoucherPagingResponse, VoucherResponse, VoucherResponseRecipientTypeEnum } from 'ume-service-openapi'
+import { VoucherPagingResponse, VoucherResponse } from 'ume-service-openapi'
 
 import AdminVoucherTable from './components/voucher-table/admin-voucher-table'
 import VourcherModalCreate from './components/vourcher-modal/vourcher-modal-create'
 
 import FilterDropdown from '~/components/filter-dropdown'
+import {
+  mappingRecipientTypes,
+  mappingVoucherStatus,
+  recipientType,
+  voucherStatusFilterItems,
+} from '~/components/filter-items'
 
 import { trpc } from '~/utils/trpc'
-
-const statusFilterItems = [
-  {
-    key: 'all',
-    label: (
-      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
-        Tất cả
-      </Tag>
-    ),
-  },
-  {
-    key: 'true',
-    label: (
-      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
-        Hoạt động
-      </Tag>
-    ),
-  },
-  {
-    key: 'false',
-    label: (
-      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
-        Tạm dừng
-      </Tag>
-    ),
-  },
-]
-
-const recipientType = [
-  {
-    key: VoucherResponseRecipientTypeEnum.All,
-    label: (
-      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
-        <div className="flex items-center justify-center">Tất cả</div>
-      </Tag>
-    ),
-  },
-  {
-    key: VoucherResponseRecipientTypeEnum.FirstTimeBooking,
-    label: (
-      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
-        <div className="flex items-center justify-center">Người lần đầu thuê</div>
-      </Tag>
-    ),
-  },
-  {
-    key: VoucherResponseRecipientTypeEnum.PreviousBooking,
-    label: (
-      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
-        <div className="flex items-center justify-center">Người đã từng thuê</div>
-      </Tag>
-    ),
-  },
-  {
-    key: VoucherResponseRecipientTypeEnum.Top5Booker,
-    label: (
-      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
-        <div className="flex items-center justify-center">Top 5 người thuê</div>
-      </Tag>
-    ),
-  },
-  {
-    key: VoucherResponseRecipientTypeEnum.Top10Booker,
-    label: (
-      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
-        <div className="flex items-center justify-center">Top 10 người thuê</div>
-      </Tag>
-    ),
-  },
-]
-
-const mappingRecipientType = {
-  ALL: 'Đối tượng',
-  FIRST_TIME_BOOKING: 'Người lần đầu thuê',
-  PREVIOUS_BOOKING: ' Người đã từng thuê',
-  TOP_5_BOOKER: ' Top 5 người thuê',
-  TOP_10_BOOKER: ' Top 10 người thuê',
-}
-const mappingStatus = {
-  all: 'Trạng thái',
-  true: 'Hoạt động',
-  false: 'Tạm dừng',
-}
 
 const VoucherByAdmin = () => {
   const [openVourcherModalCreate, setOpenVourcherModalCreate] = useState(false)
@@ -133,11 +56,16 @@ const VoucherByAdmin = () => {
     recipientType: filter.recipientType !== 'ALL' ? filter.recipientType : undefined,
     isActivated: filter.isActivated !== 'all' ? (filter.isActivated == 'true' ? true : false) : undefined,
   })
+  const ORDER = [{ id: 'asc' }]
 
   const { isLoading, isFetching } = trpc.useQuery(
     [
       'voucher.getAllVoucher',
-      { page: page.toString(), where: prismaWhereConditionToJsonString(testQuerry, ['isUndefined']), order: undefined },
+      {
+        page: page.toString(),
+        where: prismaWhereConditionToJsonString(testQuerry, ['isUndefined']),
+        order: JSON.stringify(ORDER),
+      },
     ],
     {
       onSuccess(data) {
@@ -202,14 +130,14 @@ const VoucherByAdmin = () => {
             <FilterDropdown
               id={'status'}
               CustomCss="min-w-[7rem]"
-              title={mappingStatus[filter.isActivated]}
-              items={statusFilterItems}
+              title={mappingVoucherStatus[filter.isActivated]}
+              items={voucherStatusFilterItems}
               handleFilter={handleFilter}
             />
             <FilterDropdown
               id={'recipientType'}
               CustomCss="min-w-[11rem]"
-              title={mappingRecipientType[filter.recipientType]}
+              title={mappingRecipientTypes[filter.recipientType]}
               items={recipientType}
               handleFilter={handleFilter}
             />

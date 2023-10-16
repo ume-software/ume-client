@@ -1,16 +1,16 @@
-import { CheckOne, Delete, Eyes, ReduceOne, Write } from '@icon-park/react'
+import { CheckOne, Eyes, ReduceOne, Write } from '@icon-park/react'
 import { Button } from '@ume/ui'
 
 import React, { useState } from 'react'
 
-import { Table, Tag, notification } from 'antd'
+import { Table, notification } from 'antd'
 import Image from 'next/image'
-import { VoucherResponse } from 'ume-service-openapi'
 
 import EmptyErrorPic from '../../../../../public/empty_error.png'
 import VourcherModalUpdate from '../vourcher-modal/vourcher-modal-update'
 import VourcherModalView from '../vourcher-modal/vourcher-modal-view'
 
+import { mappingRecipientTypes, mappingVoucherType } from '~/components/filter-items'
 import BanModal from '~/components/modal-base/ban-modal'
 import ComfirmModal from '~/components/modal-base/comfirm-modal'
 
@@ -30,18 +30,6 @@ const tableDataMapping = (data?) => {
   return list
 }
 
-const mappingRecipientType = {
-  ALL: 'Tất cả',
-  FIRST_TIME_BOOKING: 'Người lần đầu thuê',
-  PREVIOUS_BOOKING: ' Người đã từng thuê',
-  TOP_5_BOOKER: ' Top 5 người thuê',
-  TOP_10_BOOKER: ' Top 10 người thuê',
-}
-
-const mappingType = {
-  DISCOUNT: 'Giảm giá',
-  CASHBACK: 'Hoàn tiền',
-}
 const AdminVoucherTable = ({ data, isLoading }) => {
   const listData = tableDataMapping(data?.row)
   const [voucherModalData, setVoucherModalData] = useState<any>()
@@ -132,7 +120,7 @@ const AdminVoucherTable = ({ data, isLoading }) => {
       title: <div className="flex justify-center w-full">Loại</div>,
       dataIndex: 'type',
       key: 'type',
-      render: (type) => <div className="flex justify-center w-full ">{mappingType[type]}</div>,
+      render: (type) => <div className="flex justify-center w-full ">{mappingVoucherType[type]}</div>,
     },
     {
       title: <div className="flex justify-center w-full">Giá trị</div>,
@@ -160,7 +148,7 @@ const AdminVoucherTable = ({ data, isLoading }) => {
       title: <div className="flex justify-center w-full">Đối tượng</div>,
       key: 'recipientType',
       dataIndex: 'recipientType',
-      render: (text) => <div className="flex justify-center w-full">{mappingRecipientType[text]}</div>,
+      render: (text) => <div className="flex justify-center w-full">{mappingRecipientTypes[text]}</div>,
     },
     {
       title: '',

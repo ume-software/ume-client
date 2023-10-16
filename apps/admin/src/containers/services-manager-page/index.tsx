@@ -19,10 +19,6 @@ import FilterDropdown from '~/components/filter-dropdown'
 
 import { trpc } from '~/utils/trpc'
 
-interface LooseObject {
-  [key: string]: any
-}
-
 const statusFilterItems = [
   {
     key: 'all',
@@ -90,7 +86,6 @@ const ServicesManagerPage = () => {
       },
     },
   )
-  console.log(serviceList)
 
   const handleFilter = (title, key) => {
     setPage(1)

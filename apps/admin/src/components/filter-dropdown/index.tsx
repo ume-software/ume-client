@@ -14,7 +14,7 @@ const FilterDropdown = ({ CustomCss, id, title, items, handleFilter }: IFilterDr
   const handleItemSelected: (typeof items)['onClick'] = (e) => {
     handleFilter(id, e.key)
   }
-  let filterBtnCss = `px-4 py-2 m-2 rounded-xl bg-umeHeader hover:bg-gray-700 ${CustomCss}`
+  let filterBtnCss = `px-4 py-2 m-2 rounded-xl truncate bg-umeHeader hover:bg-gray-700 ${CustomCss}`
   return (
     <div className="mr-5">
       <Dropdown

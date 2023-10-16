@@ -36,9 +36,13 @@ const tableDataMapping = (data?) => {
 export default function UserDetails({ details, openValue, closeFunction }: IUserDetailsProps) {
   const [transaction, setTransaction] = useState<CoinHistoryPagingResponse>()
   const [page, setPage] = useState(1)
+  const ORDER = [{ id: 'asc' }]
 
   const { isLoading, isFetching } = trpc.useQuery(
-    ['user.getUserCoinHistories', { slug: details?.key, page: page.toString(), where: undefined, order: undefined }],
+    [
+      'user.getUserCoinHistories',
+      { slug: details?.key, page: page.toString(), where: undefined, order: JSON.stringify(ORDER) },
+    ],
     {
       onSuccess(data) {
         setTransaction(data.data)
@@ -92,7 +96,13 @@ export default function UserDetails({ details, openValue, closeFunction }: IUser
         </div>
       </div>
       <div className="my-4 px-4">
-        <Table pagination={false} locale={locale} columns={columns} dataSource={tableDataMapping(transaction?.row)} />
+        <Table
+          loading={isLoading || isFetching}
+          pagination={false}
+          locale={locale}
+          columns={columns}
+          dataSource={tableDataMapping(transaction?.row)}
+        />
         <div className="flex w-full justify-center mb-2 mt-5">
           <Pagination
             itemRender={(page, type) => (

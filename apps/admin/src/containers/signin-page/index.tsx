@@ -1,4 +1,5 @@
 import { Button, FieldLabel, FormInput } from '@ume/ui'
+import { setItem } from '~/hooks/localHooks'
 
 import { useState } from 'react'
 
@@ -33,6 +34,7 @@ const SigninPage = () => {
       setSubmiting(true)
       signin.mutate(values, {
         onSuccess: (response) => {
+          setItem('user', response.data.admin)
           setSubmiting(false)
           router.push('/dashboard')
         },
@@ -91,7 +93,7 @@ const SigninPage = () => {
                   isActive={!(form.values.username || form.values.password) || isSubmiting}
                   isLoading={isSubmiting}
                 >
-                  Login
+                  Đăng nhập
                 </Button>
               </div>
             </form>

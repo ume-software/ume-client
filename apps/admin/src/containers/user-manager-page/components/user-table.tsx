@@ -9,17 +9,11 @@ import Image from 'next/image'
 import EmptyErrorPic from '../../../../public/empty_error.png'
 import UserDetails from './user-details'
 
+import { mappingGender } from '~/components/filter-items'
 import ComfirmModal from '~/components/modal-base/comfirm-modal'
 
 import { trpc } from '~/utils/trpc'
 
-const mappingGender = {
-  ALL: 'Giới tính',
-  MALE: 'Nam',
-  FEMALE: ' Nữ',
-  PRIVATE: 'Ẩn',
-  OTHER: ' Khác',
-}
 const tableDataMapping = (data) => {
   const list: {
     key: any

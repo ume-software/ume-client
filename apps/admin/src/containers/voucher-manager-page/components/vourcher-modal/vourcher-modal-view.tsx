@@ -4,8 +4,6 @@ import empty_img from 'public/empty_error.png'
 import { useState } from 'react'
 
 import Image from 'next/legacy/image'
-import { prismaSelectToJsonString } from 'query-string-prisma-ume'
-import { VoucherResponse } from 'ume-service-openapi'
 
 import ModalBase from '~/components/modal-base'
 
