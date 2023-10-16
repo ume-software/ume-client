@@ -19,13 +19,14 @@ import ComfirmModal from '~/components/modal-base/comfirm-modal'
 
 import { trpc } from '~/utils/trpc'
 
-export interface IServicesModalUpdateProps {
+export interface IServicesModalViewProps {
   closeFunction: any
   openValue: boolean
   idService: string
 }
 
-export default function ServicesModalUpdate({ idService, closeFunction, openValue }: IServicesModalUpdateProps) {
+export default function ServicesModalView({ idService, closeFunction, openValue }: IServicesModalViewProps) {
+  console.log(idService)
   const [servicesDetails, setServicesDetails] = useState<ServiceResponse>()
   const SELECT = [
     '$all',
@@ -51,7 +52,7 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
       },
     },
   )
-  const titleValue = 'Chỉnh sửa dịch vụ'
+  const titleValue = 'Xem dịch vụ'
   const [openConfirm, setOpenConfirm] = useState(false)
   const [isCreate, setIsCreate] = useState<boolean>(false)
   const [isSubmiting, setSubmiting] = useState(false)
@@ -167,6 +168,7 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
     ])
   }
   const removeChildComponent = (index) => {
+    console.log(index)
     const updatedSubChildData = [...form.values.serviceAttributes]
     updatedSubChildData.splice(index, 1)
     form.setFieldValue(`serviceAttributes`, updatedSubChildData)
@@ -199,39 +201,14 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
           <div className="flex-col w-auto bg-[#15151B] mt-5 px-4">
             <div className="flex w-auto px-4 border-b-2 border-[#FFFFFF80] pb-5">
               <div className="w-1/5 pr-4 mt-10">
-                <div
-                  className={`
-                w-36 h-52 overflow-hidden rounded-2xl bg-[#413F4D]
-                ${
-                  !form.values.imageUrl && ' flex items-center justify-center border-dashed border-2 border-[#FFFFFF80]'
-                }
-                `}
-                  onClick={handleImageClick}
-                >
-                  {form.values.imageUrl && (
-                    <Image
-                      className="overflow-hidden rounded-2xl"
-                      width={144}
-                      height={208}
-                      src={form.values.imageUrl}
-                      alt=""
-                      objectFit="cover"
-                    />
-                  )}
-                  {!form.values.imageUrl && (
-                    <div className="flex items-center justify-center w-full h-full hover:scale-150">
-                      <Plus className="" theme="filled" size="24" fill="#ffffff" />
-                    </div>
-                  )}
-
-                  <input
-                    className="w-0 opacity-0"
-                    type="file"
-                    name="files"
-                    accept="image/*"
-                    ref={imageInputRef}
-                    onChange={(e) => handleMediaChange(e)}
-                    multiple
+                <div className={'w-36 h-52 overflow-hidden rounded-2xl bg-[#413F4D]'}>
+                  <Image
+                    className="overflow-hidden rounded-2xl"
+                    width={144}
+                    height={208}
+                    src={imageUrlInit}
+                    alt=""
+                    objectFit="cover"
                   />
                 </div>
               </div>
@@ -240,18 +217,13 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
                   <div className="inline-block w-full h-8">Tên tiếng việt:</div>
                   <div className="inline-block w-full ">
                     <FormInput
-                      autoComplete="off"
-                      name="viName"
-                      className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 ${
-                        form.errors.viName && form.touched.viName ? 'placeholder:text-red-500' : ''
-                      }`}
-                      placeholder={!!form.errors.viName && form.touched.viName ? form.errors.viName : 'Tên kỹ năng '}
+                      className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 `}
+                      placeholder={'Tên trống'}
                       disabled={false}
-                      onChange={form.handleChange}
-                      onBlur={form.handleBlur}
-                      value={form.values.viName}
-                      error={!!form.errors.viName && form.touched.viName}
-                      errorMessage={''}
+                      value={viNameInit}
+                      error={undefined}
+                      errorMessage={undefined}
+                      readOnly
                     />
                   </div>
                 </div>
@@ -259,18 +231,13 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
                   <div className="inline-block w-full h-8">Tên tiếng anh:</div>
                   <div className="inline-block w-full ">
                     <FormInput
-                      autoComplete="off"
-                      name="name"
-                      className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 ${
-                        form.errors.name && form.touched.name ? 'placeholder:text-red-500' : ''
-                      }`}
-                      placeholder={!!form.errors.name && form.touched.name ? form.errors.name : 'Tên kỹ năng '}
+                      className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 `}
+                      placeholder={'Tên trống'}
                       disabled={false}
-                      onChange={form.handleChange}
-                      onBlur={form.handleBlur}
-                      value={form.values.name}
-                      error={!!form.errors.name && form.touched.name}
-                      errorMessage={''}
+                      value={nameInit}
+                      error={undefined}
+                      errorMessage={undefined}
+                      readOnly
                     />
                   </div>
                 </div>
@@ -278,36 +245,13 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
               <div className="flex flex-col justify-center w-2/5 ">
                 <div className="w-full h-12 text-white">
                   Trạng Thái:
-                  <div className="inline-block w-2/3 pl-4">
-                    <Select
-                      showSearch
-                      placeholder="Loại"
-                      optionFilterProp="children"
-                      onChange={handleActivate}
-                      filterOption={filterOptionTypeVoucher}
-                      value={form.values.isActivated}
-                      style={{
-                        minWidth: '8rem',
-                        marginLeft: '1rem',
-                      }}
-                      options={[
-                        {
-                          value: true,
-                          label: 'Hoạt động',
-                        },
-                        {
-                          value: false,
-                          label: 'Tạm dừng',
-                        },
-                      ]}
-                    />
-                  </div>
+                  <div className="inline-block w-2/3 pl-4">{isActivatedInit ? 'Hoạt Động' : 'Tạm Dừng'}</div>
                 </div>
                 <div className="w-full h-12 text-white">
-                  Số người dùng: <span className="inline-block w-2/3 pl-4">{form.values.numberUsed} người</span>
+                  Số người dùng: <span className="inline-block w-2/3 pl-4">{numberUsedInit} người</span>
                 </div>
                 <div className="w-full h-12 text-white">
-                  Ngày Tạo: <span className="inline-block w-2/3 pl-4">{form.values.createdAt}</span>
+                  Ngày Tạo: <span className="inline-block w-2/3 pl-4">{createdAtInit}</span>
                 </div>
               </div>
             </div>
@@ -315,7 +259,7 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
           {/* compent-child */}
 
           <div className="grid grid-cols-2 gap-4 px-4 pb-4 mt-6">
-            {form.values.serviceAttributes.map((childData, index) => (
+            {serviceAttributesInit.map((childData, index) => (
               <div className="col-span-1 " key={index}>
                 <ServiceAttributes
                   id={index}
@@ -328,38 +272,14 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
                   removeChildComponent={(id) => {
                     removeChildComponent(id)
                   }}
+                  isReadOnly={true}
                 />
               </div>
             ))}
-            <div className="col-span-1 ">
-              <div className="flex items-center justify-center w-full h-full">
-                <div className="w-40">
-                  <Button
-                    customCSS="bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 hover:scale-110"
-                    onClick={addChildComponent}
-                  >
-                    <Plus theme="outline" size="24" fill="#fff" />
-                    Thêm dịch vụ
-                  </Button>
-                </div>
-              </div>
-            </div>
           </div>
           <div className="flex justify-center pb-4 mt-6">
             <Button customCSS="mx-6 px-4 py-1 border-2 hover:scale-110" onClick={openConfirmModalCancel}>
-              Hủy
-            </Button>
-            <Button
-              customCSS={`mx-6 px-4 py-1 border-2 ${
-                form.isValid && form.values.name != '' && 'hover:scale-110 bg-[#7463F0] border-[#7463F0]'
-              }`}
-              onClick={(e) => {
-                e.preventDefault()
-                openConfirmModal()
-              }}
-              isDisable={!form.isValid || form.values.name === ''}
-            >
-              {'Sửa'}
+              Đóng
             </Button>
           </div>
         </ModalBase>
@@ -368,8 +288,8 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
         <ComfirmModal
           closeFunction={closeComfirmFormHandle}
           openValue={true}
-          isComfirmFunction={isCreate ? submitHandle : closeHandle}
-          titleValue={isCreate ? 'Xác nhận sửa' : 'Xác nhận hủy'}
+          isComfirmFunction={closeHandle}
+          titleValue={'Xác nhận đóng'}
         ></ComfirmModal>
       )}
     </div>

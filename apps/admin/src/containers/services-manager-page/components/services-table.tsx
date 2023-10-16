@@ -8,6 +8,7 @@ import { Table, Tag, notification } from 'antd'
 import Image from 'next/image'
 
 import ServicesModalUpdate from './services-modal/services-modal-update'
+import ServicesModalView from './services-modal/services-modal-view'
 
 import ComfirmModal from '~/components/modal-base/comfirm-modal'
 
@@ -157,13 +158,13 @@ const ServicesTable = ({ servicesList, isLoading }) => {
   return (
     <div className="mt-5 ">
       <Table loading={isLoading} locale={locale} pagination={false} columns={columns} dataSource={listData} />
-      {/* {openServicesModalView && (
-        <VourcherModalView
-          vourcherId={servicesModalData}
+      {openServicesModalView && (
+        <ServicesModalView
+          idService={servicesModalData}
           closeFunction={closeModalView}
           openValue={openServicesModalView}
         />
-      )} */}
+      )}
       {openServicesModalUpdate && (
         <ServicesModalUpdate
           idService={servicesModalData}

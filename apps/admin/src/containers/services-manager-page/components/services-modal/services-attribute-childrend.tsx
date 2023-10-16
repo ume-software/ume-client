@@ -13,6 +13,7 @@ export interface IServiceAttributesProps {
   setServiceAttributesData: any
   removeChildComponent: any
   id: number
+  isReadOnly?: boolean
 }
 
 export default function ServiceAttributes({
@@ -20,6 +21,7 @@ export default function ServiceAttributes({
   serviceAttributesData,
   setServiceAttributesData,
   removeChildComponent,
+  isReadOnly,
 }: IServiceAttributesProps) {
   const form = useFormik({
     initialValues: {
@@ -79,60 +81,92 @@ export default function ServiceAttributes({
   return (
     <div className="h-fit border-2 border-[#FFFFFF80] border-opacity-30 rounded-lg w-full pl-4">
       <div className="inline-block w-11/12 h-12 text-lg font-bold text-white">Thuộc Tính:</div>
-      <div className="inline-block w-1/12">
-        <Button
-          isActive={false}
-          onClick={() => {
-            handleRemoveComponent(id)
-          }}
-        >
-          <DeleteOne theme="filled" size="18" fill="#ffffff" className="my-auto rounded-sm hover:scale-110" />
-        </Button>
-      </div>
+      {!isReadOnly && (
+        <div className="inline-block w-1/12">
+          <Button
+            isActive={false}
+            onClick={() => {
+              handleRemoveComponent(id)
+            }}
+          >
+            <DeleteOne theme="filled" size="18" fill="#ffffff" className="my-auto rounded-sm hover:scale-110" />
+          </Button>
+        </div>
+      )}
 
       <div className="w-full h-12 text-white">
         <div className="inline-block w-2/5">
-          <FormInput
-            autoComplete="off"
-            name="viAttribute"
-            className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 
+          {isReadOnly ? (
+            <FormInput
+              name="viAttribute"
+              className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 
             ${form.errors.viAttribute && form.touched.viAttribute ? 'placeholder:text-red-500' : ''}
             `}
-            placeholder={
-              form.errors.viAttribute && form.touched.viAttribute ? form.errors.viAttribute : 'Tên tiếng việt: Hạng'
-            }
-            disabled={false}
-            onChange={(e) => {
-              handleChange('viAttribute', e)
-            }}
-            onBlur={form.handleBlur}
-            value={form.values.viAttribute}
-            error={!!form.errors.viAttribute && !!form.touched.viAttribute}
-            errorMessage={''}
-          />
+              placeholder={'Tên tiếng việt: Trống'}
+              error={undefined}
+              errorMessage={undefined}
+              value={form.values.viAttribute}
+              readOnly
+            />
+          ) : (
+            <FormInput
+              autoComplete="off"
+              name="viAttribute"
+              className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 
+            ${form.errors.viAttribute && form.touched.viAttribute ? 'placeholder:text-red-500' : ''}
+            `}
+              placeholder={
+                form.errors.viAttribute && form.touched.viAttribute ? form.errors.viAttribute : 'Tên tiếng việt: Hạng'
+              }
+              disabled={false}
+              onChange={(e) => {
+                handleChange('viAttribute', e)
+              }}
+              onBlur={form.handleBlur}
+              value={form.values.viAttribute}
+              error={!!form.errors.viAttribute && !!form.touched.viAttribute}
+              errorMessage={''}
+            />
+          )}
         </div>
         <div className="inline-block text-white">
           <Minus theme="filled" size="14" fill="#ffffff" />
         </div>
         <div className="inline-block w-2/5">
-          <FormInput
-            autoComplete="off"
-            name="attribute"
-            className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 
+          {isReadOnly ? (
+            <FormInput
+              autoComplete="off"
+              name="attribute"
+              className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 
             ${form.errors.attribute && form.touched.attribute ? 'placeholder:text-red-500' : ''}
             `}
-            placeholder={
-              !!form.errors.attribute && form.touched.attribute ? form.errors.attribute : 'Tên tiếng anh: Rank'
-            }
-            disabled={false}
-            onChange={(e) => {
-              handleChange('attribute', e)
-            }}
-            onBlur={form.handleBlur}
-            value={form.values.attribute}
-            error={!!form.errors.attribute && form.touched.attribute}
-            errorMessage={''}
-          />
+              placeholder={'Tên tiếng anh: Trống'}
+              disabled={false}
+              value={form.values.attribute}
+              error={!!form.errors.attribute && form.touched.attribute}
+              errorMessage={''}
+              readOnly
+            />
+          ) : (
+            <FormInput
+              autoComplete="off"
+              name="attribute"
+              className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 
+            ${form.errors.attribute && form.touched.attribute ? 'placeholder:text-red-500' : ''}
+            `}
+              placeholder={
+                !!form.errors.attribute && form.touched.attribute ? form.errors.attribute : 'Tên tiếng anh: Rank'
+              }
+              disabled={false}
+              onChange={(e) => {
+                handleChange('attribute', e)
+              }}
+              onBlur={form.handleBlur}
+              value={form.values.attribute}
+              error={!!form.errors.attribute && form.touched.attribute}
+              errorMessage={''}
+            />
+          )}
         </div>
       </div>
 
@@ -147,39 +181,43 @@ export default function ServiceAttributes({
                 form.setFieldValue(`serviceAttributeValues[${index}]`, data)
                 setServiceAttributesData({ ...form.values, serviceAttributeValues: updatedSubChildData })
               }}
+              isReadOnly={isReadOnly}
             />
-            <div className="w-1/12">
-              <Button
-                isActive={false}
-                onClick={() => {
-                  removeSubChildComponent(index)
-                }}
-              >
-                <DeleteOne
-                  theme="filled"
-                  size="18"
-                  fill="#ffffff"
-                  className=" bg-gray-500 border-2  border-[#FFFFFF] border-opacity-30 rounded-sm hover:scale-110 my-auto"
-                />
-              </Button>
-            </div>
+            {!isReadOnly && (
+              <div className="w-1/12">
+                <Button
+                  isActive={false}
+                  onClick={() => {
+                    removeSubChildComponent(index)
+                  }}
+                >
+                  <DeleteOne
+                    theme="filled"
+                    size="18"
+                    fill="#ffffff"
+                    className=" bg-gray-500 border-2  border-[#FFFFFF] border-opacity-30 rounded-sm hover:scale-110 my-auto"
+                  />
+                </Button>
+              </div>
+            )}
           </div>
         ))}
       </div>
-
-      <div className="w-5/6 ">
-        <div className="flex items-center justify-end w-full">
-          <div className="w-20">
-            <Button
-              customCSS="bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 hover:scale-110"
-              onClick={addChildComponent}
-            >
-              <Plus theme="outline" size="24" fill="#fff" />
-              Thêm
-            </Button>
+      {!isReadOnly && (
+        <div className="w-5/6 ">
+          <div className="flex items-center justify-end w-full">
+            <div className="w-20">
+              <Button
+                customCSS="bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 hover:scale-110"
+                onClick={addChildComponent}
+              >
+                <Plus theme="outline" size="24" fill="#fff" />
+                Thêm
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }

@@ -118,7 +118,6 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
     ])
   }
   const removeChildComponent = (index) => {
-    console.log(index)
     const updatedSubChildData = [...form.values.serviceAttributes]
     updatedSubChildData.splice(index, 1)
     form.setFieldValue(`serviceAttributes`, updatedSubChildData)
@@ -176,12 +175,10 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
                   description: 'đã được tạo thành công.',
                   placement: 'bottomLeft',
                 })
-                console.log('zo1')
                 closeHandle()
               }
             },
             onError: () => {
-              console.log('zo2')
               notification.error({
                 message: 'Tạo thất bại!',
                 description: 'Tạo không thành công.',
@@ -206,7 +203,6 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
         })
       }
     }
-    closeHandle()
   }
 
   return (

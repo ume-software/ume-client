@@ -9,11 +9,13 @@ import * as Yup from 'yup'
 export interface IServiceAttributeValuesProps {
   serviceAttributeValuesData: any
   setServiceAttributeValuesData: any
+  isReadOnly?: boolean
 }
 
 export default function ServiceAttributeValues({
   serviceAttributeValuesData,
   setServiceAttributeValuesData,
+  isReadOnly,
 }: IServiceAttributeValuesProps) {
   const form = useFormik({
     initialValues: {
@@ -45,43 +47,71 @@ export default function ServiceAttributeValues({
     <div className="w-full text-white">
       <div className="inline-block w-1/12 h-8"></div>
       <div className="inline-block w-5/12 h-8">
-        <FormInput
-          autoComplete="off"
-          name="value"
-          className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 
+        {isReadOnly ? (
+          <FormInput
+            name="value"
+            className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 
             ${form.errors.value && form.touched.value ? 'placeholder:text-red-500' : ''}
             `}
-          placeholder={form.errors.value && form.touched.value ? form.errors.value : 'Tên tiếng việt: Bạc'}
-          disabled={false}
-          onChange={(e) => {
-            handleChange('value', e)
-          }}
-          onBlur={form.handleBlur}
-          value={form.values.value}
-          error={!!form.errors.value && !!form.touched.value}
-          errorMessage={''}
-        />
+            placeholder={'Tên tiếng việt: Trống'}
+            error={undefined}
+            value={form.values.value}
+            errorMessage={undefined}
+            readOnly
+          />
+        ) : (
+          <FormInput
+            autoComplete="off"
+            name="value"
+            className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 
+            ${form.errors.value && form.touched.value ? 'placeholder:text-red-500' : ''}
+            `}
+            placeholder={form.errors.value && form.touched.value ? form.errors.value : 'Tên tiếng việt: Bạc'}
+            disabled={false}
+            onChange={(e) => {
+              handleChange('value', e)
+            }}
+            onBlur={form.handleBlur}
+            value={form.values.value}
+            error={!!form.errors.value && !!form.touched.value}
+            errorMessage={''}
+          />
+        )}
       </div>
       <div className="inline-block text-white">
         <Minus theme="filled" size="14" fill="#ffffff" />
       </div>
       <div className="inline-block w-5/12 h-8">
-        <FormInput
-          autoComplete="off"
-          name="viValue"
-          className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 
+        {isReadOnly ? (
+          <FormInput
+            name="viValue"
+            className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 
             ${form.errors.viValue && form.touched.viValue ? 'placeholder:text-red-500' : ''}
             `}
-          placeholder={form.errors.viValue && form.touched.viValue ? form.errors.viValue : 'Tên tiếng anh: Silver '}
-          disabled={false}
-          onChange={(e) => {
-            handleChange('viValue', e)
-          }}
-          onBlur={form.handleBlur}
-          value={form.values.viValue}
-          error={!!form.errors.viValue && !!form.touched.viValue}
-          errorMessage={''}
-        />
+            placeholder={'Tên tiếng anh: Trống '}
+            errorMessage={''}
+            value={form.values.viValue}
+            error={undefined}
+            readOnly
+          />
+        ) : (
+          <FormInput
+            autoComplete="off"
+            name="viValue"
+            className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 
+            ${form.errors.viValue && form.touched.viValue ? 'placeholder:text-red-500' : ''}
+            `}
+            placeholder={form.errors.viValue && form.touched.viValue ? form.errors.viValue : 'Tên tiếng anh: Silver '}
+            disabled={false}
+            onChange={(e) => {
+              handleChange('viValue', e)
+            }}
+            onBlur={form.handleBlur}
+            value={form.values.viValue}
+            error={!!form.errors.viValue && !!form.touched.viValue}
+            errorMessage={''}
+          />
+        )}
       </div>
     </div>
   )

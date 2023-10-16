@@ -36,6 +36,7 @@ export const createService = async (input: CreateServiceRequest, ctx) => {
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
     }).adminCreateService(input)
+
     return {
       data: response.data,
       success: true,
