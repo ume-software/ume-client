@@ -1,3 +1,5 @@
+import { error } from 'console'
+
 const setItem = (key: string, value: any) => {
   return localStorage.setItem(key, JSON.stringify(value))
 }
@@ -9,7 +11,11 @@ const removeItem = (key: string) => {
   return localStorage.removeItem(key)
 }
 const getItem = (key: string) => {
-  return JSON.parse(localStorage.getItem(key) || '')
+  try {
+    return JSON.parse(localStorage.getItem(key) || '')
+  } catch (e) {
+    console.error(e)
+  }
 }
 
 export { setItem, clearStorage, removeItem, getItem }
