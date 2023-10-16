@@ -181,6 +181,14 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
       return false
     }
   }
+  function convertToIsoDate(inputDate) {
+    const parts = inputDate.split('/')
+    const reversedDate = parts[2] + '-' + parts[1] + '-' + parts[0]
+    const newDate = new Date(reversedDate)
+    const isoDate = newDate.toISOString()
+
+    return isoDate
+  }
   async function submitHandle() {
     if (await checkFieldRequỉed()) {
       const imgURL = await uploadImage()
@@ -195,8 +203,8 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
           numberUsablePerBooker: form.values.numUserCanUse,
           dailyUsageLimitPerBooker: form.values.numUserCanUseInDay,
           maximumDiscountValue: form.values.minimize,
-          startDate: new Date(createAt).toISOString(),
-          endDate: new Date(form.values.endDate).toISOString(),
+          startDate: convertToIsoDate(createAt),
+          endDate: convertToIsoDate(form.values.endDate),
           applyISODayOfWeek: form.values.applyTime,
         }
         let reqWithValuesNotNull = {

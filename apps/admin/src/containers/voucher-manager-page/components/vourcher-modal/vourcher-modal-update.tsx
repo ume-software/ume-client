@@ -239,7 +239,14 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
       return false
     }
   }
+  function convertToIsoDate(inputDate) {
+    const parts = inputDate.split('/')
+    const reversedDate = parts[2] + '-' + parts[1] + '-' + parts[0]
+    const newDate = new Date(reversedDate)
+    const isoDate = newDate.toISOString()
 
+    return isoDate
+  }
   async function submitHandle() {
     const imgURL = await uploadImage()
     try {
@@ -252,7 +259,7 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
         numberUsablePerBooker: [form.values.numUserCanUse, numUserCanUseInit],
         dailyUsageLimitPerBooker: [form.values.numUserCanUseInDay, numUserCanUseInDayInit],
         maximumDiscountValue: [form.values.minimize, minimizeInit],
-        endDate: [new Date(form.values.endDate).toISOString(), new Date(endDateInit).toISOString()],
+        endDate: [convertToIsoDate(form.values.endDate), convertToIsoDate(endDateInit)],
         applyISODayOfWeek: [form.values.applyTime, applyTimeInit],
         name: [form.values.name, nameInit],
         type: [form.values.typeVoucher, typeVoucherInit],
@@ -280,6 +287,13 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
               })
               utils.invalidateQueries('voucher.getAllVoucher')
               closeHandle()
+            },
+            onError: () => {
+              notification.error({
+                message: 'Chỉnh sửa Khuyến mãi không thành công!',
+                description: 'Gặp lỗi khi chỉnh sửa',
+                placement: 'bottomLeft',
+              })
             },
           })
         } catch (error) {

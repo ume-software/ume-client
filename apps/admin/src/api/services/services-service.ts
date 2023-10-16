@@ -82,6 +82,7 @@ export const updateService = async (input: { id: string; updateServiceRequest: U
       success: true,
     }
   } catch (error) {
+    console.log(error)
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
       message: error.message || 'Failed to update service',

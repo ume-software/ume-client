@@ -1,14 +1,15 @@
 import { DeleteOne, Plus } from '@icon-park/react'
 import { Button, FormInput } from '@ume/ui'
 import empty_img from 'public/empty_error.png'
+import { uploadImageServices } from '~/api/upload-media'
 
 import * as React from 'react'
 import { useRef, useState } from 'react'
 
-import { Select } from 'antd'
+import { Select, notification } from 'antd'
 import { FormikErrors, useFormik } from 'formik'
 import Image from 'next/legacy/image'
-import { ServiceResponse } from 'ume-service-openapi'
+import { ServiceResponse, UpdateServiceRequest } from 'ume-service-openapi'
 import * as Yup from 'yup'
 
 import ServiceAttributes from './services-attribute-childrend'
@@ -25,6 +26,7 @@ export interface IServicesModalUpdateProps {
 }
 
 export default function ServicesModalUpdate({ idService, closeFunction, openValue }: IServicesModalUpdateProps) {
+  const utils = trpc.useContext()
   const [servicesDetails, setServicesDetails] = useState<ServiceResponse>()
   const SELECT = [
     '$all',
@@ -55,8 +57,8 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
   const [isCreate, setIsCreate] = useState<boolean>(false)
   const [isSubmiting, setSubmiting] = useState(false)
   const imageInputRef = useRef<HTMLInputElement>(null)
-  const nameInit = servicesDetails?.name
-  const viNameInit = servicesDetails?.viName
+  const nameInit = servicesDetails?.name || ''
+  const viNameInit = servicesDetails?.viName || ''
   const imageUrlInit = servicesDetails?.imageUrl || empty_img
   const isActivatedInit = true
   const numberUsedInit = 100
@@ -64,7 +66,7 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
     ? new Date(servicesDetails?.createdAt).toLocaleDateString('en-GB')
     : ''
   const serviceAttributesInit = servicesDetails?.serviceAttributes || []
-
+  const updateService = trpc.useMutation(['services.updateService'])
   const form = useFormik({
     initialValues: {
       name: nameInit,
@@ -180,8 +182,84 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
     false: 'Tạm dừng',
     true: 'Hoạt động',
   }
+  const uploadImage = async () => {
+    let imageUrl = ''
+    try {
+      if (form.values.selectedImage) {
+        const formData = new FormData()
+        formData.append('image', form.values.selectedImage)
+        const responseData = await uploadImageServices(formData)
+        if (responseData?.data?.data?.results) {
+          responseData?.data?.data?.results.map((image) => {
+            imageUrl = image
+          })
+        }
+      }
+    } catch (error) {
+      console.error('Error uploading image:', error)
+    }
+    return { imageUrl }
+  }
+  function convertToIsoDate(inputDate) {
+    const parts = inputDate.split('/')
+    const reversedDate = parts[2] + '-' + parts[1] + '-' + parts[0]
+    const newDate = new Date(reversedDate)
+    const isoDate = newDate.toISOString()
+
+    return isoDate
+  }
   async function submitHandle() {
-    closeHandle()
+    const imgURL = await uploadImage()
+    try {
+      console.log(form.values.createdAt)
+      console.log(createdAtInit)
+      const req = {
+        // name: [form.values.name, nameInit],
+        // imageUrl: [form.values.selectedImage ? imgURL.imageUrl : imageUrlInit, imageUrlInit],
+        viName: [form.values.viName, viNameInit],
+        isActivated: [form.values.isActivated, isActivatedInit],
+        serviceAttributes: [form.values.serviceAttributes, serviceAttributesInit],
+        numberUsed: [form.values.numberUsed, numberUsedInit],
+        createdAt: [convertToIsoDate(form.values.createdAt), convertToIsoDate(createdAtInit)],
+      }
+      let reqWithValuesNotNull = {
+        name: form.values.name,
+        imageUrl: form.values.selectedImage ? imgURL.imageUrl : imageUrlInit,
+      }
+      for (let key in req) {
+        if (req[key][0] != req[key][1]) {
+          reqWithValuesNotNull[key] = req[key][0]
+        }
+      }
+      if (reqWithValuesNotNull) {
+        try {
+          let req = {
+            id: idService as string,
+            updateServiceRequest: reqWithValuesNotNull as UpdateServiceRequest,
+          }
+          updateService.mutate(req, {
+            onSuccess: () => {
+              notification.success({
+                message: 'Chỉnh sửa Dịch vụ thành công!',
+                description: 'Dịch vụ Đã được chỉnh sửa',
+                placement: 'bottomLeft',
+              })
+              utils.invalidateQueries('voucher.getAllVoucher')
+              closeHandle()
+            },
+          })
+        } catch (error) {
+          notification.error({
+            message: 'Chỉnh sửa Dịch vụ không thành công!',
+            description: 'Gặp lỗi khi chỉnh sửa',
+            placement: 'bottomLeft',
+          })
+          console.error('Failed to Handle update voucher:', error)
+        }
+      }
+    } catch (error) {
+      console.error('Failed to update voucher:', error)
+    }
   }
   return (
     <div>
