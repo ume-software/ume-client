@@ -7,6 +7,7 @@ import EmptyErrorPic from '../../../../public/empty_error.png'
 
 export interface IProviderServiceTableProps {
   data: any
+  isLoading?: boolean
 }
 
 export default function ProviderServiceTable(props: IProviderServiceTableProps) {
