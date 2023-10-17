@@ -1,11 +1,7 @@
-import { setItem } from '~/hooks/localHooks'
-
 import { useRouter } from 'next/router'
 
 import { Header } from '../header'
 import Sidebar from '../sidebar'
-
-import { trpc } from '~/utils/trpc'
 
 interface ILayout {
   children: React.ReactNode
@@ -27,4 +23,5 @@ const Layout = ({ children }: ILayout) => {
     </>
   )
 }
+
 export default Layout

@@ -52,7 +52,7 @@
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: #7e22ce;
   border-radius: 8px;
-  min-height: 50px; 
+  min-height: 50px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {

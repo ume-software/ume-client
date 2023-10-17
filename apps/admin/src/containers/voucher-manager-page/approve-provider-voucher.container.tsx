@@ -19,7 +19,6 @@ import FilterDropdown from '~/components/filter-dropdown'
 
 import { trpc } from '~/utils/trpc'
 
-
 const typeFilter = [
   {
     key: 'all',
@@ -167,7 +166,7 @@ const ApproveProviderVoucher = () => {
     discountUnit: filter.discountUnit !== 'all' ? filter.discountUnit : undefined,
   })
 
-  const { isLoading, isFetching } = trpc.useQuery(
+  trpc.useQuery(
     [
       'voucher.getAllVoucher',
       { page: page.toString(), where: prismaWhereConditionToJsonString(testQuerry, ['isUndefined']), order: undefined },

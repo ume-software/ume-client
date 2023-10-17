@@ -8,7 +8,6 @@ import type { AppProps } from 'next/app'
 import Layout from '~/components/layout'
 
 function App({ Component, pageProps }: AppProps) {
-  // if ([`/signin`].includes(pageProps)) return <Component {...pageProps} />
   return (
     <Layout>
       <Component {...pageProps} />
@@ -17,7 +16,7 @@ function App({ Component, pageProps }: AppProps) {
 }
 
 const TRPCApp = withTRPC<RootRouterTypes>({
-  config({ ctx }) {
+  config({}) {
     const url = '/api/trpc'
 
     return {

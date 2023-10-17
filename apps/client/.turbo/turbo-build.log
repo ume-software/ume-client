@@ -1,3 +1,5 @@
+<<<<<<< HEAD
+=======
 $ npx next build
 info  - Loaded env from D:\FPTU\Capstone_Project\ume-client\apps\client\.env.local
 info  - Loaded env from D:\FPTU\Capstone_Project\ume-client\apps\client\.env.production
@@ -40,3 +42,4 @@ Route (pages)                                     Size     First Load JS
 λ  (Server)  server-side renders at runtime (uses getInitialProps or getServerSideProps)
 ○  (Static)  automatically rendered as static HTML (uses no initial props)
 
+>>>>>>> origin/main

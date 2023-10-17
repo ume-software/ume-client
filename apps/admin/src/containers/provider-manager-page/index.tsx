@@ -1,12 +1,11 @@
 import { Left, Right, Search } from '@icon-park/react'
-import { Button, Input } from '@ume/ui'
+import { Input } from '@ume/ui'
 
 import React, { useState } from 'react'
 
 import { Pagination, Tag } from 'antd'
 import Head from 'next/head'
-import { AdminGetUserPagingResponseResponse, FilterProviderPagingResponse } from 'ume-service-openapi'
-import { util } from 'zod'
+import { AdminGetUserPagingResponseResponse } from 'ume-service-openapi'
 
 import TableProviders from './components/table-provider'
 
@@ -17,6 +16,7 @@ import { trpc } from '~/utils/trpc'
 interface LooseObject {
   [key: string]: any
 }
+
 const statusFilterItems = [
   {
     key: 'all',
@@ -79,7 +79,6 @@ const genderFilterItems = [
   },
 ]
 const ProviderManager = () => {
-  const utils = trpc.useContext()
   const LIMIT = '10'
   const SELECT = ['$all', { providerConfig: ['$all'] }]
   const [page, setPage] = useState(1)
@@ -106,13 +105,15 @@ const ProviderManager = () => {
       query.gender = filter.gender.toUpperCase()
     }
     if (filter.isBanned !== 'all') {
-      filter.isBanned == 'true'
-        ? (query.providerConfig = { isBanned: true })
-        : (query.providerConfig = { isBanned: false })
+      if (filter.isBanned == 'true') {
+        query.providerConfig = { isBanned: true }
+      } else {
+        query.providerConfig = { isBanned: false }
+      }
     }
     return query
   }
-  const { isLoading: isUserListLoading, isFetching: isUserListFetching } = trpc.useQuery(
+  trpc.useQuery(
     [
       'provider.getProviderList',
       {
@@ -126,9 +127,8 @@ const ProviderManager = () => {
     {
       refetchOnWindowFocus: false,
       refetchOnReconnect: 'always',
-      // refetchOnMount: false,
       onSuccess(data) {
-        setProviderList(data.data)
+        setProviderList(data?.data as any)
       },
     },
   )
@@ -170,6 +170,7 @@ const ProviderManager = () => {
   const handlePageChange = (nextPage) => {
     setPage(nextPage)
   }
+
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       setPage(1)
@@ -192,9 +193,6 @@ const ProviderManager = () => {
         isBanned: key,
       })
     }
-  }
-  function refreshData() {
-    utils.invalidateQueries('provider.getProviderList')
   }
 
   return (
