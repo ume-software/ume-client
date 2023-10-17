@@ -11,6 +11,7 @@ import {
   ServiceApi,
   ServiceAttributeApi,
   UpdateUserProfileRequestGenderEnum,
+  UpdateVoucherRequest,
   UserApi,
   VoucherApi,
 } from 'ume-service-openapi'
@@ -207,6 +208,27 @@ export const providerCreateVoucher = async (query: CreateVoucherRequest, ctx) =>
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
     }).providerCreateVoucher(query)
+    return {
+      data: reponse.data,
+      success: true,
+      message: '',
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to get data recharge',
+    })
+  }
+}
+
+export const providerUpdateVoucher = async (query: { id: string; body: UpdateVoucherRequest }, ctx) => {
+  const cookies = parse(ctx.req.headers.cookie ?? '')
+  try {
+    const reponse = await new VoucherApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).providerUpdateVoucher(query.id, query.body)
     return {
       data: reponse.data,
       success: true,

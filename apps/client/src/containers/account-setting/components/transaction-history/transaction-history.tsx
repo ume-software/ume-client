@@ -31,6 +31,8 @@ const TransactionHistory = () => {
               contentItem={'giao dịch'}
               watchAction={true}
               onWatch={() => {}}
+              editAction={true}
+              onEdit={() => {}}
               deleteAction={false}
               onDelete={() => {}}
             />

@@ -17,6 +17,7 @@ import {
   getUserBySlug,
   providerCreateVoucher,
   providerGetSelfVoucher,
+  providerUpdateVoucher,
   registerBecomeProvider,
   requestRecharge,
   updateUserProfile,
@@ -108,6 +109,37 @@ export const identityRouter = createRouter()
     }),
     resolve: async ({ input, ctx }) => {
       return await providerCreateVoucher(input, ctx)
+    },
+  })
+  .mutation('providerUpdateVoucher', {
+    input: z.object({
+      id: z.string(),
+      body: z.object({
+        code: z.optional(z.string()),
+        image: z.optional(z.string()),
+        name: z.optional(z.string()),
+        description: z.optional(z.string()),
+        numberIssued: z.optional(z.number()),
+        dailyNumberIssued: z.optional(z.number()),
+        numberUsablePerBooker: z.optional(z.number()),
+        dailyUsageLimitPerBooker: z.optional(z.number()),
+        isActivated: z.optional(z.boolean()),
+        type: z.optional(z.nativeEnum(CreateVoucherRequestTypeEnum)),
+        discountUnit: z.optional(z.nativeEnum(CreateVoucherRequestDiscountUnitEnum)),
+        discountValue: z.optional(z.number()),
+        maximumDiscountValue: z.optional(z.number()),
+        minimumBookingTotalPriceForUsage: z.optional(z.number()),
+        minimumBookingDurationForUsage: z.optional(z.number()),
+        startDate: z.optional(z.string()),
+        endDate: z.optional(z.string()),
+        applyISODayOfWeek: z.optional(z.array(z.number())),
+        recipientType: z.optional(z.nativeEnum(CreateVoucherRequestRecipientTypeEnum)),
+        selectiveBookerIds: z.optional(z.array(z.string())),
+        isHided: z.optional(z.boolean()),
+      }),
+    }),
+    resolve: async ({ input, ctx }) => {
+      return await providerUpdateVoucher(input, ctx)
     },
   })
   .query('getMyVoucher', {

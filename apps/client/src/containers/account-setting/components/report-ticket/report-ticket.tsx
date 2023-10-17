@@ -74,6 +74,8 @@ const ReportTicket = () => {
               contentItem={'tố cáo'}
               watchAction={true}
               onWatch={() => {}}
+              editAction={true}
+              onEdit={() => {}}
               deleteAction={false}
               onDelete={() => {}}
             />
