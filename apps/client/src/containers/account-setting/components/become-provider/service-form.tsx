@@ -3,13 +3,19 @@ import { Transition } from '@headlessui/react'
 import { CloseSmall, DeleteFive, Down, Plus, Save } from '@icon-park/react'
 import { Button, Input, InputWithAffix, Modal, TextArea } from '@ume/ui'
 import coin from 'public/coin-icon.png'
-import { MenuModalEnum } from '~/enumVariable/enumVariable'
+import { ActionEnum, MenuModalEnum } from '~/enumVariable/enumVariable'
 
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 
 import { ConfigProvider, message, notification, theme } from 'antd'
 import Image from 'next/legacy/image'
-import { ServiceAttributeValuePagingResponse, ServicePagingResponse, ServiceResponse } from 'ume-service-openapi'
+import {
+  ProviderServicePagingResponse,
+  ServiceAttributePagingResponse,
+  ServiceAttributeValuePagingResponse,
+  ServicePagingResponse,
+  ServiceResponse,
+} from 'ume-service-openapi'
 
 import ConfirmForm from '~/components/confirm-form/confirmForm'
 
@@ -22,6 +28,7 @@ interface ServiceForm {
 }
 
 interface AttributeProps {
+  id: string | undefined
   intro: string
   service: ServiceResponse | undefined
   serviceDefaultPrice: number
@@ -57,13 +64,22 @@ const AddSkillForm = () => {
   const [serviceForm, setServiceForm] = useState<ServiceForm>({ title: '', description: '', form: '' })
   const [indexServiceForm, setIndexServiceForm] = useState<number>(-1)
 
+  const [listOwnService, setListOwnService] = useState<ProviderServicePagingResponse['row'] | undefined>()
   const [listService, setListService] = useState<ServicePagingResponse['row'] | undefined>()
   const [listServiceFilter, setListServiceFilter] = useState<ServicePagingResponse['row'] | undefined>()
 
-  const [listServiceAttribute, setListServiceAttribute] = useState<any>()
-  const [listServiceAttributeFilter, setListServiceAttributeFilter] = useState<any>()
+  const [listServiceAttribute, setListServiceAttribute] = useState<ServiceAttributePagingResponse['row'] | undefined>()
+  const [listServiceAttributeFilter, setListServiceAttributeFilter] = useState<
+    ServiceAttributePagingResponse['row'] | undefined
+  >()
   const [listServiceId, setListServiceId] = useState<string>('')
   const [listServiceAttributeId, setListServiceAttributeId] = useState<string>('')
+
+  const { isLoading: isListOwnServiceLoading } = trpc.useQuery(['identity.providerGetOwnServices'], {
+    onSuccess(data) {
+      setListOwnService(data.data.row)
+    },
+  })
 
   const [serviceAttributeValue, setServiceAttributeValue] = useState<
     ServiceAttributeValuePagingResponse['row'] | undefined
@@ -74,6 +90,7 @@ const AddSkillForm = () => {
 
   const [attributes, setAttributes] = useState<AttributeProps[]>([
     {
+      id: undefined,
       intro: '',
       service: undefined,
       serviceDefaultPrice: 1,
@@ -86,6 +103,7 @@ const AddSkillForm = () => {
       specialTimeLot: [],
     },
   ])
+
   const [attributesDisplay, setAttributesDisplay] = useState<AttributeDisplayProps[]>([
     {
       intro: '',
@@ -101,7 +119,7 @@ const AddSkillForm = () => {
     },
   ])
 
-  const { isLoading: isServiceLoading } = trpc.useQuery(['booking.getListService'], {
+  const { isLoading: isServiceLoading } = trpc.useQuery(['identity.providerGetServiceHaveNotRegistered'], {
     onSuccess(data) {
       setListService(data.data.row)
       setListServiceFilter(data.data?.row?.filter((service) => service.name?.toLocaleLowerCase().includes('')))
@@ -134,7 +152,10 @@ const AddSkillForm = () => {
     },
   )
 
+  const utils = trpc.useContext()
+
   const createProvicerService = trpc.useMutation('identity.createServiceProvider')
+  const updateProvicerService = trpc.useMutation('identity.updateServiceProvider')
 
   const [displaySearchBox, setSearchBox] = useState<MenuDisplayProps>({
     parent: 0,
@@ -143,10 +164,81 @@ const AddSkillForm = () => {
     indexShow: 0,
   })
 
+  useEffect(() => {
+    setAttributes(
+      listOwnService
+        ? listOwnService?.map((ownService) => ({
+            id: ownService.id,
+            intro: ownService.description ?? '',
+            service: ownService.service,
+            serviceDefaultPrice: ownService.defaultCost ?? 1,
+            serviceAttribute: ownService.providerServiceAttributes?.map((providerServiceAttr) => ({
+              serviceAttributeId: providerServiceAttr.serviceAttributeId,
+              subServiceAttibute: providerServiceAttr.providerServiceAttributeValues?.map(
+                (providerServiceAttrValue) => ({
+                  serviceAttributeValueId: providerServiceAttrValue.providerServiceAttributeId ?? '',
+                  serviceAttributeValueName: providerServiceAttrValue?.serviceAttributeValue?.viValue ?? '',
+                }),
+              ),
+            })) as any,
+            specialTimeLot: ownService.bookingCosts ?? [],
+          }))
+        : [
+            {
+              id: undefined,
+              intro: '',
+              service: undefined,
+              serviceDefaultPrice: 1,
+              serviceAttribute: [
+                {
+                  serviceAttributeId: undefined,
+                  subServiceAttibute: [{ serviceAttributeValueId: '', serviceAttributeValueName: '' }],
+                },
+              ],
+              specialTimeLot: [],
+            },
+          ],
+    )
+
+    setAttributesDisplay(
+      listOwnService
+        ? listOwnService?.map((ownService) => ({
+            intro: ownService.description ?? '',
+            service: ownService.service?.name ?? '',
+            serviceDefaultPrice: ownService.defaultCost ?? 1,
+            serviceAttribute: ownService.providerServiceAttributes?.map((providerServiceAttr) => ({
+              serviceAttributeId: providerServiceAttr?.serviceAttribute?.viAttribute ?? '',
+              subServiceAttibute: providerServiceAttr.providerServiceAttributeValues?.map(
+                (providerServiceAttrValue) => ({
+                  serviceAttributeValueId: providerServiceAttrValue?.serviceAttributeValue?.id ?? '',
+                  serviceAttributeValueName: providerServiceAttrValue?.serviceAttributeValue?.viValue ?? '',
+                }),
+              ),
+            })) as any,
+            specialTimeLot: ownService.bookingCosts ?? [],
+          }))
+        : [
+            {
+              intro: '',
+              service: '',
+              serviceDefaultPrice: 1,
+              serviceAttribute: [
+                {
+                  serviceAttributeId: '',
+                  subServiceAttibute: [{ serviceAttributeValueId: '', serviceAttributeValueName: '' }],
+                },
+              ],
+              specialTimeLot: [],
+            },
+          ],
+    )
+  }, [listOwnService])
+
   const handleAddAttribute = () => {
     setAttributes([
       ...attributes,
       {
+        id: undefined,
         intro: '',
         service: undefined,
         serviceDefaultPrice: 1,
@@ -410,8 +502,6 @@ const AddSkillForm = () => {
         })
         setAttributes(updatedAttributes)
 
-        console.log(attributes)
-
         updatedAttributesDisplay[index].serviceAttribute[sub_index ?? 0]?.subServiceAttibute?.push({
           serviceAttributeValueId: '',
           serviceAttributeValueName: '',
@@ -467,7 +557,7 @@ const AddSkillForm = () => {
           }
         }),
         createServiceAttributes: attributes[index].serviceAttribute
-          .filter((attribute) => attribute?.serviceAttributeId?.id)
+          .filter((attribute) => attribute?.serviceAttributeId)
           .map((attribute) => {
             const serviceAttributeValueIds = attribute.subServiceAttibute
               .filter((subAttr) => subAttr.serviceAttributeValueId !== '')
@@ -480,20 +570,60 @@ const AddSkillForm = () => {
           }),
       }
 
-      createProvicerService.mutate(
-        {
-          serviceId: req.serviceId ?? '',
-          defaultCost: req.defaultCost,
-          description: req.description,
-          createBookingCosts: (req.createBookingCosts.length > 0 ? req.createBookingCosts : undefined) as any,
-          createServiceAttributes: req.createServiceAttributes as any,
-        },
-        {
-          onSuccess(data, variables, context) {
-            console.log(data)
+      if (attributes[index].id) {
+        updateProvicerService.mutate(
+          {
+            serviceId: req.serviceId ?? '',
+            defaultCost: req.defaultCost,
+            description: req.description,
+            createBookingCosts: (req.createBookingCosts.length > 0 ? req.createBookingCosts : undefined) as any,
+            createServiceAttributes: req.createServiceAttributes as any,
           },
-        },
-      )
+          {
+            onSuccess() {
+              notification.success({
+                message: `Cập nhật dịch vụ thành công`,
+                description: `Dịch vụ đã được cập nhật`,
+                placement: 'bottomLeft',
+              })
+            },
+            onError() {
+              notification.error({
+                message: `Cập nhật dịch vụ thất bại`,
+                description: `Có lỗi trong quá trình cập nhật. Vui lòng thử lại sau!`,
+                placement: 'bottomLeft',
+              })
+            },
+          },
+        )
+      } else {
+        createProvicerService.mutate(
+          {
+            serviceId: req.serviceId ?? '',
+            defaultCost: req.defaultCost,
+            description: req.description,
+            createBookingCosts: (req.createBookingCosts.length > 0 ? req.createBookingCosts : undefined) as any,
+            createServiceAttributes: req.createServiceAttributes as any,
+          },
+          {
+            onSuccess() {
+              notification.success({
+                message: `Tạo mới dịch vụ thành công`,
+                description: `Dịch vụ đã được tạo mới`,
+                placement: 'bottomLeft',
+              })
+              utils.invalidateQueries('identity.providerGetServiceHaveNotRegistered')
+            },
+            onError() {
+              notification.error({
+                message: `Tạo mới dịch vụ thất bại`,
+                description: `Có lỗi trong quá trình tạo mới dịch vụ. Vui lòng thử lại sau!`,
+                placement: 'bottomLeft',
+              })
+            },
+          },
+        )
+      }
     } else {
       notification.warning({
         message: 'Vui lòng nhập đầy đủ thông tin',
@@ -564,7 +694,7 @@ const AddSkillForm = () => {
         {contextHolder}
       </ConfigProvider>
       {isModalConfirmationVisible && confirmModal}
-      {!isServiceLoading ? (
+      {!isServiceLoading && !isListOwnServiceLoading ? (
         <>
           <div className="grid grid-cols-4 gap-5">
             {listService &&
@@ -607,7 +737,7 @@ const AddSkillForm = () => {
                     </Button>
                   </div>
                   <div className="flex flex-col gap-1 mb-5">
-                    <label>Giới thiệu về kỹ năng: </label>
+                    <label>Giới thiệu về kỹ năng* : </label>
                     <TextArea
                       name="description"
                       className="bg-[#413F4D] w-4/5 max-h-[140px]"

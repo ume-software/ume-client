@@ -15,6 +15,7 @@ import {
 import VourcherModal from './voucher-modal'
 
 import ConfirmForm from '~/components/confirm-form/confirmForm'
+import { TableSkeletonLoader } from '~/components/skeleton-load'
 import Table from '~/components/table/table'
 
 import { trpc } from '~/utils/trpc'
@@ -79,19 +80,19 @@ const Voucher = () => {
         new Date(voucherArray[22]).toLocaleDateString('en-GB'),
         new Date(voucherArray[23]).toLocaleDateString('en-GB'),
         <div className="flex justify-center" key={voucherArray[0]}>
-          <div
+          <p
             className={`w-fit px-2 py-1 text-lg font-semibold rounded-xl text-[${
               mappingStatus.find((statusType) => statusType.key == voucherArray[28])?.textColor
             }] bg-[${mappingStatus.find((statusType) => statusType.key == voucherArray[28])?.color}]`}
           >
             {mappingStatus.find((statusType) => statusType.key == voucherArray[28])?.label}
-          </div>
+          </p>
         </div>,
         <>{mappingRecipientType.find((receipientType) => receipientType.key == voucherArray[25])?.label}</>,
         <Switch
           key={voucherArray[0]}
           className="bg-gray-600"
-          checked={voucherArray[15]}
+          checked={voucherArray[14]}
           onClick={(e) => {
             setIsVoucherActive(e)
             setIsModalConfirmationVisible(true)
@@ -219,6 +220,8 @@ const Voucher = () => {
     ),
   })
 
+  console.log(voucherForProvider?.row)
+
   return (
     <>
       {isModalConfirmationVisible && confirmModal}
@@ -243,7 +246,7 @@ const Voucher = () => {
                 Tạo khuyến mãi
               </Button>
             </div>
-            {!isVoucherLoading && voucherForProviderArray && (
+            {!isVoucherLoading && voucherForProviderArray ? (
               <Table
                 dataHeader={['Tên', 'Mô tả', 'Loại', 'Bắt đầu', 'Kết thúc', 'Trạng thái', 'Đối tượng', 'Kích hoạt']}
                 dataBody={voucherForProviderArray}
@@ -261,6 +264,10 @@ const Voucher = () => {
                 deleteAction={false}
                 onDelete={() => {}}
               />
+            ) : (
+              <>
+                <TableSkeletonLoader />
+              </>
             )}
           </div>
         </div>

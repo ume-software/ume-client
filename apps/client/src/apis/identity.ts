@@ -10,16 +10,20 @@ import { createRouter } from './configurations'
 import {
   createServiceProvider,
   getAccountBalance,
+  getHistoryTransaction,
   getIdentityInfo,
   getMyVoucher,
   getServiceAttributeByServiceSlug,
   getServiceAttributeValueByServiceAttributeId,
   getUserBySlug,
   providerCreateVoucher,
+  providerGetOwnServices,
   providerGetSelfVoucher,
+  providerGetServiceHaveNotRegistered,
   providerUpdateVoucher,
   registerBecomeProvider,
   requestRecharge,
+  updateServiceProvider,
   updateUserProfile,
   userKYC,
 } from './services/identity-service'
@@ -158,6 +162,11 @@ export const identityRouter = createRouter()
       return await registerBecomeProvider(ctx)
     },
   })
+  .query('providerGetServiceHaveNotRegistered', {
+    resolve: async ({ ctx }) => {
+      return await providerGetServiceHaveNotRegistered(ctx)
+    },
+  })
   .query('getServiceAttributeByServiceSlug', {
     input: z.string(),
     resolve: async ({ input, ctx }) => {
@@ -168,6 +177,32 @@ export const identityRouter = createRouter()
     input: z.string(),
     resolve: async ({ input, ctx }) => {
       return await getServiceAttributeValueByServiceAttributeId(input, ctx)
+    },
+  })
+  .query('providerGetOwnServices', {
+    resolve: async ({ ctx }) => {
+      return await providerGetOwnServices(ctx)
+    },
+  })
+  .mutation('updateServiceProvider', {
+    input: z.object({
+      serviceId: z.string(),
+      defaultCost: z.number(),
+      description: z.optional(z.string()),
+      createBookingCosts: z.optional(
+        z.array(z.object({ startTimeOfDay: z.string(), endTimeOfDay: z.string(), amount: z.number() })),
+      ),
+      createServiceAttributes: z.optional(
+        z.array(
+          z.object({
+            id: z.string(),
+            serviceAttributeValueIds: z.array(z.string()),
+          }),
+        ),
+      ),
+    }),
+    resolve: async ({ input, ctx }) => {
+      return await updateServiceProvider(input, ctx)
     },
   })
   .mutation('createServiceProvider', {
@@ -182,12 +217,23 @@ export const identityRouter = createRouter()
         z.array(
           z.object({
             id: z.string(),
-            serviceAttributeValueIds: z.string(),
+            serviceAttributeValueIds: z.array(z.string()),
           }),
         ),
       ),
     }),
     resolve: async ({ input, ctx }) => {
       return await createServiceProvider(input, ctx)
+    },
+  })
+  .query('getHistoryTransaction', {
+    input: z.object({
+      limit: z.string(),
+      page: z.string(),
+      where: z.optional(z.string()),
+      order: z.optional(z.string()),
+    }),
+    resolve: async ({ input, ctx }) => {
+      return await getHistoryTransaction(input, ctx)
     },
   })

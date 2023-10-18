@@ -740,7 +740,7 @@ export default function VourcherModal(props: {
             </div>
             <div className="flex flex-col justify-end w-2/5 gap-3">
               <div className="h-12 text-white">
-                Số lượng phát hành mỗi ngày:
+                Số lượng phát hành mỗi ngày* :
                 <div className="inline-block w-1/3 ">
                   <FormInput
                     name="numVoucherInDay"
@@ -762,7 +762,7 @@ export default function VourcherModal(props: {
                 </div>
               </div>
               <div className="h-12 text-white">
-                Số lượng tối đa người dùng trong ngày:
+                Số lượng tối đa người dùng trong ngày* :
                 <div className="inline-block w-1/3 ">
                   <FormInput
                     name="numUserCanUseInDay"
@@ -784,7 +784,7 @@ export default function VourcherModal(props: {
                 </div>
               </div>
               <div className="h-12 text-white">
-                Giảm tối đa:
+                Giảm tối đa* :
                 <div className="inline-block w-1/4 ">
                   <FormInput
                     name="minimize"
