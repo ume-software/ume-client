@@ -4,24 +4,29 @@ import { Button, FormInput } from '@ume/ui'
 import * as React from 'react'
 
 import { FormikErrors, useFormik } from 'formik'
+import { HandleServiceAttributeValueRequestHandleTypeEnum } from 'ume-service-openapi'
 import * as Yup from 'yup'
 
 export interface IServiceAttributeValuesProps {
   serviceAttributeValuesData: any
   setServiceAttributeValuesData: any
   isReadOnly?: boolean
+  handleType?: HandleServiceAttributeValueRequestHandleTypeEnum
 }
 
 export default function ServiceAttributeValues({
   serviceAttributeValuesData,
   setServiceAttributeValuesData,
   isReadOnly,
+  handleType,
 }: IServiceAttributeValuesProps) {
   const form = useFormik({
     initialValues: {
+      id: (serviceAttributeValuesData.id as string) || '',
       value: (serviceAttributeValuesData.value as string) || '',
       viValue: (serviceAttributeValuesData.viValue as string) || '',
       isActivated: serviceAttributeValuesData.isActivated || true,
+      handleType: handleType || HandleServiceAttributeValueRequestHandleTypeEnum.Create,
     },
     validationSchema: Yup.object({
       value: Yup.string().required('Thuộc tính là bắt buộc'),
@@ -37,6 +42,7 @@ export default function ServiceAttributeValues({
     form.setFieldValue(`value`, serviceAttributeValuesData.value)
     form.setFieldValue(`viValue`, serviceAttributeValuesData.viValue)
     form.setFieldValue(`isActivated`, serviceAttributeValuesData.isActivated)
+    form.setFieldValue(`handleType`, handleType || HandleServiceAttributeValueRequestHandleTypeEnum.Create)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [serviceAttributeValuesData])
   const handleChange = (fieldName, e) => {

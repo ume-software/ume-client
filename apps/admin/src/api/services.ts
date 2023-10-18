@@ -59,9 +59,9 @@ export const servicesRouter = createRouter()
     input: z.object({
       id: z.string(),
       updateServiceRequest: z.object({
-        name: z.string(),
+        name: z.optional(z.string()),
         viName: z.optional(z.string()),
-        imageUrl: z.string(),
+        imageUrl: z.optional(z.string()),
         isActivated: z.optional(z.boolean()),
         serviceAttributes: z.optional(
           z.array(

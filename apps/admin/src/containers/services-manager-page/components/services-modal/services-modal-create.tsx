@@ -8,6 +8,7 @@ import { useRef, useState } from 'react'
 import { notification } from 'antd'
 import { FormikErrors, useFormik } from 'formik'
 import Image from 'next/legacy/image'
+import { HandleServiceAttributeValueRequestHandleTypeEnum } from 'ume-service-openapi'
 import * as Yup from 'yup'
 
 import ServiceAttributes from './services-attribute-childrend'
@@ -115,6 +116,7 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
         viAttribute: '',
         isActivated: true,
         serviceAttributeValues: [],
+        handleType: HandleServiceAttributeRequestHandleTypeEnum.Create,
       },
     ])
   }
@@ -162,6 +164,7 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
           let reqWithValuesNotNull = {
             name: form.values.name,
             imageUrl: img.imageUrl,
+            handleType: HandleServiceAttributeValueRequestHandleTypeEnum.Create,
           }
           for (let key in req) {
             if (req[key]) {
@@ -306,15 +309,15 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
             {form.values.serviceAttributes.map((childData, index) => (
               <div className="col-span-1 " key={index}>
                 <ServiceAttributes
-                  id={index}
+                  index={index}
                   serviceAttributesData={childData}
                   setServiceAttributesData={(data) => {
                     const updatedSubChildData = [...form.values.serviceAttributes]
                     updatedSubChildData[index] = data
                     form.setFieldValue(`serviceAttributes[${index}]`, data)
                   }}
-                  removeChildComponent={(id) => {
-                    removeChildComponent(id)
+                  removeChildComponent={(index) => {
+                    removeChildComponent(index)
                   }}
                 />
               </div>

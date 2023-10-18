@@ -8,8 +8,16 @@ import { useRef, useState } from 'react'
 
 import { Select, notification } from 'antd'
 import { FormikErrors, useFormik } from 'formik'
+import { values } from 'lodash'
 import Image from 'next/legacy/image'
-import { ServiceResponse, UpdateServiceRequest } from 'ume-service-openapi'
+import {
+  HandleServiceAttributeRequest,
+  HandleServiceAttributeRequestHandleTypeEnum,
+  HandleServiceAttributeValueRequestHandleTypeEnum,
+  ServiceAttributeResponse,
+  ServiceResponse,
+  UpdateServiceRequest,
+} from 'ume-service-openapi'
 import * as Yup from 'yup'
 
 import ServiceAttributes from './services-attribute-childrend'
@@ -65,8 +73,13 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
   const createdAtInit = servicesDetails?.createdAt
     ? new Date(servicesDetails?.createdAt).toLocaleDateString('en-GB')
     : ''
-  const serviceAttributesInit = servicesDetails?.serviceAttributes || []
+  const serviceAttributesInit =
+    (servicesDetails?.serviceAttributes?.filter((service) => {
+      // service.handleType =  HandleServiceAttributeValueRequestHandleTypeEnum.Update
+    }) as Array<HandleServiceAttributeRequest>) || []
+
   const updateService = trpc.useMutation(['services.updateService'])
+
   const form = useFormik({
     initialValues: {
       name: nameInit,
@@ -163,6 +176,7 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
         viAttribute: '',
         isActivated: true,
         serviceAttributeValues: [],
+        handleType: HandleServiceAttributeRequestHandleTypeEnum.Create,
       },
     ])
   }
@@ -208,17 +222,49 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
 
     return isoDate
   }
+
+  function getUpdateReq() {
+    console.log('--------------Check Start update-------------')
+    let updateRes: Array<HandleServiceAttributeRequest> = JSON.parse(JSON.stringify(form.values.serviceAttributes))
+    serviceAttributesInit.filter((service) => {
+      const matchingUpdateService = form.values.serviceAttributes.find(
+        (updateService) => updateService.id === service.id,
+      )
+      if (!matchingUpdateService) {
+        const res = { ...service, handleType: HandleServiceAttributeRequestHandleTypeEnum.Delete }
+        updateRes.push(res)
+      } else {
+        const serviceAttributeValues = service.serviceAttributeValues
+        if (serviceAttributeValues) {
+          const updateServiceAttributeValues = matchingUpdateService.serviceAttributeValues
+          const valueNotInValueInit = serviceAttributeValues.filter((value) => {
+            return !updateServiceAttributeValues?.some((item) => item.id === value.id)
+          })
+          if (valueNotInValueInit.length != 0) {
+            valueNotInValueInit.filter((value) => {
+              const res = { ...value, handleType: HandleServiceAttributeRequestHandleTypeEnum.Delete }
+              console.log(res)
+              const indexToUpdate = updateRes.findIndex((item) => item.id === service.id)
+              updateRes[indexToUpdate]?.serviceAttributeValues?.push(res)
+            })
+          }
+        }
+      }
+    })
+    console.log(`check221`, updateRes)
+    console.log('--------------Check end update-------------')
+    return updateRes
+  }
   async function submitHandle() {
     const imgURL = await uploadImage()
     try {
-      console.log(form.values.createdAt)
-      console.log(createdAtInit)
+      let updateRes = await getUpdateReq()
       const req = {
         // name: [form.values.name, nameInit],
         // imageUrl: [form.values.selectedImage ? imgURL.imageUrl : imageUrlInit, imageUrlInit],
         viName: [form.values.viName, viNameInit],
         isActivated: [form.values.isActivated, isActivatedInit],
-        serviceAttributes: [form.values.serviceAttributes, serviceAttributesInit],
+        serviceAttributes: [updateRes, serviceAttributesInit],
         numberUsed: [form.values.numberUsed, numberUsedInit],
         createdAt: [convertToIsoDate(form.values.createdAt), convertToIsoDate(createdAtInit)],
       }
@@ -237,6 +283,7 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
             id: idService as string,
             updateServiceRequest: reqWithValuesNotNull as UpdateServiceRequest,
           }
+          console.log(req)
           updateService.mutate(req, {
             onSuccess: () => {
               notification.success({
@@ -396,7 +443,7 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
             {form.values.serviceAttributes.map((childData, index) => (
               <div className="col-span-1 " key={index}>
                 <ServiceAttributes
-                  id={index}
+                  index={index}
                   serviceAttributesData={childData}
                   setServiceAttributesData={(data) => {
                     const updatedSubChildData = [...form.values.serviceAttributes]
@@ -406,6 +453,7 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
                   removeChildComponent={(id) => {
                     removeChildComponent(id)
                   }}
+                  handleType={HandleServiceAttributeRequestHandleTypeEnum.Update}
                 />
               </div>
             ))}

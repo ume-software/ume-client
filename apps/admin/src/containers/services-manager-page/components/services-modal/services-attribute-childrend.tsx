@@ -4,6 +4,10 @@ import { Button, FormInput } from '@ume/ui'
 import * as React from 'react'
 
 import { FormikErrors, useFormik } from 'formik'
+import {
+  HandleServiceAttributeRequestHandleTypeEnum,
+  HandleServiceAttributeValueRequestHandleTypeEnum,
+} from 'ume-service-openapi'
 import * as Yup from 'yup'
 
 import ServiceAttributeValues from './services-atrribute-value'
@@ -12,23 +16,27 @@ export interface IServiceAttributesProps {
   serviceAttributesData: any
   setServiceAttributesData: any
   removeChildComponent: any
-  id: number
+  index: number
   isReadOnly?: boolean
+  handleType?: HandleServiceAttributeRequestHandleTypeEnum
 }
 
 export default function ServiceAttributes({
-  id,
+  index,
   serviceAttributesData,
   setServiceAttributesData,
   removeChildComponent,
   isReadOnly,
+  handleType,
 }: IServiceAttributesProps) {
   const form = useFormik({
     initialValues: {
+      id: (serviceAttributesData.id as string) || '',
       attribute: (serviceAttributesData.attribute as string) || '',
       viAttribute: (serviceAttributesData.viAttribute as string) || '',
       isActivated: (serviceAttributesData.isActivated as string) || '',
       serviceAttributeValues: serviceAttributesData.serviceAttributeValues || ([] as Array<Object>),
+      handleType: handleType || HandleServiceAttributeRequestHandleTypeEnum.Create,
     },
     validationSchema: Yup.object({
       attribute: Yup.string().required('Thuộc tính là bắt buộc'),
@@ -48,10 +56,12 @@ export default function ServiceAttributes({
     },
   })
   React.useEffect(() => {
+    form.setFieldValue(`id`, serviceAttributesData.id)
     form.setFieldValue(`attribute`, serviceAttributesData.attribute)
     form.setFieldValue(`viAttribute`, serviceAttributesData.viAttribute)
     form.setFieldValue(`isActivated`, serviceAttributesData.isActivated)
     form.setFieldValue(`serviceAttributeValues`, serviceAttributesData.serviceAttributeValues)
+    form.setFieldValue(`handleType`, handleType || HandleServiceAttributeRequestHandleTypeEnum.Create)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [serviceAttributesData])
 
@@ -66,15 +76,16 @@ export default function ServiceAttributes({
         value: '',
         viValue: '',
         isActivated: true,
+        handleType: HandleServiceAttributeValueRequestHandleTypeEnum.Create,
       },
     ])
   }
-  const handleRemoveComponent = (id) => {
-    removeChildComponent(id)
+  const handleRemoveComponent = (index) => {
+    removeChildComponent(index)
   }
   const removeSubChildComponent = (index) => {
     const updatedSubChildData = [...form.values.serviceAttributeValues]
-    updatedSubChildData.splice(index, 1)
+    let deleteAttributeValue = updatedSubChildData.splice(index, 1)
     form.setFieldValue(`serviceAttributeValues`, updatedSubChildData)
     setServiceAttributesData({ ...form.values, serviceAttributeValues: updatedSubChildData })
   }
@@ -86,7 +97,7 @@ export default function ServiceAttributes({
           <Button
             isActive={false}
             onClick={() => {
-              handleRemoveComponent(id)
+              handleRemoveComponent(index)
             }}
           >
             <DeleteOne theme="filled" size="18" fill="#ffffff" className="my-auto rounded-sm hover:scale-110" />
@@ -182,6 +193,7 @@ export default function ServiceAttributes({
                 setServiceAttributesData({ ...form.values, serviceAttributeValues: updatedSubChildData })
               }}
               isReadOnly={isReadOnly}
+              handleType={HandleServiceAttributeValueRequestHandleTypeEnum.Update}
             />
             {!isReadOnly && (
               <div className="w-1/12">
