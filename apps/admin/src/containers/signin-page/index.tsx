@@ -1,4 +1,5 @@
 import { Button, FieldLabel, FormInput } from '@ume/ui'
+import { useAuth } from '~/contexts/auth'
 
 import { useState } from 'react'
 
@@ -22,6 +23,7 @@ const SigninPage = () => {
   const [isSubmiting, setSubmiting] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const signin = trpc.useMutation(['auth.signin'])
+  const { login } = useAuth()
   const router = useRouter()
 
   const form = useFormik({
@@ -34,6 +36,10 @@ const SigninPage = () => {
       setSubmiting(true)
       signin.mutate(values, {
         onSuccess: (response) => {
+          if (!response.data) {
+            login(response.data)
+          }
+
           setSubmiting(false)
           router.push('/dashboard')
         },

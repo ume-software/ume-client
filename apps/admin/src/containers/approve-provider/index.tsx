@@ -1,7 +1,7 @@
 import { Button } from '@ume/ui'
 import StatusBlock from '~/containers/approve-provider/components/kyc-status'
 
-import { use, useCallback, useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import { Image as AntdImage, notification } from 'antd'
 import { ColumnsType } from 'antd/es/table'
