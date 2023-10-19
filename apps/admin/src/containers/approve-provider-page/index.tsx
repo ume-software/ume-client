@@ -1,5 +1,5 @@
 import { Button } from '@ume/ui'
-import StatusBlock from '~/containers/approve-provider/components/kyc-status'
+import StatusBlock from '~/containers/approve-provider-page/components/kyc-status'
 
 import { useCallback, useState } from 'react'
 
