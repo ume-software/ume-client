@@ -4,7 +4,6 @@ import { Button } from '@ume/ui'
 import * as React from 'react'
 
 import { Avatar, Pagination } from 'antd'
-import Image from 'next/image'
 import { AdminGetProviderServicePagingResponse, BookingHistoryPagingResponse } from 'ume-service-openapi'
 
 import ProviderServiceTable from './provider-service-table'
@@ -37,7 +36,7 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
     },
     { providerService: ['$all', { service: ['$all'] }] },
   ]
-  const { isLoading: isListSkillLoading, isFetching: isListSkillFetching } = trpc.useQuery(
+  trpc.useQuery(
     [
       'provider.getProviderSkill',
       {
@@ -63,13 +62,12 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
       createDate: row.createdAt,
       totalBookingPeriod: row.totalBookingPeriod,
       totalBooking: row.totalBooking,
-      // rating: 'chua co',
       totalRevenue: row.totalRevenue,
       ...row,
     }
   })
 
-  const { isLoading: isListTransLoading, isFetching: isListTransFetching } = trpc.useQuery(
+  trpc.useQuery(
     [
       'provider.getProviderBookingHistory',
       {
@@ -97,7 +95,6 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
       serveTime: row.bookingPeriod,
       status: row.status,
       mountMoney: row.totalCost,
-      // feedback: 'Thằng này ngáo',
       ...row,
     }
   })
@@ -110,11 +107,10 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
   const rating = providerInfo.rating
   const servicedTime = providerInfo.servicedTime
   const balance = providerInfo.balance
-  const status = providerInfo.status
   const [switchTable, setSwitchTable] = React.useState(true)
 
-  function handleSwitchTable() {
-    if (switchTable === true) {
+  const handleSwitchTable = () => {
+    if (switchTable) {
       setSwitchTable(false)
     } else {
       setSwitchTable(true)
@@ -164,13 +160,13 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
       </div>
       <div className="flex h-10 mt-4">
         <div className="flex flex-col">
-          <Button onClick={handleSwitchTable} customCSS="hover:text-gray-400">
+          <Button isActive={false} onClick={handleSwitchTable} customCSS="hover:text-gray-400">
             Dịch vụ cung cấp
           </Button>
           {switchTable && <div className="border-b-2 border-[#7463F0] mx-4 mr-6"></div>}
         </div>
         <div className="flex flex-col w-40 ">
-          <Button onClick={handleSwitchTable} customCSS="hover:text-gray-400">
+          <Button isActive={false} onClick={handleSwitchTable} customCSS="hover:text-gray-400">
             Lịch sử giao dịch
           </Button>
           {!switchTable && <div className="border-b-2 border-[#7463F0] mx-4"></div>}

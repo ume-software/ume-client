@@ -14,7 +14,7 @@ import BecomeProvider from './components/become-provider/become-provider'
 import EditNotificated from './components/edit-notificated'
 import EditProfile from './components/edit-profile'
 import Privacy from './components/privacy'
-import ReportTicket from './components/report-ticket'
+import ReportTicket from './components/report-ticket/report-ticket'
 import TransactionHistory from './components/transaction-history/transaction-history'
 import Voucher from './components/voucher/voucher'
 
@@ -107,7 +107,7 @@ const AccountSettingContainer = () => {
       <>
         <div className="min-h-screen bg-umeBackground grid grid-cols-10 text-white">
           <div className="col-span-2">
-            <div className="min-w-[150px] p-10 bg-zinc-800 rounded-3xl sticky top-20">
+            <div className="min-w-[150px] min-h-[85%] max-h-[85%] p-10 bg-zinc-800 rounded-3xl sticky top-20 bottom-20 overflow-y-auto hide-scrollbar">
               <div className="flex flex-col gap-5">
                 {settingType.map((item) => (
                   <>

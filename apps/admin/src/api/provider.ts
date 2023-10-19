@@ -1,9 +1,11 @@
 import { z } from 'zod'
 
 import { createRouter } from './configurations'
+import { kcyAction } from './services/provider-service'
 import {
   BanProvider,
   UnBanProvider,
+  getListKYC,
   getProviderBookingHistory,
   getProviderBookingStatistics,
   getProviderDetail,
@@ -83,6 +85,7 @@ export const providerRouter = createRouter()
   .mutation('BanProvider', {
     input: z.object({
       slug: z.string(),
+      adminHandleBanProviderRequest: z.optional(z.object({ content: z.optional(z.string()) })),
     }),
     resolve: async ({ input, ctx }) => {
       return await BanProvider(input, ctx)
@@ -94,5 +97,26 @@ export const providerRouter = createRouter()
     }),
     resolve: async ({ input, ctx }) => {
       return await UnBanProvider(input, ctx)
+    },
+  })
+  .query('getListRequestKYC', {
+    input: z.object({
+      limit: z.optional(z.string()),
+      page: z.optional(z.string()),
+      select: z.optional(z.string()),
+      where: z.optional(z.string()),
+      order: z.optional(z.string()),
+    }),
+    resolve: async ({ ctx, input }) => {
+      return await getListKYC(ctx, input)
+    },
+  })
+  .mutation('actionKYC', {
+    input: z.object({
+      id: z.string(),
+      action: z.string(),
+    }),
+    resolve: async ({ input, ctx }) => {
+      return await kcyAction(ctx, { id: input.id, action: input.action })
     },
   })

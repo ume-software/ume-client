@@ -37,7 +37,7 @@ export default function UserDetails({ details, openValue, closeFunction }: IUser
   const [transaction, setTransaction] = useState<CoinHistoryPagingResponse>()
   const [page, setPage] = useState(1)
 
-  const { isLoading, isFetching } = trpc.useQuery(
+  trpc.useQuery(
     ['user.getUserCoinHistories', { slug: details?.key, page: page.toString(), where: undefined, order: undefined }],
     {
       onSuccess(data) {
@@ -70,7 +70,7 @@ export default function UserDetails({ details, openValue, closeFunction }: IUser
 
   let locale = {
     emptyText: (
-      <div className="w-full h-full flex justify-center items-center">
+      <div className="flex items-center justify-center w-full h-full">
         <Image height={250} alt="empty data" src={EmptyErrorPic} />
       </div>
     ),
@@ -83,7 +83,7 @@ export default function UserDetails({ details, openValue, closeFunction }: IUser
       className="w-auto bg-black"
     >
       <PersionalInfo data={details} />
-      <div className="flex justify-between text-white mt-5 px-4">
+      <div className="flex justify-between px-4 mt-5 text-white">
         <span>Biến động số dư</span>
         <div className="border-b-2 border-[#7463F0] mx-4 mr-6"></div>
 
@@ -91,9 +91,9 @@ export default function UserDetails({ details, openValue, closeFunction }: IUser
           Số dư: <span className="font-bold"></span>
         </div>
       </div>
-      <div className="my-4 px-4">
+      <div className="px-4 my-4">
         <Table pagination={false} locale={locale} columns={columns} dataSource={tableDataMapping(transaction?.row)} />
-        <div className="flex w-full justify-center pb-[200px] mt-5">
+        <div className="flex w-full justify-center mb-2 mt-5">
           <Pagination
             itemRender={(page, type) => (
               <div className="text-white">

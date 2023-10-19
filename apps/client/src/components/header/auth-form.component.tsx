@@ -1,7 +1,7 @@
 import { useGoogleLogin } from '@react-oauth/google'
 import { useAuth } from '~/contexts/auth'
 
-import { Dispatch, SetStateAction, useContext } from 'react'
+import { Dispatch, SetStateAction } from 'react'
 
 import { trpc } from '~/utils/trpc'
 

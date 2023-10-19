@@ -1,33 +1,22 @@
-import { Left, Right, Search } from '@icon-park/react';
-import { Button, Input } from '@ume/ui';
+import { Left, Right, Search } from '@icon-park/react'
+import { Input } from '@ume/ui'
 
+import React, { useState } from 'react'
 
+import { Pagination, Tag } from 'antd'
+import Head from 'next/head'
+import { AdminGetUserPagingResponseResponse } from 'ume-service-openapi'
 
-import React, { useState } from 'react';
+import TableProviders from './components/table-provider'
 
+import FilterDropdown from '~/components/filter-dropdown'
 
-
-import { Pagination, Tag } from 'antd';
-import Head from 'next/head';
-import { AdminGetUserPagingResponseResponse, FilterProviderPagingResponse } from 'ume-service-openapi';
-import { util } from 'zod';
-
-
-
-import TableProviders from './components/table-provider';
-
-
-
-import FilterDropdown from '~/components/filter-dropdown';
-
-
-
-import { trpc } from '~/utils/trpc';
-
+import { trpc } from '~/utils/trpc'
 
 interface LooseObject {
   [key: string]: any
 }
+
 const statusFilterItems = [
   {
     key: 'all',
@@ -40,7 +29,7 @@ const statusFilterItems = [
   {
     key: 'false',
     label: (
-      <Tag className="flex justify-center w-full px-3 py-2 text-white bg-green-500 rounded-lg hover:bg-green-600">
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
         Hoạt động
       </Tag>
     ),
@@ -48,7 +37,7 @@ const statusFilterItems = [
   {
     key: 'true',
     label: (
-      <Tag className="flex justify-center w-full px-3 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600">
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
         Tạm dừng
       </Tag>
     ),
@@ -90,9 +79,8 @@ const genderFilterItems = [
   },
 ]
 const ProviderManager = () => {
-  const utils = trpc.useContext()
   const LIMIT = '10'
-  const SELECT = ['$all'] //['$all', { user: ['$all'] }]
+  const SELECT = ['$all', { providerConfig: ['$all'] }]
   const [page, setPage] = useState(1)
   const [filter, setFilter] = useState({
     gender: 'all',
@@ -104,6 +92,9 @@ const ProviderManager = () => {
   const [providerList, setProviderList] = useState<AdminGetUserPagingResponseResponse | undefined>()
   const generateQuery = () => {
     let query: LooseObject = {}
+    query.isBanned = false
+    query.isProvider = true
+    query.NOT = [{ providerConfig: null }]
     if (filter.search !== 'all') {
       query.name = {
         contains: filter.search,
@@ -114,12 +105,15 @@ const ProviderManager = () => {
       query.gender = filter.gender.toUpperCase()
     }
     if (filter.isBanned !== 'all') {
-      filter.isBanned == 'true' ? (query.isBanned = true) : (query.isBanned = false)
+      if (filter.isBanned == 'true') {
+        query.providerConfig = { isBanned: true }
+      } else {
+        query.providerConfig = { isBanned: false }
+      }
     }
-
     return query
   }
-  const { isLoading: isUserListLoading, isFetching: isUserListFetching } = trpc.useQuery(
+  trpc.useQuery(
     [
       'provider.getProviderList',
       {
@@ -133,23 +127,22 @@ const ProviderManager = () => {
     {
       refetchOnWindowFocus: false,
       refetchOnReconnect: 'always',
-      // refetchOnMount: false,
       onSuccess(data) {
-        setProviderList(data.data)
+        setProviderList(data?.data as any)
       },
     },
   )
   const data = providerList?.row?.map((row: any) => {
     return {
+      ...row,
       key: row.id,
       id: row.id,
       name: row.name,
       Gmail: row.email,
       phone: row.phone,
       gender: row.gender,
-      isBanned: row.isBanned,
-      joinDate: row.createdAt,
-      ...row,
+      isBanned: row.providerConfig.isBanned,
+      joinDate: row.providerConfig.createdAt,
     }
   })
   const mapingGender = {
@@ -177,6 +170,7 @@ const ProviderManager = () => {
   const handlePageChange = (nextPage) => {
     setPage(nextPage)
   }
+
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       setPage(1)
@@ -199,9 +193,6 @@ const ProviderManager = () => {
         isBanned: key,
       })
     }
-  }
-  function refreshData() {
-    utils.invalidateQueries('provider.getProviderList')
   }
 
   return (

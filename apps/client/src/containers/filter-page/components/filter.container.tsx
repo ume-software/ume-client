@@ -1,5 +1,5 @@
 import { Menu, Transition } from '@headlessui/react'
-import { Check, Search } from '@icon-park/react'
+import { Check } from '@icon-park/react'
 import { Input } from '@ume/ui'
 import coin from 'public/coin-icon.png'
 import CategoryDrawer from '~/containers/home-page/components/category-drawer'
@@ -68,7 +68,7 @@ const FilterContainer = (props) => {
   const [listSkils, setListSkils] = useState<any>([])
   const [priceRange, setPriceRange] = useState<[number, number]>([min, max])
 
-  const { isLoading: loadingService, isFetching } = trpc.useQuery(['booking.getListService'], {
+  const { isLoading: loadingService } = trpc.useQuery(['booking.getListService'], {
     onSuccess(data) {
       setListSkils(data?.data?.row)
     },

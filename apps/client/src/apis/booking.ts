@@ -18,8 +18,13 @@ import {
 
 export const bookingRouter = createRouter()
   .query('getListService', {
-    resolve: async ({ ctx }) => {
-      return await getListService()
+    input: z.optional(
+      z.object({
+        where: z.optional(z.string()),
+      }),
+    ),
+    resolve: async ({ input, ctx }) => {
+      return await getListService(input)
     },
   })
   .query('getProviders', {

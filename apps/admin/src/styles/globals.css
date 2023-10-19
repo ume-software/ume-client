@@ -52,7 +52,7 @@
   background-color: #7463F0 !important;
   border-bottom: unset !important;
   color: white !important;
-  
+
   }
   .ant-table-cell::before{
     content: unset !important;
@@ -116,7 +116,7 @@
 
   .ant-pagination {
     margin-top: 1rem;
-    
+
   }
   .ant-pagination-item-active {
     background-color: white;
@@ -143,13 +143,14 @@
   }
 
   .ant-dropdown .ant-dropdown-menu {
-        background-color: #1f2937 !important; 
+        background-color: #1f2937 !important;
   }
 /* slect ant design for vourcher */
+
 .ant-select-selector {
   background-color:#413F4D !important;
-  color: white !important;  
-  border: 2px solid white !important;
+  color: white !important;
+  border: 2px solid rgba(255, 255, 255, 0.3) !important;
 }
 .ant-select-selection-overflow-item{
   background-color: #7463F0 !important;
@@ -166,9 +167,24 @@
 .ant-select-selection-overflow-item-suffix{
   display: none !important;
 }
+.ant-select-focused .ant-select-selector,
+.ant-select-selector:focus,
+.ant-select-selector:active,
+.ant-select-open .ant-select-selector {
+  border: 2px solid rgba(255, 255, 255) !important;
+}
+
+
 
 /* --------------------------------------------------------------- */
 /* Dropdown */
 .ant-dropdown-trigger {
+  margin: 0;
+}
+/* input number */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
   margin: 0;
 }

@@ -1,8 +1,13 @@
 import { TRPCError } from '@trpc/server'
 import { getEnv } from '~/env'
 
-import { parse, serialize } from 'cookie'
-import { AdminManageProviderApi } from 'ume-service-openapi'
+import { parse } from 'cookie'
+import {
+  AdminHandleBanProviderRequest,
+  AdminManageProviderApi,
+  AdminManageUserKYCRequestApi,
+  UserKYCRequestResponse,
+} from 'ume-service-openapi'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
@@ -194,14 +199,17 @@ export const getProviderTotalCoin = async (
     })
   }
 }
-export const BanProvider = async ({ slug }, ctx) => {
+export const BanProvider = async (
+  query: { slug: string; adminHandleBanProviderRequest?: AdminHandleBanProviderRequest },
+  ctx,
+) => {
   const cookies = parse(ctx.req.headers.cookie)
   try {
     const response = await new AdminManageProviderApi({
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).adminBanProviderBySlug(slug)
+    }).adminBanProviderBySlug(query.slug, query.adminHandleBanProviderRequest)
     return {
       data: response.data,
       success: true,
@@ -230,6 +238,72 @@ export const UnBanProvider = async ({ slug }, ctx) => {
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
       message: error.message || 'Failed to UnBanProvider',
+    })
+  }
+}
+
+export const getListKYC = async (
+  ctx,
+  query?: {
+    limit?: string
+    page?: string
+    select?: string
+    where?: string
+    order?: string
+  },
+) => {
+  const cookies = parse(ctx.req.headers.cookie)
+  try {
+    const response = await new AdminManageUserKYCRequestApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).adminGetListUserKYCRequest(query?.limit, query?.page, query?.select, query?.where, query?.order)
+
+    const res = response.data.row?.map((data: UserKYCRequestResponse) => ({
+      ...data.user,
+      backSideCitizenIdImageUrl: data.backSideCitizenIdImageUrl,
+      frontSideCitizenIdImageUrl: data.frontSideCitizenIdImageUrl,
+      portraitImageUrl: data.portraitImageUrl,
+      status: data?.userKYCStatus,
+      requestId: data.id,
+    }))
+
+    return {
+      data: res,
+      successs: true,
+      count: response.data.count,
+      pagination: response.data.pagination,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.message || 'Failed to get list KYC.',
+    })
+  }
+}
+
+export const kcyAction = async (ctx, { id, action }) => {
+  const cookies = parse(ctx.req.headers.cookie)
+  try {
+    let response = await new AdminManageUserKYCRequestApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    })
+    if (action === 'APPROVE') {
+      response.adminApprovedUserKYCRequest(id)
+    } else if (action === 'REJECT') {
+      response.adminRejectedUserKYCRequest(id)
+    }
+    return {
+      data: response,
+      successs: true,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.message || `Failed to ${action} KYC for user have ${id}.`,
     })
   }
 }

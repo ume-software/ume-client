@@ -11,16 +11,15 @@ import {
   ServiceApi,
   UserApi,
 } from 'ume-service-openapi'
-import { optional } from 'zod'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
-export const getListService = async () => {
+export const getListService = async (query?: { where?: string }) => {
   try {
     const response = await new ServiceApi({
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
-    }).findAndCountAll('unlimited', '1', '["$all"]')
+    }).findAndCountAll('unlimited', '1', '["$all"]', `"name":{"contains":${query?.where}}`)
 
     return {
       data: response.data,

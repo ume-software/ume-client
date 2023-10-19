@@ -8,5 +8,6 @@ module.exports = {
         hostname: '**',
       },
     ],
+    domains: ['www.ume.software'],
   },
 }

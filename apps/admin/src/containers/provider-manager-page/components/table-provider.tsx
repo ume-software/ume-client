@@ -1,6 +1,5 @@
-import { BaseballBat, Eyes, ReduceOne } from '@icon-park/react'
+import { Eyes, ReduceOne } from '@icon-park/react'
 import { Button } from '@ume/ui'
-import { BanProvider } from '~/api/services/provider-service'
 
 import * as React from 'react'
 import { useState } from 'react'
@@ -35,26 +34,27 @@ export default function TableProviders({ data }) {
   function closeBanProviderHandle() {
     setOpenBanProvider(false)
   }
-  function HandleBanFunction() {
+  function HandleBanFunction(content) {
     if (!isBanedProvider) {
       try {
-        BanProvider.mutate(
-          {
-            slug: providerId!!,
+        let req = { slug: providerId! }
+        content
+          ? (req['adminHandleBanProviderRequest'] = {
+              content: content,
+            })
+          : req
+        BanProvider.mutate(req, {
+          onSuccess: (data) => {
+            if (data.success) {
+              notification.success({
+                message: 'Chặn Người Cung Cấp thành công!',
+                description: 'Người Cung Cấp Đã Bị Chặn',
+                placement: 'bottomLeft',
+              })
+              utils.invalidateQueries('provider.getProviderList')
+            }
           },
-          {
-            onSuccess: (data) => {
-              if (data.success) {
-                notification.success({
-                  message: 'Chặn Người Cung Cấp thành công!',
-                  description: 'Người Cung Cấp Đã Bị Chặn',
-                  placement: 'bottomLeft',
-                })
-                utils.invalidateQueries('provider.getProviderList')
-              }
-            },
-          },
-        )
+        })
       } catch (error) {
         console.error('Failed to Handle Ban/Unban Provider:', error)
       }
@@ -88,7 +88,7 @@ export default function TableProviders({ data }) {
     setOpenBanProvider(true)
     setIsBanedProvider(isBanned)
   }
-  const [arrow, setArrow] = useState('Show')
+  const [arrow] = useState('Show')
   const mergedArrow = React.useMemo(() => {
     if (arrow === 'Hide') {
       return false
@@ -155,6 +155,7 @@ export default function TableProviders({ data }) {
         <Space size="middle">
           <Tooltip placement="top" title="Xem Chi Tiết" arrow={mergedArrow}>
             <Button
+              isActive={false}
               onClick={(e) => {
                 openProviderDetailHandle(record.id)
               }}
@@ -162,8 +163,9 @@ export default function TableProviders({ data }) {
               <Eyes theme="outline" size="24" fill="#fff" />
             </Button>
           </Tooltip>
-          <Tooltip placement="top" title="Chặn" arrow={mergedArrow}>
+          <Tooltip placement="top" title={record.isBanned ? 'Bỏ chặn' : 'Chặn'} arrow={mergedArrow}>
             <Button
+              isActive={false}
               onClick={(e) => {
                 banProviderHandle(record.id, record.name, record.isBanned)
               }}
@@ -186,12 +188,14 @@ export default function TableProviders({ data }) {
   return (
     <div>
       <Table locale={locale} pagination={false} columns={columnsProvider} dataSource={data} className="z-0" />
-      <ProviderDetail
-        providerInfo={data}
-        providerId={providerId}
-        openValue={openProviderDetail}
-        closeFunction={closeProviderDetailHandle}
-      />
+      {openProviderDetail && (
+        <ProviderDetail
+          providerInfo={data}
+          providerId={providerId}
+          openValue={openProviderDetail}
+          closeFunction={closeProviderDetailHandle}
+        />
+      )}
       <BanModal
         isBanned={isBanedProvider}
         name={providerName}

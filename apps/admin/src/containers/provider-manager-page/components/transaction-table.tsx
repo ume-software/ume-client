@@ -7,6 +7,7 @@ import EmptyErrorPic from '../../../../public/empty_error.png'
 
 export interface ITransactionTableProps {
   data: any
+  isLoading?: boolean
 }
 
 export default function TransactionTable(props: ITransactionTableProps) {
@@ -52,11 +53,6 @@ export default function TransactionTable(props: ITransactionTableProps) {
       dataIndex: 'mountMoney',
       key: 'mountMoney',
     },
-    // {
-    //   title: 'Phản hồi',
-    //   dataIndex: 'feedback',
-    //   key: 'feedback',
-    // },
   ]
   return <Table locale={locale} pagination={false} columns={columnsService} dataSource={data} className="z-0" />
 }

@@ -35,9 +35,9 @@ const ColumnChart = () => {
       pointIntervalUnit: 'month',
     },
     {
-      key: '5Y',
-      name: '5 năm',
-      durationYear: 5,
+      key: '1Y',
+      name: '1 năm',
+      durationYear: 1,
       durationPeriod: 0,
       isActivated: false,
       pointInterval: 1, //6,
