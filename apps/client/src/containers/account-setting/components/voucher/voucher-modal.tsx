@@ -585,7 +585,7 @@ export default function VourcherModal(props: {
               </div>
               <div className="h-12 text-white">
                 Mã* :
-                <div className="inline-block w-2/3 ">
+                <div className="h-full inline-block w-2/3 ">
                   <FormInput
                     name="vourcherCode"
                     className={`${

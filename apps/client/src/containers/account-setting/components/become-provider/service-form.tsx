@@ -696,7 +696,7 @@ const AddSkillForm = () => {
               listService?.length > 0 &&
               attributes.map((attr, index) => (
                 <>
-                  {updateProvicerService.isLoading && indexServiceForm == index ? (
+                  {(createProvicerService.isLoading || updateProvicerService.isLoading) && indexServiceForm == index ? (
                     <div key={index} className="col-span-2 border border-white border-opacity-30 p-5 rounded-3xl">
                       <div className="w-full h-full flex justify-center items-center">
                         <span

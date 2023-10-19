@@ -1,5 +1,5 @@
 import { Menu, Transition } from '@headlessui/react'
-import { CopyOne, Dot, Female, Lock, Male, More, ShareTwo } from '@icon-park/react'
+import { CopyOne, Dot, Female, Lock, Male, More, PaperMoneyTwo, ShareTwo } from '@icon-park/react'
 import TestImage4 from 'public/cover.png'
 import detailBackground from 'public/detail-cover-background.png'
 import ImgForEmpty from 'public/img-for-empty.png'
@@ -64,6 +64,18 @@ const feedData: FeedProps[] = [
 ]
 
 const moreButtonDatas: TabDataProps[] = [
+  {
+    key: 'Donate',
+    label: 'Donate',
+    icon: (
+      <PaperMoneyTwo
+        className={`transition-opacity opacity-0 group-hover:opacity-100 group-hover:translate-x-3 duration-300`}
+        theme="outline"
+        size="20"
+        fill="#fff"
+      />
+    ),
+  },
   {
     key: 'Share',
     label: 'Copy đường dẫn',
@@ -202,8 +214,10 @@ const DetailProfileContainer = () => {
 
       {!providerDetail && isProviderDetailLoading ? (
         <>
-          <div className="w-[98%] h-[380px] mx-70">
-            <BGFullGridSkeleton />
+          <div style={{ height: '380px', margin: '0 70px' }}>
+            <div className="absolute top-16 left-0" style={{ width: '100%', height: '416px' }}>
+              <Image layout="fill" src={detailBackground} alt="background" />
+            </div>
           </div>
           <div className="grid mt-10 w-full h-screen grid-cols-10 gap-10 px-10">
             <div className="col-span-2">
@@ -221,7 +235,7 @@ const DetailProfileContainer = () => {
         <>
           <div style={{ height: '380px', margin: '0 70px' }}>
             <div className="absolute top-16 left-0" style={{ width: '100%', height: '416px' }}>
-              <Image layout="fill" src={detailBackground} alt="background"></Image>
+              <Image layout="fill" src={detailBackground} alt="background" />
             </div>
             <div className="h-full flex flex-col justify-end gap-5">
               <div className="flex flex-row justify-between md:items-center items-baseline px-7 pb-5">
