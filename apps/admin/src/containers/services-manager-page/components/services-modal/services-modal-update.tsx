@@ -74,9 +74,16 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
     ? new Date(servicesDetails?.createdAt).toLocaleDateString('en-GB')
     : ''
   const serviceAttributesInit =
-    (servicesDetails?.serviceAttributes?.filter((service) => {
-      // service.handleType =  HandleServiceAttributeValueRequestHandleTypeEnum.Update
-    }) as Array<HandleServiceAttributeRequest>) || []
+    servicesDetails?.serviceAttributes?.map((service) => {
+      const updatedService = { ...service, handleType: HandleServiceAttributeRequestHandleTypeEnum.Update }
+      if (service.serviceAttributeValues) {
+        updatedService.serviceAttributeValues = service.serviceAttributeValues.map((value) => ({
+          ...value,
+          handleType: HandleServiceAttributeValueRequestHandleTypeEnum.Update,
+        }))
+      }
+      return updatedService
+    }) ?? []
 
   const updateService = trpc.useMutation(['services.updateService'])
 
@@ -231,7 +238,10 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
         (updateService) => updateService.id === service.id,
       )
       if (!matchingUpdateService) {
-        const res = { ...service, handleType: HandleServiceAttributeRequestHandleTypeEnum.Delete }
+        const res = {
+          ...service,
+          handleType: HandleServiceAttributeRequestHandleTypeEnum.Delete,
+        } as HandleServiceAttributeRequest
         updateRes.push(res)
       } else {
         const serviceAttributeValues = service.serviceAttributeValues
@@ -243,7 +253,6 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
           if (valueNotInValueInit.length != 0) {
             valueNotInValueInit.filter((value) => {
               const res = { ...value, handleType: HandleServiceAttributeRequestHandleTypeEnum.Delete }
-              console.log(res)
               const indexToUpdate = updateRes.findIndex((item) => item.id === service.id)
               updateRes[indexToUpdate]?.serviceAttributeValues?.push(res)
             })
@@ -256,6 +265,7 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
     return updateRes
   }
   async function submitHandle() {
+    setOpenConfirm(false)
     const imgURL = await uploadImage()
     try {
       let updateRes = await getUpdateReq()
@@ -283,7 +293,7 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
             id: idService as string,
             updateServiceRequest: reqWithValuesNotNull as UpdateServiceRequest,
           }
-          console.log(req)
+          console.log('req', req)
           updateService.mutate(req, {
             onSuccess: () => {
               notification.success({
@@ -418,11 +428,11 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
                       options={[
                         {
                           value: true,
-                          label: 'Hoạt động',
+                          label: mappingStatus.true,
                         },
                         {
                           value: false,
-                          label: 'Tạm dừng',
+                          label: mappingStatus.false,
                         },
                       ]}
                     />
@@ -450,10 +460,9 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
                     updatedSubChildData[index] = data
                     form.setFieldValue(`serviceAttributes[${index}]`, data)
                   }}
-                  removeChildComponent={(id) => {
-                    removeChildComponent(id)
+                  removeChildComponent={(index) => {
+                    removeChildComponent(index)
                   }}
-                  handleType={HandleServiceAttributeRequestHandleTypeEnum.Update}
                 />
               </div>
             ))}
@@ -478,10 +487,15 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
             <Button
               customCSS={`mx-6 px-4 py-1 border-2 ${form.isValid && 'hover:scale-110 bg-[#7463F0] border-[#7463F0]'}`}
               onClick={(e) => {
-                e.preventDefault()
-                openConfirmModal()
+                if (updateService.isLoading) {
+                  return
+                } else {
+                  e.preventDefault()
+                  openConfirmModal()
+                }
               }}
               isDisable={!form.isValid || form.values.name === ''}
+              isLoading={updateService.isLoading}
             >
               {'Sửa'}
             </Button>

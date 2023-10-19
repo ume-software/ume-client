@@ -15,10 +15,9 @@ import ServiceAttributeValues from './services-atrribute-value'
 export interface IServiceAttributesProps {
   serviceAttributesData: any
   setServiceAttributesData: any
-  removeChildComponent: any
+  removeChildComponent?: any
   index: number
   isReadOnly?: boolean
-  handleType?: HandleServiceAttributeRequestHandleTypeEnum
 }
 
 export default function ServiceAttributes({
@@ -27,7 +26,6 @@ export default function ServiceAttributes({
   setServiceAttributesData,
   removeChildComponent,
   isReadOnly,
-  handleType,
 }: IServiceAttributesProps) {
   const form = useFormik({
     initialValues: {
@@ -36,7 +34,7 @@ export default function ServiceAttributes({
       viAttribute: (serviceAttributesData.viAttribute as string) || '',
       isActivated: (serviceAttributesData.isActivated as string) || '',
       serviceAttributeValues: serviceAttributesData.serviceAttributeValues || ([] as Array<Object>),
-      handleType: handleType || HandleServiceAttributeRequestHandleTypeEnum.Create,
+      handleType: serviceAttributesData.handleType ?? HandleServiceAttributeRequestHandleTypeEnum.Create,
     },
     validationSchema: Yup.object({
       attribute: Yup.string().required('Thuộc tính là bắt buộc'),
@@ -55,13 +53,17 @@ export default function ServiceAttributes({
       setServiceAttributesData({ ...values })
     },
   })
+  console.log('childrend', serviceAttributesData.handleType)
   React.useEffect(() => {
     form.setFieldValue(`id`, serviceAttributesData.id)
     form.setFieldValue(`attribute`, serviceAttributesData.attribute)
     form.setFieldValue(`viAttribute`, serviceAttributesData.viAttribute)
     form.setFieldValue(`isActivated`, serviceAttributesData.isActivated)
     form.setFieldValue(`serviceAttributeValues`, serviceAttributesData.serviceAttributeValues)
-    form.setFieldValue(`handleType`, handleType || HandleServiceAttributeRequestHandleTypeEnum.Create)
+    form.setFieldValue(
+      `handleType`,
+      serviceAttributesData.handleType ?? HandleServiceAttributeRequestHandleTypeEnum.Create,
+    )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [serviceAttributesData])
 
@@ -193,7 +195,6 @@ export default function ServiceAttributes({
                 setServiceAttributesData({ ...form.values, serviceAttributeValues: updatedSubChildData })
               }}
               isReadOnly={isReadOnly}
-              handleType={HandleServiceAttributeValueRequestHandleTypeEnum.Update}
             />
             {!isReadOnly && (
               <div className="w-1/12">

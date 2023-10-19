@@ -8,7 +8,10 @@ import { useRef, useState } from 'react'
 import { notification } from 'antd'
 import { FormikErrors, useFormik } from 'formik'
 import Image from 'next/legacy/image'
-import { HandleServiceAttributeValueRequestHandleTypeEnum } from 'ume-service-openapi'
+import {
+  HandleServiceAttributeRequestHandleTypeEnum,
+  HandleServiceAttributeValueRequestHandleTypeEnum,
+} from 'ume-service-openapi'
 import * as Yup from 'yup'
 
 import ServiceAttributes from './services-attribute-childrend'
@@ -152,6 +155,7 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
     }
   }
   async function submitHandle() {
+    setOpenConfirm(false)
     if (await checkFieldRequỉed()) {
       const img = await uploadImage()
       if (img.imageUrl) {
@@ -338,19 +342,25 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
           </div>
           {/* compent-child */}
 
-          <div className="flex justify-center pb-4 mt-6">
+          <div className="flex justify-center pb-4 mt-6 ">
             <Button customCSS="mx-6 px-4 py-1 border-2 hover:scale-110" onClick={openConfirmModalCancel}>
               Hủy
             </Button>
             <Button
               customCSS={`mx-6 px-4 py-1 border-2 ${
-                form.isValid && form.values.name != '' && 'hover:scale-110 bg-[#7463F0] border-[#7463F0]'
-              }`}
+                form.isValid && form.values.name != '' && 'hover:scale-110 bg-[#7463F0] border-[#7463F0] '
+              }
+              `}
               onClick={(e) => {
-                e.preventDefault()
-                openConfirmModal()
+                if (createService.isLoading) {
+                  return
+                } else {
+                  e.preventDefault()
+                  openConfirmModal()
+                }
               }}
               isDisable={!form.isValid || form.values.name === ''}
+              isLoading={createService.isLoading}
             >
               {'Tạo'}
             </Button>

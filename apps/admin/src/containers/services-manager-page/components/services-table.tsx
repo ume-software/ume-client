@@ -37,7 +37,8 @@ const ServicesTable = ({ servicesList, isLoading }) => {
   const [isActivated, setIsActivate] = useState()
   const [selectedService, setSelectedService] = useState<any>()
   const updateService = trpc.useMutation(['services.updateService'])
-
+  console.log('table')
+  console.log(openServicesModalUpdate)
   const columns = [
     {
       title: <div className="flex justify-center w-full">Hình ảnh</div>,
@@ -103,16 +104,13 @@ const ServicesTable = ({ servicesList, isLoading }) => {
                   fill="#fff"
                 />
               </Button>
-              <Button isActive={false}>
-                <Write
-                  onClick={() => {
-                    openModalHandle('update', record.key)
-                  }}
-                  className="p-2 rounded-full hover:bg-gray-500"
-                  theme="outline"
-                  size="18"
-                  fill="#1677ff"
-                />
+              <Button
+                isActive={false}
+                onClick={() => {
+                  openModalHandle('update', record.key)
+                }}
+              >
+                <Write className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="18" fill="#1677ff" />
               </Button>
               <Button isActive={false} onClick={() => handleOpenConfirm(record)}>
                 {record.isActivated ? (
@@ -142,12 +140,14 @@ const ServicesTable = ({ servicesList, isLoading }) => {
     setOpenServicesModalUpdate(false)
   }
   function openModalHandle(action, record) {
+    console.log('click', action)
     setServicesModalData(record)
     switch (action) {
       case 'view':
         setOpenServicesModalView(true)
         break
       case 'update':
+        console.log('zo upodate')
         setOpenServicesModalUpdate(true)
         break
     }

@@ -26,7 +26,6 @@ export interface IServicesModalViewProps {
 }
 
 export default function ServicesModalView({ idService, closeFunction, openValue }: IServicesModalViewProps) {
-  console.log(idService)
   const [servicesDetails, setServicesDetails] = useState<ServiceResponse>()
   const SELECT = [
     '$all',
@@ -167,19 +166,6 @@ export default function ServicesModalView({ idService, closeFunction, openValue 
       },
     ])
   }
-  const removeChildComponent = (index) => {
-    console.log(index)
-    const updatedSubChildData = [...form.values.serviceAttributes]
-    updatedSubChildData.splice(index, 1)
-    form.setFieldValue(`serviceAttributes`, updatedSubChildData)
-  }
-
-  function handleActivate(value) {
-    form.setFieldValue('isActivated', value)
-  }
-  function filterOptionTypeVoucher(input, option) {
-    return (option?.label ?? '').toUpperCase().includes(input.toUpperCase())
-  }
   const mappingStatus = {
     false: 'Tạm dừng',
     true: 'Hoạt động',
@@ -262,15 +248,12 @@ export default function ServicesModalView({ idService, closeFunction, openValue 
             {serviceAttributesInit.map((childData, index) => (
               <div className="col-span-1 " key={index}>
                 <ServiceAttributes
-                  id={index}
+                  index={index}
                   serviceAttributesData={childData}
                   setServiceAttributesData={(data) => {
                     const updatedSubChildData = [...form.values.serviceAttributes]
                     updatedSubChildData[index] = data
                     form.setFieldValue(`serviceAttributes[${index}]`, data)
-                  }}
-                  removeChildComponent={(id) => {
-                    removeChildComponent(id)
                   }}
                   isReadOnly={true}
                 />

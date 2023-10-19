@@ -187,7 +187,7 @@ const ServicesManagerPage = () => {
           {10 * (page - 1) + 1}-{page * 10 > serviceList?.count!! ? serviceList?.count : page * 10} trên{' '}
           {serviceList?.count} dịch vụ
         </div>
-        <ServicesTable isLoading={isLoading || isFetching} servicesList={serviceList} />
+        <ServicesTable isLoading={isLoading} servicesList={serviceList} />
         <div className="flex w-full justify-center pb-[200px] mt-5">
           <Pagination
             itemRender={(page, type) => (

@@ -18,7 +18,6 @@ export default function ServiceAttributeValues({
   serviceAttributeValuesData,
   setServiceAttributeValuesData,
   isReadOnly,
-  handleType,
 }: IServiceAttributeValuesProps) {
   const form = useFormik({
     initialValues: {
@@ -26,7 +25,7 @@ export default function ServiceAttributeValues({
       value: (serviceAttributeValuesData.value as string) || '',
       viValue: (serviceAttributeValuesData.viValue as string) || '',
       isActivated: serviceAttributeValuesData.isActivated || true,
-      handleType: handleType || HandleServiceAttributeValueRequestHandleTypeEnum.Create,
+      handleType: serviceAttributeValuesData.handleType ?? HandleServiceAttributeValueRequestHandleTypeEnum.Update,
     },
     validationSchema: Yup.object({
       value: Yup.string().required('Thuộc tính là bắt buộc'),
@@ -37,12 +36,16 @@ export default function ServiceAttributeValues({
       setServiceAttributeValuesData({ ...values })
     },
   })
+  console.log('values')
 
   React.useEffect(() => {
     form.setFieldValue(`value`, serviceAttributeValuesData.value)
     form.setFieldValue(`viValue`, serviceAttributeValuesData.viValue)
     form.setFieldValue(`isActivated`, serviceAttributeValuesData.isActivated)
-    form.setFieldValue(`handleType`, handleType || HandleServiceAttributeValueRequestHandleTypeEnum.Create)
+    form.setFieldValue(
+      `handleType`,
+      serviceAttributeValuesData.handleType ?? HandleServiceAttributeValueRequestHandleTypeEnum.Update,
+    )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [serviceAttributeValuesData])
   const handleChange = (fieldName, e) => {
