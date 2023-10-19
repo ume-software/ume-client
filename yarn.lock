@@ -1376,9 +1376,9 @@
     "@types/react" "*"
 
 "@types/react@*", "@types/react@^18.0.25":
-  version "18.2.30"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.2.30.tgz#b84f786864fc46f18545364a54d5e1316308e59b"
-  integrity sha512-OfqdJnDsSo4UNw0bqAjFCuBpLYQM7wvZidz0hVxHRjrEkzRlvZL1pJVyOSY55HMiKvRNEo9DUBRuEl7FNlJ/Vg==
+  version "18.2.29"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.2.29.tgz#88b48a287e00f6fdcd6f95662878fb701ae18b27"
+  integrity sha512-Z+ZrIRocWtdD70j45izShRwDuiB4JZqDegqMFW/I8aG5DxxLKOzVNoq62UIO82v9bdgi+DO1jvsb9sTEZUSm+Q==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -6941,9 +6941,9 @@ ume-identity-service-openapi@latest:
     axios "^0.27.2"
 
 ume-service-openapi@latest:
-  version "1.2.49"
-  resolved "https://registry.yarnpkg.com/ume-service-openapi/-/ume-service-openapi-1.2.49.tgz#d1783237dc25e53edd5000b4a0aefecae646f30b"
-  integrity sha512-2bRi9KPlxd8pJ1om3/B1VeHdYV3T74htxglPUdERWS4YcLfm/ckmiNLtLjRW02J3hF5z9lIMiOohPDkYVJCoeg==
+  version "1.2.48"
+  resolved "https://registry.yarnpkg.com/ume-service-openapi/-/ume-service-openapi-1.2.48.tgz#76ac3285967f5aba89cbbb4e13508ff62d370694"
+  integrity sha512-NZEIgPwzq8LunmeUZwwjwGyZOw5fQl5n2ceLCHRCcVN6kbGdCymvMsLQxWSa7TXGFw52tsdRMDRlMXHyZXmF5Q==
   dependencies:
     axios "^0.27.2"
 
