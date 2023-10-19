@@ -220,8 +220,6 @@ const Voucher = () => {
     ),
   })
 
-  console.log(voucherForProvider?.row)
-
   return (
     <>
       {isModalConfirmationVisible && confirmModal}

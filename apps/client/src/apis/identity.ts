@@ -189,14 +189,14 @@ export const identityRouter = createRouter()
       serviceId: z.string(),
       defaultCost: z.number(),
       description: z.optional(z.string()),
-      createBookingCosts: z.optional(
+      handleBookingCosts: z.optional(
         z.array(z.object({ startTimeOfDay: z.string(), endTimeOfDay: z.string(), amount: z.number() })),
       ),
-      createServiceAttributes: z.optional(
+      handleProviderServiceAttributes: z.optional(
         z.array(
           z.object({
             id: z.string(),
-            serviceAttributeValueIds: z.array(z.string()),
+            handleServiceAttributeValueIds: z.array(z.string()),
           }),
         ),
       ),

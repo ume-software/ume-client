@@ -403,8 +403,8 @@ export const updateServiceProvider = async (
     serviceId: string
     defaultCost: number
     description?: string
-    createBookingCosts?: { startTimeOfDay: string; endTimeOfDay: string; amount: number }[]
-    createServiceAttributes?: { id: string; serviceAttributeValueIds: string[] }[]
+    handleBookingCosts?: { startTimeOfDay: string; endTimeOfDay: string; amount: number }[]
+    handleProviderServiceAttributes?: { id: string; handleServiceAttributeValueIds: string[] }[]
   },
   ctx,
 ) => {

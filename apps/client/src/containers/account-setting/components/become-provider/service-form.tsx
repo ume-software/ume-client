@@ -1,9 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Transition } from '@headlessui/react'
-import { CloseSmall, DeleteFive, Down, Plus, Save } from '@icon-park/react'
+import { CloseSmall, DeleteFive, Down, Plus, Save, Write } from '@icon-park/react'
 import { Button, Input, InputWithAffix, Modal, TextArea } from '@ume/ui'
 import coin from 'public/coin-icon.png'
-import { ActionEnum, MenuModalEnum } from '~/enumVariable/enumVariable'
+import { MenuModalEnum } from '~/enumVariable/enumVariable'
 
 import { Fragment, useEffect, useState } from 'react'
 
@@ -33,7 +33,7 @@ interface AttributeProps {
   service: ServiceResponse | undefined
   serviceDefaultPrice: number
   serviceAttribute: {
-    serviceAttributeId: ServiceResponse | undefined
+    serviceAttributeId: string | undefined
     subServiceAttibute: { serviceAttributeValueId: string; serviceAttributeValueName: string }[]
   }[]
   specialTimeLot: { startTimeOfDay?: string; endTimeOfDay?: string; amount?: number }[]
@@ -165,73 +165,46 @@ const AddSkillForm = () => {
   })
 
   useEffect(() => {
-    setAttributes(
-      listOwnService
-        ? listOwnService?.map((ownService) => ({
-            id: ownService.id,
-            intro: ownService.description ?? '',
-            service: ownService.service,
-            serviceDefaultPrice: ownService.defaultCost ?? 1,
-            serviceAttribute: ownService.providerServiceAttributes?.map((providerServiceAttr) => ({
-              serviceAttributeId: providerServiceAttr.serviceAttributeId,
-              subServiceAttibute: providerServiceAttr.providerServiceAttributeValues?.map(
-                (providerServiceAttrValue) => ({
-                  serviceAttributeValueId: providerServiceAttrValue.providerServiceAttributeId ?? '',
-                  serviceAttributeValueName: providerServiceAttrValue?.serviceAttributeValue?.viValue ?? '',
-                }),
-              ),
-            })) as any,
-            specialTimeLot: ownService.bookingCosts ?? [],
-          }))
-        : [
-            {
-              id: undefined,
-              intro: '',
-              service: undefined,
-              serviceDefaultPrice: 1,
-              serviceAttribute: [
-                {
-                  serviceAttributeId: undefined,
-                  subServiceAttibute: [{ serviceAttributeValueId: '', serviceAttributeValueName: '' }],
-                },
-              ],
-              specialTimeLot: [],
-            },
-          ],
-    )
+    if (listOwnService) {
+      setAttributes(
+        listOwnService?.map((ownService) => ({
+          id: ownService.id,
+          intro: ownService.description ?? '',
+          service: ownService.service,
+          serviceDefaultPrice: ownService.defaultCost ?? 1,
+          serviceAttribute: ownService.providerServiceAttributes?.map((providerServiceAttr) => ({
+            serviceAttributeId: providerServiceAttr.serviceAttributeId,
+            subServiceAttibute: providerServiceAttr.providerServiceAttributeValues?.map((providerServiceAttrValue) => ({
+              serviceAttributeValueId: providerServiceAttrValue.providerServiceAttributeId ?? '',
+              serviceAttributeValueName:
+                (providerServiceAttrValue?.serviceAttributeValue?.viValue != ''
+                  ? providerServiceAttrValue?.serviceAttributeValue?.viValue
+                  : providerServiceAttrValue?.serviceAttributeValue?.value) ?? '',
+            })),
+          })) as any,
+          specialTimeLot: ownService.bookingCosts ?? [],
+        })),
+      )
 
-    setAttributesDisplay(
-      listOwnService
-        ? listOwnService?.map((ownService) => ({
-            intro: ownService.description ?? '',
-            service: ownService.service?.name ?? '',
-            serviceDefaultPrice: ownService.defaultCost ?? 1,
-            serviceAttribute: ownService.providerServiceAttributes?.map((providerServiceAttr) => ({
-              serviceAttributeId: providerServiceAttr?.serviceAttribute?.viAttribute ?? '',
-              subServiceAttibute: providerServiceAttr.providerServiceAttributeValues?.map(
-                (providerServiceAttrValue) => ({
-                  serviceAttributeValueId: providerServiceAttrValue?.serviceAttributeValue?.id ?? '',
-                  serviceAttributeValueName: providerServiceAttrValue?.serviceAttributeValue?.viValue ?? '',
-                }),
-              ),
-            })) as any,
-            specialTimeLot: ownService.bookingCosts ?? [],
-          }))
-        : [
-            {
-              intro: '',
-              service: '',
-              serviceDefaultPrice: 1,
-              serviceAttribute: [
-                {
-                  serviceAttributeId: '',
-                  subServiceAttibute: [{ serviceAttributeValueId: '', serviceAttributeValueName: '' }],
-                },
-              ],
-              specialTimeLot: [],
-            },
-          ],
-    )
+      setAttributesDisplay(
+        listOwnService?.map((ownService) => ({
+          intro: ownService.description ?? '',
+          service: ownService.service?.name ?? '',
+          serviceDefaultPrice: ownService.defaultCost ?? 1,
+          serviceAttribute: ownService.providerServiceAttributes?.map((providerServiceAttr) => ({
+            serviceAttributeId: providerServiceAttr?.serviceAttribute?.viAttribute ?? '',
+            subServiceAttibute: providerServiceAttr.providerServiceAttributeValues?.map((providerServiceAttrValue) => ({
+              serviceAttributeValueId: providerServiceAttrValue?.serviceAttributeValue?.id ?? '',
+              serviceAttributeValueName:
+                (providerServiceAttrValue?.serviceAttributeValue?.viValue != ''
+                  ? providerServiceAttrValue?.serviceAttributeValue?.viValue
+                  : providerServiceAttrValue?.serviceAttributeValue?.value) ?? '',
+            })),
+          })) as any,
+          specialTimeLot: ownService.bookingCosts ?? [],
+        })),
+      )
+    }
   }, [listOwnService])
 
   const handleAddAttribute = () => {
@@ -302,7 +275,16 @@ const AddSkillForm = () => {
         setAttributesDisplay(updatedAttributesDisplay)
         break
       case 'Service':
-        updatedAttributesDisplay[index] = { ...updatedAttributesDisplay[index], service: searchText }
+        updatedAttributesDisplay[index] = {
+          ...updatedAttributesDisplay[index],
+          service: searchText,
+          serviceAttribute: [
+            {
+              serviceAttributeId: '',
+              subServiceAttibute: [{ serviceAttributeValueId: '', serviceAttributeValueName: '' }],
+            },
+          ],
+        }
         setAttributesDisplay(updatedAttributesDisplay)
         serviceChange
           ? setListServiceFilter(
@@ -372,7 +354,16 @@ const AddSkillForm = () => {
         break
       case 'Service':
         setListServiceId(value?.id!)
-        updatedAttributes[index] = { ...updatedAttributes[index], service: value }
+        updatedAttributes[index] = {
+          ...updatedAttributes[index],
+          service: value,
+          serviceAttribute: [
+            {
+              serviceAttributeId: undefined,
+              subServiceAttibute: [{ serviceAttributeValueId: '', serviceAttributeValueName: '' }],
+            },
+          ],
+        }
 
         setSearchBox({
           parent: index,
@@ -384,11 +375,7 @@ const AddSkillForm = () => {
         handleServiceInputChange('Service', index, value?.name!, undefined, true)
         break
       case 'ServiceAttribute':
-        if (
-          updatedAttributes[index].serviceAttribute.find(
-            (serviceAttr) => serviceAttr.serviceAttributeId?.id == value?.id,
-          )
-        ) {
+        if (updatedAttributes[index].serviceAttribute.find((serviceAttr) => serviceAttr.serviceAttributeId == value)) {
           messageApi.open({
             type: 'warning',
             content: 'Không thể thêm trùng thuộc tính',
@@ -400,8 +387,14 @@ const AddSkillForm = () => {
             serviceAttributeId: value,
           }
           setAttributes(updatedAttributes)
-          handleServiceInputChange('ServiceAttribute', index, value?.viAttribute!, sub_index, true)
-          setListServiceAttributeId(value?.id!)
+          handleServiceInputChange(
+            'ServiceAttribute',
+            index,
+            listServiceAttribute?.find((serviceAttribute) => serviceAttribute.id == value)?.viAttribute ?? '',
+            sub_index,
+            true,
+          )
+          setListServiceAttributeId(value)
         }
         break
       case 'ServiceAttributeValue':
@@ -420,6 +413,7 @@ const AddSkillForm = () => {
             serviceAttributeValueId: serviceAttributeValue?.serviceAttributeId ?? '',
             serviceAttributeValueName: serviceAttributeValue?.serviceAttributeName ?? '',
           }
+
           setAttributes(updatedAttributes)
           handleServiceInputChange(
             'ServiceAttributeValue',
@@ -475,12 +469,6 @@ const AddSkillForm = () => {
         })
         setAttributes(updatedAttributes)
 
-        updatedAttributesDisplay[index].specialTimeLot.push({
-          startTimeOfDay: '',
-          endTimeOfDay: '',
-          amount: 0,
-        })
-        setAttributesDisplay(updatedAttributesDisplay)
         break
       case 'ServiceAttribute':
         updatedAttributes[index].serviceAttribute.push({
@@ -514,7 +502,7 @@ const AddSkillForm = () => {
     }
   }
 
-  const handleRemoveInput = (name: string, index: number, sub_index: number) => {
+  const handleRemoveInput = (name: string, index: number, sub_index: number, sub_attr_value_index?: number) => {
     const updatedAttributes = [...attributes]
     const updatedAttributesDisplay = [...attributesDisplay]
 
@@ -523,8 +511,6 @@ const AddSkillForm = () => {
         updatedAttributes[index].specialTimeLot.splice(sub_index, 1)
         setAttributes(updatedAttributes)
 
-        updatedAttributesDisplay[index].specialTimeLot.splice(sub_index, 1)
-        setAttributesDisplay(updatedAttributesDisplay)
         break
       case 'ServiceAttribute':
         updatedAttributes[index].serviceAttribute.splice(sub_index, 1)
@@ -534,10 +520,13 @@ const AddSkillForm = () => {
         setAttributesDisplay(updatedAttributesDisplay)
         break
       case 'ServiceAttributeValue':
-        updatedAttributes[index].serviceAttribute[sub_index].subServiceAttibute.splice(sub_index, 1)
+        updatedAttributes[index].serviceAttribute[sub_index].subServiceAttibute.splice(sub_attr_value_index ?? 0, 1)
         setAttributes(updatedAttributes)
 
-        updatedAttributesDisplay[index].serviceAttribute[sub_index].subServiceAttibute.splice(sub_index, 1)
+        updatedAttributesDisplay[index].serviceAttribute[sub_index].subServiceAttibute.splice(
+          sub_attr_value_index ?? 0,
+          1,
+        )
         setAttributesDisplay(updatedAttributesDisplay)
         break
       default:
@@ -564,11 +553,12 @@ const AddSkillForm = () => {
               .map((subAttr) => subAttr.serviceAttributeValueId)
 
             return {
-              id: attribute.serviceAttributeId?.id,
+              id: attribute.serviceAttributeId,
               serviceAttributeValueIds,
             }
           }),
       }
+      console.log(req)
 
       if (attributes[index].id) {
         updateProvicerService.mutate(
@@ -576,8 +566,13 @@ const AddSkillForm = () => {
             serviceId: req.serviceId ?? '',
             defaultCost: req.defaultCost,
             description: req.description,
-            createBookingCosts: (req.createBookingCosts.length > 0 ? req.createBookingCosts : undefined) as any,
-            createServiceAttributes: req.createServiceAttributes as any,
+            handleBookingCosts: (req.createBookingCosts.length > 0 ? req.createBookingCosts : undefined) as any,
+            handleProviderServiceAttributes: req.createServiceAttributes.map((serAttr) => {
+              return {
+                id: serAttr.id ?? '',
+                handleServiceAttributeValueIds: serAttr.serviceAttributeValueIds,
+              }
+            }),
           },
           {
             onSuccess() {
@@ -700,74 +695,118 @@ const AddSkillForm = () => {
             {listService &&
               listService?.length > 0 &&
               attributes.map((attr, index) => (
-                <div key={index} className="col-span-2 border border-white border-opacity-30 p-5 rounded-3xl">
-                  <div className="flex justify-end items-center gap-2">
-                    <Button
-                      customCSS="text-xl p-2 rounded-xl hover:scale-105"
-                      isActive={true}
-                      isOutlinedButton={true}
-                      onClick={() => {
-                        setServiceForm({
-                          title: 'Cập nhật kỹ năng',
-                          description: 'Bạn có chấp nhận cập nhật kỹ năng này không?',
-                          form: 'UPDATE',
-                        })
-                        setIndexServiceForm(index)
-                        openConfirmModal()
-                      }}
-                    >
-                      <Save theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />
-                    </Button>
-                    <Button
-                      customCSS={`text-xl p-2 bg-red-500 hover:scale-105 rounded-xl`}
-                      type="button"
-                      isActive={true}
-                      isOutlinedButton={true}
-                      onClick={() => {
-                        setServiceForm({
-                          title: 'Xóa kỹ năng',
-                          description: 'Bạn có chấp nhận xóa kỹ năng này không?',
-                          form: 'DELETE',
-                        })
-                        setIndexServiceForm(index)
-                        openConfirmModal()
-                      }}
-                    >
-                      <DeleteFive theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />
-                    </Button>
-                  </div>
-                  <div className="flex flex-col gap-1 mb-5">
-                    <label>Giới thiệu về kỹ năng* : </label>
-                    <TextArea
-                      name="description"
-                      className="bg-[#413F4D] w-4/5 max-h-[140px]"
-                      rows={5}
-                      value={attributesDisplay[index].intro}
-                      onChange={(e) =>
-                        handleServiceChange('Intro', index, undefined, undefined, undefined, undefined, e.target.value)
-                      }
-                    />
-                  </div>
-                  <div className="flex flex-col gap-1 mb-5">
-                    <label>Dịch vụ: </label>
-                    <div className="flex items-center gap-3">
-                      <div className="w-fit relative">
-                        <InputWithAffix
-                          placeholder={`${listService[0]?.name}`}
-                          value={attributesDisplay[index]?.service || ''}
-                          type="text"
-                          onChange={(e) => handleServiceInputChange('Service', index, e.target.value)}
-                          className="bg-zinc-800 rounded-xl border border-white border-opacity-30"
-                          styleInput={`bg-zinc-800 rounded-xl border-none focus:outline-none`}
-                          iconStyle="border-none"
-                          position="right"
-                          component={
-                            <Down
-                              theme="outline"
-                              size="20"
-                              fill="#fff"
-                              strokeLinejoin="bevel"
-                              className="cursor-pointer"
+                <>
+                  {updateProvicerService.isLoading && indexServiceForm == index ? (
+                    <div key={index} className="col-span-2 border border-white border-opacity-30 p-5 rounded-3xl">
+                      <div className="w-full h-full flex justify-center items-center">
+                        <span
+                          className={`spinner h-28 w-28 animate-spin rounded-full border-[5px] border-r-transparent dark:border-navy-300 dark:border-r-transparent border-white`}
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div key={index} className="col-span-2 border border-white border-opacity-30 p-5 rounded-3xl">
+                      <div className="flex justify-end items-center gap-2">
+                        <Button
+                          customCSS="text-xl p-2 rounded-xl hover:scale-105"
+                          isActive={true}
+                          isOutlinedButton={true}
+                          onClick={() => {
+                            setIndexServiceForm(index)
+                            setServiceForm({
+                              title: `${attr.id ? 'Cập nhật kỹ năng' : 'Tạo mới kỹ năng'}`,
+                              description: `${
+                                attr.id
+                                  ? `Bạn có chấp nhận cập nhật kỹ năng ${attributesDisplay[index].service} không?`
+                                  : `Bạn có chấp nhận tạo mới kỹ năng ${attributesDisplay[index].service} không?`
+                              }`,
+                              form: 'UPDATE',
+                            })
+
+                            openConfirmModal()
+                          }}
+                        >
+                          {attr.id ? (
+                            <Write theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
+                          ) : (
+                            <Save theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />
+                          )}
+                        </Button>
+                        <Button
+                          customCSS={`text-xl p-2 bg-red-500 hover:scale-105 rounded-xl`}
+                          type="button"
+                          isActive={true}
+                          isOutlinedButton={true}
+                          onClick={() => {
+                            setServiceForm({
+                              title: 'Xóa kỹ năng',
+                              description: 'Bạn có chấp nhận xóa kỹ năng này không?',
+                              form: 'DELETE',
+                            })
+                            setIndexServiceForm(index)
+                            openConfirmModal()
+                          }}
+                        >
+                          <DeleteFive theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />
+                        </Button>
+                      </div>
+                      <div className="flex flex-col gap-1 mb-5">
+                        <label>Giới thiệu về kỹ năng* : </label>
+                        <TextArea
+                          name="description"
+                          className="bg-[#413F4D] w-4/5 max-h-[140px]"
+                          rows={5}
+                          value={attributesDisplay[index].intro}
+                          onChange={(e) =>
+                            handleServiceChange(
+                              'Intro',
+                              index,
+                              undefined,
+                              undefined,
+                              undefined,
+                              undefined,
+                              e.target.value,
+                            )
+                          }
+                        />
+                      </div>
+                      <div className="flex flex-col gap-1 mb-5">
+                        <label>Dịch vụ: </label>
+                        <div className="flex items-center gap-3">
+                          <div className="w-fit relative">
+                            <InputWithAffix
+                              disabled={
+                                !!listOwnService?.find((ownService) => ownService.serviceId == attr.service?.id)
+                              }
+                              placeholder={`${listService[0]?.name}`}
+                              value={attributesDisplay[index]?.service || ''}
+                              type="text"
+                              onChange={(e) => handleServiceInputChange('Service', index, e.target.value)}
+                              className="bg-zinc-800 rounded-xl border border-white border-opacity-30"
+                              styleInput={`bg-zinc-800 rounded-xl border-none focus:outline-none`}
+                              iconStyle="border-none"
+                              position="right"
+                              component={
+                                listOwnService?.find((ownService) => ownService.serviceId == attr.service?.id) ? (
+                                  <></>
+                                ) : (
+                                  <Down
+                                    theme="outline"
+                                    size="20"
+                                    fill="#fff"
+                                    strokeLinejoin="bevel"
+                                    className="cursor-pointer"
+                                    onMouseDown={() =>
+                                      setSearchBox({
+                                        parent: index,
+                                        type: MenuModalEnum.SERVICE,
+                                        isShow: true,
+                                        indexShow: index,
+                                      })
+                                    }
+                                  />
+                                )
+                              }
                               onMouseDown={() =>
                                 setSearchBox({
                                   parent: index,
@@ -777,183 +816,189 @@ const AddSkillForm = () => {
                                 })
                               }
                             />
-                          }
-                          onMouseDown={() =>
-                            setSearchBox({
-                              parent: index,
-                              type: MenuModalEnum.SERVICE,
-                              isShow: true,
-                              indexShow: index,
-                            })
-                          }
-                        />
-                        <Transition
-                          as={Fragment}
-                          show={
-                            displaySearchBox.isShow &&
-                            displaySearchBox.type == MenuModalEnum.SERVICE &&
-                            displaySearchBox.indexShow == index
-                          }
-                          enter="transition ease-out duration-400"
-                          enterFrom="transform opacity-0 scale-95"
-                          enterTo="transform opacity-100 scale-100"
-                          leave="transition ease-in duration-400"
-                          leaveFrom="transform opacity-100 scale-100"
-                          leaveTo="transform opacity-0 scale-95"
-                        >
-                          <div
-                            className="absolute right-0 left-0  max-h-[300px] w-full overflow-y-auto p-2 origin-top-right bg-[#292734] divide-y divide-gray-100 rounded-xl shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none hide-scrollbar"
-                            style={{ zIndex: 5 }}
-                            onMouseLeave={() =>
-                              setSearchBox({
-                                parent: index,
-                                type: MenuModalEnum.SERVICE,
-                                isShow: false,
-                                indexShow: index,
-                              })
-                            }
-                          >
-                            <div className="flex flex-col gap-2" style={{ zIndex: 10 }}>
-                              {listServiceFilter && listServiceFilter.length > 0 ? (
-                                listServiceFilter.map((service, service_index) => (
-                                  <div
-                                    className={`flex gap-5 items-center ${
-                                      attributes.find((attr) => attr.service == service.id) && 'bg-gray-700'
-                                    } hover:bg-gray-700 cursor-pointer p-3 rounded-lg`}
-                                    key={service_index}
-                                    onClick={() => handleServiceChange('Service', index, undefined, service)}
-                                  >
-                                    <p className="text-md font-semibold">{service.name}</p>
-                                  </div>
-                                ))
-                              ) : (
-                                <p className="text-md font-normal">Không có kết quả</p>
-                              )}
-                            </div>
-                          </div>
-                        </Transition>
-                      </div>
-                      <InputWithAffix
-                        placeholder="Giá dịch vụ"
-                        value={attributes[index].serviceDefaultPrice}
-                        type="number"
-                        name="ServicePrice"
-                        onChange={(e) =>
-                          handleServicePriceChange(index, Number(Number(e.target.value) > 0 ? e.target.value : 1))
-                        }
-                        className="max-w-[100px] bg-zinc-800 border border-white border-opacity-30 rounded-xl my-2"
-                        styleInput={`bg-zinc-800 rounded-xl border-none focus:outline-none`}
-                        iconStyle="border-none"
-                        position="right"
-                        component={<Image src={coin} width={100} height={100} alt="coin" />}
-                      />
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-2 mt-5 mb-5 ml-3">
-                    <label>Khung giờ tính thêm tiền: </label>
-                    <div className="flex flex-col gap-5">
-                      <div className="flex flex-col gap-5">
-                        {attr.specialTimeLot?.map((timeSlot, time_slot_index) => (
-                          <>
-                            <div className="flex items-center gap-3" key={time_slot_index}>
-                              <div className="flex items-center gap-3">
-                                <Input
-                                  placeholder="Thời gian bắt đầu"
-                                  value={timeSlot.startTimeOfDay}
-                                  type="time"
-                                  name="startTimeOfDay"
-                                  onChange={(e) =>
-                                    handleSpecialTimeChange(index, e.target.value, 'startTimeOfDay', time_slot_index)
-                                  }
-                                  className="max-w-[150px] bg-zinc-800 text-white border border-white border-opacity-30 !pr-1 rounded-xl my-2"
-                                />
-                                <Input
-                                  placeholder="Thời gian kết thúc"
-                                  value={timeSlot.endTimeOfDay}
-                                  type="time"
-                                  name="endTimeOfDay"
-                                  onChange={(e) =>
-                                    handleSpecialTimeChange(index, e.target.value, 'endTimeOfDay', time_slot_index)
-                                  }
-                                  className="max-w-[150px] bg-zinc-800 text-white border border-white border-opacity-30 !pr-1 rounded-xl my-2"
-                                />
-
-                                <InputWithAffix
-                                  placeholder="Giá"
-                                  value={timeSlot.amount}
-                                  type="number"
-                                  name="amount"
-                                  onChange={(e) =>
-                                    handleSpecialTimeChange(
-                                      index,
-                                      String(Number(e.target.value) > 0 ? e.target.value : 1),
-                                      'amount',
-                                      time_slot_index,
-                                    )
-                                  }
-                                  className="max-w-[100px] bg-zinc-800 border border-white border-opacity-30 rounded-xl my-2"
-                                  styleInput={`bg-zinc-800 rounded-xl border-none focus:outline-none`}
-                                  iconStyle="border-none"
-                                  position="right"
-                                  component={<Image src={coin} width={100} height={100} alt="coin" />}
-                                />
-                              </div>
-                              <Button
-                                customCSS={`text-xl p-2 bg-red-500 hover:scale-105 rounded-xl`}
-                                type="button"
-                                isActive={true}
-                                isOutlinedButton={true}
-                                onClick={() => handleRemoveInput('SpecialTimeSlot', index, time_slot_index)}
+                            <Transition
+                              as={Fragment}
+                              show={
+                                displaySearchBox.isShow &&
+                                displaySearchBox.type == MenuModalEnum.SERVICE &&
+                                displaySearchBox.indexShow == index
+                              }
+                              enter="transition ease-out duration-400"
+                              enterFrom="transform opacity-0 scale-95"
+                              enterTo="transform opacity-100 scale-100"
+                              leave="transition ease-in duration-400"
+                              leaveFrom="transform opacity-100 scale-100"
+                              leaveTo="transform opacity-0 scale-95"
+                            >
+                              <div
+                                className="absolute right-0 left-0  max-h-[300px] w-full overflow-y-auto p-2 origin-top-right bg-[#292734] divide-y divide-gray-100 rounded-xl shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none hide-scrollbar"
+                                style={{ zIndex: 5 }}
+                                onMouseLeave={() =>
+                                  setSearchBox({
+                                    parent: index,
+                                    type: MenuModalEnum.SERVICE,
+                                    isShow: false,
+                                    indexShow: index,
+                                  })
+                                }
                               >
-                                <DeleteFive theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />
-                              </Button>
-                            </div>
-                          </>
-                        ))}
+                                <div className="flex flex-col gap-2" style={{ zIndex: 10 }}>
+                                  {listServiceFilter && listServiceFilter.length > 0 ? (
+                                    listServiceFilter.map((service, service_index) => (
+                                      <div
+                                        className={`flex gap-5 items-center ${
+                                          attributes.find((attr) => attr.service == service.id) && 'bg-gray-700'
+                                        } hover:bg-gray-700 cursor-pointer p-3 rounded-lg`}
+                                        key={service_index}
+                                        onClick={() => handleServiceChange('Service', index, undefined, service)}
+                                      >
+                                        <p className="text-md font-semibold">{service.name}</p>
+                                      </div>
+                                    ))
+                                  ) : (
+                                    <p className="text-md font-normal">Không có kết quả</p>
+                                  )}
+                                </div>
+                              </div>
+                            </Transition>
+                          </div>
+                          <InputWithAffix
+                            placeholder="Giá dịch vụ"
+                            value={attributes[index].serviceDefaultPrice}
+                            type="number"
+                            name="ServicePrice"
+                            onChange={(e) =>
+                              handleServicePriceChange(index, Number(Number(e.target.value) > 0 ? e.target.value : 1))
+                            }
+                            className="max-w-[100px] bg-zinc-800 border border-white border-opacity-30 rounded-xl my-2"
+                            styleInput={`bg-zinc-800 rounded-xl border-none focus:outline-none`}
+                            iconStyle="border-none"
+                            position="right"
+                            component={<Image src={coin} width={100} height={100} alt="coin" />}
+                          />
+                        </div>
                       </div>
-                      <Button
-                        customCSS={`text-sm p-2 hover:scale-105 rounded-xl`}
-                        type="button"
-                        isActive={true}
-                        isOutlinedButton={true}
-                        onClick={() => handleAddInput('SpecialTimeSlot', index)}
-                      >
-                        <Plus theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />
-                        <p>Thêm khung thời gian</p>
-                      </Button>
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-2 mt-5 mb-5 ml-10">
-                    <label>Thuộc tính</label>
-                    <div className="flex flex-col gap-5">
-                      <div className="flex flex-col gap-5">
-                        {attr.serviceAttribute?.map((serviceAttribute, sub_index) => (
-                          <>
-                            <div className="flex items-center gap-3" key={sub_index}>
-                              <div className="w-fit relative">
-                                <InputWithAffix
-                                  placeholder={`Hạng`}
-                                  value={attributesDisplay[index].serviceAttribute[sub_index].serviceAttributeId}
-                                  type="text"
-                                  onChange={(e) =>
-                                    handleServiceInputChange(
-                                      'ServiceAttribute',
-                                      index,
-                                      String(e.target.value),
-                                      sub_index,
-                                    )
-                                  }
-                                  className="bg-zinc-800 rounded-xl border border-white border-opacity-30"
-                                  styleInput={`bg-zinc-800 rounded-xl border-none focus:outline-none`}
-                                  iconStyle="border-none"
-                                  position="right"
-                                  component={
-                                    <Down
-                                      theme="outline"
-                                      size="20"
-                                      fill="#fff"
-                                      strokeLinejoin="bevel"
-                                      className="cursor-pointer"
+                      <div className="flex flex-col gap-2 mt-5 mb-5 ml-3">
+                        <label>Khung giờ đặc biệt: </label>
+                        <div className="flex flex-col gap-5">
+                          <div className="flex flex-col gap-5">
+                            {attr.specialTimeLot?.map((timeSlot, time_slot_index) => (
+                              <>
+                                <div className="flex items-center gap-3" key={time_slot_index}>
+                                  <div className="flex items-center gap-3">
+                                    <Input
+                                      placeholder="Thời gian bắt đầu"
+                                      value={timeSlot.startTimeOfDay}
+                                      type="time"
+                                      name="startTimeOfDay"
+                                      onChange={(e) =>
+                                        handleSpecialTimeChange(
+                                          index,
+                                          e.target.value,
+                                          'startTimeOfDay',
+                                          time_slot_index,
+                                        )
+                                      }
+                                      className="max-w-[150px] bg-zinc-800 text-white border border-white border-opacity-30 !pr-1 rounded-xl my-2"
+                                    />
+                                    <Input
+                                      placeholder="Thời gian kết thúc"
+                                      value={timeSlot.endTimeOfDay}
+                                      type="time"
+                                      name="endTimeOfDay"
+                                      onChange={(e) =>
+                                        handleSpecialTimeChange(index, e.target.value, 'endTimeOfDay', time_slot_index)
+                                      }
+                                      className="max-w-[150px] bg-zinc-800 text-white border border-white border-opacity-30 !pr-1 rounded-xl my-2"
+                                    />
+
+                                    <InputWithAffix
+                                      placeholder="Giá"
+                                      value={timeSlot.amount}
+                                      type="number"
+                                      name="amount"
+                                      onChange={(e) =>
+                                        handleSpecialTimeChange(
+                                          index,
+                                          String(Number(e.target.value) > 0 ? e.target.value : 1),
+                                          'amount',
+                                          time_slot_index,
+                                        )
+                                      }
+                                      className="max-w-[100px] bg-zinc-800 border border-white border-opacity-30 rounded-xl my-2"
+                                      styleInput={`bg-zinc-800 rounded-xl border-none focus:outline-none`}
+                                      iconStyle="border-none"
+                                      position="right"
+                                      component={<Image src={coin} width={100} height={100} alt="coin" />}
+                                    />
+                                  </div>
+                                  <Button
+                                    customCSS={`text-xl p-2 bg-red-500 hover:scale-105 rounded-xl`}
+                                    type="button"
+                                    isActive={true}
+                                    isOutlinedButton={true}
+                                    onClick={() => handleRemoveInput('SpecialTimeSlot', index, time_slot_index)}
+                                  >
+                                    <DeleteFive theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />
+                                  </Button>
+                                </div>
+                              </>
+                            ))}
+                          </div>
+                          <Button
+                            customCSS={`text-sm p-2 hover:scale-105 rounded-xl`}
+                            type="button"
+                            isActive={true}
+                            isOutlinedButton={true}
+                            onClick={() => handleAddInput('SpecialTimeSlot', index)}
+                          >
+                            <Plus theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />
+                            <p>Thêm khung thời gian</p>
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-2 mt-5 mb-5 ml-10">
+                        <label>Thuộc tính</label>
+                        <div className="flex flex-col gap-5">
+                          <div className="flex flex-col gap-5">
+                            {attr.serviceAttribute?.map((serviceAttribute, sub_index) => (
+                              <>
+                                <div className="flex items-center gap-3" key={sub_index}>
+                                  <div className="w-fit relative">
+                                    <InputWithAffix
+                                      placeholder={`Hạng`}
+                                      value={attributesDisplay[index].serviceAttribute[sub_index].serviceAttributeId}
+                                      type="text"
+                                      onChange={(e) =>
+                                        handleServiceInputChange(
+                                          'ServiceAttribute',
+                                          index,
+                                          String(e.target.value),
+                                          sub_index,
+                                        )
+                                      }
+                                      className="bg-zinc-800 rounded-xl border border-white border-opacity-30"
+                                      styleInput={`bg-zinc-800 rounded-xl border-none focus:outline-none`}
+                                      iconStyle="border-none"
+                                      position="right"
+                                      component={
+                                        <Down
+                                          theme="outline"
+                                          size="20"
+                                          fill="#fff"
+                                          strokeLinejoin="bevel"
+                                          className="cursor-pointer"
+                                          onMouseDown={() =>
+                                            setSearchBox({
+                                              parent: index,
+                                              type: MenuModalEnum.ATTRIBUTE,
+                                              isShow: true,
+                                              indexShow: sub_index,
+                                            })
+                                          }
+                                          onClick={() => setListServiceId(attributes[index].service?.id ?? '')}
+                                        />
+                                      }
                                       onMouseDown={() =>
                                         setSearchBox({
                                           parent: index,
@@ -964,119 +1009,130 @@ const AddSkillForm = () => {
                                       }
                                       onClick={() => setListServiceId(attributes[index].service?.id ?? '')}
                                     />
-                                  }
-                                  onMouseDown={() =>
-                                    setSearchBox({
-                                      parent: index,
-                                      type: MenuModalEnum.ATTRIBUTE,
-                                      isShow: true,
-                                      indexShow: sub_index,
-                                    })
-                                  }
-                                  onClick={() => setListServiceId(attributes[index].service?.id ?? '')}
-                                />
-                                <Transition
-                                  as={Fragment}
-                                  show={
-                                    displaySearchBox.parent == index &&
-                                    displaySearchBox.isShow &&
-                                    displaySearchBox.type == MenuModalEnum.ATTRIBUTE &&
-                                    displaySearchBox.indexShow == sub_index
-                                  }
-                                  enter="transition ease-out duration-400"
-                                  enterFrom="transform opacity-0 scale-95"
-                                  enterTo="transform opacity-100 scale-100"
-                                  leave="transition ease-in duration-400"
-                                  leaveFrom="transform opacity-100 scale-100"
-                                  leaveTo="transform opacity-0 scale-95"
-                                >
-                                  <div
-                                    className="absolute right-0 left-0 max-h-[300px] w-full overflow-y-auto p-2 origin-top-right bg-[#292734] divide-y divide-gray-100 rounded-xl shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none hide-scrollbar"
-                                    style={{ zIndex: 5 }}
-                                    onMouseLeave={() =>
-                                      setSearchBox({
-                                        parent: index,
-                                        type: MenuModalEnum.ATTRIBUTE,
-                                        isShow: false,
-                                        indexShow: sub_index,
-                                      })
-                                    }
-                                  >
-                                    <div className="flex flex-col gap-2" style={{ zIndex: 10 }}>
-                                      {!isServiceAttributeLoading && !isServiceAttributeFetching ? (
-                                        listServiceAttributeFilter && listServiceAttributeFilter.length > 0 ? (
-                                          listServiceAttributeFilter?.map((value_attr, sub_attr_index) => (
-                                            <div
-                                              className={`flex gap-5 items-center bg-gray-700 hover:bg-gray-700 cursor-pointer p-3 rounded-lg`}
-                                              key={sub_attr_index}
-                                              onClick={() =>
-                                                handleServiceChange('ServiceAttribute', index, sub_index, value_attr)
-                                              }
-                                            >
-                                              <p className="text-mg font-semibold">{value_attr.viAttribute}</p>
-                                            </div>
-                                          ))
-                                        ) : (
-                                          <p className="text-md font-normal">Không có kết quả</p>
-                                        )
-                                      ) : (
-                                        <>
-                                          <div className="w-full animate-pulse flex-row items-center justify-center space-x-1 rounded-xl border p-3">
-                                            <div className="h-6 w-full rounded-md bg-gray-300 "></div>
-                                          </div>
-                                        </>
-                                      )}
-                                    </div>
+                                    <Transition
+                                      as={Fragment}
+                                      show={
+                                        displaySearchBox.parent == index &&
+                                        displaySearchBox.isShow &&
+                                        displaySearchBox.type == MenuModalEnum.ATTRIBUTE &&
+                                        displaySearchBox.indexShow == sub_index
+                                      }
+                                      enter="transition ease-out duration-400"
+                                      enterFrom="transform opacity-0 scale-95"
+                                      enterTo="transform opacity-100 scale-100"
+                                      leave="transition ease-in duration-400"
+                                      leaveFrom="transform opacity-100 scale-100"
+                                      leaveTo="transform opacity-0 scale-95"
+                                    >
+                                      <div
+                                        className="absolute right-0 left-0 max-h-[300px] w-full overflow-y-auto p-2 origin-top-right bg-[#292734] divide-y divide-gray-100 rounded-xl shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none hide-scrollbar"
+                                        style={{ zIndex: 5 }}
+                                        onMouseLeave={() =>
+                                          setSearchBox({
+                                            parent: index,
+                                            type: MenuModalEnum.ATTRIBUTE,
+                                            isShow: false,
+                                            indexShow: sub_index,
+                                          })
+                                        }
+                                      >
+                                        <div className="flex flex-col gap-2" style={{ zIndex: 10 }}>
+                                          {!isServiceAttributeLoading && !isServiceAttributeFetching ? (
+                                            listServiceAttributeFilter && listServiceAttributeFilter.length > 0 ? (
+                                              listServiceAttributeFilter?.map((value_attr, sub_attr_index) => (
+                                                <div
+                                                  className={`flex gap-5 items-center bg-gray-700 hover:bg-gray-700 cursor-pointer p-3 rounded-lg`}
+                                                  key={sub_attr_index}
+                                                  onClick={() =>
+                                                    handleServiceChange(
+                                                      'ServiceAttribute',
+                                                      index,
+                                                      sub_index,
+                                                      value_attr.id,
+                                                    )
+                                                  }
+                                                >
+                                                  <p className="text-mg font-semibold">{value_attr.viAttribute}</p>
+                                                </div>
+                                              ))
+                                            ) : (
+                                              <p className="text-md font-normal">Không có kết quả</p>
+                                            )
+                                          ) : (
+                                            <>
+                                              <div className="w-full animate-pulse flex-row items-center justify-center space-x-1 rounded-xl border p-3">
+                                                <div className="h-6 w-full rounded-md bg-gray-300 "></div>
+                                              </div>
+                                            </>
+                                          )}
+                                        </div>
+                                      </div>
+                                    </Transition>
                                   </div>
-                                </Transition>
-                              </div>
-                              <Button
-                                customCSS={`text-xl p-2 bg-red-500 hover:scale-105 rounded-xl`}
-                                type="button"
-                                isActive={true}
-                                isOutlinedButton={true}
-                                onClick={() => handleRemoveInput('ServiceAttribute', index, sub_index)}
-                              >
-                                <DeleteFive theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />
-                              </Button>
-                            </div>
-                            {attr.serviceAttribute[sub_index].serviceAttributeId && (
-                              <>
-                                <div className="flex flex-col gap-5 pl-7">
-                                  {attr.serviceAttribute[sub_index].subServiceAttibute?.map(
-                                    (_, sub_attr_value_index) => (
-                                      <>
-                                        <div className="flex items-center gap-3" key={sub_attr_value_index}>
-                                          <div className="w-fit relative">
-                                            <InputWithAffix
-                                              placeholder={`Vàng`}
-                                              value={
-                                                attributesDisplay[index].serviceAttribute[sub_index].subServiceAttibute[
-                                                  sub_attr_value_index
-                                                ]?.serviceAttributeValueName ?? ''
-                                              }
-                                              type="text"
-                                              onChange={(e) =>
-                                                handleServiceInputChange(
-                                                  'ServiceAttributeValue',
-                                                  index,
-                                                  String(e.target.value),
-                                                  sub_index,
-                                                  undefined,
-                                                  sub_attr_value_index,
-                                                )
-                                              }
-                                              className="bg-zinc-800 rounded-xl border border-white border-opacity-30"
-                                              styleInput={`bg-zinc-800 rounded-xl border-none focus:outline-none`}
-                                              iconStyle="border-none"
-                                              position="right"
-                                              component={
-                                                <Down
-                                                  theme="outline"
-                                                  size="20"
-                                                  fill="#fff"
-                                                  strokeLinejoin="bevel"
-                                                  className="cursor-pointer"
+                                  <Button
+                                    customCSS={`text-xl p-2 bg-red-500 hover:scale-105 rounded-xl`}
+                                    type="button"
+                                    isActive={true}
+                                    isOutlinedButton={true}
+                                    onClick={() => handleRemoveInput('ServiceAttribute', index, sub_index)}
+                                  >
+                                    <DeleteFive theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />
+                                  </Button>
+                                </div>
+                                {attr.serviceAttribute[sub_index].serviceAttributeId && (
+                                  <>
+                                    <div className="flex flex-col gap-5 pl-7">
+                                      {attr.serviceAttribute[sub_index].subServiceAttibute?.map(
+                                        (_, sub_attr_value_index) => (
+                                          <>
+                                            <div className="flex items-center gap-3" key={sub_attr_value_index}>
+                                              <div className="w-fit relative">
+                                                <InputWithAffix
+                                                  placeholder={`Vàng`}
+                                                  value={
+                                                    attributesDisplay[index].serviceAttribute[sub_index]
+                                                      .subServiceAttibute[sub_attr_value_index]
+                                                      ?.serviceAttributeValueName ?? ''
+                                                  }
+                                                  type="text"
+                                                  onChange={(e) =>
+                                                    handleServiceInputChange(
+                                                      'ServiceAttributeValue',
+                                                      index,
+                                                      String(e.target.value),
+                                                      sub_index,
+                                                      undefined,
+                                                      sub_attr_value_index,
+                                                    )
+                                                  }
+                                                  className="bg-zinc-800 rounded-xl border border-white border-opacity-30"
+                                                  styleInput={`bg-zinc-800 rounded-xl border-none focus:outline-none`}
+                                                  iconStyle="border-none"
+                                                  position="right"
+                                                  component={
+                                                    <Down
+                                                      theme="outline"
+                                                      size="20"
+                                                      fill="#fff"
+                                                      strokeLinejoin="bevel"
+                                                      className="cursor-pointer"
+                                                      onMouseDown={() =>
+                                                        setSearchBox({
+                                                          parent: index,
+                                                          type: MenuModalEnum.SUB_ATTRIBUTE,
+                                                          isShow: true,
+                                                          indexShow: sub_index,
+                                                          indexChildShow: sub_attr_value_index,
+                                                        })
+                                                      }
+                                                      onClick={() => {
+                                                        setListServiceAttributeId(
+                                                          attributes[index]?.serviceAttribute[sub_index]!
+                                                            .serviceAttributeId ?? '',
+                                                        )
+                                                      }}
+                                                    />
+                                                  }
                                                   onMouseDown={() =>
                                                     setSearchBox({
                                                       parent: index,
@@ -1088,145 +1144,145 @@ const AddSkillForm = () => {
                                                   }
                                                   onClick={() =>
                                                     setListServiceAttributeId(
-                                                      attributes[index]?.serviceAttribute[sub_index]?.serviceAttributeId
-                                                        ?.id ?? '',
+                                                      attributes[index]?.serviceAttribute[sub_index]!
+                                                        .serviceAttributeId ?? '',
                                                     )
                                                   }
                                                 />
-                                              }
-                                              onMouseDown={() =>
-                                                setSearchBox({
-                                                  parent: index,
-                                                  type: MenuModalEnum.SUB_ATTRIBUTE,
-                                                  isShow: true,
-                                                  indexShow: sub_index,
-                                                  indexChildShow: sub_attr_value_index,
-                                                })
-                                              }
-                                              onClick={() =>
-                                                setListServiceAttributeId(
-                                                  attributes[index]?.serviceAttribute[sub_index]?.serviceAttributeId
-                                                    ?.id ?? '',
-                                                )
-                                              }
-                                            />
-                                            <Transition
-                                              as={Fragment}
-                                              show={
-                                                displaySearchBox.parent == index &&
-                                                displaySearchBox.isShow &&
-                                                displaySearchBox.type == MenuModalEnum.SUB_ATTRIBUTE &&
-                                                displaySearchBox.indexShow == sub_index &&
-                                                displaySearchBox.indexChildShow == sub_attr_value_index
-                                              }
-                                              enter="transition ease-out duration-400"
-                                              enterFrom="transform opacity-0 scale-95"
-                                              enterTo="transform opacity-100 scale-100"
-                                              leave="transition ease-in duration-400"
-                                              leaveFrom="transform opacity-100 scale-100"
-                                              leaveTo="transform opacity-0 scale-95"
-                                            >
-                                              <div
-                                                className="absolute right-0 left-0 max-h-[300px] w-full overflow-y-auto p-2 origin-top-right bg-[#292734] divide-y divide-gray-100 rounded-xl shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none hide-scrollbar"
-                                                style={{ zIndex: 5 }}
-                                                onMouseLeave={() =>
-                                                  setSearchBox({
-                                                    parent: index,
-                                                    type: MenuModalEnum.SUB_ATTRIBUTE,
-                                                    isShow: false,
-                                                    indexShow: sub_index,
-                                                    indexChildShow: sub_attr_value_index,
-                                                  })
+                                                <Transition
+                                                  as={Fragment}
+                                                  show={
+                                                    displaySearchBox.parent == index &&
+                                                    displaySearchBox.isShow &&
+                                                    displaySearchBox.type == MenuModalEnum.SUB_ATTRIBUTE &&
+                                                    displaySearchBox.indexShow == sub_index &&
+                                                    displaySearchBox.indexChildShow == sub_attr_value_index
+                                                  }
+                                                  enter="transition ease-out duration-400"
+                                                  enterFrom="transform opacity-0 scale-95"
+                                                  enterTo="transform opacity-100 scale-100"
+                                                  leave="transition ease-in duration-400"
+                                                  leaveFrom="transform opacity-100 scale-100"
+                                                  leaveTo="transform opacity-0 scale-95"
+                                                >
+                                                  <div
+                                                    className="absolute right-0 left-0 max-h-[300px] w-full overflow-y-auto p-2 origin-top-right bg-[#292734] divide-y divide-gray-100 rounded-xl shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none hide-scrollbar"
+                                                    style={{ zIndex: 5 }}
+                                                    onMouseLeave={() =>
+                                                      setSearchBox({
+                                                        parent: index,
+                                                        type: MenuModalEnum.SUB_ATTRIBUTE,
+                                                        isShow: false,
+                                                        indexShow: sub_index,
+                                                        indexChildShow: sub_attr_value_index,
+                                                      })
+                                                    }
+                                                  >
+                                                    <div className="flex flex-col gap-2" style={{ zIndex: 10 }}>
+                                                      {!isServiceAttributeValueLoading &&
+                                                      !isServiceAttributeValueFetching ? (
+                                                        serviceAttributeValueFilter &&
+                                                        serviceAttributeValueFilter.length > 0 ? (
+                                                          serviceAttributeValueFilter?.map(
+                                                            (value_attr, sub_attr_index) => (
+                                                              <div
+                                                                className={`flex gap-5 items-center bg-gray-700 hover:bg-gray-700 cursor-pointer p-3 rounded-lg`}
+                                                                key={sub_attr_index}
+                                                                onClick={() =>
+                                                                  handleServiceChange(
+                                                                    'ServiceAttributeValue',
+                                                                    index,
+                                                                    sub_index,
+                                                                    undefined,
+                                                                    sub_attr_value_index,
+                                                                    {
+                                                                      serviceAttributeId: value_attr.id ?? '',
+                                                                      serviceAttributeName:
+                                                                        (value_attr.viValue != ''
+                                                                          ? value_attr.viValue
+                                                                          : value_attr.value) ?? '',
+                                                                    },
+                                                                  )
+                                                                }
+                                                              >
+                                                                <p className="text-mg font-semibold">
+                                                                  {value_attr.viValue != ''
+                                                                    ? value_attr.viValue
+                                                                    : value_attr.value}
+                                                                </p>
+                                                              </div>
+                                                            ),
+                                                          )
+                                                        ) : (
+                                                          <p className="text-md font-normal">Không có kết quả</p>
+                                                        )
+                                                      ) : (
+                                                        <>
+                                                          <div className="w-full animate-pulse flex-row items-center justify-center space-x-1 rounded-xl border p-3">
+                                                            <div className="h-6 w-full rounded-md bg-gray-300 "></div>
+                                                          </div>
+                                                        </>
+                                                      )}
+                                                    </div>
+                                                  </div>
+                                                </Transition>
+                                              </div>
+                                              <Button
+                                                customCSS={`text-xl p-2 bg-red-500 hover:scale-105 rounded-xl`}
+                                                type="button"
+                                                isActive={true}
+                                                isOutlinedButton={true}
+                                                onClick={() =>
+                                                  handleRemoveInput(
+                                                    'ServiceAttributeValue',
+                                                    index,
+                                                    sub_index,
+                                                    sub_attr_value_index,
+                                                  )
                                                 }
                                               >
-                                                <div className="flex flex-col gap-2" style={{ zIndex: 10 }}>
-                                                  {!isServiceAttributeValueLoading &&
-                                                  !isServiceAttributeValueFetching ? (
-                                                    serviceAttributeValueFilter &&
-                                                    serviceAttributeValueFilter.length > 0 ? (
-                                                      serviceAttributeValueFilter?.map((value_attr, sub_attr_index) => (
-                                                        <div
-                                                          className={`flex gap-5 items-center bg-gray-700 hover:bg-gray-700 cursor-pointer p-3 rounded-lg`}
-                                                          key={sub_attr_index}
-                                                          onClick={() =>
-                                                            handleServiceChange(
-                                                              'ServiceAttributeValue',
-                                                              index,
-                                                              sub_index,
-                                                              undefined,
-                                                              sub_attr_value_index,
-                                                              {
-                                                                serviceAttributeId: value_attr.id ?? '',
-                                                                serviceAttributeName: value_attr.viValue ?? '',
-                                                              },
-                                                            )
-                                                          }
-                                                        >
-                                                          <p className="text-mg font-semibold">{value_attr.viValue}</p>
-                                                        </div>
-                                                      ))
-                                                    ) : (
-                                                      <p className="text-md font-normal">Không có kết quả</p>
-                                                    )
-                                                  ) : (
-                                                    <>
-                                                      <div className="w-full animate-pulse flex-row items-center justify-center space-x-1 rounded-xl border p-3">
-                                                        <div className="h-6 w-full rounded-md bg-gray-300 "></div>
-                                                      </div>
-                                                    </>
-                                                  )}
-                                                </div>
-                                              </div>
-                                            </Transition>
-                                          </div>
-                                          <Button
-                                            customCSS={`text-xl p-2 bg-red-500 hover:scale-105 rounded-xl`}
-                                            type="button"
-                                            isActive={true}
-                                            isOutlinedButton={true}
-                                            onClick={() =>
-                                              handleRemoveInput(
-                                                'ServiceAttributeValue',
-                                                sub_index,
-                                                sub_attr_value_index,
-                                              )
-                                            }
-                                          >
-                                            <DeleteFive theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />
-                                          </Button>
-                                        </div>
-                                      </>
-                                    ),
-                                  )}
-                                  <Button
-                                    customCSS={`text-sm p-2 hover:scale-105 rounded-xl`}
-                                    type="button"
-                                    isActive={true}
-                                    isOutlinedButton={true}
-                                    onClick={() => handleAddInput('ServiceAttributeValue', index, sub_index)}
-                                  >
-                                    <Plus theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />
-                                    <p>Thêm giá trị</p>
-                                  </Button>
-                                </div>
+                                                <DeleteFive
+                                                  theme="outline"
+                                                  size="20"
+                                                  fill="#fff"
+                                                  strokeLinejoin="bevel"
+                                                />
+                                              </Button>
+                                            </div>
+                                          </>
+                                        ),
+                                      )}
+                                      <Button
+                                        customCSS={`text-sm p-2 hover:scale-105 rounded-xl`}
+                                        type="button"
+                                        isActive={true}
+                                        isOutlinedButton={true}
+                                        onClick={() => handleAddInput('ServiceAttributeValue', index, sub_index)}
+                                      >
+                                        <Plus theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />
+                                        <p>Thêm giá trị</p>
+                                      </Button>
+                                    </div>
+                                  </>
+                                )}
                               </>
-                            )}
-                          </>
-                        ))}
-                        <Button
-                          customCSS={`text-sm p-2 hover:scale-105 rounded-xl`}
-                          type="button"
-                          isActive={true}
-                          isOutlinedButton={true}
-                          onClick={() => handleAddInput('ServiceAttribute', index)}
-                        >
-                          <Plus theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />
-                          <p>Thêm thuộc tính</p>
-                        </Button>
+                            ))}
+                            <Button
+                              customCSS={`text-sm p-2 hover:scale-105 rounded-xl`}
+                              type="button"
+                              isActive={true}
+                              isOutlinedButton={true}
+                              onClick={() => handleAddInput('ServiceAttribute', index)}
+                            >
+                              <Plus theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />
+                              <p>Thêm thuộc tính</p>
+                            </Button>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </div>
+                  )}
+                </>
               ))}
             <div className="col-span-2 min-h-[300px] flex justify-center items-center">
               <Button

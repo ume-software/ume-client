@@ -345,6 +345,7 @@ export default function VourcherModal(props: {
                       placement: 'bottomLeft',
                     })
                     clearData()
+                    utils.invalidateQueries('identity.providerGetSelfVoucher')
                     props.handleCloseModalVoucher()
                   } else {
                     notification.error({
@@ -878,6 +879,7 @@ export default function VourcherModal(props: {
                   openConfirmModal()
                 }}
                 isDisable={!form.isValid || !checkFieldRequied}
+                isLoading={providerCreateVoucher.isLoading ?? providerUpdateVoucher.isLoading}
               >
                 {props.actionModal == ActionEnum.CREATE ? 'Tạo' : 'Lưu'}
               </Button>
