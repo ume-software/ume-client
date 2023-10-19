@@ -266,6 +266,7 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
   }
   async function submitHandle() {
     setOpenConfirm(false)
+    setIsCreate(false)
     const imgURL = await uploadImage()
     try {
       let updateRes = await getUpdateReq()

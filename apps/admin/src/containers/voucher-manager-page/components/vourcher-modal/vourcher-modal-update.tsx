@@ -248,6 +248,8 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
     return isoDate
   }
   async function submitHandle() {
+    setOpenConfirm(false)
+    setIsCreate(false)
     const imgURL = await uploadImage()
     try {
       const req = {
@@ -288,10 +290,10 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
               utils.invalidateQueries('voucher.getAllVoucher')
               closeHandle()
             },
-            onError: () => {
+            onError: (err) => {
               notification.error({
                 message: 'Chỉnh sửa Khuyến mãi không thành công!',
-                description: 'Gặp lỗi khi chỉnh sửa',
+                description: err.message,
                 placement: 'bottomLeft',
               })
             },
@@ -770,8 +772,12 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                 form.isValid && form.values.name != '' && 'hover:scale-110 bg-[#7463F0] border-[#7463F0]'
               }`}
               onClick={(e) => {
-                e.preventDefault()
-                openConfirmModal()
+                if (updateVoucherAdmin.isLoading) {
+                  return
+                } else {
+                  e.preventDefault()
+                  openConfirmModal()
+                }
               }}
               isDisable={!form.isValid || form.values.name === ''}
             >

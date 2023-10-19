@@ -190,6 +190,8 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
     return isoDate
   }
   async function submitHandle() {
+    setOpenConfirm(false)
+    setIsCreate(false)
     if (await checkFieldRequỉed()) {
       const imgURL = await uploadImage()
       try {
@@ -730,8 +732,12 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                 form.isValid && form.values.name != '' && 'hover:scale-110 bg-[#7463F0] border-[#7463F0]'
               }`}
               onClick={(e) => {
-                e.preventDefault()
-                openConfirmModal()
+                if (createNewVoucherAdmin.isLoading) {
+                  return
+                } else {
+                  e.preventDefault()
+                  openConfirmModal()
+                }
               }}
               isDisable={!form.isValid || form.values.name === ''}
             >

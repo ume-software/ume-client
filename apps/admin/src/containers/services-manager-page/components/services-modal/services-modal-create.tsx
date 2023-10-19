@@ -156,6 +156,7 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
   }
   async function submitHandle() {
     setOpenConfirm(false)
+    setIsCreate(false)
     if (await checkFieldRequỉed()) {
       const img = await uploadImage()
       if (img.imageUrl) {

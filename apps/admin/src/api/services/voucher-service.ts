@@ -81,10 +81,10 @@ export const updateVoucherAdmin = async (input: { id: string; voucherUpdate: Upd
       success: true,
     }
   } catch (error) {
-    console.log('-----------', error)
+    console.log('-----------', error.response.data)
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
-      message: error.message || 'Failed to create voucher',
+      message: error.response.data.data.message || 'Failed to create voucher',
     })
   }
 }
