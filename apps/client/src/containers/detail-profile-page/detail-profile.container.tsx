@@ -1,17 +1,16 @@
 import { Menu, Transition } from '@headlessui/react'
-import { Dot, Female, Jump, Lock, Male, More, Pencil, Plus, ShareTwo } from '@icon-park/react'
-import cover from 'public/cover.png'
+import { CopyOne, Dot, Female, Lock, Male, More, ShareTwo } from '@icon-park/react'
 import TestImage4 from 'public/cover.png'
 import detailBackground from 'public/detail-cover-background.png'
 import ImgForEmpty from 'public/img-for-empty.png'
 import lgbtIcon from 'public/rainbow-flag-11151.svg'
 
-import { Fragment, ReactElement, ReactNode, useEffect, useState } from 'react'
+import { Fragment, ReactElement, ReactNode, useState } from 'react'
 
 import { ConfigProvider, message, theme } from 'antd'
-import Image, { ImageProps, StaticImageData } from 'next/legacy/image'
+import Image, { StaticImageData } from 'next/legacy/image'
 import { useRouter } from 'next/router'
-import { GetProfileProviderBySlugResponse, UserInformationResponse } from 'ume-service-openapi'
+import { UserInformationResponse } from 'ume-service-openapi'
 
 import AlbumTab from './album-tab/album-tab'
 import FeedsTab from './feeds-tab'
@@ -35,7 +34,7 @@ interface FeedProps {
   numberCom?: number
 }
 
-interface valueGenderProps {
+interface ValueGenderProps {
   value: string
   icon: ReactNode
 }
@@ -66,31 +65,19 @@ const feedData: FeedProps[] = [
 
 const moreButtonDatas: TabDataProps[] = [
   {
-    key: 'SettingInformation',
-    label: 'Chỉnh sửa thông tin',
-    icon: (
-      <Pencil
-        className={`transition-opacity opacity-0 group-hover:opacity-100 group-hover:translate-x-3 duration-300`}
-        theme="outline"
-        size="20"
-        fill="#fff"
-      />
-    ),
-  },
-  {
-    key: 'Follow',
-    label: 'Follow',
-    icon: (
-      <Plus
-        className={`transition-opacity opacity-0 group-hover:opacity-100 group-hover:translate-x-3 duration-300`}
-        theme="outline"
-        size="20"
-        fill="#fff"
-      />
-    ),
-  },
-  {
     key: 'Share',
+    label: 'Copy đường dẫn',
+    icon: (
+      <CopyOne
+        className={`transition-opacity opacity-0 group-hover:opacity-100 group-hover:translate-x-3 duration-300`}
+        theme="outline"
+        size="20"
+        fill="#fff"
+      />
+    ),
+  },
+  {
+    key: 'ShareToFacebook',
     label: 'Chia sẻ đến Facebook',
     icon: (
       <ShareTwo
@@ -103,7 +90,7 @@ const moreButtonDatas: TabDataProps[] = [
   },
 ]
 
-const valueGenders: valueGenderProps[] = [
+const valueGenders: ValueGenderProps[] = [
   {
     value: 'MALE',
     icon: <Male theme="outline" size="20" fill="#3463f9" />,
@@ -141,26 +128,23 @@ const DetailProfileContainer = () => {
 
   const [messageApi, contextHolder] = message.useMessage()
   const [providerDetail, setProviderDetail] = useState<UserInformationResponse | undefined>(undefined)
-  const { isLoading: isProviderDetailLoading, isFetching: isProviderDetailFetching } = trpc.useQuery(
-    ['booking.getUserBySlug', slug.profileId!.toString()],
-    {
-      onSuccess(data) {
-        if (data.data.id) {
-          setProviderDetail(data.data)
-        } else {
-          router.replace('/404')
-        }
-      },
-      onError() {
+  const { isLoading: isProviderDetailLoading } = trpc.useQuery(['booking.getUserBySlug', slug.profileId!.toString()], {
+    onSuccess(data) {
+      if (data.data.id) {
+        setProviderDetail(data.data)
+      } else {
         router.replace('/404')
-      },
+      }
     },
-  )
+    onError() {
+      router.replace('/404')
+    },
+  })
 
   const [selectedTab, setSelectedTab] = useState<TabDataProps>(
     tabDatas.find((tab) => {
       return tab.key.toString() == slug.tab?.toString()
-    }) || tabDatas[0],
+    }) ?? tabDatas[0],
   )
 
   const handleChangeTab = (item: TabDataProps) => {
@@ -193,7 +177,14 @@ const DetailProfileContainer = () => {
       navigator.clipboard.writeText(window.location.href)
       messageApi.open({
         type: 'success',
-        content: 'Copy link success',
+        content: 'Copy đường dẫn thành công',
+        duration: 2,
+      })
+    } else if (item.key == 'ShareToFacebook') {
+      window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank')
+      messageApi.open({
+        type: 'success',
+        content: 'Mở facebook thành công',
         duration: 2,
       })
     }
@@ -240,7 +231,7 @@ const DetailProfileContainer = () => {
                       className="absolute rounded-full"
                       layout="fill"
                       objectFit="cover"
-                      src={providerDetail?.avatarUrl || ImgForEmpty}
+                      src={providerDetail?.avatarUrl ?? ImgForEmpty}
                       alt="avatar"
                     />
                   </div>
