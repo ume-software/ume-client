@@ -565,11 +565,11 @@
     client-only "^0.0.1"
 
 "@humanwhocodes/config-array@^0.11.11":
-  version "0.11.11"
-  resolved "https://registry.yarnpkg.com/@humanwhocodes/config-array/-/config-array-0.11.11.tgz#88a04c570dbbc7dd943e4712429c3df09bc32844"
-  integrity sha512-N2brEuAadi0CcdeMXUkhbZB84eskAc8MEX1By6qEchoVywSgXPIjou4rYsl0V3Hj0ZnuGycGCjdNgockbzeWNA==
+  version "0.11.12"
+  resolved "https://registry.yarnpkg.com/@humanwhocodes/config-array/-/config-array-0.11.12.tgz#549afec9bfce5232ac6325db12765f407e70e3a0"
+  integrity sha512-NlGesA1usRNn6ctHCZ21M4/dKPgW9Nn1FypRdIKKgZOKzkVV4T1FlK5mBiLhHBCDmEbdQG0idrcXlbZfksJ+RA==
   dependencies:
-    "@humanwhocodes/object-schema" "^1.2.1"
+    "@humanwhocodes/object-schema" "^2.0.0"
     debug "^4.1.1"
     minimatch "^3.0.5"
 
@@ -578,10 +578,10 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/module-importer/-/module-importer-1.0.1.tgz#af5b2691a22b44be847b0ca81641c5fb6ad0172c"
   integrity sha512-bxveV4V8v5Yb4ncFTT3rPSgZBOpCkjfK0y4oVVVJwIuDVBRMDXrPyXRL988i5ap9m9bnyEEjWfm5WkBmtffLfA==
 
-"@humanwhocodes/object-schema@^1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-1.2.1.tgz#b520529ec21d8e5945a1851dfd1c32e94e39ff45"
-  integrity sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==
+"@humanwhocodes/object-schema@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-2.0.0.tgz#04ad39d82176c7da1591c81e78b993cffd8348d8"
+  integrity sha512-9S9QrXY2K0L4AGDcSgTi9vgiCcG8VcBv4Mp7/1hDPYoswIy6Z6KO5blYto82BT8M0MZNRWmCFLpCs3HlpYGGdw==
 
 "@icon-park/react@^1.4.2":
   version "1.4.2"
@@ -1378,9 +1378,15 @@
     "@types/react" "*"
 
 "@types/react@*", "@types/react@^18.0.25":
+<<<<<<< HEAD
   version "18.2.28"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-18.2.28.tgz#86877465c0fcf751659a36c769ecedfcfacee332"
   integrity sha512-ad4aa/RaaJS3hyGz0BGegdnSRXQBkd1CCYDCdNjBPg90UUpLgo+WlJqb9fMYUxtehmzF3PJaTWqRZjko6BRzBg==
+=======
+  version "18.2.30"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.2.30.tgz#b84f786864fc46f18545364a54d5e1316308e59b"
+  integrity sha512-OfqdJnDsSo4UNw0bqAjFCuBpLYQM7wvZidz0hVxHRjrEkzRlvZL1pJVyOSY55HMiKvRNEo9DUBRuEl7FNlJ/Vg==
+>>>>>>> a62565d... Merge pull request #87 from ume-software/feature/config-codebase
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -2578,9 +2584,15 @@ ee-first@1.1.1:
   integrity sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==
 
 electron-to-chromium@^1.4.535:
+<<<<<<< HEAD
   version "1.4.554"
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.554.tgz#04e09c2ee31dc0f1546174033809b54cc372740b"
   integrity sha512-Q0umzPJjfBrrj8unkONTgbKQXzXRrH7sVV7D9ea2yBV3Oaogz991yhbpfvo2LMNkJItmruXTEzVpP9cp7vaIiQ==
+=======
+  version "1.4.560"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.560.tgz#f251409f1e8f393d0dfdf9ccb0b39de739a06a17"
+  integrity sha512-HhJH/pWAxTaPZl7R3mJ6gCd8MfjQdil9RAWk84qHaLsmPTadydfAmq0a1x8kZtOGQ6pZrWhOYj5uZ8I0meZIgg==
+>>>>>>> a62565d... Merge pull request #87 from ume-software/feature/config-codebase
 
 emittery@^0.13.1:
   version "0.13.1"
@@ -6949,9 +6961,15 @@ ume-identity-service-openapi@latest:
     axios "^0.27.2"
 
 ume-service-openapi@latest:
+<<<<<<< HEAD
   version "1.2.41"
   resolved "https://registry.yarnpkg.com/ume-service-openapi/-/ume-service-openapi-1.2.41.tgz#c14cb118e38af1975de494348b5501f21b171636"
   integrity sha512-Y9Igij+aMGSzMwr/8xGgBP2dKmFd3oYQPKN8vdLdEgsZmcxs9wvC3FKZNKvNYcxB0SFH2cRrt/tlggIsQ07Rbw==
+=======
+  version "1.2.49"
+  resolved "https://registry.yarnpkg.com/ume-service-openapi/-/ume-service-openapi-1.2.49.tgz#d1783237dc25e53edd5000b4a0aefecae646f30b"
+  integrity sha512-2bRi9KPlxd8pJ1om3/B1VeHdYV3T74htxglPUdERWS4YcLfm/ckmiNLtLjRW02J3hF5z9lIMiOohPDkYVJCoeg==
+>>>>>>> a62565d... Merge pull request #87 from ume-software/feature/config-codebase
   dependencies:
     axios "^0.27.2"
 
