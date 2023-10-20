@@ -1,6 +1,6 @@
 import { Button, FieldLabel, FormInput } from '@ume/ui'
 import { useAuth } from '~/contexts/auth'
-import { getItem, setItem } from '~/hooks/localHooks'
+import { getItem } from '~/hooks/localHooks'
 
 import { useEffect, useState } from 'react'
 
@@ -37,7 +37,7 @@ const SigninPage = () => {
       setSubmiting(true)
       signin.mutate(values, {
         onSuccess: (response) => {
-          setItem('user', response.data.admin)
+          login(response.data.admin as any)
           setSubmiting(false)
           router.push('/dashboard')
         },
