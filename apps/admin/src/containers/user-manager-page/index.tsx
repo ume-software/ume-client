@@ -6,11 +6,7 @@ import React, { useState } from 'react'
 import { Pagination, Tag } from 'antd'
 import Head from 'next/head'
 import { PrismaWhereConditionType, prismaWhereConditionToJsonString } from 'query-string-prisma-ume'
-import {
-  AdminGetUserPagingResponseResponse,
-  AdminGetUserResponseResponse,
-  AdminGetUserResponseResponseGenderEnum,
-} from 'ume-service-openapi'
+import { AdminGetUserPagingResponseResponse, AdminGetUserResponseResponse } from 'ume-service-openapi'
 
 import UserTable from './components/user-table'
 
@@ -75,7 +71,7 @@ const UserManager = () => {
   })
   const ORDER = [{ id: 'asc' }]
 
-  const { isLoading: isUserListLoading, isFetching: isUserListFetching } = trpc.useQuery(
+  const { isLoading: isUserListLoading } = trpc.useQuery(
     [
       'user.getUserList',
       {
@@ -173,7 +169,7 @@ const UserManager = () => {
           {10 * (page - 1) + 1}-{page * 10 > userList?.count!! ? userList?.count : page * 10} trên {userList?.count}{' '}
           người dùng
         </div>
-        <UserTable isLoading={isUserListLoading || isUserListFetching} userList={userList} />
+        <UserTable isLoading={isUserListLoading} userList={userList} />
         <div className="flex w-full justify-center pb-[200px] mt-5">
           <Pagination
             itemRender={(page, type) => (

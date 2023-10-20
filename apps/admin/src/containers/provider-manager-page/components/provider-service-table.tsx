@@ -55,8 +55,9 @@ export default function ProviderServiceTable(props: IProviderServiceTableProps) 
   ]
   const locale = {
     emptyText: (
-      <div className="flex items-center justify-center w-full h-full">
+      <div className="flex flex-col items-center justify-center w-full h-full font-bold text-2xl text-white">
         <Image height={600} alt="empty data" src={EmptyErrorPic} />
+        Không có data
       </div>
     ),
   }

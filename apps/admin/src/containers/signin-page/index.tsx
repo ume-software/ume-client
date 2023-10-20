@@ -1,7 +1,7 @@
 import { Button, FieldLabel, FormInput } from '@ume/ui'
-import { setItem } from '~/hooks/localHooks'
+import { getItem, setItem } from '~/hooks/localHooks'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { FormikErrors, useFormik } from 'formik'
 import Head from 'next/head'
@@ -45,6 +45,13 @@ const SigninPage = () => {
       })
     },
   })
+
+  const adminInfo = getItem('user')
+  useEffect(() => {
+    if (adminInfo) {
+      router.push('/dashboard')
+    }
+  }, [adminInfo])
 
   return (
     <>

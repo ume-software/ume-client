@@ -6,12 +6,7 @@ import React, { useState } from 'react'
 import { Pagination, Tag } from 'antd'
 import Head from 'next/head'
 import { PrismaWhereConditionType, prismaWhereConditionToJsonString } from 'query-string-prisma-ume'
-import {
-  AdminGetUserPagingResponseResponse,
-  AdminGetUserResponseResponse,
-  AdminGetUserResponseResponseGenderEnum,
-  ServicePagingResponse,
-} from 'ume-service-openapi'
+import { ServicePagingResponse } from 'ume-service-openapi'
 
 import ServicesTable from './components/services-table'
 
@@ -70,7 +65,7 @@ const ServicesManagerPage = () => {
     isActivated: filter.isActivated !== 'all' ? (filter.isActivated == 'true' ? true : false) : undefined,
   })
 
-  const { isLoading, isFetching } = trpc.useQuery(
+  const { isLoading } = trpc.useQuery(
     [
       'services.getServiceList',
       {
@@ -162,7 +157,7 @@ const ServicesManagerPage = () => {
           {10 * (page - 1) + 1}-{page * 10 > serviceList?.count!! ? serviceList?.count : page * 10} trên{' '}
           {serviceList?.count} dịch vụ
         </div>
-        <ServicesTable isLoading={isLoading || isFetching} servicesList={serviceList} />
+        <ServicesTable isLoading={isLoading} servicesList={serviceList} />
         <div className="flex w-full justify-center pb-[200px] mt-5">
           <Pagination
             itemRender={(page, type) => (

@@ -1,11 +1,16 @@
 import { Left, Right } from '@icon-park/react'
 import { Button } from '@ume/ui'
+import coinIcon from 'public/coin-icon.png'
 
 import * as React from 'react'
 
 import { Avatar, Pagination } from 'antd'
 import Image from 'next/image'
-import { AdminGetProviderServicePagingResponse, BookingHistoryPagingResponse } from 'ume-service-openapi'
+import {
+  AdminGetProviderServicePagingResponse,
+  BookingHistoryPagingResponse,
+  UserCoinResponse,
+} from 'ume-service-openapi'
 
 import ProviderServiceTable from './provider-service-table'
 import TransactionTable from './transaction-table'
@@ -21,6 +26,7 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
   const [providerSkills, setProviderSkills] = React.useState<AdminGetProviderServicePagingResponse | undefined>()
   const [providerTransHistory, setProviderTransHistory] = React.useState<BookingHistoryPagingResponse | undefined>()
   const [pageService, setPageService] = React.useState(1)
+  const [totalCoin, setTotalCoin] = React.useState<UserCoinResponse>()
   const [pageTrans, setPageTrans] = React.useState(1)
   const PAGE_SIZE_SERVICE = 5
   const PAGE_SIZE_TRANS = 10
@@ -37,7 +43,7 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
     },
     { providerService: ['$all', { service: ['$all'] }] },
   ]
-  const { isLoading: isListSkillLoading, isFetching: isListSkillFetching } = trpc.useQuery(
+  const { isLoading: isListSkillLoading } = trpc.useQuery(
     [
       'provider.getProviderSkill',
       {
@@ -69,7 +75,7 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
     }
   })
 
-  const { isLoading: isListTransLoading, isFetching: isListTransFetching } = trpc.useQuery(
+  const { isLoading: isListTransLoading } = trpc.useQuery(
     [
       'provider.getProviderBookingHistory',
       {
@@ -87,6 +93,11 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
     },
   )
 
+  trpc.useQuery(['user.getUserTotalCoin', { slug: providerId }], {
+    onSuccess(data) {
+      setTotalCoin(data.data)
+    },
+  })
   const dataProviderTranHistory = providerTransHistory?.row?.map((row: any) => {
     return {
       key: row.id,
@@ -158,8 +169,8 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
         <div className="h-6 text-white ">
           Số giờ đã phục vụ: <span className="font-bold">{servicedTime}</span>
         </div>
-        <div className="h-6 text-white ">
-          Số dư: <span className="font-bold">{balance}</span>
+        <div className=" flex items-center text-white w-[6rem]">
+          Số dư: {totalCoin?.totalCoin} <Image alt="Xu" src={coinIcon} width={25} height={25} />
         </div>
       </div>
       <div className="flex h-10 mt-4">
@@ -177,13 +188,9 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
         </div>
       </div>
       <div>
-        {switchTable && (
-          <ProviderServiceTable isLoading={isListSkillLoading || isListSkillFetching} data={dataProviderSkills} />
-        )}
-        {!switchTable && (
-          <TransactionTable isLoading={isListTransLoading || isListTransFetching} data={dataProviderTranHistory} />
-        )}
-        <div className="flex w-full justify-center pb-[200px] mt-5">
+        {switchTable && <ProviderServiceTable isLoading={isListSkillLoading} data={dataProviderSkills} />}
+        {!switchTable && <TransactionTable isLoading={isListTransLoading} data={dataProviderTranHistory} />}
+        <div className="flex w-full justify-center pb-[3rem] mt-5">
           <Pagination
             itemRender={(page, type) => (
               <div className="text-white">

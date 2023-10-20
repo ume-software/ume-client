@@ -38,7 +38,7 @@ export default function VourcherModalView({ vourcherId, closeFunction, openValue
       provider: ['$all'],
     },
   ]
-  const { isLoading, isFetching } = trpc.useQuery(
+  const { isLoading } = trpc.useQuery(
     ['voucher.getVoucherDetails', { id: vourcherId, select: JSON.stringify(SELECT) }],
     {
       onSuccess(data) {

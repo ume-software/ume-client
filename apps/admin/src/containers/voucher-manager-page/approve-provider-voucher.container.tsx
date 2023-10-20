@@ -56,7 +56,7 @@ const ApproveProviderVoucher = () => {
   })
   const ORDER = [{ id: 'asc' }]
 
-  const { isLoading, isFetching } = trpc.useQuery(
+  const { isLoading } = trpc.useQuery(
     [
       'voucher.getAllVoucher',
       {
@@ -166,7 +166,7 @@ const ApproveProviderVoucher = () => {
         {10 * (page - 1) + 1}-{page * 10 > voucherList?.count!! ? voucherList?.count : page * 10} trên{' '}
         {voucherList?.count} khuyến mãi
       </div>
-      <ApproveProviderVoucherTable isLoading={isLoading || isFetching} data={voucherList} />
+      <ApproveProviderVoucherTable isLoading={isLoading} data={voucherList} />
       <div className="flex w-full justify-center pb-[200px] mt-5">
         <Pagination
           itemRender={(page, type) => (

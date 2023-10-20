@@ -1,10 +1,11 @@
 import { Left, Right } from '@icon-park/react'
+import coinIcon from 'public/coin-icon.png'
 
 import { useState } from 'react'
 
 import { Pagination, Table } from 'antd'
 import Image from 'next/image'
-import { CoinHistoryPagingResponse } from 'ume-service-openapi'
+import { CoinHistoryPagingResponse, UserCoinResponse } from 'ume-service-openapi'
 
 import EmptyErrorPic from '../../../../public/empty_error.png'
 
@@ -35,10 +36,11 @@ const tableDataMapping = (data?) => {
 
 export default function UserDetails({ details, openValue, closeFunction }: IUserDetailsProps) {
   const [transaction, setTransaction] = useState<CoinHistoryPagingResponse>()
+  const [totalCoin, setTotalCoin] = useState<UserCoinResponse>()
   const [page, setPage] = useState(1)
   const ORDER = [{ id: 'asc' }]
 
-  const { isLoading, isFetching } = trpc.useQuery(
+  const { isLoading } = trpc.useQuery(
     [
       'user.getUserCoinHistories',
       { slug: details?.key, page: page.toString(), where: undefined, order: JSON.stringify(ORDER) },
@@ -49,6 +51,12 @@ export default function UserDetails({ details, openValue, closeFunction }: IUser
       },
     },
   )
+
+  trpc.useQuery(['user.getUserTotalCoin', { slug: details?.key }], {
+    onSuccess(data) {
+      setTotalCoin(data.data)
+    },
+  })
 
   const handlePageChange = (selectedPage) => {
     setPage(selectedPage)
@@ -66,16 +74,22 @@ export default function UserDetails({ details, openValue, closeFunction }: IUser
       key: 'coinType',
     },
     {
-      title: 'Số tiền',
+      title: <div className="flex justify-center items-center">Số tiền</div>,
       dataIndex: 'amount',
       key: 'amount',
+      render: (amount) => (
+        <div className="flex justify-center items-center">
+          {amount} <Image alt="Xu" src={coinIcon} width={30} height={30} />
+        </div>
+      ),
     },
   ]
 
-  let locale = {
+  const locale = {
     emptyText: (
-      <div className="w-full h-full flex justify-center items-center">
-        <Image height={250} alt="empty data" src={EmptyErrorPic} />
+      <div className="flex flex-col items-center justify-center w-full h-full font-bold text-2xl text-white">
+        <Image height={600} alt="empty data" src={EmptyErrorPic} />
+        Không có data
       </div>
     ),
   }
@@ -87,17 +101,17 @@ export default function UserDetails({ details, openValue, closeFunction }: IUser
       className="w-auto bg-black"
     >
       <PersionalInfo data={details} />
-      <div className="flex justify-between text-white mt-5 px-4">
+      <div className="flex justify-between items-center text-white mt-5 px-4">
         <span>Biến động số dư</span>
         <div className="border-b-2 border-[#7463F0] mx-4 mr-6"></div>
 
-        <div className="h-6 text-white w-[6rem]">
-          Số dư: <span className="font-bold"></span>
+        <div className=" flex items-center text-white w-[6rem]">
+          Số dư: {totalCoin?.totalCoin} <Image alt="Xu" src={coinIcon} width={30} height={30} />
         </div>
       </div>
       <div className="my-4 px-4">
         <Table
-          loading={isLoading || isFetching}
+          loading={isLoading}
           pagination={false}
           locale={locale}
           columns={columns}

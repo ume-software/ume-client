@@ -59,7 +59,7 @@ const VoucherByProvider = () => {
   })
   const ORDER = [{ id: 'asc' }]
 
-  const { isLoading, isFetching } = trpc.useQuery(
+  const { isLoading } = trpc.useQuery(
     [
       'voucher.getAllVoucher',
       { page: page.toString(), where: prismaWhereConditionToJsonString(testQuerry), order: JSON.stringify(ORDER) },
@@ -178,7 +178,7 @@ const VoucherByProvider = () => {
         {10 * (page - 1) + 1}-{page * 10 > voucherList?.count!! ? voucherList?.count : page * 10} trên{' '}
         {voucherList?.count} khuyến mãi
       </div>
-      <ProviderVoucherTable data={voucherList} isLoading={isLoading || isFetching} />
+      <ProviderVoucherTable data={voucherList} isLoading={isLoading} />
       <div className="flex w-full justify-center pb-[200px] mt-5">
         <Pagination
           itemRender={(page, type) => (

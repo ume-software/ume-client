@@ -1,13 +1,11 @@
-import { BaseballBat, CheckOne, Eyes, ReduceOne } from '@icon-park/react'
+import { Eyes, ReduceOne } from '@icon-park/react'
 import { Button } from '@ume/ui'
-import { BanProvider } from '~/api/services/provider-service'
 
 import * as React from 'react'
 import { useState } from 'react'
 
 import { Space, Table, Tag, Tooltip, notification } from 'antd'
 import Image from 'next/image'
-import { AdminHandleBanProviderRequest } from 'ume-service-openapi'
 
 import EmptyErrorPic from '../../../../public/empty_error.png'
 import ProviderDetail from './provider-detail'
@@ -181,8 +179,9 @@ export default function TableProviders({ data, isLoading }) {
   ]
   const locale = {
     emptyText: (
-      <div className="flex items-center justify-center w-full h-full">
+      <div className="flex flex-col items-center justify-center w-full h-full font-bold text-2xl text-white">
         <Image height={600} alt="empty data" src={EmptyErrorPic} />
+        Không có data
       </div>
     ),
   }

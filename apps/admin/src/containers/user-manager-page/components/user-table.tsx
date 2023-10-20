@@ -1,4 +1,4 @@
-import { CheckOne, Eyes, ReduceOne } from '@icon-park/react'
+import { Eyes, ReduceOne } from '@icon-park/react'
 import { Button } from '@ume/ui'
 
 import React, { useState } from 'react'
@@ -187,7 +187,7 @@ const UserTable = ({ userList, isLoading }) => {
               />
               <Button isActive={false} onClick={() => handleOpenBan(record)}>
                 {record.isBanned ? (
-                  <CheckOne className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="20" fill="#22c55e" />
+                  <ReduceOne className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="20" fill="#fff" />
                 ) : (
                   <ReduceOne className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="20" fill="#ff0000" />
                 )}
@@ -199,10 +199,11 @@ const UserTable = ({ userList, isLoading }) => {
     },
   ]
 
-  let locale = {
+  const locale = {
     emptyText: (
-      <div className="flex items-center justify-center w-full h-full">
+      <div className="flex flex-col items-center justify-center w-full h-full font-bold text-2xl text-white">
         <Image height={600} alt="empty data" src={EmptyErrorPic} />
+        Không có data
       </div>
     ),
   }

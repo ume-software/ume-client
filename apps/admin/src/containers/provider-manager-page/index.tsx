@@ -78,7 +78,7 @@ const ProviderManager = () => {
     }
     return query
   }
-  const { isLoading: isUserListLoading, isFetching: isUserListFetching } = trpc.useQuery(
+  const { isLoading: isUserListLoading } = trpc.useQuery(
     [
       'provider.getProviderList',
       {
@@ -184,7 +184,7 @@ const ProviderManager = () => {
               />
             </div>
           </div>
-          <div className="flex items-center px-3 bg-gray-800 border-2 rounded-lg">
+          <div className="flex items-center bg-umeHeader border-2 rounded-lg">
             <Search
               onClick={() => {
                 setPage(1)
@@ -193,13 +193,13 @@ const ProviderManager = () => {
                   search: searchChange,
                 })
               }}
-              className="bg-gray-800 rounded-full hover:bg-gray-700"
+              className="bg-umeHeader p-2 rounded-full hover:bg-gray-700"
               theme="outline"
               size="24"
               fill="#fff"
             />
             <Input
-              className="bg-gray-800 focus:outline-none"
+              className="bg-umeHeader focus:outline-none"
               placeholder="Search "
               value={searchChange}
               onChange={handleSearchChange}
@@ -212,7 +212,7 @@ const ProviderManager = () => {
           {10 * (page - 1) + 1}-{page * 10 > providerList?.count!! ? providerList?.count : page * 10} trên{' '}
           {providerList?.count} user
         </div>
-        <TableProviders data={data} isLoading={isUserListLoading || isUserListFetching} />
+        <TableProviders data={data} isLoading={isUserListLoading} />
         <div className="flex w-full justify-center pb-[200px] mt-5">
           <Pagination
             itemRender={(page, type) => (

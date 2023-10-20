@@ -11,14 +11,41 @@ import AdminVoucherTable from './components/voucher-table/admin-voucher-table'
 import VourcherModalCreate from './components/vourcher-modal/vourcher-modal-create'
 
 import FilterDropdown from '~/components/filter-dropdown'
-import {
-  mappingRecipientTypes,
-  mappingVoucherStatus,
-  recipientType,
-  voucherStatusFilterItems,
-} from '~/components/filter-items'
+import { mappingRecipientTypes, recipientType } from '~/components/filter-items'
 
 import { trpc } from '~/utils/trpc'
+
+export const voucherStatusFilterItems = [
+  {
+    key: 'all',
+    label: (
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-400 hover:text-white">
+        Tất cả
+      </Tag>
+    ),
+  },
+  {
+    key: 'true',
+    label: (
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
+        Hoạt động
+      </Tag>
+    ),
+  },
+  {
+    key: 'false',
+    label: (
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
+        Tạm dừng
+      </Tag>
+    ),
+  },
+]
+export const mappingVoucherStatus = {
+  all: 'Tất cả',
+  true: 'Hoạt động',
+  false: 'Tạm dừng',
+}
 
 const VoucherByAdmin = () => {
   const [openVourcherModalCreate, setOpenVourcherModalCreate] = useState(false)
@@ -58,7 +85,7 @@ const VoucherByAdmin = () => {
   })
   const ORDER = [{ id: 'asc' }]
 
-  const { isLoading, isFetching } = trpc.useQuery(
+  const { isLoading } = trpc.useQuery(
     [
       'voucher.getAllVoucher',
       {
@@ -129,15 +156,15 @@ const VoucherByAdmin = () => {
           <div className="flex">
             <FilterDropdown
               id={'status'}
-              CustomCss="min-w-[7rem]"
-              title={mappingVoucherStatus[filter.isActivated]}
+              CustomCss="w-[12rem]"
+              title={`Trạng thái: ${mappingVoucherStatus[filter.isActivated]}`}
               items={voucherStatusFilterItems}
               handleFilter={handleFilter}
             />
             <FilterDropdown
               id={'recipientType'}
-              CustomCss="min-w-[11rem]"
-              title={mappingRecipientTypes[filter.recipientType]}
+              CustomCss="w-[12rem]"
+              title={`Đối tượng: ${mappingRecipientTypes[filter.recipientType]}`}
               items={recipientType}
               handleFilter={handleFilter}
             />
@@ -160,7 +187,7 @@ const VoucherByAdmin = () => {
         {10 * (page - 1) + 1}-{page * 10 > adminVoucherList?.count!! ? adminVoucherList?.count : page * 10} trên{' '}
         {adminVoucherList?.count} khuyến mãi
       </div>
-      <AdminVoucherTable isLoading={isLoading || isFetching} data={adminVoucherList} />
+      <AdminVoucherTable isLoading={isLoading} data={adminVoucherList} />
       <div className="flex w-full justify-center pb-[200px] mt-5">
         <Pagination
           itemRender={(page, type) => (

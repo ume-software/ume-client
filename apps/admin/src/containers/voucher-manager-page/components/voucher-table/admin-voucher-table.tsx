@@ -1,4 +1,4 @@
-import { CheckOne, Eyes, ReduceOne, Write } from '@icon-park/react'
+import { Eyes, ReduceOne, Write } from '@icon-park/react'
 import { Button } from '@ume/ui'
 
 import React, { useState } from 'react'
@@ -11,7 +11,6 @@ import VourcherModalUpdate from '../vourcher-modal/vourcher-modal-update'
 import VourcherModalView from '../vourcher-modal/vourcher-modal-view'
 
 import { mappingRecipientTypes, mappingVoucherType } from '~/components/filter-items'
-import BanModal from '~/components/modal-base/ban-modal'
 import ComfirmModal from '~/components/modal-base/comfirm-modal'
 
 import { trpc } from '~/utils/trpc'
@@ -183,10 +182,9 @@ const AdminVoucherTable = ({ data, isLoading }) => {
                 {record.isActivated ? (
                   <ReduceOne className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="20" fill="#ff0000" />
                 ) : (
-                  <CheckOne className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="20" fill="#22c55e" />
+                  <ReduceOne className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="20" fill="#fff" />
                 )}
               </Button>
-              {/* <Delete className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="18" fill="#ff0000" /> */}
             </div>
           </>
         )
@@ -194,10 +192,11 @@ const AdminVoucherTable = ({ data, isLoading }) => {
     },
   ]
 
-  let locale = {
+  const locale = {
     emptyText: (
-      <div className="flex items-center justify-center w-full h-full">
+      <div className="flex flex-col items-center justify-center w-full h-full font-bold text-2xl text-white">
         <Image height={600} alt="empty data" src={EmptyErrorPic} />
+        Không có data
       </div>
     ),
   }

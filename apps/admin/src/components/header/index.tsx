@@ -1,11 +1,12 @@
-import { Remind, User } from '@icon-park/react'
+import { Remind } from '@icon-park/react'
 import emptyPic from 'public/empty_error.png'
 import { getItem, removeItem } from '~/hooks/localHooks'
 
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
-import { Avatar, Badge, Dropdown, Space } from 'antd'
+import { Badge, Dropdown, Space } from 'antd'
 import Cookies from 'js-cookie'
+import Image from 'next/legacy/image'
 import { useRouter } from 'next/router'
 
 export const Header = () => {
@@ -22,7 +23,32 @@ export const Header = () => {
       label: <div className="active:bg-gray-500 text-white p-2">Đăng xuất</div>,
     },
   ]
+
   const adminInfo = getItem('user')
+
+  useEffect(() => {
+    if (adminInfo) {
+      return
+    } else {
+      handleLogOut()
+    }
+  }, [adminInfo])
+
+  const test = {
+    id: '93ac1c91-8660-4589-b559-8222fbab9d1b',
+    createdAt: '2023-09-25T03:17:53.350Z',
+    updatedAt: '2023-09-25T03:17:53.350Z',
+    deletedAt: null,
+    name: 'Vo Van Que',
+    username: 'queadmin',
+    dob: '2001-05-31T17:00:00.000Z',
+    gender: 'MALE',
+    phone: '0123456789',
+    email: 'shinamonvu@gmail.com',
+    password: '$2b$10$yLZVOWv1px8mreKT4jXzEOQwgYFrXv.3kdhxFqu0dag2virW4D6WW',
+    avatarUrl: 'https://haycafe.vn/wp-content/uploads/2022/02/anh-meo-cute-hinh-cute-meo.jpg',
+    ipv4: null,
+  }
 
   const handleItemSelected = (e) => {
     switch (e.key) {
@@ -40,7 +66,6 @@ export const Header = () => {
               <Remind theme="outline" size="24" fill="#fff" />
             </Badge>
           </div>
-
           <Dropdown
             menu={{
               items,
@@ -48,15 +73,15 @@ export const Header = () => {
             }}
             placement="bottomLeft"
           >
-            <Avatar
-              src={adminInfo?.avatarUrl}
-              icon={
-                <div className="w-full h-full flex justify-center items-center">
-                  <User theme="outline" size="24" fill="#fff" />
-                </div>
-              }
-              size={40}
-            />
+            <div>
+              <Image
+                className="rounded-full"
+                src={adminInfo?.avatarUrl || emptyPic}
+                width={40}
+                height={40}
+                alt="Picture of the author"
+              />
+            </div>
           </Dropdown>
         </Space>
       </div>

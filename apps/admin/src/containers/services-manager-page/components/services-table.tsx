@@ -4,10 +4,8 @@ import EmptyErrorPic from 'public/empty_error.png'
 
 import React, { useState } from 'react'
 
-import { Table, Tag, notification } from 'antd'
+import { Table, Tag } from 'antd'
 import Image from 'next/image'
-
-import ComfirmModal from '~/components/modal-base/comfirm-modal'
 
 import { trpc } from '~/utils/trpc'
 
@@ -28,55 +26,6 @@ const ServicesTable = ({ servicesList, isLoading }) => {
   const utils = trpc.useContext()
 
   const listData = tableDataMapping(servicesList?.row)
-
-  // const handleBanFunction = () => {
-  //   if (!isBannedUser) {
-  //     try {
-  //       banUser.mutate(
-  //         {
-  //           slug: userId!!,
-  //         },
-  //         {
-  //           onSuccess: (data) => {
-  //             if (data.success) {
-  //               notification.success({
-  //                 message: 'Dừng hoạt động dịch vụ thành công!',
-  //                 description: 'dịch vụ đã bị dừng hoạt động',
-  //                 placement: 'bottomLeft',
-  //               })
-  //               utils.invalidateQueries('services.getServiceList')
-  //             }
-  //           },
-  //         },
-  //       )
-  //     } catch (error) {
-  //       console.error('Failed to Handle Ban/Unban User', error)
-  //     }
-  //   } else {
-  //     try {
-  //       unBanUser.mutate(
-  //         {
-  //           slug: userId!!,
-  //         },
-  //         {
-  //           onSuccess: (data) => {
-  //             if (data.success) {
-  //               notification.success({
-  //                 message: 'Kích hoạt dịch vụ thành công!',
-  //                 description: 'dịch vụ đã được kích hoạt',
-  //                 placement: 'bottomLeft',
-  //               })
-  //               utils.invalidateQueries('services.getServiceList')
-  //             }
-  //           },
-  //         },
-  //       )
-  //     } catch (error) {
-  //       console.error('Failed to Handle Ban/Unban User:', error)
-  //     }
-  //   }
-  //   setOpenBanUser(false)
-  // }
 
   const columns = [
     {
@@ -164,10 +113,11 @@ const ServicesTable = ({ servicesList, isLoading }) => {
     },
   ]
 
-  let locale = {
+  const locale = {
     emptyText: (
-      <div className="flex items-center justify-center w-full h-full">
+      <div className="flex flex-col items-center justify-center w-full h-full font-bold text-2xl text-white">
         <Image height={600} alt="empty data" src={EmptyErrorPic} />
+        Không có data
       </div>
     ),
   }
