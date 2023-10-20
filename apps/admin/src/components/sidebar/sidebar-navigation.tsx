@@ -104,13 +104,13 @@ const SidebarNavigation: SidebarNavigationItem[] = [
     ],
   },
   {
-    label: 'Quản lý kỹ năng',
+    label: 'Quản lý dịch vụ',
     key: 'service',
     children: [
       {
         label: (
-          <Link href="/#" rel="noopener noreferrer">
-            Quản lý kỹ năng
+          <Link href="/services-manager" rel="noopener noreferrer">
+            Dịch vụ
           </Link>
         ),
         key: 'service-manager',

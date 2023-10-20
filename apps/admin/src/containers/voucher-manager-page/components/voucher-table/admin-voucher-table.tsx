@@ -1,17 +1,16 @@
-import { CheckOne, Delete, Eyes, ReduceOne, Write } from '@icon-park/react'
+import { Eyes, ReduceOne, Write } from '@icon-park/react'
 import { Button } from '@ume/ui'
 
 import React, { useState } from 'react'
 
-import { Table, Tag, notification } from 'antd'
+import { Table, notification } from 'antd'
 import Image from 'next/image'
-import { VoucherResponse } from 'ume-service-openapi'
 
 import EmptyErrorPic from '../../../../../public/empty_error.png'
 import VourcherModalUpdate from '../vourcher-modal/vourcher-modal-update'
 import VourcherModalView from '../vourcher-modal/vourcher-modal-view'
 
-import BanModal from '~/components/modal-base/ban-modal'
+import { mappingRecipientTypes, mappingVoucherType } from '~/components/filter-items'
 import ComfirmModal from '~/components/modal-base/comfirm-modal'
 
 import { trpc } from '~/utils/trpc'
@@ -30,19 +29,7 @@ const tableDataMapping = (data?) => {
   return list
 }
 
-const mappingRecipientType = {
-  ALL: 'Tất cả',
-  FIRST_TIME_BOOKING: 'Người lần đầu thuê',
-  PREVIOUS_BOOKING: ' Người đã từng thuê',
-  TOP_5_BOOKER: ' Top 5 người thuê',
-  TOP_10_BOOKER: ' Top 10 người thuê',
-}
-
-const mappingType = {
-  DISCOUNT: 'Giảm giá',
-  CASHBACK: 'Hoàn tiền',
-}
-const AdminVoucherTable = ({ data }) => {
+const AdminVoucherTable = ({ data, isLoading }) => {
   const listData = tableDataMapping(data?.row)
   const [voucherModalData, setVoucherModalData] = useState<any>()
   const [openVourcherModalView, setOpenVourcherModalView] = useState(false)
@@ -132,7 +119,7 @@ const AdminVoucherTable = ({ data }) => {
       title: <div className="flex justify-center w-full">Loại</div>,
       dataIndex: 'type',
       key: 'type',
-      render: (type) => <div className="flex justify-center w-full ">{mappingType[type]}</div>,
+      render: (type) => <div className="flex justify-center w-full ">{mappingVoucherType[type]}</div>,
     },
     {
       title: <div className="flex justify-center w-full">Giá trị</div>,
@@ -160,7 +147,7 @@ const AdminVoucherTable = ({ data }) => {
       title: <div className="flex justify-center w-full">Đối tượng</div>,
       key: 'recipientType',
       dataIndex: 'recipientType',
-      render: (text) => <div className="flex justify-center w-full">{mappingRecipientType[text]}</div>,
+      render: (text) => <div className="flex justify-center w-full">{mappingRecipientTypes[text]}</div>,
     },
     {
       title: '',
@@ -195,10 +182,9 @@ const AdminVoucherTable = ({ data }) => {
                 {record.isActivated ? (
                   <ReduceOne className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="20" fill="#ff0000" />
                 ) : (
-                  <CheckOne className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="20" fill="#22c55e" />
+                  <ReduceOne className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="20" fill="#fff" />
                 )}
               </Button>
-              {/* <Delete className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="18" fill="#ff0000" /> */}
             </div>
           </>
         )
@@ -206,17 +192,18 @@ const AdminVoucherTable = ({ data }) => {
     },
   ]
 
-  let locale = {
+  const locale = {
     emptyText: (
-      <div className="flex items-center justify-center w-full h-full">
+      <div className="flex flex-col items-center justify-center w-full h-full font-bold text-2xl text-white">
         <Image height={600} alt="empty data" src={EmptyErrorPic} />
+        Không có data
       </div>
     ),
   }
 
   return (
     <div className="mt-5 ">
-      <Table locale={locale} pagination={false} columns={columns} dataSource={listData} />
+      <Table loading={isLoading} locale={locale} pagination={false} columns={columns} dataSource={listData} />
       {openVourcherModalView && (
         <VourcherModalView
           vourcherId={voucherModalData}

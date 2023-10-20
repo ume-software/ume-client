@@ -4,8 +4,6 @@ import empty_img from 'public/empty_error.png'
 import { useState } from 'react'
 
 import Image from 'next/legacy/image'
-import { prismaSelectToJsonString } from 'query-string-prisma-ume'
-import { VoucherResponse } from 'ume-service-openapi'
 
 import ModalBase from '~/components/modal-base'
 
@@ -40,7 +38,7 @@ export default function VourcherModalView({ vourcherId, closeFunction, openValue
       provider: ['$all'],
     },
   ]
-  const { isLoading, isFetching } = trpc.useQuery(
+  const { isLoading } = trpc.useQuery(
     ['voucher.getVoucherDetails', { id: vourcherId, select: JSON.stringify(SELECT) }],
     {
       onSuccess(data) {
@@ -76,7 +74,7 @@ export default function VourcherModalView({ vourcherId, closeFunction, openValue
         <div className="flex-col w-auto bg-[#15151B] mt-5 px-4">
           <div className="flex w-auto px-4 border-b-2 border-[#FFFFFF80] pb-5">
             <div className="w-1/5 pr-4 mt-10">
-              <Image className="overflow-hidden rounded-2xl" width={150} height={200} src={avatarUrl!} alt="" />
+              <Image className="overflow-hidden rounded-2xl" width={150} height={200} src={avatarUrl} alt="" />
             </div>
             <div className="flex flex-col justify-end w-2/5 ">
               <div className="text-white h-14">

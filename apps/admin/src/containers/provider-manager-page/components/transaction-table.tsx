@@ -1,3 +1,5 @@
+import coinIcon from 'public/coin-icon.png'
+
 import * as React from 'react'
 
 import { Table } from 'antd'
@@ -13,8 +15,9 @@ export interface ITransactionTableProps {
 export default function TransactionTable(props: ITransactionTableProps) {
   const locale = {
     emptyText: (
-      <div className="flex items-center justify-center w-full h-full">
+      <div className="flex flex-col items-center justify-center w-full h-full font-bold text-2xl text-white">
         <Image height={600} alt="empty data" src={EmptyErrorPic} />
+        Không có data
       </div>
     ),
   }
@@ -49,10 +52,24 @@ export default function TransactionTable(props: ITransactionTableProps) {
       key: 'status',
     },
     {
-      title: 'Số tiền',
+      title: <div className="flex justify-center items-center">Số tiền</div>,
       dataIndex: 'mountMoney',
       key: 'mountMoney',
+      render: (mountMoney) => (
+        <div className="flex justify-center items-center">
+          {mountMoney} <Image alt="Xu" src={coinIcon} width={30} height={30} />
+        </div>
+      ),
     },
   ]
-  return <Table locale={locale} pagination={false} columns={columnsService} dataSource={data} className="z-0" />
+  return (
+    <Table
+      loading={props.isLoading}
+      locale={locale}
+      pagination={false}
+      columns={columnsService}
+      dataSource={data}
+      className="z-0"
+    />
+  )
 }
