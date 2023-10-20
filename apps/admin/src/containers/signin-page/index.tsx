@@ -1,4 +1,5 @@
 import { Button, FieldLabel, FormInput } from '@ume/ui'
+import { useAuth } from '~/contexts/auth'
 import { getItem, setItem } from '~/hooks/localHooks'
 
 import { useEffect, useState } from 'react'
@@ -93,7 +94,7 @@ const SigninPage = () => {
                 />
               </div>
               {errorMessage && <p className="text-xs text-ume-error">{errorMessage}</p>}
-              <div>
+              <div className="w-full flex justify-center">
                 <Button
                   name="submit"
                   type="submit"
