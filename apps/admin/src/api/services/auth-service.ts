@@ -1,5 +1,6 @@
 import { TRPCError } from '@trpc/server'
 import { getEnv } from '~/env'
+import { setItem } from '~/hooks/localHooks'
 
 import { serialize } from 'cookie'
 import { AdminAuthApi } from 'ume-service-openapi'
@@ -15,7 +16,14 @@ export const signinService = async ({ username, password }, ctx) => {
       username: username,
       password: password,
     })
-    const { accessToken, refreshToken } = response.data
+    const { admin, accessToken, refreshToken } = response.data
+    // try {
+    //   if (typeof window !== 'undefined') {
+    //     window.localStorage.setItem('user', JSON.stringify(admin))
+    //   }
+    // } catch (localStorageError) {
+    //   console.error('Error storing data in localStorage:', localStorageError)
+    // }
     ctx.res.setHeader('Set-Cookie', [
       serialize('accessToken', accessToken ?? '', {
         path: '/',

@@ -1,4 +1,4 @@
-import { CheckOne, CloseOne, Delete, Eyes, ReduceOne, Write } from '@icon-park/react'
+import { CheckOne, CloseOne, Eyes } from '@icon-park/react'
 
 import React, { useState } from 'react'
 
@@ -44,7 +44,7 @@ const mappingType = {
   CASHBACK: 'Hoàn tiền',
 }
 
-const ProviderVoucherTable = ({ data }) => {
+const ProviderVoucherTable = ({ data, isLoading }) => {
   const listData = tableDataMapping(data?.row)
   const utils = trpc.useContext()
   const [openConfirm, setOpenConfirm] = useState(false)
@@ -206,17 +206,18 @@ const ProviderVoucherTable = ({ data }) => {
     },
   ]
 
-  let locale = {
+  const locale = {
     emptyText: (
-      <div className="flex items-center justify-center w-full h-full">
+      <div className="flex flex-col items-center justify-center w-full h-full font-bold text-2xl text-white">
         <Image height={600} alt="empty data" src={EmptyErrorPic} />
+        Không có data
       </div>
     ),
   }
 
   return (
     <div className="mt-5 ">
-      <Table locale={locale} pagination={false} columns={columns} dataSource={listData} />
+      <Table loading={isLoading} locale={locale} pagination={false} columns={columns} dataSource={listData} />
       {openVourcherModalView && (
         <VourcherModalView
           vourcherId={voucherModalData}

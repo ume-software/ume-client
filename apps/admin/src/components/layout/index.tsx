@@ -6,11 +6,13 @@ import Sidebar from '../sidebar'
 interface ILayout {
   children: React.ReactNode
 }
+
 const Layout = ({ children }: ILayout) => {
   const router = useRouter()
   if (router.pathname == '/signin') {
     return <>{children}</>
   }
+
   return (
     <>
       <div className="max-w-full max-h-full">

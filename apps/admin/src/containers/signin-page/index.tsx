@@ -1,7 +1,7 @@
 import { Button, FieldLabel, FormInput } from '@ume/ui'
-import { useAuth } from '~/contexts/auth'
+import { getItem, setItem } from '~/hooks/localHooks'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { FormikErrors, useFormik } from 'formik'
 import Head from 'next/head'
@@ -36,10 +36,7 @@ const SigninPage = () => {
       setSubmiting(true)
       signin.mutate(values, {
         onSuccess: (response) => {
-          if (!response.data) {
-            login(response.data)
-          }
-
+          setItem('user', response.data.admin)
           setSubmiting(false)
           router.push('/dashboard')
         },
@@ -50,6 +47,13 @@ const SigninPage = () => {
       })
     },
   })
+
+  const adminInfo = getItem('user')
+  useEffect(() => {
+    if (adminInfo) {
+      router.push('/dashboard')
+    }
+  }, [adminInfo])
 
   return (
     <>
@@ -98,7 +102,7 @@ const SigninPage = () => {
                   isActive={!(form.values.username || form.values.password) || isSubmiting}
                   isLoading={isSubmiting}
                 >
-                  Login
+                  Đăng nhập
                 </Button>
               </div>
             </form>
