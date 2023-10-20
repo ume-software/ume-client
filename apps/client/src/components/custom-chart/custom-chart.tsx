@@ -241,13 +241,13 @@ export const CustomChart = ({
         }}
       >
         {!!optionsTop?.length && (
-          <div className={`absolute top-5 right-5 bg-[#15151B] p-1 rounded-md z-2`}>
+          <div className={`absolute top-5 right-5 bg-[#15151B] p-1 rounded-md`} style={{ zIndex: 5 }}>
             {<OptionFilterDataChart handleChangeOptionTop={handleChangeOptionTop} optionsTop={optionsTop} />}
           </div>
         )}
         {!!htmlAppened && htmlAppened}
         {optionCustomNode}
-        <div className={`relative rounded-xl shadow-md`}>
+        <div className={`relative rounded-xl shadow-md`} style={{ zIndex: 2 }}>
           <HighchartsReact
             style={{
               width: '100%',

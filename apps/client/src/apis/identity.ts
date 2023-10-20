@@ -10,15 +10,20 @@ import { createRouter } from './configurations'
 import {
   createServiceProvider,
   getAccountBalance,
+  getHistoryTransaction,
   getIdentityInfo,
   getMyVoucher,
   getServiceAttributeByServiceSlug,
   getServiceAttributeValueByServiceAttributeId,
   getUserBySlug,
   providerCreateVoucher,
+  providerGetOwnServices,
   providerGetSelfVoucher,
+  providerGetServiceHaveNotRegistered,
+  providerUpdateVoucher,
   registerBecomeProvider,
   requestRecharge,
+  updateServiceProvider,
   updateUserProfile,
   userKYC,
 } from './services/identity-service'
@@ -110,6 +115,37 @@ export const identityRouter = createRouter()
       return await providerCreateVoucher(input, ctx)
     },
   })
+  .mutation('providerUpdateVoucher', {
+    input: z.object({
+      id: z.string(),
+      body: z.object({
+        code: z.optional(z.string()),
+        image: z.optional(z.string()),
+        name: z.optional(z.string()),
+        description: z.optional(z.string()),
+        numberIssued: z.optional(z.number()),
+        dailyNumberIssued: z.optional(z.number()),
+        numberUsablePerBooker: z.optional(z.number()),
+        dailyUsageLimitPerBooker: z.optional(z.number()),
+        isActivated: z.optional(z.boolean()),
+        type: z.optional(z.nativeEnum(CreateVoucherRequestTypeEnum)),
+        discountUnit: z.optional(z.nativeEnum(CreateVoucherRequestDiscountUnitEnum)),
+        discountValue: z.optional(z.number()),
+        maximumDiscountValue: z.optional(z.number()),
+        minimumBookingTotalPriceForUsage: z.optional(z.number()),
+        minimumBookingDurationForUsage: z.optional(z.number()),
+        startDate: z.optional(z.string()),
+        endDate: z.optional(z.string()),
+        applyISODayOfWeek: z.optional(z.array(z.number())),
+        recipientType: z.optional(z.nativeEnum(CreateVoucherRequestRecipientTypeEnum)),
+        selectiveBookerIds: z.optional(z.array(z.string())),
+        isHided: z.optional(z.boolean()),
+      }),
+    }),
+    resolve: async ({ input, ctx }) => {
+      return await providerUpdateVoucher(input, ctx)
+    },
+  })
   .query('getMyVoucher', {
     input: z.object({
       limit: z.string(),
@@ -126,6 +162,11 @@ export const identityRouter = createRouter()
       return await registerBecomeProvider(ctx)
     },
   })
+  .query('providerGetServiceHaveNotRegistered', {
+    resolve: async ({ ctx }) => {
+      return await providerGetServiceHaveNotRegistered(ctx)
+    },
+  })
   .query('getServiceAttributeByServiceSlug', {
     input: z.string(),
     resolve: async ({ input, ctx }) => {
@@ -136,6 +177,32 @@ export const identityRouter = createRouter()
     input: z.string(),
     resolve: async ({ input, ctx }) => {
       return await getServiceAttributeValueByServiceAttributeId(input, ctx)
+    },
+  })
+  .query('providerGetOwnServices', {
+    resolve: async ({ ctx }) => {
+      return await providerGetOwnServices(ctx)
+    },
+  })
+  .mutation('updateServiceProvider', {
+    input: z.object({
+      serviceId: z.string(),
+      defaultCost: z.number(),
+      description: z.optional(z.string()),
+      handleBookingCosts: z.optional(
+        z.array(z.object({ startTimeOfDay: z.string(), endTimeOfDay: z.string(), amount: z.number() })),
+      ),
+      handleProviderServiceAttributes: z.optional(
+        z.array(
+          z.object({
+            id: z.string(),
+            handleServiceAttributeValueIds: z.array(z.string()),
+          }),
+        ),
+      ),
+    }),
+    resolve: async ({ input, ctx }) => {
+      return await updateServiceProvider(input, ctx)
     },
   })
   .mutation('createServiceProvider', {
@@ -150,12 +217,23 @@ export const identityRouter = createRouter()
         z.array(
           z.object({
             id: z.string(),
-            serviceAttributeValueIds: z.string(),
+            serviceAttributeValueIds: z.array(z.string()),
           }),
         ),
       ),
     }),
     resolve: async ({ input, ctx }) => {
       return await createServiceProvider(input, ctx)
+    },
+  })
+  .query('getHistoryTransaction', {
+    input: z.object({
+      limit: z.string(),
+      page: z.string(),
+      where: z.optional(z.string()),
+      order: z.optional(z.string()),
+    }),
+    resolve: async ({ input, ctx }) => {
+      return await getHistoryTransaction(input, ctx)
     },
   })

@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/alt-text */
 import { Menu, Transition } from '@headlessui/react'
-import { Check, CloseSmall, Pencil } from '@icon-park/react'
+import { Check, CheckOne, CloseSmall, Pencil } from '@icon-park/react'
 import { Button, Input, Modal } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
 import { uploadImageBooking } from '~/apis/upload-media'
@@ -9,9 +9,7 @@ import { GenderEnum } from '~/enumVariable/enumVariable'
 import { FormEvent, Fragment, useEffect, useRef, useState } from 'react'
 
 import { notification } from 'antd'
-import { identity } from 'lodash'
 import Image from 'next/legacy/image'
-import { useRouter } from 'next/router'
 import { UserInformationResponse } from 'ume-service-openapi'
 
 import ConfirmForm from '~/components/confirm-form/confirmForm'
@@ -54,14 +52,11 @@ const genderData: GenderProps[] = [
 const EditProfile = () => {
   const today = new Date().toISOString().split('T')[0]
   const [userSettingData, setUserSettingData] = useState<UserInformationResponse | undefined>(undefined)
-  const { isLoading: isLoadingUserSettingData, isFetching: isFetchingUserSettingData } = trpc.useQuery(
-    ['identity.identityInfo'],
-    {
-      onSuccess(data) {
-        setUserSettingData(data.data)
-      },
+  const { isLoading: isLoadingUserSettingData } = trpc.useQuery(['identity.identityInfo'], {
+    onSuccess(data) {
+      setUserSettingData(data.data)
     },
-  )
+  })
   const utils = trpc.useContext()
 
   const updateInformation = trpc.useMutation(['identity.updateUserProfile'])
@@ -83,7 +78,7 @@ const EditProfile = () => {
     avatarUrl: undefined,
     dob: undefined,
     email: undefined,
-    gender: genderData.find((gender) => gender.key == userSettingData?.gender!) || genderData[0],
+    gender: genderData.find((gender) => gender.key == userSettingData?.gender!) ?? genderData[0],
     isVerified: undefined,
     latestOnline: null,
     name: undefined,
@@ -104,7 +99,7 @@ const EditProfile = () => {
       avatarUrl: userSettingData?.avatarUrl,
       dob: userSettingData?.dob,
       email: userSettingData?.email,
-      gender: genderData.find((gender) => gender.key == userSettingData?.gender!) || genderData[0],
+      gender: genderData.find((gender) => gender.key == userSettingData?.gender!) ?? genderData[0],
       isVerified: userSettingData?.isVerified,
       latestOnline: null,
       name: userSettingData?.name,
@@ -234,10 +229,10 @@ const EditProfile = () => {
             updateInformation.mutate(
               {
                 avatarUrl: String(responseData.data.data.results),
-                dob: settingAccount.dob || undefined,
+                dob: settingAccount.dob ?? undefined,
                 gender: settingAccount.gender.key,
                 name: settingAccount.name?.trim(),
-                slug: settingAccount.slug?.trim() || undefined,
+                slug: settingAccount.slug?.trim() ?? undefined,
               },
               {
                 onSuccess() {
@@ -273,10 +268,10 @@ const EditProfile = () => {
         try {
           updateInformation.mutate(
             {
-              dob: settingAccount.dob || undefined,
+              dob: settingAccount.dob ?? undefined,
               gender: settingAccount.gender.key,
               name: settingAccount.name?.trim(),
-              slug: settingAccount.slug?.trim() || undefined,
+              slug: settingAccount.slug?.trim() ?? undefined,
             },
             {
               onSuccess() {
@@ -455,7 +450,7 @@ const EditProfile = () => {
           onClick={handleClose}
           onKeyDown={(e) => e.key === 'Enter' && handleClose()}
           tabIndex={1}
-          className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
+          className="bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25"
           theme="outline"
           size="24"
           fill="#FFFFFF"
@@ -463,14 +458,6 @@ const EditProfile = () => {
       </>
     ),
   })
-
-  const handleVerification = () => {
-    if (userSettingData?.isVerified) {
-      setIsModaVertificationlVisible(true)
-    } else {
-      setIsModaVertificationlVisible(true)
-    }
-  }
 
   return (
     <div className="w-full px-10">
@@ -489,7 +476,7 @@ const EditProfile = () => {
                     className="rounded-lg"
                     layout="fill"
                     objectFit="cover"
-                    src={selectedImage.avatarURL ? selectedImage.avatarURL : userSettingData.avatarUrl || ImgForEmpty}
+                    src={selectedImage.avatarURL ? selectedImage.avatarURL : userSettingData.avatarUrl ?? ImgForEmpty}
                     alt="Personal Image"
                   />
                 </div>
@@ -613,10 +600,9 @@ const EditProfile = () => {
                     <div>
                       {userSettingData.isVerified ? (
                         <div className="flex items-center justify-between">
-                          <div className="w-fit bg-green-600 py-2 px-4 text-white rounded-md">Đã xác minh</div>{' '}
-                          <Button isActive={true} isOutlinedButton={true} customCSS="p-2 hover:scale-105" type="button">
-                            Xem hình ảnh xác minh
-                          </Button>
+                          <div className="w-fit flex items-center gap-2 bg-green-600 py-2 px-4 text-white rounded-md">
+                            <CheckOne theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" /> Đã xác minh
+                          </div>
                         </div>
                       ) : (
                         <div className="flex items-center justify-between">
@@ -627,7 +613,7 @@ const EditProfile = () => {
                             customCSS="py-2 px-7 rounded-xl hover:scale-105"
                             type="button"
                             onClick={() => {
-                              handleVerification()
+                              setIsModaVertificationlVisible(true)
                             }}
                           >
                             Xác minh danh tính

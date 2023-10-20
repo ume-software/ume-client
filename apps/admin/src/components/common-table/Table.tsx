@@ -3,7 +3,7 @@ import React from 'react'
 import { Table } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 
-import Pagination, { PaginationProps } from './Pagination'
+import Pagination, { PaginationProps } from './pagination'
 
 export type ICommonTableProps = PaginationProps & {
   columns: ColumnsType<any>

@@ -120,37 +120,47 @@ const TableSkeletonLoader = () => {
   const skeletonRowCount = 2
 
   return (
-    <table className="w-full text-center">
-      <thead>
-        <tr>
-          <th className="py-2">Top</th>
-          <th className="py-2">Tên</th>
-          <th className="py-2">Số tiền</th>
-        </tr>
-      </thead>
-      <tbody>
-        {Array.from({ length: skeletonRowCount }, (_, index) => (
-          <tr key={index} className="">
-            <td className="py-2">
-              <span className="w-[100px] h-[40px]" />
-            </td>
-            <td className="py-2">
-              <div className="min-w-[150px] flex justify-center items-center gap-2">
-                <div className="relative w-8 h-8">
+    <div className="border border-gray-300 rounded-2xl p-3 animate-pulse">
+      <table className="w-full text-center">
+        <thead>
+          <tr>
+            <th className="py-2">
+              <div className="relative w-[100px] h-[40px] bg-gray-300 animate-pulse"></div>
+            </th>
+            <th className="py-2">
+              <div className="relative w-[100px] h-[40px] bg-gray-300 animate-pulse"></div>
+            </th>
+            <th className="py-2">
+              <div className="relative w-[100px] h-[40px] bg-gray-300 animate-pulse"></div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {Array.from({ length: skeletonRowCount }, (_, index) => (
+            <tr key={index} className="">
+              <td className="py-2">
+                <div className="flex items-center justify-center bg-gray-300 animate-pulse">
                   <span className="w-[100px] h-[40px]" />
                 </div>
-                <span className="w-[100px] h-[40px]" />
-              </div>
-            </td>
-            <td className="py-2">
-              <div className="flex items-center justify-center">
-                <span className="w-[100px] h-[40px]" />
-              </div>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+              </td>
+              <td className="py-2">
+                <div className="min-w-[150px] flex justify-center items-center gap-2 bg-gray-300 animate-pulse">
+                  <div className="relative w-8 h-8">
+                    <span className="w-[100px] h-[40px]" />
+                  </div>
+                  <span className="w-[100px] h-[40px] bg-gray-300 animate-pulse" />
+                </div>
+              </td>
+              <td className="py-2">
+                <div className="flex items-center justify-center bg-gray-300 animate-pulse">
+                  <span className="w-[100px] h-[40px]" />
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   )
 }
 

@@ -1,4 +1,4 @@
-import { DeleteFive, Eyes, Left, Right } from '@icon-park/react'
+import { DeleteFive, Eyes, Left, Right, Write } from '@icon-park/react'
 import ImgForEmpty from 'public/img-for-empty.png'
 
 import { ReactNode, useState } from 'react'
@@ -15,8 +15,10 @@ interface ITable {
   contentItem: string
   watchAction: boolean
   onWatch: (id?: number) => void
-  onDelete: () => void
+  editAction: boolean
+  onEdit: (id?: number) => void
   deleteAction: boolean
+  onDelete: () => void
 }
 
 const Table = ({
@@ -29,8 +31,10 @@ const Table = ({
   contentItem,
   watchAction,
   onWatch,
-  onDelete,
+  onEdit,
+  editAction,
   deleteAction,
+  onDelete,
 }: ITable) => {
   const [position, setPosition] = useState<number>(1)
 
@@ -107,6 +111,16 @@ const Table = ({
                           className="cursor-pointer"
                           onClick={() => onWatch(Number(page) * indexRow)}
                         />
+                        {editAction && (
+                          <Write
+                            theme="outline"
+                            size="20"
+                            fill="#fff"
+                            strokeLinejoin="bevel"
+                            className="cursor-pointer"
+                            onClick={() => onEdit(Number(page) * indexRow)}
+                          />
+                        )}
                         {deleteAction && (
                           <DeleteFive
                             theme="outline"
