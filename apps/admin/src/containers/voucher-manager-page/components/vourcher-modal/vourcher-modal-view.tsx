@@ -74,7 +74,7 @@ export default function VourcherModalView({ vourcherId, closeFunction, openValue
         <div className="flex-col w-auto bg-[#15151B] mt-5 px-4">
           <div className="flex w-auto px-4 border-b-2 border-[#FFFFFF80] pb-5">
             <div className="w-1/5 pr-4 mt-10">
-              <Image className="overflow-hidden rounded-2xl" width={150} height={200} src={avatarUrl!} alt="" />
+              <Image className="overflow-hidden rounded-2xl" width={150} height={200} src={avatarUrl} alt="" />
             </div>
             <div className="flex flex-col justify-end w-2/5 ">
               <div className="text-white h-14">

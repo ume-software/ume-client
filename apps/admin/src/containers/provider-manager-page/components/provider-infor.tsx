@@ -1,6 +1,7 @@
 import { Left, Right } from '@icon-park/react'
 import { Button } from '@ume/ui'
 import coinIcon from 'public/coin-icon.png'
+import EmptyErrorPic from 'public/empty_error.png'
 
 import * as React from 'react'
 
@@ -108,7 +109,6 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
       serveTime: row.bookingPeriod,
       status: row.status,
       mountMoney: row.totalCost,
-      // feedback: 'Thằng này ngáo',
       ...row,
     }
   })
@@ -120,8 +120,6 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
   const phone = providerInfo.phone
   const rating = providerInfo.rating
   const servicedTime = providerInfo.servicedTime
-  const balance = providerInfo.balance
-  const status = providerInfo.status
   const [switchTable, setSwitchTable] = React.useState(true)
 
   function handleSwitchTable() {
@@ -143,7 +141,7 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
     <div className="flex-col w-auto bg-[#15151B] mt-5 px-4">
       <div className="flex w-auto px-4 border-b-2 border-[#FFFFFF80] pb-5">
         <div className="pr-4 rounded-full">
-          <Avatar src={avatarUrl} size={200} />
+          <Avatar src={avatarUrl || EmptyErrorPic} size={200} />
         </div>
         <div className="flex flex-col justify-end w-2/5 ">
           <div className="h-12 text-white">
