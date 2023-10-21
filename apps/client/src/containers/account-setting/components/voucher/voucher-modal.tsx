@@ -112,9 +112,6 @@ export default function VourcherModal(props: {
   const issuer = user?.name
   const today = new Date().toISOString().split('T')[0]
   const createVoucherFormRef = useRef<HTMLFormElement>(null)
-
-  console.log(props.voucherSelected)
-
   const form = useFormik({
     initialValues: {
       vourcherCode: props.voucherSelected?.code ?? '',
@@ -585,7 +582,7 @@ export default function VourcherModal(props: {
               </div>
               <div className="h-12 text-white">
                 Mã* :
-                <div className="h-full inline-block w-2/3 ">
+                <div className="inline-block w-2/3 h-full ">
                   <FormInput
                     name="vourcherCode"
                     className={`${
@@ -661,7 +658,7 @@ export default function VourcherModal(props: {
           </div>
 
           <div className="flex w-auto px-4 border-b-2 border-[#FFFFFF80] pb-5">
-            <div className="flex flex-col justify-end w-3/5 mt-5 gap-3">
+            <div className="flex flex-col justify-end w-3/5 gap-3 mt-5">
               <div className="h-12 text-white">
                 Số lượng phát hành* :
                 <div className="inline-block w-1/5 ">
@@ -850,7 +847,7 @@ export default function VourcherModal(props: {
             </div>
           </div>
         </div>
-        <div className="flex justify-center pb-4 mt-6 gap-10">
+        <div className="flex justify-center gap-10 pb-4 mt-6">
           {props.voucherSelected?.status == VoucherResponseStatusEnum.Approved ? (
             <>
               <p className="text-white opacity-30">Bạn chỉ có thể chỉnh sửa voucher chưa được admin chấp nhận</p>

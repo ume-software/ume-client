@@ -9,7 +9,5 @@ export const trpcHandler = trpcNext.createNextApiHandler({
   batching: {
     enabled: true,
   },
-  onError({ error, type, path, input, ctx, req }) {
-    console.log(error)
-  },
+  onError({ error, type, path, input, ctx, req }) {},
 })

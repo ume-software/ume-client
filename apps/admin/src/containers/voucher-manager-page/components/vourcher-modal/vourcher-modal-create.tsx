@@ -205,7 +205,6 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
             reqWithValuesNotNull[key] = req[key]
           }
         }
-        console.log(reqWithValuesNotNull)
 
         createNewVoucherAdmin.mutate(reqWithValuesNotNull, {
           onSuccess: (data) => {

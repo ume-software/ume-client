@@ -70,9 +70,7 @@ const CreatePost = (props: any) => {
             })
           }
         }
-      } catch (error) {
-        console.log('error at catch', error)
-      }
+      } catch (error) {}
       return { thumbnails }
     } else {
       return { thumbnails: [] }

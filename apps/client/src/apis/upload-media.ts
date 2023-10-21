@@ -11,9 +11,7 @@ export const uploadImageBooking = async (formData) => {
     return {
       data: response,
     }
-  } catch (error) {
-    console.log('error at catch', error)
-  }
+  } catch (error) {}
 }
 
 export const uploadAudioBooking = async (formData) => {

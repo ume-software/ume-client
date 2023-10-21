@@ -40,23 +40,7 @@ export const Header = () => {
     if (!user && !adminInfo) {
       handleLogOut()
     }
-  }, [adminInfo, handleLogOut, login, user])
-
-  const test = {
-    id: '93ac1c91-8660-4589-b559-8222fbab9d1b',
-    createdAt: '2023-09-25T03:17:53.350Z',
-    updatedAt: '2023-09-25T03:17:53.350Z',
-    deletedAt: null,
-    name: 'Vo Van Que',
-    username: 'queadmin',
-    dob: '2001-05-31T17:00:00.000Z',
-    gender: 'MALE',
-    phone: '0123456789',
-    email: 'shinamonvu@gmail.com',
-    password: '$2b$10$yLZVOWv1px8mreKT4jXzEOQwgYFrXv.3kdhxFqu0dag2virW4D6WW',
-    avatarUrl: 'https://haycafe.vn/wp-content/uploads/2022/02/anh-meo-cute-hinh-cute-meo.jpg',
-    ipv4: null,
-  }
+  }, [])
 
   const handleItemSelected = (e) => {
     switch (e.key) {
