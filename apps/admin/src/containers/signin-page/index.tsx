@@ -95,11 +95,11 @@ const SigninPage = () => {
                 />
               </div>
               {errorMessage && <p className="text-xs text-ume-error">{errorMessage}</p>}
-              <div className="flex justify-center w-full">
+              <div className="flex justify-center max-w-full">
                 <Button
                   name="submit"
                   type="submit"
-                  customCSS="bg-blue-500 hover:opacoty-90 px-2 py-1
+                  customCSS="w-96 bg-blue-500 hover:opacoty-90 px-2 py-1
             hover:bg-ume-primary focus:bg-ume-primary active:bg-ume-primary/90"
                   isActive={!(form.values.username || form.values.password) || isSubmiting}
                   isLoading={isSubmiting}
