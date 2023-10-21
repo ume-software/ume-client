@@ -1,22 +1,33 @@
 import { Menu, Transition } from '@headlessui/react'
-import { CopyOne, Dot, Female, Lock, Male, More, PaperMoneyTwo, ShareTwo } from '@icon-park/react'
+import { CloseSmall, CopyOne, Dot, Female, Lock, Male, More, PaperMoneyTwo, ShareTwo } from '@icon-park/react'
+import { Button, InputWithAffix, Modal, TextArea } from '@ume/ui'
+import coin from 'public/coin-icon.png'
 import TestImage4 from 'public/cover.png'
 import detailBackground from 'public/detail-cover-background.png'
 import ImgForEmpty from 'public/img-for-empty.png'
 import lgbtIcon from 'public/rainbow-flag-11151.svg'
+import { useAuth } from '~/contexts/auth'
 
-import { Fragment, ReactElement, ReactNode, useState } from 'react'
+import { Fragment, ReactElement, useState } from 'react'
 
-import { ConfigProvider, message, theme } from 'antd'
+import { ConfigProvider, Tooltip, message, notification, theme } from 'antd'
+import { Formik } from 'formik'
 import Image, { StaticImageData } from 'next/legacy/image'
 import { useRouter } from 'next/router'
-import { UserInformationResponse } from 'ume-service-openapi'
+import {
+  ProviderConfigResponseStatusEnum,
+  UserInformationResponse,
+  UserInformationResponseGenderEnum,
+} from 'ume-service-openapi'
+import * as Yup from 'yup'
 
 import AlbumTab from './album-tab/album-tab'
-import FeedsTab from './feeds-tab'
 import InformationTab from './information-tab/information-tab'
+import PostTab from './post-tab'
 
-import { BGFullGridSkeleton } from '~/components/skeleton-load'
+import ConfirmForm from '~/components/confirm-form/confirmForm'
+import { LoginModal } from '~/components/header/login-modal.component'
+import { SkeletonDetailProvider } from '~/components/skeleton-load'
 
 import { trpc } from '~/utils/trpc'
 
@@ -27,41 +38,10 @@ interface TabDataProps {
   [key: string]: any
 }
 
-interface FeedProps {
-  feedLink: string
-  imgSrc: string | StaticImageData
-  numberLike?: number
-  numberCom?: number
+interface DonateProps {
+  donateValue: number
+  donateContent?: string
 }
-
-interface ValueGenderProps {
-  value: string
-  icon: ReactNode
-}
-
-const feedData: FeedProps[] = [
-  {
-    feedLink: '/1',
-    imgSrc: ImgForEmpty,
-    numberLike: 2,
-    numberCom: 1,
-  },
-  {
-    feedLink: '/1',
-    imgSrc: ImgForEmpty,
-    numberLike: 25,
-    numberCom: 1,
-  },
-  {
-    feedLink: '/1',
-    imgSrc: ImgForEmpty,
-  },
-  {
-    feedLink: '/1',
-    imgSrc: TestImage4,
-    numberCom: 8,
-  },
-]
 
 const moreButtonDatas: TabDataProps[] = [
   {
@@ -102,22 +82,6 @@ const moreButtonDatas: TabDataProps[] = [
   },
 ]
 
-const valueGenders: ValueGenderProps[] = [
-  {
-    value: 'MALE',
-    icon: <Male theme="outline" size="20" fill="#3463f9" />,
-  },
-  { value: 'FEMALE', icon: <Female theme="outline" size="20" fill="#f70a34" /> },
-  {
-    value: 'ORTHER',
-    icon: (
-      <div className="flex items-center">
-        <Image width={30} height={20} alt="lgbt-icon" src={lgbtIcon} layout="fixed" />
-      </div>
-    ),
-  },
-  { value: 'PRIVATE', icon: <Lock theme="outline" size="20" fill="#f7761c" /> },
-]
 const tabDatas: TabDataProps[] = [
   {
     key: 'Service',
@@ -138,8 +102,14 @@ const DetailProfileContainer = () => {
   const basePath = router.asPath.split('?')[0]
   const slug = router.query
 
+  const { isAuthenticated } = useAuth()
+  const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
+
   const [messageApi, contextHolder] = message.useMessage()
   const [providerDetail, setProviderDetail] = useState<UserInformationResponse | undefined>(undefined)
+  const [donationValues, setDonationValues] = useState<DonateProps>({ donateValue: 1 })
+  const [isModalDonationVisible, setIsModalDonationVisible] = useState<boolean>(false)
+  const [isModalConfirmationVisible, setIsModalConfirmationVisible] = useState<boolean>(false)
   const { isLoading: isProviderDetailLoading } = trpc.useQuery(['booking.getUserBySlug', slug.profileId!.toString()], {
     onSuccess(data) {
       if (data.data.id) {
@@ -152,6 +122,8 @@ const DetailProfileContainer = () => {
       router.replace('/404')
     },
   })
+  const donationForRecipient = trpc.useMutation(['booking.donationForRecipient'])
+  const utils = trpc.useContext()
 
   const [selectedTab, setSelectedTab] = useState<TabDataProps>(
     tabDatas.find((tab) => {
@@ -199,8 +171,173 @@ const DetailProfileContainer = () => {
         content: 'Mở facebook thành công',
         duration: 2,
       })
+    } else if (item.key == 'Donate') {
+      if (providerDetail && isAuthenticated) {
+        setIsModalDonationVisible(true)
+      } else {
+        setIsModalLoginVisible(true)
+      }
     }
   }
+
+  const handleCloseDonationModal = () => {
+    setIsModalDonationVisible(false)
+  }
+  const handleCloseComfirmModal = () => {
+    setIsModalConfirmationVisible(false)
+  }
+
+  const confirmModal = Modal.useEditableForm({
+    onOK: () => {},
+    onClose: handleCloseComfirmModal,
+    show: isModalConfirmationVisible,
+    form: (
+      <>
+        <ConfirmForm
+          title="Donate cho nhà cung cấp"
+          description="Bạn có chấp nhận donate cho nhà cung cấp này hay không?"
+          onClose={handleCloseComfirmModal}
+          onOk={() => {
+            donationForRecipient.mutate(
+              {
+                recipientId: providerDetail?.id ?? '',
+                amount: donationValues.donateValue,
+                message: donationValues.donateContent,
+              },
+              {
+                onSuccess() {
+                  notification.success({
+                    message: 'Donate thành công!',
+                    description: 'Nhà cung cấp đã nhận được tấm lòng của bạn :>',
+                    placement: 'bottomLeft',
+                  })
+                  utils.invalidateQueries('identity.account-balance')
+                  handleCloseComfirmModal()
+                  handleCloseDonationModal()
+                },
+                onError() {
+                  notification.error({
+                    message: 'Donate thất bại!',
+                    description: 'Có lỗi trong hệ thống của chúng tôi. Vui lòng thử lại sau :<',
+                    placement: 'bottomLeft',
+                  })
+                },
+              },
+            )
+          }}
+        />
+      </>
+    ),
+    backgroundColor: '#15151b',
+    closeWhenClickOutSide: true,
+    closeButtonOnConner: (
+      <>
+        <CloseSmall
+          onClick={handleCloseComfirmModal}
+          onKeyDown={(e) => e.key === 'Enter' && handleCloseComfirmModal()}
+          tabIndex={1}
+          className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
+          theme="outline"
+          size="24"
+          fill="#FFFFFF"
+        />
+      </>
+    ),
+  })
+
+  const validationSchema = Yup.object().shape({
+    donateValue: Yup.string()
+      .required('Xin hãy nhập số tiền')
+      .matches(/^\d+$/)
+      .min(1)
+      .max(7, 'Chỉ được nhập nhiều nhất 7 chữ số'),
+  })
+
+  const donateModal = Modal.useEditableForm({
+    onOK: () => {},
+    onClose: handleCloseDonationModal,
+    title: <p className="text-white">Tặng quà</p>,
+    show: isModalDonationVisible,
+    form: (
+      <>
+        <Formik
+          initialValues={{
+            donateValue: '1',
+            donateContent: undefined,
+          }}
+          onSubmit={(values) => {
+            setDonationValues({ donateValue: Number(values.donateValue), donateContent: values.donateContent })
+          }}
+          validationSchema={validationSchema}
+        >
+          {({ handleSubmit, handleChange, handleBlur, values, errors }) => (
+            <div className="text-white flex flex-col gap-5 p-10">
+              <div className="space-y-2">
+                <label>Tiền quà: </label>
+                <InputWithAffix
+                  placeholder="Tiền donate"
+                  value={values.donateValue}
+                  name="donateValue"
+                  type="number"
+                  min={1}
+                  onChange={handleChange}
+                  className="w-full max-h-[50px] bg-zinc-800 border border-white border-opacity-30 rounded-xl my-2"
+                  styleInput={`bg-zinc-800 rounded-xl border-none focus:outline-none`}
+                  iconStyle="border-none"
+                  position="right"
+                  component={<Image src={coin} width={50} height={50} alt="coin" />}
+                  autoComplete="off"
+                  onBlur={handleBlur}
+                />
+                {!!errors.donateValue && <p className="pl-3 text-red-500 text-xs">{errors.donateValue}</p>}
+              </div>
+              <div className="space-y-2">
+                <label>Nội dung: </label>
+                <TextArea
+                  name="donateContent"
+                  className="bg-[#413F4D] w-full max-h-[140px]"
+                  rows={5}
+                  value={values.donateContent}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="w-full text-center">
+                <Button
+                  customCSS={`text-md py-2 px-5 rounded-xl ${
+                    !errors.donateValue ? 'hover:scale-105' : 'opacity-30 cursor-not-allowed'
+                  }`}
+                  type="button"
+                  isActive={!errors.donateValue}
+                  isOutlinedButton={true}
+                  onClick={() => {
+                    handleSubmit()
+                    setIsModalConfirmationVisible(true)
+                  }}
+                >
+                  Chấp nhận
+                </Button>
+              </div>
+            </div>
+          )}
+        </Formik>
+      </>
+    ),
+    backgroundColor: '#15151b',
+    closeWhenClickOutSide: true,
+    closeButtonOnConner: (
+      <>
+        <CloseSmall
+          onClick={handleCloseDonationModal}
+          onKeyDown={(e) => e.key === 'Enter' && handleCloseDonationModal()}
+          tabIndex={1}
+          className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
+          theme="outline"
+          size="24"
+          fill="#FFFFFF"
+        />
+      </>
+    ),
+  })
 
   return (
     <>
@@ -211,26 +348,13 @@ const DetailProfileContainer = () => {
       >
         {contextHolder}
       </ConfigProvider>
+      <LoginModal isModalLoginVisible={isModalLoginVisible} setIsModalLoginVisible={setIsModalLoginVisible} />
+
+      {isModalDonationVisible && donateModal}
+      {isModalConfirmationVisible && confirmModal}
 
       {!providerDetail && isProviderDetailLoading ? (
-        <>
-          <div style={{ height: '380px', margin: '0 70px' }}>
-            <div className="absolute top-16 left-0" style={{ width: '100%', height: '416px' }}>
-              <Image layout="fill" src={detailBackground} alt="background" />
-            </div>
-          </div>
-          <div className="grid mt-10 w-full h-screen grid-cols-10 gap-10 px-10">
-            <div className="col-span-2">
-              <BGFullGridSkeleton />
-            </div>
-            <div className="col-span-5">
-              <BGFullGridSkeleton />
-            </div>
-            <div className="col-span-3">
-              <BGFullGridSkeleton />
-            </div>
-          </div>
-        </>
+        <SkeletonDetailProvider />
       ) : (
         <>
           <div style={{ height: '380px', margin: '0 70px' }}>
@@ -254,16 +378,39 @@ const DetailProfileContainer = () => {
                     <div className="flex flex-row items-center gap-3">
                       <div className="bg-gray-700 p-2 rounded-full flex items-center gap-2">
                         <div>
-                          {valueGenders.map((gender) => (
-                            <div key={gender.value}>{gender.value == providerDetail?.gender && gender.icon}</div>
-                          ))}
+                          {providerDetail?.gender == UserInformationResponseGenderEnum.Male && (
+                            <Male theme="outline" size="20" fill="#3463f9" />
+                          )}
+                          {providerDetail?.gender == UserInformationResponseGenderEnum.Female && (
+                            <Female theme="outline" size="20" fill="#f70a34" />
+                          )}
+                          {providerDetail?.gender == UserInformationResponseGenderEnum.Other && (
+                            <div className="flex items-center">
+                              <Image width={30} height={20} alt="lgbt-icon" src={lgbtIcon} layout="fixed" />
+                            </div>
+                          )}
+                          {providerDetail?.gender == UserInformationResponseGenderEnum.Private && (
+                            <Lock theme="outline" size="20" fill="#f7761c" />
+                          )}
                         </div>
                         <p>{caculateAge(providerDetail?.dob)}</p>
                       </div>
-                      <div className="bg-gray-700 p-2 rounded-full flex items-center gap-1">
-                        <Dot theme="multi-color" size="24" fill={providerDetail?.isOnline ? '#008000' : '#FF0000'} />
-                        <p>{providerDetail?.providerConfig?.status}</p>
-                      </div>
+                      <Tooltip placement="bottomLeft" title={`${providerDetail?.isOnline ? 'Online' : 'Offline'}`}>
+                        <div className="bg-gray-700 p-2 rounded-full flex items-center gap-1">
+                          <Dot theme="multi-color" size="24" fill={providerDetail?.isOnline ? '#008000' : '#FF0000'} />
+                          <p>
+                            {providerDetail?.providerConfig?.status == ProviderConfigResponseStatusEnum.Activated &&
+                              'Sẵn sàng'}
+                          </p>
+                          <p>
+                            {providerDetail?.providerConfig?.status == ProviderConfigResponseStatusEnum.Busy && 'Bận'}
+                          </p>
+                          <p>
+                            {providerDetail?.providerConfig?.status ==
+                              ProviderConfigResponseStatusEnum.StoppedAcceptingBooking && 'Ngừng nhận đơn'}
+                          </p>
+                        </div>
+                      </Tooltip>
                     </div>
                   </div>
                 </div>
@@ -295,17 +442,13 @@ const DetailProfileContainer = () => {
                           {moreButtonDatas.map((item, index) => (
                             <div
                               key={index}
-                              className="hover:bg-purple-600 hover:text-white group rounded-md px-2 py-1"
+                              className="hover:bg-purple-600 hover:text-white group cursor-pointer rounded-md px-2 py-1"
+                              onClick={() => {
+                                handleMenuButtonAction(item)
+                              }}
                             >
                               <div className="scale-x-100 group-hover:scale-x-95 flex items-center justify-between gap-2 group-hover:-translate-x-2 duration-300">
-                                <div
-                                  className="cursor-pointer"
-                                  onClick={() => {
-                                    handleMenuButtonAction(item)
-                                  }}
-                                >
-                                  {item.label}
-                                </div>
+                                <div>{item.label}</div>
                                 {item.icon}
                               </div>
                             </div>
@@ -338,7 +481,7 @@ const DetailProfileContainer = () => {
               <div className="flex justify-center my-10">
                 {selectedTab.key == 'Service' && <InformationTab data={providerDetail!} />}
                 {selectedTab.key == 'Album' && <AlbumTab data={providerDetail!} />}
-                {selectedTab.key == 'Post' && <FeedsTab datas={feedData} />}
+                {selectedTab.key == 'Post' && <PostTab providerId={providerDetail!.slug} />}
               </div>
             </span>
           </div>

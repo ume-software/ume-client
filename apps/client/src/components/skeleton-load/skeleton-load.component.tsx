@@ -1,4 +1,9 @@
+import detailBackground from 'public/detail-cover-background.png'
+import ImgForEmpty from 'public/img-for-empty.png'
+
 import React from 'react'
+
+import Image from 'next/legacy/image'
 
 const PostSkeletonLoader = () => {
   return (
@@ -241,6 +246,44 @@ const SkeletonForAccountSetting = () => {
   )
 }
 
+const SkeletonDetailProvider = () => {
+  return (
+    <>
+      <div style={{ height: '380px', margin: '0 70px' }}>
+        <div className="absolute top-16 left-0" style={{ width: '100%', height: '416px' }}>
+          <Image layout="fill" src={detailBackground} alt="background" />
+        </div>
+        <div className="h-full flex flex-col justify-end gap-5">
+          <div className="flex flex-row justify-between md:items-center items-baseline px-7 pb-5">
+            <div className="flex md:flex-row md:gap-x-8 flex-col gap-y-2" style={{ zIndex: 2 }}>
+              <div style={{ width: 194, height: 182, position: 'relative' }}>
+                <Image
+                  className="absolute rounded-full"
+                  layout="fill"
+                  objectFit="cover"
+                  src={ImgForEmpty}
+                  alt="avatar"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="grid mt-10 w-full h-screen grid-cols-10 gap-10 px-10">
+        <div className="col-span-2">
+          <BGFullGridSkeleton />
+        </div>
+        <div className="col-span-5">
+          <BGFullGridSkeleton />
+        </div>
+        <div className="col-span-3">
+          <BGFullGridSkeleton />
+        </div>
+      </div>
+    </>
+  )
+}
+
 export {
   PostSkeletonLoader,
   CommentSkeletonLoader,
@@ -252,4 +295,5 @@ export {
   BGFullGridSkeleton,
   ChatSkeleton,
   SkeletonForAccountSetting,
+  SkeletonDetailProvider,
 }

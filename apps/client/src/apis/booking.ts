@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { createRouter } from './configurations'
 import {
   createBooking,
+  donationForRecipient,
   getAlbumByUserSlug,
   getAllNotice,
   getCurrentBookingForProvider,
@@ -10,6 +11,7 @@ import {
   getHotProviders,
   getListService,
   getNoticeAmount,
+  getPostByUserSlug,
   getProviders,
   getUserBySlug,
   postFeedback,
@@ -110,5 +112,21 @@ export const bookingRouter = createRouter()
     input: z.object({ slug: z.string(), page: z.optional(z.string()), limit: z.optional(z.string()) }),
     resolve: async ({ ctx, input }) => {
       return await getAlbumByUserSlug(input, ctx)
+    },
+  })
+  .mutation('donationForRecipient', {
+    input: z.object({
+      recipientId: z.string(),
+      amount: z.number(),
+      message: z.optional(z.string()),
+    }),
+    resolve: async ({ ctx, input }) => {
+      return await donationForRecipient(input, ctx)
+    },
+  })
+  .query('getPostByUserSlug', {
+    input: z.object({ userSlug: z.string(), page: z.string() }),
+    resolve: async ({ ctx, input }) => {
+      return await getPostByUserSlug(input, ctx)
     },
   })

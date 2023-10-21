@@ -3,11 +3,11 @@ import { Modal } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
 import PostByID from '~/containers/community-page/components/post-by-ID'
 
-import { ReactNode, useState } from 'react'
+import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 
 import Image from 'next/legacy/image'
 import { useRouter } from 'next/router'
-import { DetailAlbumResponse, UserInformationResponse } from 'ume-service-openapi'
+import { UserInformationResponse } from 'ume-service-openapi'
 
 import { trpc } from '~/utils/trpc'
 
@@ -15,18 +15,26 @@ const AlbumTab = (props: { data: UserInformationResponse }) => {
   const router = useRouter()
   const slug = router.query
 
-  const [album, setAlbum] = useState<DetailAlbumResponse[] | undefined>()
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [scrollPosition, setScrollPosition] = useState(0)
+  const [page, setPage] = useState<string>('1')
+
+  const [album, setAlbum] = useState<any>()
   const [formPost, setFormPost] = useState<ReactNode>(<></>)
 
-  const { isLoading: isLoadingAlbum } = trpc.useQuery(
-    ['booking.getAlbumByUserSlug', { slug: slug.profileId?.toString() || props.data.slug }],
+  const {
+    data: AlbumData,
+    isLoading: isLoadingAlbum,
+    isFetching: isAlbumFetching,
+  } = trpc.useQuery(
+    ['booking.getAlbumByUserSlug', { slug: slug.profileId?.toString() ?? props.data.slug, limit: '8', page: page }],
     {
       refetchOnWindowFocus: false,
       refetchOnReconnect: 'always',
       cacheTime: 0,
       refetchOnMount: true,
       onSuccess(data) {
-        setAlbum(data.data.row)
+        setAlbum((prevData) => [...(prevData ?? []), ...(data?.data?.row ?? [])])
       },
     },
   )
@@ -64,10 +72,34 @@ const AlbumTab = (props: { data: UserInformationResponse }) => {
     setIsPostModal(true)
   }
 
+  useEffect(() => {
+    window.addEventListener('scroll', onScroll)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const onScroll = useCallback(() => {
+    const { scrollY } = window
+    setScrollPosition(scrollY)
+  }, [])
+
+  useEffect(() => {
+    if (containerRef.current) {
+      const { scrollHeight } = containerRef.current
+      const isAtEnd = scrollPosition >= scrollHeight - 500
+      if (isAtEnd && Number(AlbumData?.data.count) > 8 * Number(page)) {
+        setPage(String(Number(page) + 1))
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scrollPosition])
+
   return (
     <>
       {isPostModal && PostModal}
-      <div className="w-full px-10">
+      <div ref={containerRef} className="w-full px-10">
         {album && album.length > 0 ? (
           <>
             <div className="w-full grid grid-cols-8 gap-10">
@@ -90,7 +122,7 @@ const AlbumTab = (props: { data: UserInformationResponse }) => {
           </>
         ) : (
           <div className="w-full h-screen mt-3 text-center">
-            {isLoadingAlbum ? (
+            {isLoadingAlbum ?? isAlbumFetching ? (
               <>
                 <div className="w-full grid grid-cols-8 gap-10">
                   {[...Array(8)].map((_, index) => (

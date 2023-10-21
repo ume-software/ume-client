@@ -1,12 +1,12 @@
-import { GrinningFaceWithOpenMouth, Picture, Send, Star } from '@icon-park/react'
+import { Picture, Send } from '@icon-park/react'
 import { Button, InputWithButton } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
-import { Carousel, Rate } from 'antd'
+import { Rate } from 'antd'
 import Image from 'next/legacy/image'
-import { FeedbackPagingResponse, ProviderServiceResponse } from 'ume-service-openapi'
+import { ProviderServiceResponse } from 'ume-service-openapi'
 
 import { CommentSkeletonLoader } from '~/components/skeleton-load'
 
@@ -18,7 +18,7 @@ interface PostFeedbackProps {
 }
 
 const Service = (props: { data: ProviderServiceResponse }) => {
-  const feedbackGame = trpc.useQuery(['booking.getFeedbackServiceById', props.data.id!.toString()]) || undefined
+  const feedbackGame = trpc.useQuery(['booking.getFeedbackServiceById', props.data.id!.toString()]) ?? undefined
   const postFeedback = trpc.useMutation(['booking.postFeedback'])
 
   const [feedback, setFeedback] = useState<PostFeedbackProps>({ rate: 5, content: '' })
@@ -70,7 +70,7 @@ const Service = (props: { data: ProviderServiceResponse }) => {
                         className="object-cover rounded-full"
                         width={55}
                         height={55}
-                        src={feedback?.booking?.booker?.avatarUrl || ImgForEmpty}
+                        src={feedback?.booking?.booker?.avatarUrl ?? ImgForEmpty}
                         alt="Empty Image"
                       />
                     </div>
