@@ -11,8 +11,6 @@ const removeItem = (key: string) => {
 const getItem = (key: string) => {
   if (typeof window !== 'undefined') {
     return localStorage.getItem(key) ? JSON.parse(localStorage.getItem(key) || '') : undefined
-  } else {
-    console.log('You are on the server')
   }
 }
 
