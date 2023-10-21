@@ -1,6 +1,6 @@
 import { Button, FieldLabel, FormInput } from '@ume/ui'
 import { useAuth } from '~/contexts/auth'
-import { getItem } from '~/hooks/localHooks'
+import { getItem, setItem } from '~/hooks/localHooks'
 
 import { useEffect, useState } from 'react'
 
@@ -38,6 +38,7 @@ const SigninPage = () => {
       signin.mutate(values, {
         onSuccess: (response) => {
           login(response.data.admin as any)
+          setItem('user', response.data.admin)
           setSubmiting(false)
           router.push('/dashboard')
         },
@@ -54,7 +55,7 @@ const SigninPage = () => {
     if (adminInfo) {
       router.push('/dashboard')
     }
-  }, [adminInfo])
+  }, [adminInfo, router])
 
   return (
     <>
@@ -94,7 +95,7 @@ const SigninPage = () => {
                 />
               </div>
               {errorMessage && <p className="text-xs text-ume-error">{errorMessage}</p>}
-              <div className="w-full flex justify-center">
+              <div className="flex justify-center w-full">
                 <Button
                   name="submit"
                   type="submit"

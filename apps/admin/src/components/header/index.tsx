@@ -1,26 +1,32 @@
 import { Remind } from '@icon-park/react'
 import emptyPic from 'public/empty_error.png'
+import { useAuth } from '~/contexts/auth'
 import { getItem, removeItem } from '~/hooks/localHooks'
 
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 
 import { Badge, Dropdown, Space } from 'antd'
+import { log } from 'console'
 import Cookies from 'js-cookie'
 import Image from 'next/legacy/image'
 import { useRouter } from 'next/router'
 
 export const Header = () => {
   const router = useRouter()
-  function handleLogOut() {
+  const { user, login, logout } = useAuth()
+
+  const handleLogOut = useCallback(() => {
     removeItem('user')
     Cookies.remove('refreshToken')
     Cookies.remove('accessToken')
+    logout()
     router.push('/signin')
-  }
+  }, [router, logout])
+
   const items = [
     {
       key: 'logOut',
-      label: <div className="active:bg-gray-500 text-white p-2">Đăng xuất</div>,
+      label: <div className="p-2 text-white active:bg-gray-500">Đăng xuất</div>,
     },
   ]
 
@@ -28,11 +34,13 @@ export const Header = () => {
 
   useEffect(() => {
     if (adminInfo) {
-      return
-    } else {
+      login(adminInfo)
+    }
+
+    if (!user && !adminInfo) {
       handleLogOut()
     }
-  }, [adminInfo])
+  }, [adminInfo, handleLogOut, login, user])
 
   const test = {
     id: '93ac1c91-8660-4589-b559-8222fbab9d1b',
@@ -58,7 +66,7 @@ export const Header = () => {
     }
   }
   return (
-    <div className="fixed top-0 min-w-full h-16 z-40 bg-umeHeader px-7 shadow-md">
+    <div className="fixed top-0 z-40 h-16 min-w-full shadow-md bg-umeHeader px-7">
       <div className="flex items-center justify-end flex-1 h-full align-middle">
         <Space>
           <div className="mr-5">
