@@ -5,6 +5,7 @@ import { parse } from 'cookie'
 import {
   BookingApi,
   BookingProviderRequest,
+  DonationApi,
   NoticeApi,
   ProviderApi,
   ProviderServiceApi,
@@ -261,6 +262,46 @@ export const postFeedback = async (
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
       message: error.message || 'Fail to create get album',
+    })
+  }
+}
+
+export const donationForRecipient = async (query: { recipientId: string; amount: number; message?: string }, ctx) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie)
+    const respone = await new DonationApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).donationForRecipient({ recipientId: query.recipientId, amount: query.amount, message: query.message })
+    return {
+      data: respone.data,
+      success: true,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to donate',
+    })
+  }
+}
+
+export const getPostByUserSlug = async (query: { userSlug: string; page: string }, ctx) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie)
+    const respone = await new UserApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).getPostsByUserSlug(query.userSlug, '8', query.page)
+    return {
+      data: respone.data,
+      success: true,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to get post by user slug',
     })
   }
 }

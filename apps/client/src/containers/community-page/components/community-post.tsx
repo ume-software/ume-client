@@ -4,17 +4,7 @@ import { Modal } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
 import { useAuth } from '~/contexts/auth'
 
-import {
-  Dispatch,
-  Fragment,
-  ReactNode,
-  SetStateAction,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react'
+import { Dispatch, Fragment, ReactNode, SetStateAction, useEffect, useRef, useState } from 'react'
 
 import Image from 'next/legacy/image'
 import Link from 'next/link'
@@ -163,7 +153,7 @@ const CommunityPost = (props: CommunityPostProps) => {
                 className="absolute rounded-full"
                 layout="fill"
                 objectFit="cover"
-                src={props.data?.user.avatarUrl || ImgForEmpty}
+                src={props.data?.user.avatarUrl ?? ImgForEmpty}
                 alt="Provider Image"
               />
             </Link>
