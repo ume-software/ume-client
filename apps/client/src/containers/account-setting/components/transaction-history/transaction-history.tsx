@@ -45,15 +45,13 @@ const TransactionHistory = () => {
     setTransactionHistoryArray(resultArray)
   }, [transactionHistory])
 
-  console.log(transactionHistory)
-
   return (
     <>
       <div className="w-full px-10">
         <p className="text-4xl font-bold">Lịch sử giao dịch</p>
         {!isTransactionHistoryLoading && transactionHistoryArray ? (
           <>
-            <div className="flex flex-col gap-5 mt-10 pr-5 space-y-10">
+            <div className="flex flex-col gap-5 pr-5 mt-10 space-y-10">
               <ColumnChart />
               <div className="flex flex-col gap-3">
                 <p className="text-xl font-bold">Chi tiết giao dịch</p>

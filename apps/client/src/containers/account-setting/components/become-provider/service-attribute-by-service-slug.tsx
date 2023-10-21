@@ -24,7 +24,6 @@ const ServiceByServiceSlug = (props: { serviceId: string; index: number }) => {
     {
       onSuccess(data) {
         setServiceAttribute(data.data.row)
-        console.log(data.data.row)
       },
       enabled: !!props.serviceId,
     },
@@ -37,11 +36,9 @@ const ServiceByServiceSlug = (props: { serviceId: string; index: number }) => {
     type: '',
     isShow: false,
   })
-  console.log(props.serviceId)
 
   const handleAddAttribute = (name: string, index: number) => {
     setServiceAttributeArray([...(serviceAttributeArray ?? []), (serviceAttributeArray ?? [])[index]])
-    console.log('áassaas')
   }
 
   return (

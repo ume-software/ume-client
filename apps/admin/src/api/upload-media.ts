@@ -11,7 +11,5 @@ export const uploadImageVoucher = async (formData) => {
     return {
       data: response,
     }
-  } catch (error) {
-    console.log('error at catch', error)
-  }
+  } catch (error) {}
 }

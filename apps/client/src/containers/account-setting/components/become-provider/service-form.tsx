@@ -558,7 +558,6 @@ const AddSkillForm = () => {
             }
           }),
       }
-      console.log(req)
 
       if (attributes[index].id) {
         updateProvicerService.mutate(

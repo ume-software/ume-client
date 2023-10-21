@@ -108,9 +108,7 @@ export const RechargeModal = ({ setShowRechargeModal, showRechargeModal }: IRech
                             setQRContent(data.data)
                           }
                         },
-                        onError: (error) => {
-                          console.log(error)
-                        },
+                        onError: (error) => {},
                       },
                     )
                   }}
