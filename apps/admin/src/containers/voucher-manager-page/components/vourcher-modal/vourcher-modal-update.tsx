@@ -6,7 +6,7 @@ import { uploadImageVoucher } from '~/api/upload-media'
 import * as React from 'react'
 import { useRef, useState } from 'react'
 
-import { Select, Space, notification } from 'antd'
+import { Select, notification } from 'antd'
 import { FormikErrors, useFormik } from 'formik'
 import Image from 'next/legacy/image'
 import {
@@ -56,25 +56,30 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
 
   const updateVoucherAdmin = trpc.useMutation(['voucher.updateVoucherAdmin'])
   const MAX_NUMBER = '100000'
+  const MAX_NUMBER_DISCOUNT = '100'
   const ImageInit = voucherDetails?.image || empty_img
   const nameInit = voucherDetails?.name || ''
   const vourcherCodeInit = voucherDetails?.code || ''
   const issuer = voucherDetails?.admin?.name || voucherDetails?.provider?.name || ''
   const approverInit = voucherDetails?.admin?.name || ''
-  const statusInit = voucherDetails?.status
+  const statusInit = voucherDetails?.status ?? ''
   const createAt = voucherDetails?.createdAt ? new Date(voucherDetails?.createdAt).toLocaleDateString('en-GB') : ''
   const endDateInit = voucherDetails?.endDate ? new Date(voucherDetails?.endDate).toISOString().split('T')[0] : ''
-  const numVoucherInit = voucherDetails?.numberIssued
-  const numUserCanUseInit = voucherDetails?.numberUsablePerBooker
-  const typeVoucherInit = voucherDetails?.type
-  const applyTimeInit = voucherDetails?.applyISODayOfWeek
-  const numVoucherInDayInit = voucherDetails?.dailyNumberIssued
-  const numUserCanUseInDayInit = voucherDetails?.dailyUsageLimitPerBooker
-  const minimizeInit = voucherDetails?.maximumDiscountValue
-  const audienceInit = voucherDetails?.recipientType
-  const descriptionInit = voucherDetails?.description
+  const numVoucherInit = voucherDetails?.numberIssued ?? 0
+  const numUserCanUseInit = voucherDetails?.numberUsablePerBooker ?? 0
+  const typeVoucherInit = voucherDetails?.type ?? ''
+  const applyTimeInit = voucherDetails?.applyISODayOfWeek ?? []
+  const numVoucherInDayInit = voucherDetails?.dailyNumberIssued ?? 0
+  const numUserCanUseInDayInit = voucherDetails?.dailyUsageLimitPerBooker ?? ''
+  const minimizeInit = voucherDetails?.discountValue ?? 0
+  const audienceInit = voucherDetails?.recipientType ?? 0
+  const descriptionInit = voucherDetails?.description ?? ''
   const contentInit = 'SOME THING WRONG'
   const discountUnitInit = voucherDetails?.discountUnit
+  const minimumBookingDurationForUsageInit = voucherDetails?.minimumBookingDurationForUsage ?? 0
+  const minimumBookingTotalPriceForUsageInit = voucherDetails?.minimumBookingTotalPriceForUsage ?? 0
+  const maximumDiscountValueInit = voucherDetails?.maximumDiscountValue ?? 0
+
   const titleValue = 'Thông Tin Khuyến Mãi'
   const [isSubmiting, setSubmiting] = useState(false)
   interface IFormValues {
@@ -95,6 +100,9 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
     status: any
     numUserCanUse: number
     numUserCanUseInDay: number
+    minimumBookingDurationForUsage: number
+    minimumBookingTotalPriceForUsage: number
+    maximumDiscountValue: number
   }
   const validate = (values: IFormValues): FormikErrors<IFormValues> => {
     const errors: FormikErrors<IFormValues> = {}
@@ -119,6 +127,9 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
       status: statusInit,
       numUserCanUse: numUserCanUseInit,
       numUserCanUseInDay: numUserCanUseInDayInit,
+      minimumBookingDurationForUsage: minimumBookingDurationForUsageInit,
+      minimumBookingTotalPriceForUsage: minimumBookingTotalPriceForUsageInit,
+      maximumDiscountValue: maximumDiscountValueInit,
     },
     validationSchema: Yup.object({
       name: Yup.string().required('Name là bắt buộc'),
@@ -151,6 +162,9 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
     form.setFieldValue('status', statusInit)
     form.setFieldValue('numUserCanUse', numUserCanUseInit)
     form.setFieldValue('numUserCanUseInDay', numUserCanUseInDayInit)
+    form.setFieldValue('minimumBookingDurationForUsage', minimumBookingDurationForUsageInit)
+    form.setFieldValue('minimumBookingTotalPriceForUsage', minimumBookingTotalPriceForUsageInit)
+    form.setFieldValue('maximumDiscountValue', maximumDiscountValueInit)
   }, [endDateInit])
   const mappingRecipientType = {
     ALL: 'Tất cả',
@@ -472,14 +486,14 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                       disabled={false}
                       onChange={(e) => {
                         const newValue = parseInt(e.target.value)
-                        if (!isNaN(newValue) && newValue >= 0) {
+                        if (!isNaN(newValue) && newValue >= 1) {
                           if (newValue > parseInt(MAX_NUMBER)) {
                             e.target.value = MAX_NUMBER
                           } else {
                             e.target.value = newValue.toString()
                           }
                         } else {
-                          e.target.value = '0'
+                          e.target.value = '1'
                         }
                         form.handleChange(e)
                       }}
@@ -503,14 +517,14 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                       errorMessage={form.errors.numUserCanUse}
                       onChange={(e) => {
                         const newValue = parseInt(e.target.value)
-                        if (!isNaN(newValue) && newValue >= 0) {
+                        if (!isNaN(newValue) && newValue >= 1) {
                           if (newValue > parseInt(MAX_NUMBER)) {
                             e.target.value = MAX_NUMBER
                           } else {
                             e.target.value = newValue.toString()
                           }
                         } else {
-                          e.target.value = '0'
+                          e.target.value = '1'
                         }
                         form.handleChange(e)
                       }}
@@ -589,6 +603,38 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                     ]}
                   ></Select>
                 </div>
+                <div className="h-12 text-white">
+                  Khuyến mãi dùng cho hóa đơn có xu tối thiểu:
+                  <div className="inline-block w-1/5 ">
+                    <FormInput
+                      name="minimumBookingTotalPriceForUsage"
+                      className="bg-[#413F4D] border-2 border-[#FFFFFF] h-8 ml-4 border-opacity-30"
+                      placeholder="Số Lượng"
+                      value={form.values.minimumBookingTotalPriceForUsage}
+                      onBlur={form.handleBlur}
+                      error={
+                        !!form.errors.minimumBookingTotalPriceForUsage && form.touched.minimumBookingTotalPriceForUsage
+                      }
+                      errorMessage={form.errors.minimumBookingTotalPriceForUsage}
+                      onChange={(e) => {
+                        const newValue = parseInt(e.target.value)
+                        if (!isNaN(newValue) && newValue >= 0) {
+                          if (newValue > parseInt(MAX_NUMBER)) {
+                            e.target.value = MAX_NUMBER
+                          } else {
+                            e.target.value = newValue.toString()
+                          }
+                        } else {
+                          e.target.value = '0'
+                        }
+                        form.handleChange(e)
+                      }}
+                      type="number"
+                      min={0}
+                      max={100000}
+                    />
+                  </div>
+                </div>
               </div>
               <div className="flex flex-col justify-end w-2/5 ">
                 <div className="h-12 text-white">
@@ -604,14 +650,14 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                       errorMessage={form.errors.numVoucherInDay}
                       onChange={(e) => {
                         const newValue = parseInt(e.target.value)
-                        if (!isNaN(newValue) && newValue >= 0) {
+                        if (!isNaN(newValue) && newValue >= 1) {
                           if (newValue > parseInt(MAX_NUMBER)) {
                             e.target.value = MAX_NUMBER
                           } else {
                             e.target.value = newValue.toString()
                           }
                         } else {
-                          e.target.value = '0'
+                          e.target.value = '1'
                         }
                         form.handleChange(e)
                       }}
@@ -634,14 +680,14 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                       errorMessage={form.errors.numUserCanUseInDay}
                       onChange={(e) => {
                         const newValue = parseInt(e.target.value)
-                        if (!isNaN(newValue) && newValue >= 0) {
+                        if (!isNaN(newValue) && newValue >= 1) {
                           if (newValue > parseInt(MAX_NUMBER)) {
                             e.target.value = MAX_NUMBER
                           } else {
                             e.target.value = newValue.toString()
                           }
                         } else {
-                          e.target.value = '0'
+                          e.target.value = '1'
                         }
                         form.handleChange(e)
                       }}
@@ -651,12 +697,12 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                     />
                   </div>
                 </div>
-                <div className="h-12 text-white">
-                  Giảm tối đa:
-                  <div className="inline-block w-1/4 ">
+                <div className="flex items-baseline h-12 text-white">
+                  <span className="h-8">Giảm :</span>
+                  <div className="inline-block w-2/12 ml-1 ">
                     <FormInput
                       name="minimize"
-                      className="bg-[#413F4D]  border-2 border-[#FFFFFF] h-8 ml-4 border-opacity-30"
+                      className="bg-[#413F4D]  border-2 border-[#FFFFFF] h-8 border-opacity-30"
                       placeholder="Số Lượng"
                       value={form.values.minimize}
                       onBlur={form.handleBlur}
@@ -664,14 +710,14 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                       errorMessage={form.errors.minimize}
                       onChange={(e) => {
                         const newValue = parseInt(e.target.value)
-                        if (!isNaN(newValue) && newValue >= 0) {
-                          if (newValue > parseInt(MAX_NUMBER)) {
-                            e.target.value = MAX_NUMBER
+                        if (!isNaN(newValue) && newValue >= 1) {
+                          if (newValue > parseInt(MAX_NUMBER_DISCOUNT)) {
+                            e.target.value = MAX_NUMBER_DISCOUNT
                           } else {
                             e.target.value = newValue.toString()
                           }
                         } else {
-                          e.target.value = '0'
+                          e.target.value = '1'
                         }
                         form.handleChange(e)
                       }}
@@ -680,7 +726,7 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                       max={100}
                     />
                   </div>
-                  <div className="inline-block w-1/4 ml-1 ">
+                  <div className="inline-block w-2/12 ml-1 ">
                     <Select
                       showSearch
                       placeholder="Loại"
@@ -689,8 +735,7 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                       filterOption={filterOptionDisCountUnit}
                       value={form.values.discountUnit}
                       style={{
-                        minWidth: '4rem',
-                        marginLeft: '1rem',
+                        minWidth: '2rem',
                       }}
                       options={[
                         {
@@ -699,11 +744,44 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                         },
                         {
                           value: CreateVoucherRequestDiscountUnitEnum.Cash,
-                          label: 'k/VND',
+                          label: 'xu',
                         },
                       ]}
                     />
                   </div>
+                  {form.values.discountUnit == CreateVoucherRequestDiscountUnitEnum.Percent && (
+                    <div className="flex items-center justify-end w-6/12">
+                      <span className="">Giảm Tối Đa:</span>
+                      <div className="inline-block w-3/12 ml-1 mr-1">
+                        <FormInput
+                          name="maximumDiscountValue"
+                          className="bg-[#413F4D]  border-2 border-[#FFFFFF] h-8 border-opacity-30"
+                          placeholder=""
+                          value={form.values.maximumDiscountValue}
+                          onBlur={form.handleBlur}
+                          error={!!form.errors.maximumDiscountValue && form.touched.maximumDiscountValue}
+                          errorMessage={form.errors.maximumDiscountValue}
+                          onChange={(e) => {
+                            const newValue = parseInt(e.target.value)
+                            if (!isNaN(newValue) && newValue >= 0) {
+                              if (newValue > parseInt(MAX_NUMBER_DISCOUNT)) {
+                                e.target.value = MAX_NUMBER_DISCOUNT
+                              } else {
+                                e.target.value = newValue.toString()
+                              }
+                            } else {
+                              e.target.value = '0'
+                            }
+                            form.handleChange(e)
+                          }}
+                          type="number"
+                          min={0}
+                          max={100}
+                        />
+                      </div>
+                      {' Xu'}
+                    </div>
+                  )}
                 </div>
                 <div className="h-12 text-white">
                   Đối tượng:
@@ -745,6 +823,38 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                       },
                     ]}
                   />
+                </div>
+                <div className="h-12 text-white">
+                  Khuyến mãi dùng cho hóa đơn có giờ tối thiểu:
+                  <div className="inline-block w-1/5 ">
+                    <FormInput
+                      name="minimumBookingDurationForUsage"
+                      className="bg-[#413F4D] border-2 border-[#FFFFFF] h-8 ml-4 border-opacity-30"
+                      placeholder="Số Lượng"
+                      value={form.values.minimumBookingDurationForUsage}
+                      onBlur={form.handleBlur}
+                      error={
+                        !!form.errors.minimumBookingDurationForUsage && form.touched.minimumBookingDurationForUsage
+                      }
+                      errorMessage={form.errors.minimumBookingDurationForUsage}
+                      onChange={(e) => {
+                        const newValue = parseInt(e.target.value)
+                        if (!isNaN(newValue) && newValue >= 0) {
+                          if (newValue > parseInt('24')) {
+                            e.target.value = '24'
+                          } else {
+                            e.target.value = newValue.toString()
+                          }
+                        } else {
+                          e.target.value = '0'
+                        }
+                        form.handleChange(e)
+                      }}
+                      type="number"
+                      min={0}
+                      max={100000}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
