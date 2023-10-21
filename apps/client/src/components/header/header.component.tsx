@@ -88,9 +88,7 @@ export const Header: React.FC = () => {
         <span className="px-3 py-2 text-lg font-medium text-white align-middle duration-500 hover:bg-slate-700 rounded-2xl hover:ease-in-out">
           <Link href={'/home'}>Trang chủ</Link>
         </span>
-        <span className="px-3 py-2 text-lg font-medium text-white align-middle duration-500 hover:bg-slate-700 rounded-2xl hover:ease-in-out ">
-          <Link href={'/live'}>Trực Tiếp</Link>
-        </span>
+
         <span className="px-3 py-2 text-lg font-medium text-white align-middle duration-500 hover:bg-slate-700 rounded-2xl hover:ease-in-out">
           <Link href={'/community'}>Cộng đồng</Link>
         </span>
