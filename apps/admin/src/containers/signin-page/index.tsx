@@ -1,6 +1,8 @@
 import { Button, FieldLabel, FormInput } from '@ume/ui'
+import { useAuth } from '~/contexts/auth'
+import { getItem, setItem } from '~/hooks/localHooks'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { FormikErrors, useFormik } from 'formik'
 import Head from 'next/head'
@@ -22,6 +24,7 @@ const SigninPage = () => {
   const [isSubmiting, setSubmiting] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const signin = trpc.useMutation(['auth.signin'])
+  const { login } = useAuth()
   const router = useRouter()
 
   const form = useFormik({
@@ -34,6 +37,8 @@ const SigninPage = () => {
       setSubmiting(true)
       signin.mutate(values, {
         onSuccess: (response) => {
+          login(response.data.admin as any)
+          setItem('user', response.data.admin)
           setSubmiting(false)
           router.push('/dashboard')
         },
@@ -44,6 +49,13 @@ const SigninPage = () => {
       })
     },
   })
+
+  const adminInfo = getItem('user')
+  useEffect(() => {
+    if (adminInfo) {
+      router.push('/dashboard')
+    }
+  }, [adminInfo, router])
 
   return (
     <>
@@ -83,7 +95,7 @@ const SigninPage = () => {
                 />
               </div>
               {errorMessage && <p className="text-xs text-ume-error">{errorMessage}</p>}
-              <div>
+              <div className="flex justify-center w-full">
                 <Button
                   name="submit"
                   type="submit"
@@ -92,7 +104,7 @@ const SigninPage = () => {
                   isActive={!(form.values.username || form.values.password) || isSubmiting}
                   isLoading={isSubmiting}
                 >
-                  Login
+                  Đăng nhập
                 </Button>
               </div>
             </form>

@@ -5,135 +5,24 @@ import React, { useState } from 'react'
 
 import { Pagination, Tag } from 'antd'
 import { PrismaWhereConditionType, prismaWhereConditionToJsonString } from 'query-string-prisma-ume'
-import {
-  VoucherPagingResponse,
-  VoucherResponse,
-  VoucherResponseDiscountUnitEnum,
-  VoucherResponseRecipientTypeEnum,
-  VoucherResponseTypeEnum,
-} from 'ume-service-openapi'
+import { VoucherPagingResponse, VoucherResponse } from 'ume-service-openapi'
 
 import ApproveProviderVoucherTable from './components/voucher-table/approve-voucher-table'
 
 import FilterDropdown from '~/components/filter-dropdown'
+import {
+  discountUnitsFilter,
+  mappingDiscountUnits,
+  mappingRecipientTypes,
+  mappingVoucherType,
+  recipientType,
+  voucherTypeFilter,
+} from '~/components/filter-items'
 
 import { trpc } from '~/utils/trpc'
 
-const typeFilter = [
-  {
-    key: 'all',
-    label: (
-      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-400 hover:text-white">
-        Tất cả
-      </Tag>
-    ),
-  },
-  {
-    key: VoucherResponseTypeEnum.Discount,
-    label: (
-      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-400 hover:text-white">
-        Giảm giá
-      </Tag>
-    ),
-  },
-  {
-    key: VoucherResponseTypeEnum.Cashback,
-    label: (
-      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-400 hover:text-white">
-        Hoàn tiền
-      </Tag>
-    ),
-  },
-]
-const mappingtype = {
-  all: 'Loại',
-  CASHBACK: 'Hoàn tiền',
-  DISCOUNT: 'Giảm giá',
-}
-const discountUnitsFilter = [
-  {
-    key: 'all',
-    label: (
-      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-400 hover:text-white">
-        Tất cả
-      </Tag>
-    ),
-  },
-  {
-    key: VoucherResponseDiscountUnitEnum.Cash,
-    label: (
-      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-400 hover:text-white">
-        Tiền
-      </Tag>
-    ),
-  },
-  {
-    key: VoucherResponseDiscountUnitEnum.Percent,
-    label: (
-      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-400 hover:text-white">
-        Phần trăm
-      </Tag>
-    ),
-  },
-]
-const mappingDiscountUnits = {
-  all: 'Kiểu khuyến mãi',
-  CASH: 'Tiền',
-  PERCENT: 'Phần trăm',
-}
-
-const recipientTypeFilter = [
-  {
-    key: VoucherResponseRecipientTypeEnum.All,
-    label: (
-      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
-        <div className="flex items-center justify-center">Tất cả</div>
-      </Tag>
-    ),
-  },
-  {
-    key: VoucherResponseRecipientTypeEnum.FirstTimeBooking,
-    label: (
-      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
-        <div className="flex items-center justify-center">Người lần đầu thuê</div>
-      </Tag>
-    ),
-  },
-  {
-    key: VoucherResponseRecipientTypeEnum.PreviousBooking,
-    label: (
-      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
-        <div className="flex items-center justify-center">Người đã từng thuê</div>
-      </Tag>
-    ),
-  },
-  {
-    key: VoucherResponseRecipientTypeEnum.Top5Booker,
-    label: (
-      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
-        <div className="flex items-center justify-center">Top 5 người thuê</div>
-      </Tag>
-    ),
-  },
-  {
-    key: VoucherResponseRecipientTypeEnum.Top10Booker,
-    label: (
-      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
-        <div className="flex items-center justify-center">Top 10 người thuê</div>
-      </Tag>
-    ),
-  },
-]
-
-const mappingRecipientType = {
-  ALL: 'Đối tượng',
-  FIRST_TIME_BOOKING: 'Người lần đầu thuê',
-  PREVIOUS_BOOKING: ' Người đã từng thuê',
-  TOP_5_BOOKER: ' Top 5 người thuê',
-  TOP_10_BOOKER: ' Top 10 người thuê',
-}
 const ApproveProviderVoucher = () => {
-  const [adminVoucherList, setAdminVoucherList] = useState<VoucherPagingResponse>()
+  const [voucherList, setVoucherList] = useState<VoucherPagingResponse>()
   const [page, setPage] = useState(1)
   const [filter, setFilter] = useState({
     recipientType: 'ALL',
@@ -159,21 +48,26 @@ const ApproveProviderVoucher = () => {
       },
     ],
 
-    providerId: null,
+    adminId: null,
     recipientType: filter.recipientType !== 'ALL' ? filter.recipientType : undefined,
     status: 'PENDING',
     type: filter.type !== 'all' ? filter.type : undefined,
     discountUnit: filter.discountUnit !== 'all' ? filter.discountUnit : undefined,
   })
+  const ORDER = [{ id: 'asc' }]
 
-  trpc.useQuery(
+  const { isLoading } = trpc.useQuery(
     [
       'voucher.getAllVoucher',
-      { page: page.toString(), where: prismaWhereConditionToJsonString(testQuerry, ['isUndefined']), order: undefined },
+      {
+        page: page.toString(),
+        where: prismaWhereConditionToJsonString(testQuerry, ['isUndefined']),
+        order: JSON.stringify(ORDER),
+      },
     ],
     {
       onSuccess(data) {
-        setAdminVoucherList(data.data)
+        setVoucherList(data.data)
       },
     },
   )
@@ -234,28 +128,28 @@ const ApproveProviderVoucher = () => {
           <div className="flex">
             <FilterDropdown
               id={'recipientType'}
-              CustomCss="min-w-[11rem]"
-              title={`${mappingRecipientType[filter.recipientType]}`}
-              items={recipientTypeFilter}
+              CustomCss="w-[12rem]"
+              title={`Đối tượng: ${mappingRecipientTypes[filter.recipientType]}`}
+              items={recipientType}
               handleFilter={handleFilter}
             />
             <FilterDropdown
               id={'discountUnit'}
-              CustomCss="min-w-[9.5rem]"
-              title={`${mappingDiscountUnits[filter.discountUnit]}`}
+              CustomCss="w-[9rem]"
+              title={`Kiểu: ${mappingDiscountUnits[filter.discountUnit]}`}
               items={discountUnitsFilter}
               handleFilter={handleFilter}
             />
             <FilterDropdown
               id={'type'}
-              CustomCss="min-w-[6.5rem]"
-              title={`${mappingtype[filter.type]}`}
-              items={typeFilter}
+              CustomCss="w-[9rem]"
+              title={`Loại: ${mappingVoucherType[filter.type]}`}
+              items={voucherTypeFilter}
               handleFilter={handleFilter}
             />
           </div>
 
-          <div className="flex items-center pl-2 border-2 border-white rounded-lg w-fit bg-umeHeader">
+          <div className="flex items-center border-2 border-white rounded-lg w-fit bg-umeHeader">
             <Search className="p-2 rounded-full active:bg-gray-700" theme="outline" size="24" fill="#fff" />
             <Input
               placeholder="Tìm kiếm tên khuyến mãi"
@@ -268,7 +162,11 @@ const ApproveProviderVoucher = () => {
           </div>
         </div>
       </div>
-      <ApproveProviderVoucherTable data={adminVoucherList} />
+      <div className="flex justify-end mb-5 text-gray-500">
+        {10 * (page - 1) + 1}-{page * 10 > voucherList?.count!! ? voucherList?.count : page * 10} trên{' '}
+        {voucherList?.count} khuyến mãi
+      </div>
+      <ApproveProviderVoucherTable isLoading={isLoading} data={voucherList} />
       <div className="flex w-full justify-center pb-[200px] mt-5">
         <Pagination
           itemRender={(page, type) => (
@@ -284,7 +182,7 @@ const ApproveProviderVoucher = () => {
           )}
           pageSize={10}
           current={page}
-          total={adminVoucherList?.count}
+          total={voucherList?.count}
           onChange={(page) => {
             handlePageChange(page)
           }}

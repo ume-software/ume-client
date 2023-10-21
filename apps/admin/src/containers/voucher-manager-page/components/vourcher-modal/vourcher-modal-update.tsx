@@ -40,19 +40,16 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
       provider: ['$all'],
     },
   ]
-  const { isLoading, isFetching } = trpc.useQuery(
-    ['voucher.getVoucherDetails', { id: vourcherId, select: JSON.stringify(SELECT) }],
-    {
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: 'always',
-      // refetchOnMount: false,
-      // refetchInterval: false,
-      // refetchIntervalInBackground: false,
-      onSuccess(data) {
-        setVoucherDetails(data.data)
-      },
+  trpc.useQuery(['voucher.getVoucherDetails', { id: vourcherId, select: JSON.stringify(SELECT) }], {
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: 'always',
+    // refetchOnMount: false,
+    // refetchInterval: false,
+    // refetchIntervalInBackground: false,
+    onSuccess(data) {
+      setVoucherDetails(data.data)
     },
-  )
+  })
 
   const updateVoucherAdmin = trpc.useMutation(['voucher.updateVoucherAdmin'])
   const MAX_NUMBER = '100000'

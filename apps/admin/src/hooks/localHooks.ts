@@ -9,10 +9,10 @@ const removeItem = (key: string) => {
   return localStorage.removeItem(key)
 }
 const getItem = (key: string) => {
-  try {
-    return JSON.parse(localStorage.getItem(key) || '')
-  } catch (e) {
-    console.error(e)
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem(key) ? JSON.parse(localStorage.getItem(key) || '') : undefined
+  } else {
+    console.log('You are on the server')
   }
 }
 

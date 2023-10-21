@@ -6,85 +6,78 @@ import React, { useState } from 'react'
 import { Pagination, Tag } from 'antd'
 import Head from 'next/head'
 import { PrismaWhereConditionType, prismaWhereConditionToJsonString } from 'query-string-prisma-ume'
-import { AdminGetUserPagingResponseResponse, AdminGetUserResponseResponse } from 'ume-service-openapi'
+import { ServicePagingResponse } from 'ume-service-openapi'
 
-import UserTable from './components/user-table'
+import ServicesTable from './components/services-table'
 
 import FilterDropdown from '~/components/filter-dropdown'
-import { genderFilterItems, mappingGender } from '~/components/filter-items'
 
-import { LIMIT_PAGE_SIZE } from '~/utils/constant'
 import { trpc } from '~/utils/trpc'
 
-interface LooseObject {
-  [key: string]: any
-}
-
-const userStatusFilterItems = [
+const statusFilterItems = [
   {
     key: 'all',
     label: (
-      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
+      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white px-3 py-2 w-full flex justify-center">
         Tất cả
-      </Tag>
-    ),
-  },
-  {
-    key: 'false',
-    label: (
-      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
-        Hoạt động
       </Tag>
     ),
   },
   {
     key: 'true',
     label: (
-      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
+      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white  px-3 py-2 w-full flex justify-center">
+        Hoạt động
+      </Tag>
+    ),
+  },
+  {
+    key: 'false',
+    label: (
+      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white  px-3 py-2 w-full flex justify-center">
         Tạm dừng
       </Tag>
     ),
   },
 ]
 
-const mappingUserStatus = {
-  all: 'Tất cả',
-  false: 'Hoạt động',
-  true: 'Tạm dừng',
+const mappingStatus = {
+  all: 'Trạng thái',
+  false: 'Tạm dừng',
+  true: 'Hoạt động',
 }
-const UserManager = () => {
-  const [userList, setUserList] = useState<AdminGetUserPagingResponseResponse | undefined>()
+const ServicesManagerPage = () => {
+  const [serviceList, setServiceList] = useState<ServicePagingResponse | undefined>()
   const [page, setPage] = useState(1)
   const [filter, setFilter] = useState({
     gender: 'ALL',
-    isBanned: 'all',
+    isActivated: 'all',
     search: '',
   })
   const [searchChange, setSearchChange] = useState('')
-
-  const testQuerry: PrismaWhereConditionType<AdminGetUserResponseResponse> = Object.assign({
+  const testQuerry: PrismaWhereConditionType<ServicePagingResponse> = Object.assign({
     name: {
       contains: filter.search,
       mode: 'insensitive',
     },
 
     gender: filter.gender !== 'ALL' ? filter.gender : undefined,
-    isBanned: filter.isBanned !== 'all' ? (filter.isBanned == 'true' ? true : false) : undefined,
+    isActivated: filter.isActivated !== 'all' ? (filter.isActivated == 'true' ? true : false) : undefined,
   })
-  const ORDER = [{ id: 'asc' }]
 
-  const { isLoading: isUserListLoading } = trpc.useQuery(
+  const { isLoading } = trpc.useQuery(
     [
-      'user.getUserList',
+      'services.getServiceList',
       {
         page: page.toString(),
+        select: undefined,
         where: prismaWhereConditionToJsonString(testQuerry, ['isUndefined']),
-        order: JSON.stringify(ORDER),
+        order: undefined,
       },
     ],
     {
       onSuccess(data) {
-        setUserList(data?.data as any)
+        setServiceList(data?.data as any)
       },
     },
   )
@@ -99,7 +92,7 @@ const UserManager = () => {
     } else if (title == 'status') {
       setFilter({
         ...filter,
-        isBanned: key,
+        isActivated: key,
       })
     }
   }
@@ -131,33 +124,26 @@ const UserManager = () => {
   return (
     <div>
       <Head>
-        <title>Admin | User Manager</title>
+        <title>Admin | Services Manager</title>
       </Head>
       <div className="pb-10">
-        <span className="content-title">Quản Lý người dùng</span>
+        <span className="content-title">Quản Lý Dịch Vụ</span>
         <div className="flex flex-col my-10">
-          <div className="flex items-center justify-between">
+          <div className="flex justify-between items-center">
             <div className="flex">
               <FilterDropdown
-                id={'gender'}
-                CustomCss="w-[9rem]"
-                title={`Giới tính: ${mappingGender[filter.gender]}`}
-                items={genderFilterItems}
-                handleFilter={handleFilter}
-              />
-              <FilterDropdown
                 id={'status'}
-                CustomCss="w-[12rem]"
-                title={`Trạng thái: ${mappingUserStatus[filter.isBanned]}`}
-                items={userStatusFilterItems}
+                CustomCss="min-w-[7rem]"
+                title={`${mappingStatus[filter.isActivated]}`}
+                items={statusFilterItems}
                 handleFilter={handleFilter}
               />
             </div>
 
-            <div className="flex items-center rounded-lg bg-umeHeader border-2 border-white">
+            <div className="flex pl-1 items-center rounded-lg bg-umeHeader border-2 border-white">
               <Search className=" active:bg-gray-700 p-2 rounded-full" theme="outline" size="24" fill="#fff" />
               <Input
-                placeholder="Tìm kiếm tên người dùng"
+                placeholder="Tìm kiếm tên dịch vụ"
                 onKeyUp={handleKeyPress}
                 value={searchChange}
                 onChange={handleSearchChange}
@@ -168,10 +154,10 @@ const UserManager = () => {
           </div>
         </div>
         <div className="flex justify-end mb-5 text-gray-500">
-          {10 * (page - 1) + 1}-{page * 10 > userList?.count!! ? userList?.count : page * 10} trên {userList?.count}{' '}
-          người dùng
+          {10 * (page - 1) + 1}-{page * 10 > serviceList?.count!! ? serviceList?.count : page * 10} trên{' '}
+          {serviceList?.count} dịch vụ
         </div>
-        <UserTable isLoading={isUserListLoading} userList={userList} />
+        <ServicesTable isLoading={isLoading} servicesList={serviceList} />
         <div className="flex w-full justify-center pb-[200px] mt-5">
           <Pagination
             itemRender={(page, type) => (
@@ -185,9 +171,9 @@ const UserManager = () => {
                 )}
               </div>
             )}
-            pageSize={Number(LIMIT_PAGE_SIZE)}
+            pageSize={10}
             current={page}
-            total={userList?.count}
+            total={serviceList?.count}
             onChange={(page) => {
               handlePageChange(page)
             }}
@@ -198,4 +184,4 @@ const UserManager = () => {
   )
 }
 
-export default UserManager
+export default ServicesManagerPage

@@ -52,6 +52,29 @@ export const getUserCoinHistories = async (
     })
   }
 }
+
+export const getUserTotalCoin = async (ctx, { slug }) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie ?? '')
+    const response = await new AdminManageUserApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).adminGetTotalCoinByUserSlug(slug)
+
+    return {
+      data: response.data,
+      success: true,
+      message: 'Success',
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.message || 'Authentication failed',
+    })
+  }
+}
+
 export const banUser = async (ctx, { slug }) => {
   try {
     const cookies = parse(ctx.req.headers.cookie ?? '')

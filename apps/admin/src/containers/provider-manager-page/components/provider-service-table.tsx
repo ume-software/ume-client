@@ -50,10 +50,20 @@ export default function ProviderServiceTable(props: IProviderServiceTableProps) 
   ]
   const locale = {
     emptyText: (
-      <div className="flex items-center justify-center w-full h-full">
+      <div className="flex flex-col items-center justify-center w-full h-full font-bold text-2xl text-white">
         <Image height={600} alt="empty data" src={EmptyErrorPic} />
+        Không có data
       </div>
     ),
   }
-  return <Table locale={locale} pagination={false} columns={columnsService} dataSource={data} className="z-0" />
+  return (
+    <Table
+      loading={props.isLoading}
+      locale={locale}
+      pagination={false}
+      columns={columnsService}
+      dataSource={data}
+      className="z-0"
+    />
+  )
 }
