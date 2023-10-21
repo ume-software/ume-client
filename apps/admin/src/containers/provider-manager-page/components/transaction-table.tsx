@@ -1,3 +1,5 @@
+import coinIcon from 'public/coin-icon.png'
+
 import * as React from 'react'
 
 import { Table } from 'antd'
@@ -42,6 +44,9 @@ export default function TransactionTable(props: ITransactionTableProps) {
       title: 'Giờ phục vụ',
       dataIndex: 'serveTime',
       key: 'serveTime',
+      render: (text) => {
+        return <div>{text ? text : 0} h</div>
+      },
     },
     {
       title: 'Trạng thái',
@@ -52,6 +57,12 @@ export default function TransactionTable(props: ITransactionTableProps) {
       title: 'Số tiền',
       dataIndex: 'mountMoney',
       key: 'mountMoney',
+      render: (text) => (
+        <div>
+          {' '}
+          {text ? text : 0} <Image className="inline-block" alt="Xu" src={coinIcon} width={25} height={25} />
+        </div>
+      ),
     },
     // {
     //   title: 'Phản hồi',
