@@ -30,7 +30,6 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
   >()
   const [providerTransHistory, setProviderTransHistory] = React.useState<BookingHistoryPagingResponse | undefined>()
   const [pageService, setPageService] = React.useState(1)
-  const [totalCoin, setTotalCoin] = React.useState<UserCoinResponse>()
   const [pageTrans, setPageTrans] = React.useState(1)
   const PAGE_SIZE_SERVICE = 5
   const PAGE_SIZE_TRANS = 10
@@ -38,6 +37,7 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
     '$all',
     {
       service: ['$all'],
+      $where: { deletedAt: null },
     },
   ]
   const SELECT_TRANS = [
@@ -45,7 +45,15 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
     {
       booker: ['$all'],
     },
-    { providerService: ['$all', { service: ['$all'] }] },
+    {
+      providerService: [
+        '$all',
+        {
+          service: ['$all'],
+          $where: { deletedAt: null },
+        },
+      ],
+    },
   ]
   const { isLoading: isListSkillLoading } = trpc.useQuery(
     [
@@ -76,8 +84,6 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
       },
     },
   )
-
-  console.log(providerBookingStatistics)
   const dataProviderSkills = providerSkills?.row?.map((row: any) => {
     return {
       key: row.id,
@@ -110,11 +116,6 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
     },
   )
 
-  trpc.useQuery(['user.getUserTotalCoin', { slug: providerId }], {
-    onSuccess(data) {
-      setTotalCoin(data.data)
-    },
-  })
   const dataProviderTranHistory = providerTransHistory?.row?.map((row: any) => {
     return {
       key: row.id,
@@ -207,18 +208,18 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
           </span>
         </div>
       </div>
-      <div className="flex h-10 mt-4">
+      <div className="flex justify-between w-64 h-10 mt-4">
         <div className="flex flex-col">
           <Button isActive={false} onClick={handleSwitchTable} customCSS="hover:text-gray-400">
             Dịch vụ cung cấp
           </Button>
-          {switchTable && <div className="border-b-2 border-[#7463F0] mx-4 mr-6"></div>}
+          {switchTable && <div className="border-b-2 border-[#7463F0] mx-4 "></div>}
         </div>
-        <div className="flex flex-col w-40 ">
+        <div className="flex flex-col">
           <Button isActive={false} onClick={handleSwitchTable} customCSS="hover:text-gray-400">
             Lịch sử giao dịch
           </Button>
-          {!switchTable && <div className="border-b-2 border-[#7463F0] mx-4"></div>}
+          {!switchTable && <div className="border-b-2 border-[#7463F0] mx-4 "></div>}
         </div>
       </div>
       <div>

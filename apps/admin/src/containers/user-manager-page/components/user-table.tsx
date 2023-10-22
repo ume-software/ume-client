@@ -92,10 +92,15 @@ const UserTable = ({ userList, isLoading }) => {
                 notification.success({
                   message: 'Chặn người dùng thành công!',
                   description: 'người dùng đã bị chặn',
-                  placement: 'bottomLeft',
                 })
                 utils.invalidateQueries('user.getUserList')
               }
+            },
+            onError: (err) => {
+              notification.error({
+                message: 'Chặn người dùng không thành công!',
+                description: err.message,
+              })
             },
           },
         )
@@ -114,10 +119,15 @@ const UserTable = ({ userList, isLoading }) => {
                 notification.success({
                   message: 'Bỏ chặn người dùng thành công!',
                   description: 'Người dùng đã được bỏ chặn',
-                  placement: 'bottomLeft',
                 })
                 utils.invalidateQueries('user.getUserList')
               }
+            },
+            onError: (err) => {
+              notification.error({
+                message: 'Bỏ chặn người dùng không thành công!',
+                description: err.message,
+              })
             },
           },
         )
@@ -149,7 +159,7 @@ const UserTable = ({ userList, isLoading }) => {
       title: <div className="flex items-center justify-center">Giới tính</div>,
       dataIndex: 'gender',
       key: 'gender',
-      render: (text) => <div className="w-14 flex justify-center">{mappingGender[text]}</div>,
+      render: (text) => <div className="flex justify-center w-14">{mappingGender[text]}</div>,
     },
     {
       title: <div className="flex items-center justify-center">Trạng thái</div>,
@@ -203,7 +213,7 @@ const UserTable = ({ userList, isLoading }) => {
 
   const locale = {
     emptyText: (
-      <div className="flex flex-col items-center justify-center w-full h-full font-bold text-2xl text-white">
+      <div className="flex flex-col items-center justify-center w-full h-full text-2xl font-bold text-white">
         <Image height={600} alt="empty data" src={EmptyErrorPic} />
         Không có data
       </div>

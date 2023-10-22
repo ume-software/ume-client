@@ -40,7 +40,7 @@ export default function BanModal({ isBanned, name, openValue, closeFunction, exc
     <>
       <ModalBase titleValue={titleValue} closeFunction={closeHandle} openValue={openValue} width={600}>
         <div className="flex flex-col gap-3 mx-4 mt-4">
-          <label className="text-white">Lý do chặn:</label>
+          <label className="text-white">Lý do:</label>
           <TextArea
             className="bg-[#413F4D] border-2 text-white max-h-[240px] min-h-[100px]"
             rows={10}

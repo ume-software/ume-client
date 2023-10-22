@@ -84,6 +84,7 @@ export const getProviderSkill = async (
   },
 ) => {
   try {
+    console.log('getProviderSkill', query)
     const cookies = parse(ctx.req.headers.cookie ?? '')
     const response = await new AdminManageProviderApi({
       basePath: getEnv().baseUmeServiceURL,
@@ -122,6 +123,7 @@ export const getProviderBookingHistory = async (
   },
 ) => {
   try {
+    console.log('getProviderBookingHistory', query)
     const cookies = parse(ctx.req.headers.cookie ?? '')
     const response = await new AdminManageProviderApi({
       basePath: getEnv().baseUmeServiceURL,

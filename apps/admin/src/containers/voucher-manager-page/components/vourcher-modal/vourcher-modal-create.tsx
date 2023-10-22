@@ -235,7 +235,6 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
               notification.success({
                 message: 'Tạo thành công!',
                 description: 'đã được tạo thành công.',
-                placement: 'bottomLeft',
               })
               closeHandle()
             }
@@ -244,7 +243,6 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
             notification.error({
               message: 'Tạo thất bại!',
               description: 'Tạo không thành công.',
-              placement: 'bottomLeft',
             })
           },
         })

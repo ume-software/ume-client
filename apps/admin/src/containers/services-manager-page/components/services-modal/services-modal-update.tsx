@@ -297,7 +297,6 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
               notification.success({
                 message: 'Chỉnh sửa Dịch vụ thành công!',
                 description: 'Dịch vụ Đã được chỉnh sửa',
-                placement: 'bottomLeft',
               })
               utils.invalidateQueries('services.getServiceList')
               closeHandle()
@@ -306,7 +305,6 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
               notification.error({
                 message: 'Chỉnh sửa Dịch vụ không thành công!',
                 description: err.message,
-                placement: 'bottomLeft',
               })
             },
           })
@@ -314,7 +312,6 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
           notification.error({
             message: 'Chỉnh sửa Dịch vụ không thành công!',
             description: 'Gặp lỗi khi chỉnh sửa',
-            placement: 'bottomLeft',
           })
           console.error('Failed to Handle update voucher:', error)
         }

@@ -182,7 +182,6 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
                 notification.success({
                   message: 'Tạo thành công!',
                   description: 'đã được tạo thành công.',
-                  placement: 'bottomLeft',
                 })
                 closeHandle()
               }
@@ -191,7 +190,6 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
               notification.error({
                 message: 'Tạo thất bại!',
                 description: 'Tạo không thành công.',
-                placement: 'bottomLeft',
               })
             },
           })
@@ -200,7 +198,6 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
           notification.error({
             message: 'Tạo thất bại!',
             description: 'Tạo không thành công.',
-            placement: 'bottomLeft',
           })
         }
       } else {
@@ -208,7 +205,6 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
         notification.error({
           message: 'Tạo thất bại!',
           description: 'Tạo không thành công vì thiếu ảnh',
-          placement: 'bottomLeft',
         })
       }
     }

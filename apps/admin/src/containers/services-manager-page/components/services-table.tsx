@@ -170,13 +170,11 @@ const ServicesTable = ({ servicesList, isLoading }) => {
                 notification.success({
                   message: 'Dừng hoạt động thành công!',
                   description: 'Dịch vụ đã bị dừng hoạt động',
-                  placement: 'bottomLeft',
                 })
               } else {
                 notification.success({
                   message: 'Kích hoạt thành công!',
                   description: 'Dịch vụ đã được kích hoạt lại',
-                  placement: 'bottomLeft',
                 })
               }
               utils.invalidateQueries('services.getServiceList')

@@ -308,7 +308,6 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
               notification.success({
                 message: 'Chỉnh sửa Khuyến mãi thành công!',
                 description: 'Khuyến mãi Đã được chỉnh sửa',
-                placement: 'bottomLeft',
               })
               utils.invalidateQueries('voucher.getAllVoucher')
               closeHandle()
@@ -317,7 +316,6 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
               notification.error({
                 message: 'Chỉnh sửa Khuyến mãi không thành công!',
                 description: err.message,
-                placement: 'bottomLeft',
               })
             },
           })
@@ -325,7 +323,6 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
           notification.error({
             message: 'Chỉnh sửa Khuyến mãi không thành công!',
             description: 'Gặp lỗi khi chỉnh sửa',
-            placement: 'bottomLeft',
           })
           console.error('Failed to Handle update voucher:', error)
         }

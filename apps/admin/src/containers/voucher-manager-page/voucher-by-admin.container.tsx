@@ -100,7 +100,6 @@ const VoucherByAdmin = () => {
       },
     },
   )
-
   const handleFilter = (id, key) => {
     setPage(1)
     if (id == 'recipientType') {
