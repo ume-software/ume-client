@@ -42,7 +42,7 @@ export default function BanModal({ isBanned, name, openValue, closeFunction, exc
         <div className="flex flex-col gap-3 mx-4 mt-4">
           <label className="text-white">Lý do chặn:</label>
           <TextArea
-            className="bg-[#413F4D] border-2 text-white"
+            className="bg-[#413F4D] border-2 text-white max-h-[240px] min-h-[100px]"
             rows={10}
             value={content}
             onChange={(e) => setContent(e.target.value)}

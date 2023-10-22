@@ -1,3 +1,5 @@
+import coinIcon from 'public/coin-icon.png'
+
 import * as React from 'react'
 
 import { Table } from 'antd'
@@ -36,16 +38,28 @@ export default function ProviderServiceTable(props: IProviderServiceTableProps) 
       title: 'Số giờ phục vụ',
       dataIndex: 'totalBookingPeriod',
       key: 'totalBookingPeriod',
+      render: (text) => {
+        return <div>{text ? text : 0} h</div>
+      },
     },
     {
       title: 'Số người thuê',
       dataIndex: 'totalBooking',
       key: 'totalBooking',
+      render: (text) => {
+        return text ? text : 0
+      },
     },
     {
       title: 'Doanh thu',
       dataIndex: 'totalRevenue',
       key: 'totalRevenue',
+      render: (text) => (
+        <div>
+          {' '}
+          {text ? text : 0} <Image className="inline-block" alt="Xu" src={coinIcon} width={25} height={25} />
+        </div>
+      ),
     },
   ]
   const locale = {
@@ -56,6 +70,7 @@ export default function ProviderServiceTable(props: IProviderServiceTableProps) 
       </div>
     ),
   }
+  console.log(data)
   return (
     <Table
       loading={props.isLoading}

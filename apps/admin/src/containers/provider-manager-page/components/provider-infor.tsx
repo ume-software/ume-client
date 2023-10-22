@@ -1,4 +1,4 @@
-import { Left, Right } from '@icon-park/react'
+import { Left, Right, Star } from '@icon-park/react'
 import { Button } from '@ume/ui'
 import coinIcon from 'public/coin-icon.png'
 import EmptyErrorPic from 'public/empty_error.png'
@@ -8,9 +8,9 @@ import * as React from 'react'
 import { Avatar, Pagination } from 'antd'
 import Image from 'next/image'
 import {
+  AdminGetBookingStatisticResponse,
   AdminGetProviderServicePagingResponse,
   BookingHistoryPagingResponse,
-  UserCoinResponse,
 } from 'ume-service-openapi'
 
 import ProviderServiceTable from './provider-service-table'
@@ -25,6 +25,9 @@ export interface IProviderInfoProps {
 
 export default function ProviderInfo({ providerInfo, providerId }: IProviderInfoProps) {
   const [providerSkills, setProviderSkills] = React.useState<AdminGetProviderServicePagingResponse | undefined>()
+  const [providerBookingStatistics, setProviderBookingStatistics] = React.useState<
+    AdminGetBookingStatisticResponse | undefined
+  >()
   const [providerTransHistory, setProviderTransHistory] = React.useState<BookingHistoryPagingResponse | undefined>()
   const [pageService, setPageService] = React.useState(1)
   const [totalCoin, setTotalCoin] = React.useState<UserCoinResponse>()
@@ -60,7 +63,21 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
       },
     },
   )
+  const { isLoading: isListStatisticsLoading, isFetching: isListStatisticsFetching } = trpc.useQuery(
+    [
+      'provider.getProviderBookingStatistics',
+      {
+        slug: providerId,
+      },
+    ],
+    {
+      onSuccess(data) {
+        setProviderBookingStatistics(data.data)
+      },
+    },
+  )
 
+  console.log(providerBookingStatistics)
   const dataProviderSkills = providerSkills?.row?.map((row: any) => {
     return {
       key: row.id,
@@ -117,8 +134,10 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
   const createdAt = new Date(providerInfo.createdAt).toLocaleDateString('en-GB')
   const email = providerInfo.Gmail
   const phone = providerInfo.phone
-  const rating = providerInfo.rating
-  const servicedTime = providerInfo.servicedTime
+  const rating = providerBookingStatistics?.star?.toFixed(1) ?? ''
+  const servicedTime = providerBookingStatistics?.totalTime?.toFixed(0) ?? ''
+  const balance = providerBookingStatistics?.totalRevenue?.toFixed(0) ?? ''
+  const status = providerInfo.status
   const [switchTable, setSwitchTable] = React.useState(true)
 
   const handleSwitchTable = () => {
@@ -161,13 +180,31 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
       </div>
       <div className="flex justify-between mt-4">
         <div className="h-6 text-white ">
-          Đánh giá: <span className="font-bold">{rating}</span>
+          Đánh giá:{' '}
+          <span className="inline-block font-bold ">
+            {rating + ' '}{' '}
+            {rating && <Star className="inline-block" theme="filled" size="15" fill="#FFBB00" strokeLinejoin="bevel" />}
+            {!rating && 'Chưa có đánh giá'}
+          </span>
         </div>
         <div className="h-6 text-white ">
-          Số giờ đã phục vụ: <span className="font-bold">{servicedTime}</span>
+          Số giờ đã phục vụ:{' '}
+          <span className="font-bold">
+            {servicedTime} {servicedTime && ' h'}
+            {!servicedTime && 'Chưa có giờ phục vụ'}
+          </span>
         </div>
-        <div className=" flex items-center text-white w-[6rem]">
-          Số dư: {totalCoin?.totalCoin} <Image alt="Xu" src={coinIcon} width={25} height={25} />
+        <div className="h-6 text-white ">
+          Doanh Thu:{' '}
+          <span className="inline-block font-bold">
+            {' '}
+            {balance}
+            {balance ? (
+              <Image className="inline-block" alt="Xu" src={coinIcon} width={25} height={25} />
+            ) : (
+              'Chưa có doanh thu'
+            )}
+          </span>
         </div>
       </div>
       <div className="flex h-10 mt-4">
