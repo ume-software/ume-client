@@ -1,4 +1,4 @@
-import { Eyes, ReduceOne, Write } from '@icon-park/react'
+import { CheckOne, CloseOne, Eyes, ReduceOne, Write } from '@icon-park/react'
 import { Button } from '@ume/ui'
 
 import React, { useState } from 'react'
@@ -71,26 +71,30 @@ const AdminVoucherTable = ({ data, isLoading }) => {
   function handleConfirmFunction() {
     try {
       updateVoucher.mutate(
-        { id: selectedVoucher, voucherUpdate: { isActivated: isActivated } },
+        { id: selectedVoucher, voucherUpdate: { isActivated: !isActivated } },
         {
-          onSuccess(data, variables, context) {
+          onSuccess(data) {
             if (data.success) {
               if (isActivated) {
                 notification.success({
                   message: 'Dừng hoạt động thành công!',
                   description: 'Khuyến mãi đã bị dừng hoạt động',
-                  placement: 'bottomLeft',
                 })
               } else {
                 notification.success({
                   message: 'Kích hoạt thành công!',
                   description: 'Khuyến mãi đã được kích hoạt lại',
-                  placement: 'bottomLeft',
                 })
               }
 
               utils.invalidateQueries('voucher.getAllVoucher')
             }
+          },
+          onError: (err) => {
+            notification.error({
+              message: 'Hành Động không thành công!',
+              description: err.message,
+            })
           },
         },
       )
@@ -167,22 +171,29 @@ const AdminVoucherTable = ({ data, isLoading }) => {
                   fill="#fff"
                 />
               </Button>
-              <Button isActive={false}>
-                <Write
-                  onClick={() => {
-                    openModalHandle('update', record.key)
-                  }}
-                  className="p-2 rounded-full hover:bg-gray-500"
-                  theme="outline"
-                  size="18"
-                  fill="#1677ff"
-                />
-              </Button>
+              {record.isPublished ? (
+                <Button isActive={false} className="pointer-events-none ">
+                  <Write className="p-2 rounded-full opacity-40" theme="outline" size="18" fill="#fff" />
+                </Button>
+              ) : (
+                <Button isActive={false}>
+                  <Write
+                    onClick={() => {
+                      openModalHandle('update', record.key)
+                    }}
+                    className="p-2 rounded-full hover:bg-gray-500"
+                    theme="outline"
+                    size="18"
+                    fill="#1677ff"
+                  />
+                </Button>
+              )}
+
               <Button isActive={false} onClick={() => handleOpenConfirm(record)}>
                 {record.isActivated ? (
-                  <ReduceOne className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="20" fill="#ff0000" />
+                  <CloseOne className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="20" fill="#ff0000" />
                 ) : (
-                  <ReduceOne className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="20" fill="#fff" />
+                  <CheckOne className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="20" fill="#85ea2d" />
                 )}
               </Button>
             </div>
@@ -194,7 +205,7 @@ const AdminVoucherTable = ({ data, isLoading }) => {
 
   const locale = {
     emptyText: (
-      <div className="flex flex-col items-center justify-center w-full h-full font-bold text-2xl text-white">
+      <div className="flex flex-col items-center justify-center w-full h-full text-2xl font-bold text-white">
         <Image height={600} alt="empty data" src={EmptyErrorPic} />
         Không có data
       </div>

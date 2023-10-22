@@ -36,7 +36,6 @@ export const signinService = async ({ username, password }, ctx) => {
     return {
       data: response.data,
       success: true,
-      message: 'Success',
     }
   } catch (error) {
     throw new TRPCError({
