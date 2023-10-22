@@ -52,9 +52,6 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
     {
       refetchOnWindowFocus: false,
       refetchOnReconnect: 'always',
-      // refetchOnMount: false,
-      // refetchInterval: false,
-      // refetchIntervalInBackground: false,
       onSuccess(data) {
         setServicesDetails(data.data)
       },
@@ -291,7 +288,6 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
             id: idService as string,
             updateServiceRequest: reqWithValuesNotNull as UpdateServiceRequest,
           }
-          console.log('req', req)
           updateService.mutate(req, {
             onSuccess: () => {
               notification.success({

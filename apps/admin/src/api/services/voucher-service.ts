@@ -18,7 +18,6 @@ export const getAllVoucher = async (ctx, query: { page: string; where?: string; 
     return {
       data: response.data,
       success: true,
-      message: 'Success',
     }
   } catch (error) {
     throw new TRPCError({
@@ -39,7 +38,6 @@ export const getVoucherDetails = async (ctx, query: { id; select }) => {
     return {
       data: response.data,
       success: true,
-      message: 'Success',
     }
   } catch (error) {
     throw new TRPCError({

@@ -31,7 +31,6 @@ export const getProviderList = async (
     return {
       data: response.data,
       success: true,
-      message: 'Success',
     }
   } catch (error) {
     throw new TRPCError({
@@ -62,7 +61,6 @@ export const getProviderDetail = async (
     return {
       data: response.data,
       success: true,
-      message: 'Success',
     }
   } catch (error) {
     throw new TRPCError({
@@ -84,7 +82,6 @@ export const getProviderSkill = async (
   },
 ) => {
   try {
-    console.log('getProviderSkill', query)
     const cookies = parse(ctx.req.headers.cookie ?? '')
     const response = await new AdminManageProviderApi({
       basePath: getEnv().baseUmeServiceURL,
@@ -101,7 +98,6 @@ export const getProviderSkill = async (
     return {
       data: response.data,
       success: true,
-      message: 'Success',
     }
   } catch (error) {
     throw new TRPCError({
@@ -123,7 +119,6 @@ export const getProviderBookingHistory = async (
   },
 ) => {
   try {
-    console.log('getProviderBookingHistory', query)
     const cookies = parse(ctx.req.headers.cookie ?? '')
     const response = await new AdminManageProviderApi({
       basePath: getEnv().baseUmeServiceURL,
@@ -140,7 +135,6 @@ export const getProviderBookingHistory = async (
     return {
       data: response.data,
       success: true,
-      message: 'Success',
     }
   } catch (error) {
     throw new TRPCError({
@@ -166,7 +160,6 @@ export const getProviderBookingStatistics = async (
     return {
       data: response.data,
       success: true,
-      message: 'Success',
     }
   } catch (error) {
     throw new TRPCError({
@@ -192,7 +185,6 @@ export const getProviderTotalCoin = async (
     return {
       data: response.data,
       success: true,
-      message: 'Success',
     }
   } catch (error) {
     throw new TRPCError({

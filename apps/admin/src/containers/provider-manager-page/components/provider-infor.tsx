@@ -180,25 +180,26 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
         </div>
       </div>
       <div className="flex justify-between mt-4">
-        <div className="h-6 text-white ">
-          Đánh giá:{' '}
-          <span className="inline-block font-bold ">
-            {rating + ' '}{' '}
-            {rating && <Star className="inline-block" theme="filled" size="15" fill="#FFBB00" strokeLinejoin="bevel" />}
+        <div className="flex h-6 text-white">
+          Đánh giá:
+          <span className="inline-block ml-1 font-bold">
+            {rating}
+            {rating && (
+              <Star className="inline-block ml-1" theme="filled" size="12" fill="#FFBB00" strokeLinejoin="bevel" />
+            )}
             {!rating && 'Chưa có đánh giá'}
           </span>
         </div>
         <div className="h-6 text-white ">
-          Số giờ đã phục vụ:{' '}
-          <span className="font-bold">
+          Số giờ đã phục vụ:
+          <span className="ml-1 font-bold">
             {servicedTime} {servicedTime && ' h'}
             {!servicedTime && 'Chưa có giờ phục vụ'}
           </span>
         </div>
         <div className="h-6 text-white ">
-          Doanh Thu:{' '}
-          <span className="inline-block font-bold">
-            {' '}
+          Doanh Thu:
+          <span className="inline-block ml-1 font-bold">
             {balance}
             {balance ? (
               <Image className="inline-block" alt="Xu" src={coinIcon} width={25} height={25} />

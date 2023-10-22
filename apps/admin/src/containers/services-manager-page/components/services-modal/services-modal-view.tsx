@@ -43,9 +43,6 @@ export default function ServicesModalView({ idService, closeFunction, openValue 
     {
       refetchOnWindowFocus: false,
       refetchOnReconnect: 'always',
-      // refetchOnMount: false,
-      // refetchInterval: false,
-      // refetchIntervalInBackground: false,
       onSuccess(data) {
         setServicesDetails(data.data)
       },
