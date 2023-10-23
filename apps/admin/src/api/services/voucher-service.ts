@@ -85,3 +85,24 @@ export const updateVoucherAdmin = async (input: { id: string; voucherUpdate: Upd
     })
   }
 }
+
+export const adminCheckVoucherCodeExisted = async (ctx, query: { code }) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie ?? '')
+    const response = await new AdminManageVoucherApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).adminCheckVoucherCodeExisted(query.code)
+
+    return {
+      data: response.data,
+      success: true,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.message || 'Authentication failed',
+    })
+  }
+}

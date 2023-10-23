@@ -1,6 +1,7 @@
 import { Plus } from '@icon-park/react'
 import { Button, FormInput, TextArea } from '@ume/ui'
 import { uploadImageVoucher } from '~/api/upload-media'
+import useDebounce from '~/hooks/adminDebounce'
 
 import * as React from 'react'
 import { useRef, useState } from 'react'
@@ -9,6 +10,7 @@ import { Select, Space, notification } from 'antd'
 import { FormikErrors, useFormik } from 'formik'
 import Image from 'next/legacy/image'
 import {
+  CheckExistedResponse,
   CreateVoucherRequestDiscountUnitEnum,
   CreateVoucherRequestRecipientTypeEnum,
   CreateVoucherRequestTypeEnum,
@@ -107,7 +109,8 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
   const [openConfirm, setOpenConfirm] = React.useState(false)
   const [isCreate, setIsCreate] = useState<boolean>(false)
   const createNewVoucherAdmin = trpc.useMutation(['voucher.createNewVoucherAdmin'])
-
+  const debouncedValue = useDebounce<string>(form.values.vourcherCode, 500)
+  const [adminCheckVoucherCodeExisted, setAdminCheckVoucherCodeExisted] = useState<CheckExistedResponse>()
   function clearData() {
     form.resetForm()
   }
@@ -147,6 +150,23 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
   function filterOptionTypeVoucher(input, option) {
     return (option?.label ?? '').toUpperCase().includes(input.toUpperCase())
   }
+  trpc.useQuery(
+    [
+      'voucher.adminCheckVoucherCodeExisted',
+      {
+        code: debouncedValue + '',
+      },
+    ],
+    {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: 'always',
+      cacheTime: 0,
+      refetchOnMount: true,
+      onSuccess(data) {
+        setAdminCheckVoucherCodeExisted(data.data)
+      },
+    },
+  )
 
   function handleRecipientType(value) {
     form.setFieldValue('audience', value)
@@ -280,6 +300,9 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
     }
     return { imageUrl }
   }
+  function isDisableButton() {
+    return !form.isValid || form.values.name == '' || (adminCheckVoucherCodeExisted?.isExisted ? true : false)
+  }
 
   return (
     <div>
@@ -351,9 +374,9 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                     />
                   </div>
                 </div>
-                <div className="h-12 text-white">
+                <div className="flex h-12 text-white ">
                   Mã:
-                  <div className="inline-block w-2/3 ">
+                  <div className="inline-block w-2/3 h-12">
                     <FormInput
                       name="vourcherCode"
                       className="bg-[#413F4D] border-2 border-[#FFFFFF] h-8 ml-4 border-opacity-30"
@@ -369,6 +392,9 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                       errorMessage={form.errors.vourcherCode}
                       type="text"
                     />
+                    {adminCheckVoucherCodeExisted?.isExisted && (
+                      <div className="w-full ml-4 text-xs text-red-500">Mã đã tồn tại</div>
+                    )}
                   </div>
                 </div>
                 <div className="h-12 text-white">
@@ -853,7 +879,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
             </Button>
             <Button
               customCSS={`mx-6 px-4 py-1 border-2  ${
-                form.isValid && form.values.name != '' && 'hover:scale-110 bg-[#7463F0] border-[#7463F0]'
+                !isDisableButton() && 'hover:scale-110 bg-[#7463F0] border-[#7463F0]'
               }`}
               onClick={(e) => {
                 if (createNewVoucherAdmin.isLoading) {
@@ -863,7 +889,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                   openConfirmModal()
                 }
               }}
-              isDisable={!form.isValid || form.values.name === ''}
+              isDisable={isDisableButton()}
             >
               {'Tạo'}
             </Button>

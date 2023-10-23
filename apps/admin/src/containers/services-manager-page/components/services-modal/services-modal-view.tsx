@@ -34,8 +34,10 @@ export default function ServicesModalView({ idService, closeFunction, openValue 
         '$all',
         {
           serviceAttributeValues: ['$all'],
+          $where: { deletedAt: null },
         },
       ],
+      $where: { deletedAt: null },
     },
   ]
   const { isLoading, isFetching } = trpc.useQuery(

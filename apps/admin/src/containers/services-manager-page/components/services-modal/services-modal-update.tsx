@@ -42,8 +42,9 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
       serviceAttributes: [
         '$all',
         {
-          serviceAttributeValues: ['$all'],
+          serviceAttributeValues: ['$all', { $where: { deletedAt: null } }],
         },
+        { $where: { deletedAt: null } },
       ],
     },
   ]
@@ -124,14 +125,21 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
   })
 
   React.useEffect(() => {
-    form.setFieldValue('name', nameInit)
-    form.setFieldValue('viName', viNameInit)
-    form.setFieldValue('imageUrl', imageUrlInit)
-    form.setFieldValue('isActivated', isActivatedInit)
-    form.setFieldValue('serviceAttributes', serviceAttributesInit)
-    form.setFieldValue('numberUsed', numberUsedInit)
-    form.setFieldValue('createdAt', createdAtInit)
-  }, [servicesDetails])
+    if (servicesDetails) {
+      form.resetForm({
+        values: {
+          name: nameInit,
+          viName: viNameInit,
+          imageUrl: imageUrlInit,
+          isActivated: isActivatedInit,
+          serviceAttributes: serviceAttributesInit,
+          numberUsed: numberUsedInit,
+          createdAt: createdAtInit,
+          selectedImage: null,
+        },
+      })
+    }
+  }, [nameInit])
 
   function closeHandleSmall() {
     openConfirmModalCancel()
@@ -316,6 +324,9 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
       console.error('Failed to update voucher:', error)
     }
   }
+  function isDisableButton() {
+    return !form.isValid || !form.dirty
+  }
   return (
     <div>
       <form onSubmit={form.handleSubmit} className="flex flex-col mb-4 gap-y-4">
@@ -483,7 +494,9 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
               Hủy
             </Button>
             <Button
-              customCSS={`mx-6 px-4 py-1 border-2 ${form.isValid && 'hover:scale-110 bg-[#7463F0] border-[#7463F0]'}`}
+              customCSS={`mx-6 px-4 py-1 border-2 ${
+                !isDisableButton() && 'hover:scale-110 bg-[#7463F0] border-[#7463F0]'
+              }`}
               onClick={(e) => {
                 if (updateService.isLoading) {
                   return
@@ -492,7 +505,7 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
                   openConfirmModal()
                 }
               }}
-              isDisable={!form.isValid || form.values.name === ''}
+              isDisable={isDisableButton()}
               isLoading={updateService.isLoading}
             >
               {'Sửa'}
