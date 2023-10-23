@@ -23,6 +23,7 @@ COPY . .
 RUN yarn install
 RUN yarn build:client
 
-EXPOSE 3000
+WORKDIR /app/apps/client
 
-CMD ["yarn", "dev"]
+EXPOSE 3000
+CMD ["yarn", "start"]
