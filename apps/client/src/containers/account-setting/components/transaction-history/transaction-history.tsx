@@ -28,6 +28,8 @@ const TransactionHistory = () => {
     },
   )
 
+  console.log(transactionHistory)
+
   useEffect(() => {
     const resultArray = transactionHistory?.row?.map((transactionHistory) => {
       const transactionArray = Object.values(transactionHistory)

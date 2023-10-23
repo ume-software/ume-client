@@ -186,7 +186,7 @@ export const providerGetSelfVoucher = async (
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).providerGetSelfVoucher(query.limit, query.page, '["$all"]', query.where, query.order)
+    }).providerGetSelfVoucher(query.limit, query.page, '["$all"]', query.where, "[{ createdAt: 'asc' }]")
     return {
       data: reponse.data,
       success: true,
@@ -354,7 +354,7 @@ export const providerGetOwnServices = async (ctx) => {
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).providerGetOwnServices('unlimited', '1', '["$all"]', '{}', '[]')
+    }).providerGetOwnServices('unlimited', '1', '["$all"]', '{}', `[{ "createdAt": "asc" }]`)
     return {
       data: reponse.data,
       success: true,

@@ -511,7 +511,9 @@ const EditProfile = () => {
                       } border border-white border-opacity-30`}
                       placeholder="nguyen_van_a"
                       value={settingAccount.slug}
-                      onChange={(e) => setSettingAccount((prevData) => ({ ...prevData, slug: e.target.value }))}
+                      onChange={(e) => {
+                        setSettingAccount((prevData) => ({ ...prevData, slug: e.target.value.replace(/ /g, '-') }))
+                      }}
                     />
                   </div>
                   <div className="flex items-center gap-10">

@@ -36,7 +36,7 @@ interface AttributeProps {
     serviceAttributeId: string | undefined
     subServiceAttibute: { serviceAttributeValueId: string; serviceAttributeValueName: string }[]
   }[]
-  specialTimeLot: { startTimeOfDay?: string; endTimeOfDay?: string; amount?: number }[]
+  specialTimeLot: { id?: string; startTimeOfDay?: string; endTimeOfDay?: string; amount?: number }[]
 }
 
 interface AttributeDisplayProps {
@@ -47,7 +47,7 @@ interface AttributeDisplayProps {
     serviceAttributeId: string
     subServiceAttibute: { serviceAttributeValueId: string; serviceAttributeValueName: string }[]
   }[]
-  specialTimeLot: { startTimeOfDay?: string; endTimeOfDay?: string; amount?: number }[]
+  specialTimeLot: { id?: string; startTimeOfDay?: string; endTimeOfDay?: string; amount?: number }[]
 }
 
 interface MenuDisplayProps {
@@ -175,7 +175,7 @@ const AddSkillForm = () => {
           serviceAttribute: ownService.providerServiceAttributes?.map((providerServiceAttr) => ({
             serviceAttributeId: providerServiceAttr.serviceAttributeId,
             subServiceAttibute: providerServiceAttr.providerServiceAttributeValues?.map((providerServiceAttrValue) => ({
-              serviceAttributeValueId: providerServiceAttrValue.providerServiceAttributeId ?? '',
+              serviceAttributeValueId: providerServiceAttrValue.serviceAttributeValueId ?? '',
               serviceAttributeValueName:
                 (providerServiceAttrValue?.serviceAttributeValue?.viValue != ''
                   ? providerServiceAttrValue?.serviceAttributeValue?.viValue
@@ -438,17 +438,63 @@ const AddSkillForm = () => {
     setAttributes(updatedAttributes)
   }
 
+  const isTimePeriodIncluded = (period1: string[], period2: string[]) => {
+    const [start1, end1] = period1.map((time) => time.split(':').map(Number))
+    const [start2, end2] = period2.map((time) => time.split(':').map(Number))
+
+    const startMinutes1 = start1[0] * 60 + start1[1]
+    const endMinutes1 = end1[0] * 60 + end1[1]
+    const startMinutes2 = start2[0] * 60 + start2[1]
+    const endMinutes2 = end2[0] * 60 + end2[1]
+    const isEntirelyIncluded =
+      (startMinutes1 >= startMinutes2 && endMinutes1 <= endMinutes2) ||
+      (startMinutes1 >= startMinutes2 && startMinutes1 <= endMinutes2 && endMinutes1 >= startMinutes2)
+
+    const isStartIncluded = startMinutes1 >= startMinutes2 && startMinutes1 <= endMinutes2
+
+    return isEntirelyIncluded || isStartIncluded
+  }
+
   const handleSpecialTimeChange = (index: number, value: string, type: string, time_slotIndex: number) => {
     const updatedAttributes = [...attributes]
     switch (type) {
       case 'startTimeOfDay':
-        updatedAttributes[index].specialTimeLot[time_slotIndex].startTimeOfDay = value
-        setAttributes(updatedAttributes)
+        const found = updatedAttributes[index].specialTimeLot.some((timeSlot) => {
+          return isTimePeriodIncluded(
+            [value, updatedAttributes[index].specialTimeLot[time_slotIndex].endTimeOfDay ?? ''],
+            [timeSlot.startTimeOfDay ?? '', timeSlot.endTimeOfDay ?? ''],
+          )
+        })
+
+        if (found) {
+          messageApi.open({
+            type: 'warning',
+            content: 'Khoảng thời gian không được trùng',
+            duration: 2,
+          })
+        } else {
+          updatedAttributes[index].specialTimeLot[time_slotIndex].startTimeOfDay = value
+          setAttributes(updatedAttributes)
+        }
 
         break
       case 'endTimeOfDay':
-        updatedAttributes[index].specialTimeLot[time_slotIndex].endTimeOfDay = value
-        setAttributes(updatedAttributes)
+        const foundEOD = updatedAttributes[index].specialTimeLot.some((timeSlot) => {
+          return isTimePeriodIncluded(
+            [updatedAttributes[index].specialTimeLot[time_slotIndex].startTimeOfDay ?? '', value],
+            [timeSlot.startTimeOfDay ?? '', timeSlot.endTimeOfDay ?? ''],
+          )
+        })
+        if (foundEOD) {
+          messageApi.open({
+            type: 'warning',
+            content: 'Khoảng thời gian không được trùng',
+            duration: 2,
+          })
+        } else {
+          updatedAttributes[index].specialTimeLot[time_slotIndex].endTimeOfDay = value
+          setAttributes(updatedAttributes)
+        }
         break
       case 'amount':
         updatedAttributes[index].specialTimeLot[time_slotIndex].amount = Number(value)
@@ -542,7 +588,12 @@ const AddSkillForm = () => {
         description: attributes[index]?.intro,
         createBookingCosts: attributes[index].specialTimeLot.filter((specialTimeLot) => {
           if (specialTimeLot.startTimeOfDay != '' && specialTimeLot.endTimeOfDay != '') {
-            return specialTimeLot
+            return {
+              id: specialTimeLot.id,
+              startTimeOfDay: specialTimeLot.startTimeOfDay,
+              endTimeOfDay: specialTimeLot.endTimeOfDay,
+              amount: specialTimeLot.amount,
+            }
           }
         }),
         createServiceAttributes: attributes[index].serviceAttribute
@@ -558,7 +609,6 @@ const AddSkillForm = () => {
             }
           }),
       }
-      console.log(req)
 
       if (attributes[index].id) {
         updateProvicerService.mutate(
@@ -566,7 +616,15 @@ const AddSkillForm = () => {
             serviceId: req.serviceId ?? '',
             defaultCost: req.defaultCost,
             description: req.description,
-            handleBookingCosts: (req.createBookingCosts.length > 0 ? req.createBookingCosts : undefined) as any,
+            handleBookingCosts: (req.createBookingCosts.length > 0
+              ? req.createBookingCosts.map((bookingCost) => {
+                  return {
+                    startTimeOfDay: bookingCost.startTimeOfDay,
+                    endTimeOfDay: bookingCost.endTimeOfDay,
+                    amount: bookingCost.amount,
+                  }
+                })
+              : undefined) as any,
             handleProviderServiceAttributes: req.createServiceAttributes.map((serAttr) => {
               return {
                 id: serAttr.id ?? '',
