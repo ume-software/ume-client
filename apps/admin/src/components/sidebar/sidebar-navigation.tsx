@@ -100,6 +100,24 @@ const SidebarNavigation: SidebarNavigationItem[] = [
         ),
         key: 'approve-provider',
         icon: <UserToUserTransmission theme="outline" size="22" fill="#fff" />,
+        children: [
+          {
+            label: (
+              <Link href="/kyc-manager/kyc-pending" rel="noopener noreferrer">
+                KYC chờ duyệt
+              </Link>
+            ),
+            key: 'kyc-pending',
+          },
+          {
+            label: (
+              <Link href="/kyc-manager/kyc-all" rel="noopener noreferrer">
+                Danh sách KYC
+              </Link>
+            ),
+            key: 'kyc-all',
+          },
+        ],
       },
     ],
   },

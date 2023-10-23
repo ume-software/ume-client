@@ -6,24 +6,24 @@ import ApproveProviderVoucher from './approve-provider-voucher.container'
 import VoucherByAdmin from './voucher-by-admin.container'
 import VoucherByProvider from './voucher-by-provider.container'
 
-const VoucherManager = ({ task }) => {
-  const SwitchVoucherManager = ({ selectedTask }) => {
-    switch (selectedTask) {
-      case 'voucher-by-admin':
-        return <VoucherByAdmin />
-      case 'voucher-by-provider':
-        return <VoucherByProvider />
-      case 'approve-provider-voucher':
-        return <ApproveProviderVoucher />
-    }
+const SwitchVoucherManager = ({ selectedTask }) => {
+  switch (selectedTask) {
+    case 'voucher-by-admin':
+      return <VoucherByAdmin />
+    case 'voucher-by-provider':
+      return <VoucherByProvider />
+    case 'approve-provider-voucher':
+      return <ApproveProviderVoucher />
   }
+}
 
+const VoucherManager = ({ task }) => {
   return (
     <div>
       <Head>
         <title>Admin | Voucher Manager</title>
       </Head>
-      <div className="pb-10 h-full">
+      <div className="h-full pb-10">
         <SwitchVoucherManager selectedTask={task} />
       </div>
     </div>
