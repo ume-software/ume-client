@@ -8,7 +8,13 @@ import {
 import { z } from 'zod'
 
 import { createRouter } from './configurations'
-import { createNewVoucherAdmin, getAllVoucher, getVoucherDetails, updateVoucherAdmin } from './services/voucher-service'
+import {
+  adminCheckVoucherCodeExisted,
+  createNewVoucherAdmin,
+  getAllVoucher,
+  getVoucherDetails,
+  updateVoucherAdmin,
+} from './services/voucher-service'
 
 export const voucherRouter = createRouter()
   .query('getAllVoucher', {
@@ -81,5 +87,11 @@ export const voucherRouter = createRouter()
     }),
     resolve: async ({ input, ctx }) => {
       return await updateVoucherAdmin(input, ctx)
+    },
+  })
+  .query('adminCheckVoucherCodeExisted', {
+    input: z.object({ code: z.string() }),
+    resolve: async ({ ctx, input }) => {
+      return await adminCheckVoucherCodeExisted(ctx, input)
     },
   })

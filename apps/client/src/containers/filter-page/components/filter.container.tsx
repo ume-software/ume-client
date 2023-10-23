@@ -182,7 +182,7 @@ const FilterContainer = (props) => {
         <CategoryDrawer data={listSkils} loadingService={loadingService} />
       </div>
       <div className="flex items-center justify-between mx-5">
-        <div className="flex gap-5 my-8 items-center">
+        <div className="flex items-center gap-5 my-8">
           <div className="max-w-96">
             <Input
               className="w-full outline-none border-none bg-[#292734] focus:outline-[#6d3fe0] max-h-10 rounded-xl"
@@ -191,7 +191,7 @@ const FilterContainer = (props) => {
               onKeyPress={(e) => handleKeyPress(e)}
             />
           </div>
-          <div className="flex gap-2 items-center">
+          <div className="flex items-center gap-2">
             <Tooltip
               className="bg-[#292734] text-white px-8 py-2 rounded-xl hover:bg-gray-500 cursor-pointer"
               title={tooltipContent}
@@ -199,7 +199,7 @@ const FilterContainer = (props) => {
               trigger="click"
             >
               {priceRange[0] != min || priceRange[1] != max ? (
-                <div className="flex text-xl gap-3 font-bold border border-light-50">
+                <div className="flex gap-3 text-xl font-bold border border-light-50">
                   <div className="flex items-center gap-1">
                     {priceRange[0]}
                     <Image src={coin} width={25} height={25} alt="coin" />
@@ -244,7 +244,7 @@ const FilterContainer = (props) => {
                         key={index}
                         onClick={() => setGender(genData)}
                       >
-                        <p className="text-mg font-semibold">{genData.name}</p>
+                        <p className="font-semibold text-mg">{genData.name}</p>
                         <div>
                           {genData.key === gender.key ? (
                             <Check theme="filled" size="10" fill="#FFFFFF" strokeLinejoin="bevel" />
@@ -290,7 +290,7 @@ const FilterContainer = (props) => {
                         key={item.key}
                         onClick={() => setOrder(item)}
                       >
-                        <p className="text-mg font-semibold">{item.name}</p>
+                        <p className="font-semibold text-mg">{item.name}</p>
                         <div>
                           {order.key === item.key ? (
                             <Check theme="filled" size="10" fill="#FFFFFF" strokeLinejoin="bevel" />
@@ -326,7 +326,7 @@ const FilterContainer = (props) => {
                 </Link>
               ))
             ) : (
-              <div className="col-span-full text-center mt-10">
+              <div className="mt-10 text-center col-span-full">
                 <p className="text-3xl font-bold">
                   Chưa có người chơi nào phù hợp với tìm kiếm của bạn. Xin hãy thử lại
                 </p>
