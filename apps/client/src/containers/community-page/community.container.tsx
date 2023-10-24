@@ -2,7 +2,7 @@ import { CloseSmall, Earth, EveryUser } from '@icon-park/react'
 import { Modal } from '@ume/ui'
 import { useAuth } from '~/contexts/auth'
 
-import { ReactNode, useContext, useId, useState } from 'react'
+import { ReactNode, useId, useState } from 'react'
 
 import CreatePost from './components/create-post'
 import FollowingPost from './components/following-post'

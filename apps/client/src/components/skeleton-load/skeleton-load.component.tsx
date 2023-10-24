@@ -128,7 +128,7 @@ const TableSkeletonLoader = () => {
     <div className="border border-gray-300 rounded-2xl p-3 animate-pulse">
       <table className="w-full text-center">
         <thead>
-          <tr className="flex justify-between">
+          <tr>
             <th className="py-2">
               <div className="relative w-[100px] h-[40px] bg-gray-300 animate-pulse"></div>
             </th>
@@ -142,7 +142,7 @@ const TableSkeletonLoader = () => {
         </thead>
         <tbody>
           {Array.from({ length: skeletonRowCount }, (_, index) => (
-            <tr key={index} className="flex justify-center">
+            <tr key={index} className="">
               <td className="py-2">
                 <div className="flex items-center justify-center bg-gray-300 animate-pulse">
                   <span className="w-[100px] h-[40px]" />
