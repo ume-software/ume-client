@@ -514,6 +514,7 @@ const EditProfile = () => {
                       onChange={(e) => {
                         setSettingAccount((prevData) => ({ ...prevData, slug: e.target.value.replace(/ /g, '-') }))
                       }}
+                      disabled={!!settingAccount.slug}
                     />
                   </div>
                   <div className="flex items-center gap-10">

@@ -284,6 +284,25 @@ const SkeletonDetailProvider = () => {
   )
 }
 
+const SkeletonProviderService = () => {
+  return (
+    <div className="w-full max-h-screen grid grid-cols-4 gap-5">
+      <div className="col-span-2">
+        <BGFullGridSkeleton />
+      </div>
+      <div className="col-span-2">
+        <BGFullGridSkeleton />
+      </div>
+      <div className="col-span-2">
+        <BGFullGridSkeleton />
+      </div>
+      <div className="col-span-2">
+        <BGFullGridSkeleton />
+      </div>
+    </div>
+  )
+}
+
 export {
   PostSkeletonLoader,
   CommentSkeletonLoader,
@@ -296,4 +315,5 @@ export {
   ChatSkeleton,
   SkeletonForAccountSetting,
   SkeletonDetailProvider,
+  SkeletonProviderService,
 }

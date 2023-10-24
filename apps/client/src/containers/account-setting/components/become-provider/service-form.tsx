@@ -18,6 +18,7 @@ import {
 } from 'ume-service-openapi'
 
 import ConfirmForm from '~/components/confirm-form/confirmForm'
+import { SkeletonProviderService } from '~/components/skeleton-load'
 
 import { trpc } from '~/utils/trpc'
 
@@ -1357,7 +1358,9 @@ const AddSkillForm = () => {
           </div>
         </>
       ) : (
-        <></>
+        <>
+          <SkeletonProviderService />
+        </>
       )}
     </>
   )

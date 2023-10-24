@@ -46,7 +46,7 @@ interface DonateProps {
 const moreButtonDatas: TabDataProps[] = [
   {
     key: 'Donate',
-    label: 'Donate',
+    label: 'Tặng quà',
     icon: (
       <PaperMoneyTwo
         className={`transition-opacity opacity-0 group-hover:opacity-100 group-hover:translate-x-3 duration-300`}

@@ -2,19 +2,32 @@ import React, { useEffect, useState } from 'react'
 
 import { CustomChart } from '~/components/custom-chart'
 
-const ColumnChart = () => {
+const ColumnChart = (props: { seriesCharts: any[] }) => {
+  console.log(props.seriesCharts)
+
+  const categories = props.seriesCharts.map((item) => item.monthYear)
+  const collectData = props.seriesCharts.map((item) =>
+    item.amount.reduce((acc, curr) => (curr > 0 ? acc + curr : acc), 0),
+  )
+  const sendData = props.seriesCharts.map((item) =>
+    item.amount.reduce((acc, curr) => (curr < 0 ? acc + Math.abs(curr) : acc), 0),
+  )
+
   const [dataCharts, setDataCharts] = useState<any[]>([
     {
       name: 'Chi hàng tháng',
-      data: [57, 23, 84, 6, 42],
+      data: sendData,
       color: '#F73164',
     },
     {
       name: 'Thu hàng tháng',
-      data: [57, 23, 84, 6, 42],
+      data: collectData,
       color: '#6F4EF2',
     },
   ])
+
+  console.log(dataCharts)
+
   const [optionsTop, setToptionsTop] = useState([
     {
       key: '1M',
@@ -81,7 +94,7 @@ const ColumnChart = () => {
           `<div style={{display:"flex"}}>` +
           `<span style="font-size:30px;color:${point.color}">` +
           '\u25A0</span> ' +
-          `<span style="font-size:14px">${point?.series?.name}(Triệu VND): </span>
+          `<span style="font-size:14px">${point?.series?.name}: ${value.toLocaleString('en-US')} VND</span>
                         <span style="font-size:14px; font-weight: 500"></span>
                     </div>`
       })
@@ -119,6 +132,7 @@ const ColumnChart = () => {
             maxPointWidth: 50,
           },
         }}
+        category={categories}
         series={dataCharts}
         chart={{ height: 450 }}
         title={{
