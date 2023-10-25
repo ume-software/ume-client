@@ -1,20 +1,22 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Menu, Transition } from '@headlessui/react'
-import { Dot, Gift, Logout, Remind, Setting, User, WalletOne } from '@icon-park/react'
+import { Dot, Gift, Remind } from '@icon-park/react'
 import { Button } from '@ume/ui'
 import coin from 'public/coin-icon.png'
 import logo from 'public/ume-logo-2.svg'
 import Notificate from '~/containers/notificate/notificate.container'
 import { useAuth } from '~/contexts/auth'
 
-import React, { Fragment, ReactElement, useContext, useEffect, useId, useState } from 'react'
+import React, { Fragment, ReactElement, useCallback, useContext, useEffect, useId, useState } from 'react'
 
+import { isNil } from 'lodash'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
 
 import { SocketContext } from '../layouts/app-layout/app-layout'
+import { DropDownMenu } from './drop-down.component'
 import { LoginModal } from './login-modal.component'
-import { RechargeModal } from './recharge-form.component'
+import { RechargeModal } from './recharge-modal.component'
 
 import { trpc } from '~/utils/trpc'
 
@@ -33,8 +35,9 @@ export const Header: React.FC = () => {
   const [isModalLoginVisible, setIsModalLoginVisible] = React.useState(false)
 
   const accessToken = localStorage.getItem('accessToken')
+  const userInfo = JSON.parse(localStorage.getItem('user') ?? 'null')
 
-  const { isAuthenticated, user, logout, login } = useAuth()
+  const { isAuthenticated, logout, login } = useAuth()
 
   trpc.useQuery(['identity.identityInfo'], {
     onSuccess(data) {
@@ -44,7 +47,7 @@ export const Header: React.FC = () => {
       localStorage.removeItem('accessToken')
       localStorage.removeItem('refeshToken')
     },
-    enabled: !accessToken,
+    enabled: !isNil(accessToken) && !isNil(userInfo),
   })
 
   const { isLoading: isRechargeLoading } = trpc.useQuery(['identity.account-balance'], {
@@ -74,9 +77,9 @@ export const Header: React.FC = () => {
     setSelectedTab(target)
   }
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     logout()
-  }
+  }, [logout])
 
   useEffect(() => {
     if (socketContext.socketNotificateContext[0]) {
@@ -97,22 +100,23 @@ export const Header: React.FC = () => {
         <span className="px-3 py-2 text-lg font-medium text-white align-middle duration-500 hover:bg-slate-700 rounded-2xl hover:ease-in-out">
           <Link href={'/home'}>Trang chủ</Link>
         </span>
-
         <span className="px-3 py-2 text-lg font-medium text-white align-middle duration-500 hover:bg-slate-700 rounded-2xl hover:ease-in-out">
           <Link href={'/community'}>Cộng đồng</Link>
+        </span>
+        <span className="px-3 py-2 text-lg font-medium text-white align-middle duration-500 hover:bg-slate-700 rounded-2xl hover:ease-in-out">
+          <Link href={'/'}>FAQs</Link>
         </span>
       </div>
       <div className="flex items-center">
         <div className="flex flex-1 pr-2 duration-500 hover:ease-in-out">
-          {isAuthenticated && (
+          {accessToken && userInfo && (
             <span className="self-center my-auto mr-4 rounded-ful hover:scale-110 hover:ease-in-out">
               <button className="pt-2">
                 <Gift size={22} strokeWidth={4} fill="#FFFFFF" />
               </button>
             </span>
           )}
-
-          {isAuthenticated && (
+          {accessToken && userInfo && (
             <button onClick={() => setShowRechargeModal(true)}>
               <div className="flex items-center justify-end rounded-full bg-[#37354F] pr-2 pl-4 mr-2 self-center text-white">
                 {isRechargeLoading ? (
@@ -130,7 +134,7 @@ export const Header: React.FC = () => {
             </button>
           )}
 
-          {isAuthenticated && (
+          {accessToken && userInfo && (
             <span className="my-auto mr-5 duration-300 rounded-full">
               <div className="relative pt-2">
                 <Menu>
@@ -197,7 +201,7 @@ export const Header: React.FC = () => {
             </span>
           )}
           <span className="my-auto mr-5">
-            {!isAuthenticated ? (
+            {isNil(accessToken) && isNil(userInfo) ? (
               <>
                 <Button
                   name="register"
@@ -212,82 +216,7 @@ export const Header: React.FC = () => {
               </>
             ) : (
               <div className="mt-1 bg-[#292734]">
-                <Menu>
-                  <div>
-                    <Menu.Button>
-                      <Image
-                        className="rounded-full"
-                        layout="fixed"
-                        height={35}
-                        width={35}
-                        src={user?.avatarUrl?.toString() ?? ''}
-                        alt="avatar"
-                      />
-                    </Menu.Button>
-                  </div>
-                  <Transition
-                    as={Fragment}
-                    enter="transition ease-out duration-400"
-                    enterFrom="transform opacity-0 scale-95"
-                    enterTo="transform opacity-100 scale-100"
-                    leave="transition ease-in duration-400"
-                    leaveFrom="transform opacity-100 scale-100"
-                    leaveTo="transform opacity-0 scale-95"
-                  >
-                    <Menu.Items className="absolute w-56 pt-2 origin-top-right bg-white divide-y divide-gray-200 rounded-md shadow-lg right-12 ring-1 ring-black ring-opacity-5 focus:outline-none">
-                      <Menu.Item as="div">
-                        {({ active }) => (
-                          <button
-                            className={`${
-                              active ? 'bg-violet-500 text-white' : 'text-gray-900'
-                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                          >
-                            <User theme="outline" size="20" fill="#333" className="mr-3" />
-                            Tài khoản của bạn
-                          </button>
-                        )}
-                      </Menu.Item>
-                      <Menu.Item as="div">
-                        {({ active }) => (
-                          <button
-                            className={`${
-                              active ? 'bg-violet-500 text-white' : 'text-gray-900'
-                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                          >
-                            <WalletOne theme="outline" size="20" fill="#333" className="mr-3" />
-                            Kiểm tra ví tiên
-                          </button>
-                        )}
-                      </Menu.Item>
-                      <Menu.Item as="div">
-                        {({ active }) => (
-                          <Link
-                            href={`/account-setting?user=${user?.name}&tab=settingInformation`}
-                            className={`${
-                              active ? 'bg-violet-500 text-white' : 'text-gray-900'
-                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                          >
-                            <Setting theme="outline" size="20" fill="#333" className="mr-3" />
-                            Cài đặt tài khoản
-                          </Link>
-                        )}
-                      </Menu.Item>
-                      <Menu.Item as="div">
-                        {({ active }) => (
-                          <button
-                            onClick={handleLogout}
-                            className={`${
-                              active ? 'bg-violet-500 text-white' : 'text-gray-900'
-                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                          >
-                            <Logout className="mr-3" theme="outline" size="20" fill="#333" />
-                            Đăng xuất
-                          </button>
-                        )}
-                      </Menu.Item>
-                    </Menu.Items>
-                  </Transition>
-                </Menu>
+                <DropDownMenu user={userInfo} handleLogout={handleLogout} />
               </div>
             )}
           </span>

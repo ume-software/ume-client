@@ -5,13 +5,12 @@ import momo from 'public/momo-logo.png'
 import vnpay from 'public/vnpay-logo.png'
 import { RechargeEnum } from '~/enumVariable/enumVariable'
 
-import { useState } from 'react'
+import { useId, useMemo, useState } from 'react'
 
 import { QRCode } from 'antd'
 import { Formik } from 'formik'
 import Image from 'next/image'
 import { StaticImageData } from 'next/legacy/image'
-import { useRouter } from 'next/router'
 import * as Yup from 'yup'
 
 import { trpc } from '~/utils/trpc'
@@ -25,7 +24,7 @@ interface IFormValue {
   platform: string
   balance: string
 }
-interface paymentPlatformArrayProps {
+interface PaymentPlatformArrayProps {
   paymentPlatform: string
   imgSrc: StaticImageData | string
   tax: number
@@ -33,15 +32,15 @@ interface paymentPlatformArrayProps {
 }
 
 const coinRechangeValue: number[] = [10000, 20000, 50000, 100000, 200000, 500000]
-const paymentPlatformArray: paymentPlatformArrayProps[] = [
+const paymentPlatformArray: PaymentPlatformArrayProps[] = [
   { paymentPlatform: 'MOMO', imgSrc: momo, tax: 0.01, type: 'QR' },
   { paymentPlatform: 'VNPAY', imgSrc: vnpay, tax: 0.03, type: 'VNPAY' },
 ]
 
 export const RechargeModal = ({ setShowRechargeModal, showRechargeModal }: IRechargeModalProps) => {
   const [qrContent, setQRContent] = useState<any>()
-  const [isSubmiting, setSubmiting] = useState(false)
-  const [platform, setPlatform] = useState<paymentPlatformArrayProps>(paymentPlatformArray[0])
+  const index = useId()
+  const [platform, setPlatform] = useState<PaymentPlatformArrayProps>(paymentPlatformArray[0])
   const handleClose = () => {
     setShowRechargeModal(false)
     setTimeout(() => setQRContent(null), 1000)
@@ -50,7 +49,7 @@ export const RechargeModal = ({ setShowRechargeModal, showRechargeModal }: IRech
   const validationSchema = Yup.object().shape({
     balance: Yup.string()
       .required('Xin hãy nhập số tiền')
-      .matches(/^[0-9]+$/)
+      .matches(/^\d+$/)
       .min(1)
       .max(7, 'Chỉ được nhập nhiều nhất 7 chữ số'),
   })
@@ -92,7 +91,6 @@ export const RechargeModal = ({ setShowRechargeModal, showRechargeModal }: IRech
                     balance: '10',
                   }}
                   onSubmit={(values) => {
-                    setSubmiting(true)
                     requestRecharge.mutate(
                       {
                         total: values.balance,
@@ -100,7 +98,6 @@ export const RechargeModal = ({ setShowRechargeModal, showRechargeModal }: IRech
                       },
                       {
                         onSuccess: (data) => {
-                          setSubmiting(false)
                           if (data.data.dataStringType == RechargeEnum.REDIRECT_URL) {
                             handleClose()
                             window.open(`${data.data.dataString}`, '_blank')
@@ -116,7 +113,7 @@ export const RechargeModal = ({ setShowRechargeModal, showRechargeModal }: IRech
                 >
                   {({ handleSubmit, handleChange, handleBlur, values, errors, isSubmitting, setValues }) => (
                     <form>
-                      <div className="w-full grid grid-cols-6 place-items-center mb-5">
+                      <div className="grid w-full grid-cols-6 mb-5 place-items-center">
                         {coinRechangeValue.map((price, index) => (
                           <>
                             <div
@@ -126,7 +123,7 @@ export const RechargeModal = ({ setShowRechargeModal, showRechargeModal }: IRech
                               } rounded-xl cursor-pointer`}
                               onClick={() => setValues({ balance: (price / 1000).toString() }, true)}
                             >
-                              <div className="flex justify-start items-center">
+                              <div className="flex items-center justify-start">
                                 <p>{price / 1000}</p>
                                 <Image src={coin} width={40} height={40} alt="coin" />
                               </div>
@@ -158,7 +155,7 @@ export const RechargeModal = ({ setShowRechargeModal, showRechargeModal }: IRech
                             autoComplete="off"
                           />
                         </div>
-                        <div className="my-5 flex justify-between items-center">
+                        <div className="flex items-center justify-between my-5">
                           <p className="text-xl font-semibold">Tổng:</p>
                           <div className="flex items-center gap-1">
                             <p className="text-xl font-semibold">
@@ -172,7 +169,7 @@ export const RechargeModal = ({ setShowRechargeModal, showRechargeModal }: IRech
                             <span className="text-xs italic"> VND</span>
                           </div>
                         </div>
-                        <div className="flex justify-center items-center mt-2">
+                        <div className="flex items-center justify-center mt-2">
                           <div>
                             <Button
                               customCSS={`!rounded-2xl w-full !text-white py-2 px-3 font-semibold text-lg text-center ${
