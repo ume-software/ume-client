@@ -195,7 +195,28 @@ export const providerGetSelfVoucher = async (
   } catch (error) {
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
-      message: error.message || 'Fail to get data recharge',
+      message: error.message || 'Fail to get data voucher',
+    })
+  }
+}
+
+export const providerCheckVoucherCode = async (input: string, ctx) => {
+  const cookies = parse(ctx.req.headers.cookie ?? '')
+  try {
+    const reponse = await new VoucherApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).checkVoucherCodeExisted(input)
+    return {
+      data: reponse.data,
+      success: true,
+      message: '',
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to get voucher code',
     })
   }
 }

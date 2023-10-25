@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
 import { CustomChart } from '~/components/custom-chart'
 
@@ -13,20 +13,18 @@ const ColumnChart = (props: { seriesCharts: any[] }) => {
     item.amount.reduce((acc, curr) => (curr < 0 ? acc + Math.abs(curr) : acc), 0),
   )
 
-  const [dataCharts, setDataCharts] = useState<any[]>([
+  const [dataCharts] = useState<any[]>([
     {
-      name: 'Chi hàng tháng',
+      name: 'Chi',
       data: sendData,
       color: '#F73164',
     },
     {
-      name: 'Thu hàng tháng',
+      name: 'Thu',
       data: collectData,
       color: '#6F4EF2',
     },
   ])
-
-  console.log(dataCharts)
 
   const [optionsTop, setToptionsTop] = useState([
     {
@@ -85,16 +83,17 @@ const ColumnChart = (props: { seriesCharts: any[] }) => {
 
   const tooltip = {
     formatter: function () {
-      var currentPoint: any = { ...this },
+      let currentPoint: any = { ...this },
         stackValues: any = `<span  style="font-size:14px"><b>Tháng</b></span><br/>`
       currentPoint.points.forEach(function (point: any) {
         const value = point.y?.valueOf() || 0
-
         stackValues +=
           `<div style={{display:"flex"}}>` +
           `<span style="font-size:30px;color:${point.color}">` +
           '\u25A0</span> ' +
-          `<span style="font-size:14px">${point?.series?.name}: ${value.toLocaleString('en-US')} VND</span>
+          `<span style="font-size:14px">${point?.series?.name} (${point.point.category}): ${value.toLocaleString(
+            'en-US',
+          )} VND</span>
                         <span style="font-size:14px; font-weight: 500"></span>
                     </div>`
       })
@@ -155,7 +154,7 @@ const ColumnChart = (props: { seriesCharts: any[] }) => {
               fontFamily: 'Roboto',
             },
             formatter: function () {
-              return (this as any).value
+              return this.value
             },
           },
         }}

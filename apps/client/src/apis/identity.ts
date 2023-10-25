@@ -16,6 +16,7 @@ import {
   getServiceAttributeByServiceSlug,
   getServiceAttributeValueByServiceAttributeId,
   getUserBySlug,
+  providerCheckVoucherCode,
   providerCreateVoucher,
   providerGetOwnServices,
   providerGetSelfVoucher,
@@ -85,6 +86,12 @@ export const identityRouter = createRouter()
     }),
     resolve: async ({ input, ctx }) => {
       return await providerGetSelfVoucher(input, ctx)
+    },
+  })
+  .query('providerCheckVoucherCode', {
+    input: z.string(),
+    resolve: async ({ input, ctx }) => {
+      return await providerCheckVoucherCode(input, ctx)
     },
   })
   .mutation('providerCreateVoucher', {
