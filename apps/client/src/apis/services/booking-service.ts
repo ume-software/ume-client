@@ -52,6 +52,7 @@ export const getProviders = async (query?: {
       query?.startCost,
       query?.endCost,
       query?.serviceId,
+      [],
       query?.name,
       query?.gender as 'MALE' | 'FEMALE' | 'OTHER' | 'PRIVATE',
       query?.status as 'ACTIVATED' | 'UN_ACTIVATED' | 'STOPPED_ACCEPTING_BOOKING' | 'BUSY',
