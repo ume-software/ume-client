@@ -37,8 +37,8 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
     '$all',
     {
       service: ['$all'],
-      $where: { deletedAt: null },
     },
+    { $where: { deletedAt: null } },
   ]
   const SELECT_TRANS = [
     '$all',
@@ -50,8 +50,8 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
         '$all',
         {
           service: ['$all'],
-          $where: { deletedAt: null },
         },
+        { $where: { deletedAt: null } },
       ],
     },
   ]

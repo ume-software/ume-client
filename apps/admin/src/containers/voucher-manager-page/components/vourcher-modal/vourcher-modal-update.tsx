@@ -2,6 +2,7 @@ import { Plus } from '@icon-park/react'
 import { Button, FormInput, Input, TextArea } from '@ume/ui'
 import empty_img from 'public/empty_error.png'
 import { uploadImageVoucher } from '~/api/upload-media'
+import useDebounce from '~/hooks/adminDebounce'
 
 import * as React from 'react'
 import { useRef, useState } from 'react'
@@ -10,6 +11,7 @@ import { Select, notification } from 'antd'
 import { FormikErrors, useFormik } from 'formik'
 import Image from 'next/legacy/image'
 import {
+  CheckExistedResponse,
   CreateVoucherRequestDiscountUnitEnum,
   CreateVoucherRequestRecipientTypeEnum,
   CreateVoucherRequestTypeEnum,
@@ -43,9 +45,6 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
   trpc.useQuery(['voucher.getVoucherDetails', { id: vourcherId, select: JSON.stringify(SELECT) }], {
     refetchOnWindowFocus: false,
     refetchOnReconnect: 'always',
-    // refetchOnMount: false,
-    // refetchInterval: false,
-    // refetchIntervalInBackground: false,
     onSuccess(data) {
       setVoucherDetails(data.data)
     },
@@ -141,29 +140,54 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
       resetForm()
     },
   })
-
   React.useEffect(() => {
-    form.setFieldValue('vourcherCode', vourcherCodeInit)
-    form.setFieldValue('imageSource', ImageInit)
-    form.setFieldValue('description', descriptionInit)
-    form.setFieldValue('numVoucher', numVoucherInit)
-    form.setFieldValue('numVoucherInDay', numVoucherInDayInit)
-    form.setFieldValue('minimize', minimizeInit)
-    form.setFieldValue('endDate', endDateInit)
-    form.setFieldValue('applyTime', applyTimeInit)
-    form.setFieldValue('name', nameInit)
-    form.setFieldValue('typeVoucher', typeVoucherInit)
-    form.setFieldValue('discountUnit', discountUnitInit)
-    form.setFieldValue('audience', audienceInit)
-    form.setFieldValue('content', contentInit)
-    form.setFieldValue('status', statusInit)
-    form.setFieldValue('numUserCanUse', numUserCanUseInit)
-    form.setFieldValue('numUserCanUseInDay', numUserCanUseInDayInit)
-    form.setFieldValue('minimumBookingDurationForUsage', minimumBookingDurationForUsageInit)
-    form.setFieldValue('minimumBookingTotalPriceForUsage', minimumBookingTotalPriceForUsageInit)
-    form.setFieldValue('maximumDiscountValue', maximumDiscountValueInit)
+    if (updateVoucherAdmin) {
+      form.resetForm({
+        values: {
+          vourcherCode: vourcherCodeInit,
+          imageSource: ImageInit,
+          description: descriptionInit,
+          numVoucher: numVoucherInit,
+          numVoucherInDay: numVoucherInDayInit,
+          minimize: minimizeInit,
+          endDate: endDateInit,
+          applyTime: applyTimeInit,
+          name: nameInit,
+          typeVoucher: typeVoucherInit,
+          discountUnit: discountUnitInit,
+          audience: audienceInit,
+          content: contentInit,
+          selectedImage: null,
+          status: statusInit,
+          numUserCanUse: numUserCanUseInit,
+          numUserCanUseInDay: numUserCanUseInDayInit,
+          minimumBookingDurationForUsage: minimumBookingDurationForUsageInit,
+          minimumBookingTotalPriceForUsage: minimumBookingTotalPriceForUsageInit,
+          maximumDiscountValue: maximumDiscountValueInit,
+        },
+      })
+    }
   }, [endDateInit])
 
+  const [adminCheckVoucherCodeExisted, setAdminCheckVoucherCodeExisted] = useState<CheckExistedResponse>()
+  const debouncedValue = useDebounce<string>(form.values.vourcherCode, 500)
+  trpc.useQuery(
+    [
+      'voucher.adminCheckVoucherCodeExisted',
+      {
+        code: debouncedValue + '',
+      },
+    ],
+    {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: 'always',
+      cacheTime: 0,
+      refetchOnMount: true,
+      onSuccess(data) {
+        if (debouncedValue != vourcherCodeInit) setAdminCheckVoucherCodeExisted(data.data)
+      },
+    },
+  )
   const mappingRecipientType = {
     ALL: 'Tất cả',
     FIRST_TIME_BOOKING: 'Người lần đầu thuê',
@@ -353,7 +377,13 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
     }
     return { imageUrl }
   }
-
+  function isDisableButton() {
+    return (
+      !form.isValid ||
+      !form.dirty ||
+      (adminCheckVoucherCodeExisted?.isExisted ? (debouncedValue != vourcherCodeInit ? true : false) : false)
+    )
+  }
   return (
     <div>
       <form onSubmit={form.handleSubmit} className="flex flex-col mb-4 gap-y-4">
@@ -424,7 +454,8 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                     />
                   </div>
                 </div>
-                <div className="h-12 text-white">
+
+                <div className="flex h-12 text-white">
                   Mã:
                   <div className="inline-block w-2/3 ">
                     <FormInput
@@ -442,6 +473,9 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                       errorMessage={form.errors.vourcherCode}
                       type="text"
                     />
+                    {adminCheckVoucherCodeExisted?.isExisted && debouncedValue != vourcherCodeInit && (
+                      <div className="w-full ml-4 text-xs text-red-500">Mã đã tồn tại</div>
+                    )}
                   </div>
                 </div>
                 <div className="h-12 text-white">
@@ -894,7 +928,7 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
             </Button>
             <Button
               customCSS={`mx-6 px-4 py-1 border-2  ${
-                form.isValid && form.values.name != '' && 'hover:scale-110 bg-[#7463F0] border-[#7463F0]'
+                !isDisableButton() && 'hover:scale-110 bg-[#7463F0] border-[#7463F0]'
               }`}
               onClick={(e) => {
                 if (updateVoucherAdmin.isLoading) {
@@ -904,7 +938,7 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                   openConfirmModal()
                 }
               }}
-              isDisable={!form.isValid || form.values.name === ''}
+              isDisable={isDisableButton()}
             >
               {'Sửa'}
             </Button>
