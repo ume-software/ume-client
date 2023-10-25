@@ -8,16 +8,15 @@ See more info here: https://nextjs.org/docs/messages/invalid-next-config
 info  - Linting and checking validity of types...
 Failed to compile.
 
-./src/apis/services/booking-service.ts:55:7
-Type error: Argument of type 'string | undefined' is not assignable to parameter of type 'string[] | undefined'.
-  Type 'string' is not assignable to type 'string[]'.
+./src/components/header/header.component.tsx:19:31
+Type error: Cannot find module './recharge-modal.component' or its corresponding type declarations.
 
-[0m [90m 53 | [39m      query[33m?[39m[33m.[39mendCost[33m,[39m[0m
-[0m [90m 54 | [39m      query[33m?[39m[33m.[39mserviceId[33m,[39m[0m
-[0m[31m[1m>[22m[39m[90m 55 | [39m      query[33m?[39m[33m.[39mname[33m,[39m[0m
-[0m [90m    | [39m      [31m[1m^[22m[39m[0m
-[0m [90m 56 | [39m      query[33m?[39m[33m.[39mgender [36mas[39m [32m'MALE'[39m [33m|[39m [32m'FEMALE'[39m [33m|[39m [32m'OTHER'[39m [33m|[39m [32m'PRIVATE'[39m[33m,[39m[0m
-[0m [90m 57 | [39m      query[33m?[39m[33m.[39mstatus [36mas[39m [32m'ACTIVATED'[39m [33m|[39m [32m'UN_ACTIVATED'[39m [33m|[39m [32m'STOPPED_ACCEPTING_BOOKING'[39m [33m|[39m [32m'BUSY'[39m[33m,[39m[0m
-[0m [90m 58 | [39m      query[33m?[39m[33m.[39mlimit[33m,[39m[0m
+[0m [90m 17 | [39m[36mimport[39m { [33mDropDownMenu[39m } [36mfrom[39m [32m'./drop-down.component'[39m[0m
+[0m [90m 18 | [39m[36mimport[39m { [33mLoginModal[39m } [36mfrom[39m [32m'./login-modal.component'[39m[0m
+[0m[31m[1m>[22m[39m[90m 19 | [39m[36mimport[39m { [33mRechargeModal[39m } [36mfrom[39m [32m'./recharge-modal.component'[39m[0m
+[0m [90m    | [39m                              [31m[1m^[22m[39m[0m
+[0m [90m 20 | [39m[0m
+[0m [90m 21 | [39m[36mimport[39m { trpc } [36mfrom[39m [32m'~/utils/trpc'[39m[0m
+[0m [90m 22 | [39m[0m
 error Command failed with exit code 1.
 info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
