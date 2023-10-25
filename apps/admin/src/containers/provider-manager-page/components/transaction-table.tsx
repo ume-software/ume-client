@@ -45,6 +45,9 @@ export default function TransactionTable(props: ITransactionTableProps) {
       title: 'Giờ phục vụ',
       dataIndex: 'serveTime',
       key: 'serveTime',
+      render: (text) => {
+        return <div>{text ? text : 0} h</div>
+      },
     },
     {
       title: 'Trạng thái',
@@ -55,9 +58,10 @@ export default function TransactionTable(props: ITransactionTableProps) {
       title: <div className="flex justify-center items-center">Số tiền</div>,
       dataIndex: 'mountMoney',
       key: 'mountMoney',
-      render: (mountMoney) => (
-        <div className="flex justify-center items-center">
-          {mountMoney} <Image alt="Xu" src={coinIcon} width={30} height={30} />
+      render: (text) => (
+        <div>
+          {' '}
+          {text ? text : 0} <Image className="inline-block" alt="Xu" src={coinIcon} width={25} height={25} />
         </div>
       ),
     },

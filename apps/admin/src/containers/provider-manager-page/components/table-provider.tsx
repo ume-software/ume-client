@@ -49,7 +49,6 @@ export default function TableProviders({ data, isLoading }) {
               notification.success({
                 message: 'Chặn Người Cung Cấp thành công!',
                 description: 'Người Cung Cấp Đã Bị Chặn',
-                placement: 'bottomLeft',
               })
               utils.invalidateQueries('provider.getProviderList')
             }
@@ -70,7 +69,6 @@ export default function TableProviders({ data, isLoading }) {
                 notification.success({
                   message: 'Bỏ Chặn Người Cung Cấp thành công!',
                   description: 'Người Cung Cấp Đã Được Bỏ Chặn',
-                  placement: 'bottomLeft',
                 })
                 utils.invalidateQueries('provider.getProviderList')
               }
@@ -179,7 +177,7 @@ export default function TableProviders({ data, isLoading }) {
   ]
   const locale = {
     emptyText: (
-      <div className="flex flex-col items-center justify-center w-full h-full font-bold text-2xl text-white">
+      <div className="flex flex-col items-center justify-center w-full h-full text-2xl font-bold text-white">
         <Image height={600} alt="empty data" src={EmptyErrorPic} />
         Không có data
       </div>

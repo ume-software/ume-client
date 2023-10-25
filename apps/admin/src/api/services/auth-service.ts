@@ -36,10 +36,8 @@ export const signinService = async ({ username, password }, ctx) => {
     return {
       data: response.data,
       success: true,
-      message: 'Success',
     }
   } catch (error) {
-    console.log(error)
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
       message: error.message || 'Authentication failed',

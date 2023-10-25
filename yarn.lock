@@ -2051,9 +2051,9 @@ camelcase@^6.2.0:
   integrity sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==
 
 caniuse-lite@^1.0.30001406, caniuse-lite@^1.0.30001538, caniuse-lite@^1.0.30001541:
-  version "1.0.30001553"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001553.tgz#e64e7dc8fd4885cd246bb476471420beb5e474b5"
-  integrity sha512-N0ttd6TrFfuqKNi+pMgWJTb9qrdJu4JSpgPFLe/lrD19ugC6fZgF0pUewRowDwzdDnb9V41mFcdlYgl/PyKf4A==
+  version "1.0.30001554"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001554.tgz#ba80d88dff9acbc0cd4b7535fc30e0191c5e2e2a"
+  integrity sha512-A2E3U//MBwbJVzebddm1YfNp7Nud5Ip+IPn4BozBmn4KqVX7AvluoIDFWjsv5OkGnKUXQVmMSoMKLa3ScCblcQ==
 
 chalk@^2.4.2:
   version "2.4.2"
@@ -6533,9 +6533,9 @@ supports-preserve-symlinks-flag@^1.0.0:
   integrity sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==
 
 swagger-ui-dist@>=5.0.0:
-  version "5.9.0"
-  resolved "https://registry.yarnpkg.com/swagger-ui-dist/-/swagger-ui-dist-5.9.0.tgz#d52b6cf52fd0a8e6930866c402aaa793fe4e3f76"
-  integrity sha512-NUHSYoe5XRTk/Are8jPJ6phzBh3l9l33nEyXosM17QInoV95/jng8+PuSGtbD407QoPf93MH3Bkh773OgesJpA==
+  version "5.9.1"
+  resolved "https://registry.yarnpkg.com/swagger-ui-dist/-/swagger-ui-dist-5.9.1.tgz#d0bcd614e3752da02df141846348f84468ae815e"
+  integrity sha512-5zAx+hUwJb9T3EAntc7TqYkV716CMqG6sZpNlAAMOMWkNXRYxGkN8ADIvD55dQZ10LxN90ZM/TQmN7y1gpICnw==
 
 swagger-ui-express@^5.0.0:
   version "5.0.0"
@@ -6562,9 +6562,9 @@ symbol-tree@^3.2.4:
   integrity sha512-9QNk5KwDF+Bvz+PyObkmSYjI5ksVUYtjW7AU22r2NKcfLJcXp96hkDWU3+XndOsUb+AQ9QhfzfCT2O+CNWT5Tw==
 
 tailwindcss@^3.2.4, tailwindcss@^3.2.7, tailwindcss@^3.3.2:
-  version "3.3.4"
-  resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-3.3.4.tgz#f08c493ff3ddf03081c40e780e98f129e1c8214d"
-  integrity sha512-JXZNOkggUAc9T5E7nCrimoXHcSf9h3NWFe5sh36CGD/3M5TRLuQeFnQoDsit2uVTqgoOZHLx5rTykLUu16vsMQ==
+  version "3.3.5"
+  resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-3.3.5.tgz#22a59e2fbe0ecb6660809d9cc5f3976b077be3b8"
+  integrity sha512-5SEZU4J7pxZgSkv7FP1zY8i2TIAOooNZ1e/OGtxIEv6GltpoiXUqWvLy89+a10qYTB1N5Ifkuw9lqQkN9sscvA==
   dependencies:
     "@alloc/quick-lru" "^5.2.0"
     arg "^5.0.2"
@@ -6949,9 +6949,9 @@ ume-identity-service-openapi@latest:
     axios "^0.27.2"
 
 ume-service-openapi@latest:
-  version "1.2.52"
-  resolved "https://registry.yarnpkg.com/ume-service-openapi/-/ume-service-openapi-1.2.52.tgz#e96a2757ca6fc44f49e53855cd775dce081cae90"
-  integrity sha512-bg61hlrvdGTThKNDUupeEaNT4L1inVt4a6rfWfqtXREE37l4UsIFRS9uSL/iB619Oh7YWq4HBxGeJxMVZ06ZgQ==
+  version "1.2.55"
+  resolved "https://registry.yarnpkg.com/ume-service-openapi/-/ume-service-openapi-1.2.55.tgz#04e8512dfeb299acb034c16a059065fbb4adfef9"
+  integrity sha512-eU9N+U/HdTQ/JIYq1mfNnbfkGWEZ1juYIRuYCHihhSS1XPV8+Bq5vmPnocIwtmuDyoILEhfY11dhAorSBtPIuw==
   dependencies:
     axios "^0.27.2"
 

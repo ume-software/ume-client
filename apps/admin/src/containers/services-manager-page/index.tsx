@@ -1,5 +1,5 @@
-import { Left, Right, Search } from '@icon-park/react'
-import { Input } from '@ume/ui'
+import { Left, Plus, Right, Search } from '@icon-park/react'
+import { Button, Input } from '@ume/ui'
 
 import React, { useState } from 'react'
 
@@ -8,6 +8,8 @@ import Head from 'next/head'
 import { PrismaWhereConditionType, prismaWhereConditionToJsonString } from 'query-string-prisma-ume'
 import { ServicePagingResponse } from 'ume-service-openapi'
 
+import ServicesModalCreate from './components/services-modal/services-modal-create'
+import ServicesModalUpdate from './components/services-modal/services-modal-update'
 import ServicesTable from './components/services-table'
 
 import FilterDropdown from '~/components/filter-dropdown'
@@ -18,7 +20,7 @@ const statusFilterItems = [
   {
     key: 'all',
     label: (
-      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white px-3 py-2 w-full flex justify-center">
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
         Tất cả
       </Tag>
     ),
@@ -26,7 +28,7 @@ const statusFilterItems = [
   {
     key: 'true',
     label: (
-      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white  px-3 py-2 w-full flex justify-center">
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
         Hoạt động
       </Tag>
     ),
@@ -34,7 +36,7 @@ const statusFilterItems = [
   {
     key: 'false',
     label: (
-      <Tag className="hover:bg-gray-500 hover:text-white rounded-lg bg-white  px-3 py-2 w-full flex justify-center">
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
         Tạm dừng
       </Tag>
     ),
@@ -49,6 +51,9 @@ const mappingStatus = {
 const ServicesManagerPage = () => {
   const [serviceList, setServiceList] = useState<ServicePagingResponse | undefined>()
   const [page, setPage] = useState(1)
+  const [openServicesModalCreate, setOpenServicesModalCreate] = useState(false)
+  const [openServicesModalUpdate, setOpenServicesModalUpdate] = useState(false)
+
   const [filter, setFilter] = useState({
     gender: 'ALL',
     isActivated: 'all',
@@ -81,7 +86,6 @@ const ServicesManagerPage = () => {
       },
     },
   )
-
   const handleFilter = (title, key) => {
     setPage(1)
     if (title == 'gender') {
@@ -121,15 +125,32 @@ const ServicesManagerPage = () => {
       })
     }
   }
+  function addServicesHandler() {
+    setOpenServicesModalCreate(true)
+    // setOpenServicesModalUpdate(true)
+  }
+  function closeServicesModalCreate() {
+    setOpenServicesModalCreate(false)
+  }
+
+  function closeServicesModalUpdate() {
+    setOpenServicesModalUpdate(false)
+  }
   return (
     <div>
       <Head>
         <title>Admin | Services Manager</title>
       </Head>
       <div className="pb-10">
-        <span className="content-title">Quản Lý Dịch Vụ</span>
+        <div className="flex justify-between">
+          <span className="content-title">Quản Lý Dịch Vụ</span>
+          <Button customCSS="bg-[#7463f0] px-3 rounded-2xl active:bg-gray-600 py-2" onClick={addServicesHandler}>
+            <Plus theme="outline" size="24" fill="#fff" />
+            Thêm dịch vụ
+          </Button>
+        </div>
         <div className="flex flex-col my-10">
-          <div className="flex justify-between items-center">
+          <div className="flex items-center justify-between">
             <div className="flex">
               <FilterDropdown
                 id={'status'}
@@ -140,8 +161,8 @@ const ServicesManagerPage = () => {
               />
             </div>
 
-            <div className="flex pl-1 items-center rounded-lg bg-umeHeader border-2 border-white">
-              <Search className=" active:bg-gray-700 p-2 rounded-full" theme="outline" size="24" fill="#fff" />
+            <div className="flex items-center pl-1 border-2 border-white rounded-lg bg-umeHeader">
+              <Search className="p-2 rounded-full active:bg-gray-700" theme="outline" size="24" fill="#fff" />
               <Input
                 placeholder="Tìm kiếm tên dịch vụ"
                 onKeyUp={handleKeyPress}
@@ -179,6 +200,16 @@ const ServicesManagerPage = () => {
             }}
           />
         </div>
+        {openServicesModalCreate && (
+          <ServicesModalCreate closeFunction={closeServicesModalCreate} openValue={openServicesModalCreate} />
+        )}
+        {openServicesModalUpdate && (
+          <ServicesModalUpdate
+            idService="1"
+            closeFunction={closeServicesModalUpdate}
+            openValue={openServicesModalUpdate}
+          />
+        )}
       </div>
     </div>
   )

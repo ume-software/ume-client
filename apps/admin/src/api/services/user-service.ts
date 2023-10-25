@@ -18,7 +18,6 @@ export const getUserList = async (ctx, query: { page: string; where?: string; or
     return {
       data: response.data,
       success: true,
-      message: 'Success',
     }
   } catch (error) {
     throw new TRPCError({
@@ -43,7 +42,6 @@ export const getUserCoinHistories = async (
     return {
       data: response.data,
       success: true,
-      message: 'Success',
     }
   } catch (error) {
     throw new TRPCError({
@@ -65,7 +63,6 @@ export const getUserTotalCoin = async (ctx, { slug }) => {
     return {
       data: response.data,
       success: true,
-      message: 'Success',
     }
   } catch (error) {
     throw new TRPCError({
@@ -87,7 +84,6 @@ export const banUser = async (ctx, { slug }) => {
     return {
       data: response.data,
       success: true,
-      message: 'Success',
     }
   } catch (error) {
     throw new TRPCError({
@@ -108,7 +104,6 @@ export const unBanUser = async (ctx, { slug }) => {
     return {
       data: response.data,
       success: true,
-      message: 'Success',
     }
   } catch (error) {
     throw new TRPCError({

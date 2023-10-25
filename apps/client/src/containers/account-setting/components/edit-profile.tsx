@@ -346,7 +346,7 @@ const EditProfile = () => {
           className="min-h-[75%] max-h-[95%] flex flex-col justify-between px-5 pb-5 gap-5 overflow-y-auto custom-scrollbar"
           onSubmit={handleUploadImage}
         >
-          <div className="text-xl text-white font-bold pb-3 border-b border-opacity-30">Xác minh danh tính</div>
+          <div className="pb-3 text-xl font-bold text-white border-b border-opacity-30">Xác minh danh tính</div>
           <p className="text-white opacity-50">*Dùng ảnh CCCD hoặc Passport</p>
           <div className="min-h-[75%] max-h-full flex flex-col gap-10 text-md text-white overflow-y-auto custom-scrollbar">
             <div>
@@ -354,8 +354,8 @@ const EditProfile = () => {
               <div className="relative">
                 <div className="relative w-full h-[300px] bg-white bg-opacity-30 rounded-xl">
                   {!selectedImage.frontVertificationImage && (
-                    <div className="w-full h-full absolute flex justify-center items-center top-0 left-0 right-0 bottom-0 border-dashed border-2 border-white rounded-xl z-10">
-                      <p className="text-white text-4xl font-bold">+</p>
+                    <div className="absolute top-0 bottom-0 left-0 right-0 z-10 flex items-center justify-center w-full h-full border-2 border-white border-dashed rounded-xl">
+                      <p className="text-4xl font-bold text-white">+</p>
                     </div>
                   )}
                   <Image
@@ -367,7 +367,7 @@ const EditProfile = () => {
                   />
                 </div>
                 <input
-                  className="absolute w-full h-full top-0 left-0 opacity-0 z-20 cursor-pointer"
+                  className="absolute top-0 left-0 z-20 w-full h-full opacity-0 cursor-pointer"
                   type="file"
                   name="files"
                   onChange={(e) => handleImageChange(e, 1)}
@@ -378,8 +378,8 @@ const EditProfile = () => {
               <label>Ảnh mặt sau</label>
               <div className="relative">
                 <div className="relative w-full h-[300px] bg-white bg-opacity-30 rounded-xl">
-                  <div className="w-full h-full absolute flex justify-center items-center top-0 left-0 right-0 bottom-0 border-dashed border-2 border-white rounded-xl z-10">
-                    <p className="text-white text-4xl font-bold">+</p>
+                  <div className="absolute top-0 bottom-0 left-0 right-0 z-10 flex items-center justify-center w-full h-full border-2 border-white border-dashed rounded-xl">
+                    <p className="text-4xl font-bold text-white">+</p>
                   </div>
                   <Image
                     className="rounded-lg"
@@ -390,7 +390,7 @@ const EditProfile = () => {
                   />
                 </div>
                 <input
-                  className="absolute w-full h-full top-0 left-0 opacity-0 z-20 cursor-pointer"
+                  className="absolute top-0 left-0 z-20 w-full h-full opacity-0 cursor-pointer"
                   type="file"
                   name="files"
                   onChange={(e) => handleImageChange(e, 2)}
@@ -401,8 +401,8 @@ const EditProfile = () => {
               <label>Ảnh khuôn mặt</label>
               <div className="relative">
                 <div className="relative w-full h-[300px] bg-white bg-opacity-30 rounded-xl">
-                  <div className="w-full h-full absolute flex justify-center items-center top-0 left-0 right-0 bottom-0 border-dashed border-2 border-white rounded-xl z-10">
-                    <p className="text-white text-4xl font-bold">+</p>
+                  <div className="absolute top-0 bottom-0 left-0 right-0 z-10 flex items-center justify-center w-full h-full border-2 border-white border-dashed rounded-xl">
+                    <p className="text-4xl font-bold text-white">+</p>
                   </div>
                   <Image
                     className="rounded-lg"
@@ -413,7 +413,7 @@ const EditProfile = () => {
                   />
                 </div>
                 <input
-                  className="absolute w-full h-full top-0 left-0 opacity-0 z-20 cursor-pointer"
+                  className="absolute top-0 left-0 z-20 w-full h-full opacity-0 cursor-pointer"
                   type="file"
                   name="files"
                   onChange={(e) => handleImageChange(e, 3)}
@@ -467,9 +467,9 @@ const EditProfile = () => {
           <form
             ref={editAccountInforFormRef}
             onSubmit={handleUpdateInformation}
-            className="w-full flex flex-col items-center gap-5 p-10"
+            className="flex flex-col items-center w-full gap-5 p-10"
           >
-            <div className="w-full flex justify-start items-center gap-24">
+            <div className="flex items-center justify-start w-full gap-24">
               <div className="relative p-2 bg-gray-700 rounded-lg">
                 <div className="w-[250px] h-[300px]">
                   <Image
@@ -480,10 +480,10 @@ const EditProfile = () => {
                     alt="Personal Image"
                   />
                 </div>
-                <div className="absolute right-0 bottom-0 p-2 bg-zinc-800 hover:bg-gray-700 rounded-full">
+                <div className="absolute bottom-0 right-0 p-2 rounded-full bg-zinc-800 hover:bg-gray-700">
                   <Pencil theme="filled" size="25" fill="#FFFFFF" strokeLinejoin="bevel" />
                   <input
-                    className="absolute w-full h-full top-0 left-0 opacity-0 z-20"
+                    className="absolute top-0 left-0 z-20 w-full h-full opacity-0"
                     type="file"
                     name="files"
                     onChange={(e) => handleImageChange(e, 0)}
@@ -491,7 +491,7 @@ const EditProfile = () => {
                 </div>
               </div>
               <div>
-                <p className="opacity-30 py-2 border-b mb-5">Thông tin hồ sơ</p>
+                <p className="py-2 mb-5 border-b opacity-30">Thông tin hồ sơ</p>
                 <div className="flex flex-col gap-6">
                   <div className="space-y-2">
                     <label>Tên</label>
@@ -548,7 +548,7 @@ const EditProfile = () => {
                     </div>
                     <div className="space-y-2">
                       <label>Giới tính</label>
-                      <div className="w-fit relative">
+                      <div className="relative w-fit">
                         <Menu>
                           <Menu.Button>
                             <button
@@ -581,7 +581,7 @@ const EditProfile = () => {
                                     key={index}
                                     onClick={() => setSettingAccount((prevData) => ({ ...prevData, gender: genData }))}
                                   >
-                                    <p className="text-mg font-semibold">{genData.name}</p>
+                                    <p className="font-semibold text-mg">{genData.name}</p>
                                     <div>
                                       {genData.key === settingAccount.gender.key ? (
                                         <Check theme="filled" size="10" fill="#FFFFFF" strokeLinejoin="bevel" />
@@ -603,13 +603,13 @@ const EditProfile = () => {
                     <div>
                       {userSettingData.isVerified ? (
                         <div className="flex items-center justify-between">
-                          <div className="w-fit flex items-center gap-2 bg-green-600 py-2 px-4 text-white rounded-md">
+                          <div className="flex items-center gap-2 px-4 py-2 text-white bg-green-600 rounded-md w-fit">
                             <CheckOne theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" /> Đã xác minh
                           </div>
                         </div>
                       ) : (
                         <div className="flex items-center justify-between">
-                          <div className="w-fit bg-red-600 p-2 px-5 text-white rounded-md">Chưa xác minh</div>
+                          <div className="p-2 px-5 text-white bg-red-600 rounded-md w-fit">Chưa xác minh</div>
                           <Button
                             isActive={true}
                             isOutlinedButton={true}
