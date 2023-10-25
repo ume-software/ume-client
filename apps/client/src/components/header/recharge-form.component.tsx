@@ -5,7 +5,7 @@ import momo from 'public/momo-logo.png'
 import vnpay from 'public/vnpay-logo.png'
 import { RechargeEnum } from '~/enumVariable/enumVariable'
 
-import { useId, useMemo, useState } from 'react'
+import { useId, useState } from 'react'
 
 import { QRCode } from 'antd'
 import { Formik } from 'formik'
@@ -20,10 +20,6 @@ interface IRechargeModalProps {
   setShowRechargeModal: any
 }
 
-interface IFormValue {
-  platform: string
-  balance: string
-}
 interface PaymentPlatformArrayProps {
   paymentPlatform: string
   imgSrc: StaticImageData | string
