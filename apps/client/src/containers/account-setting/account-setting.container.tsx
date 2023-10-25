@@ -4,7 +4,6 @@ import logo from 'public/logo.png'
 import { useAuth } from '~/contexts/auth'
 
 import { ReactNode, useEffect, useState } from 'react'
-import React from 'react'
 
 import { parse } from 'cookie'
 import Image from 'next/legacy/image'
@@ -91,7 +90,7 @@ const AccountSettingContainer = () => {
   }
 
   useEffect(() => {
-    if (!!accessToken) {
+    if (accessToken) {
       return
     } else {
       router.replace({ pathname: '/home' })
