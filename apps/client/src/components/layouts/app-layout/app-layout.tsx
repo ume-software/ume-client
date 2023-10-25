@@ -1,6 +1,5 @@
-import * as socketio from 'socket.io-client'
 import { socket } from '~/apis/socket/socket-connect'
-import { AuthProvider, useAuth } from '~/contexts/auth'
+import { useAuth } from '~/contexts/auth'
 
 import { Dispatch, PropsWithChildren, ReactNode, SetStateAction, createContext, useEffect, useState } from 'react'
 
@@ -13,7 +12,7 @@ import { getSocket } from '~/utils/constants'
 
 type AppLayoutProps = PropsWithChildren
 
-interface socketClientEmit {
+interface SocketClientEmit {
   [key: string]: any
 }
 interface SocketContext {
@@ -31,7 +30,7 @@ interface DrawerProps {
   setChildrenDrawer: (children: ReactNode) => void
 }
 
-export const SocketClientEmit = createContext<socketClientEmit>({
+export const SocketClientEmit = createContext<SocketClientEmit>({
   socketInstanceChatting: null,
 })
 
@@ -55,7 +54,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
   const [childrenDrawer, setChildrenDrawer] = useState<ReactNode>()
 
-  const [socketClientEmit, setSocketClientEmit] = useState<socketClientEmit>({ socketInstanceChatting: null })
+  const [socketClientEmit, setSocketClientEmit] = useState<SocketClientEmit>({ socketInstanceChatting: null })
 
   const [socketContext, setSocketContext] = useState<SocketContext['socketContext']>({
     socketNotificateContext: [],

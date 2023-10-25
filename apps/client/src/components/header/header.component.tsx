@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Menu, Transition } from '@headlessui/react'
 import { Dot, Gift, Remind } from '@icon-park/react'
 import { Button } from '@ume/ui'
@@ -6,12 +7,13 @@ import logo from 'public/ume-logo-2.svg'
 import Notificate from '~/containers/notificate/notificate.container'
 import { useAuth } from '~/contexts/auth'
 
-import React, { Fragment, ReactElement, useCallback, useId, useState } from 'react'
+import React, { Fragment, ReactElement, useCallback, useContext, useEffect, useId, useState } from 'react'
 
 import { isNil } from 'lodash'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
 
+import { SocketContext } from '../layouts/app-layout/app-layout'
 import { DropDownMenu } from './drop-down.component'
 import { LoginModal } from './login-modal.component'
 import { RechargeModal } from './recharge-form.component'
@@ -27,8 +29,9 @@ export const Header: React.FC = () => {
   const index = useId()
   const [showRechargeModal, setShowRechargeModal] = useState(false)
   const [balance, setBalance] = useState<any>()
-  const [notificatedAmount] = useState<number>(0)
+  const [notificatedAmount, setNotificatedAmount] = useState<number>(0)
   const [selectedTab, setSelectedTab] = useState('Chính')
+  const { socketContext } = useContext(SocketContext)
   const [isModalLoginVisible, setIsModalLoginVisible] = React.useState(false)
 
   const accessToken = localStorage.getItem('accessToken')
@@ -47,7 +50,7 @@ export const Header: React.FC = () => {
     enabled: !isNil(accessToken) && !isNil(userInfo),
   })
 
-  trpc.useQuery(['identity.account-balance'], {
+  const { isLoading: isRechargeLoading } = trpc.useQuery(['identity.account-balance'], {
     onSuccess(data) {
       setBalance(data.data.totalCoinsAvailable)
     },
@@ -77,6 +80,12 @@ export const Header: React.FC = () => {
   const handleLogout = useCallback(() => {
     logout()
   }, [logout])
+
+  useEffect(() => {
+    if (socketContext.socketNotificateContext[0]) {
+      setNotificatedAmount(notificatedAmount + 1)
+    }
+  }, [socketContext.socketNotificateContext[0]])
 
   return (
     <div className="fixed z-50 flex items-center justify-between w-full h-16 bg-umeHeader ">
@@ -110,7 +119,16 @@ export const Header: React.FC = () => {
           {accessToken && userInfo && (
             <button onClick={() => setShowRechargeModal(true)}>
               <div className="flex items-center justify-end rounded-full bg-[#37354F] pr-2 pl-4 mr-2 self-center text-white">
-                <p className="text-lg font-semibold">{balance}</p>
+                {isRechargeLoading ? (
+                  <>
+                    <span
+                      className={`spinner h-3 w-3 animate-spin rounded-full border-[2px] border-r-transparent dark:border-navy-300 dark:border-r-transparent border-white`}
+                    />
+                  </>
+                ) : (
+                  <p className="text-lg font-semibold">{balance}</p>
+                )}
+
                 <Image src={coin} width={30} height={30} alt="coin" />
               </div>
             </button>
@@ -121,7 +139,11 @@ export const Header: React.FC = () => {
               <div className="relative pt-2">
                 <Menu>
                   <div>
-                    <Menu.Button>
+                    <Menu.Button
+                      onClick={() => {
+                        setNotificatedAmount(0)
+                      }}
+                    >
                       {notificatedAmount > 0 ? (
                         <div>
                           <Remind theme="filled" size="22" fill="#FFFFFF" strokeLinejoin="bevel" />
