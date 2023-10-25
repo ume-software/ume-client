@@ -32,9 +32,9 @@ export const Header: React.FC = () => {
   const [isModalLoginVisible, setIsModalLoginVisible] = React.useState(false)
 
   const accessToken = localStorage.getItem('accessToken')
-  const userInfo = localStorage.getItem('user')
+  const userInfo = JSON.parse(localStorage.getItem('user') ?? 'null')
 
-  const { isAuthenticated, user, logout, login } = useAuth()
+  const { isAuthenticated, logout, login } = useAuth()
 
   trpc.useQuery(['identity.identityInfo'], {
     onSuccess(data) {
@@ -95,22 +95,19 @@ export const Header: React.FC = () => {
           <Link href={'/community'}>Cộng đồng</Link>
         </span>
         <span className="px-3 py-2 text-lg font-medium text-white align-middle duration-500 hover:bg-slate-700 rounded-2xl hover:ease-in-out">
-          <Link href={'/'}>Hỗ trợ</Link>
-        </span>
-        <span className="px-3 py-2 text-lg font-medium text-white align-middle duration-500 hover:bg-slate-700 rounded-2xl hover:ease-in-out">
           <Link href={'/'}>FAQs</Link>
         </span>
       </div>
       <div className="flex items-center">
         <div className="flex flex-1 pr-2 duration-500 hover:ease-in-out">
-          {isAuthenticated && (
+          {accessToken && userInfo && (
             <span className="self-center my-auto mr-4 rounded-ful hover:scale-110 hover:ease-in-out">
               <button className="pt-2">
                 <Gift size={22} strokeWidth={4} fill="#FFFFFF" />
               </button>
             </span>
           )}
-          {isAuthenticated && (
+          {accessToken && userInfo && (
             <button onClick={() => setShowRechargeModal(true)}>
               <div className="flex items-center justify-end rounded-full bg-[#37354F] pr-2 pl-4 mr-2 self-center text-white">
                 <p className="text-lg font-semibold">{balance}</p>
@@ -119,7 +116,7 @@ export const Header: React.FC = () => {
             </button>
           )}
 
-          {isAuthenticated && (
+          {accessToken && userInfo && (
             <span className="my-auto mr-5 duration-300 rounded-full">
               <div className="relative pt-2">
                 <Menu>
@@ -182,7 +179,7 @@ export const Header: React.FC = () => {
             </span>
           )}
           <span className="my-auto mr-5">
-            {!isAuthenticated ? (
+            {isNil(accessToken) && isNil(userInfo) ? (
               <>
                 <Button
                   name="register"
@@ -197,7 +194,7 @@ export const Header: React.FC = () => {
               </>
             ) : (
               <div className="mt-1 bg-[#292734]">
-                <DropDownMenu user={user} handleLogout={handleLogout} />
+                <DropDownMenu user={userInfo} handleLogout={handleLogout} />
               </div>
             )}
           </span>

@@ -1,5 +1,5 @@
 import { Menu, Transition } from '@headlessui/react'
-import { Logout, Setting, User, WalletOne } from '@icon-park/react'
+import { Help, Logout, Setting, User, WalletOne } from '@icon-park/react'
 
 import { Fragment } from 'react'
 
@@ -11,6 +11,8 @@ interface MenuProps {
   handleLogout: () => void
 }
 
+//TODO: map link for dropdown menu
+
 export const DropDownMenu = ({ user, handleLogout }: MenuProps) => {
   return (
     <Menu>
@@ -21,7 +23,7 @@ export const DropDownMenu = ({ user, handleLogout }: MenuProps) => {
             layout="fixed"
             height={35}
             width={35}
-            src={user?.avatarUrl?.toString() ?? ''}
+            src={user?.avatarUrl ?? ''}
             alt="avatar"
           />
         </Menu.Button>
@@ -35,28 +37,29 @@ export const DropDownMenu = ({ user, handleLogout }: MenuProps) => {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="absolute w-56 pt-2 origin-top-right bg-white divide-y divide-gray-200 rounded-md shadow-lg right-12 ring-1 ring-black ring-opacity-5 focus:outline-none">
+        <Menu.Items className="absolute w-56 p-2 text-white origin-top-right divide-y divide-gray-200 rounded-md shadow-lg bg-umeHeader right-12 ring-1 ring-black ring-opacity-5 focus:outline-none">
           <Menu.Item as="div">
             {({ active }) => (
-              <button
+              <Link
+                href={`/profile/${user?.id}`}
                 className={`${
-                  active ? 'bg-violet-500 text-white' : 'text-gray-900'
-                } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                  active ? 'bg-slate-700' : 'text-gray-900'
+                } group flex w-full items-center rounded-md px-2 text-white py-2 text-sm`}
               >
-                <User theme="outline" size="20" fill="#333" className="mr-3" />
+                <User theme="outline" size="20" fill="#ffffff" className="mr-3" />
                 Tài khoản của bạn
-              </button>
+              </Link>
             )}
           </Menu.Item>
           <Menu.Item as="div">
             {({ active }) => (
               <button
                 className={`${
-                  active ? 'bg-violet-500 text-white' : 'text-gray-900'
-                } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                  active ? 'bg-slate-700' : 'text-gray-900'
+                } group flex w-full items-center rounded-md  text-white px-2 py-2 text-sm`}
               >
-                <WalletOne theme="outline" size="20" fill="#333" className="mr-3" />
-                Kiểm tra ví tiên
+                <WalletOne theme="outline" size="20" fill="#ffffff" className="mr-3" />
+                Lich sử giao dịch
               </button>
             )}
           </Menu.Item>
@@ -65,23 +68,37 @@ export const DropDownMenu = ({ user, handleLogout }: MenuProps) => {
               <Link
                 href={`/account-setting?user=${user?.name}&tab=settingInformation`}
                 className={`${
-                  active ? 'bg-violet-500 text-white' : 'text-gray-900'
-                } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                  active ? 'bg-slate-700 text-white' : 'text-gray-900'
+                } group flex w-full items-center rounded-md text-white px-2 py-2 text-sm`}
               >
-                <Setting theme="outline" size="20" fill="#333" className="mr-3" />
+                <Setting theme="outline" size="20" fill="#ffffff" className="mr-3" />
                 Cài đặt tài khoản
               </Link>
             )}
           </Menu.Item>
           <Menu.Item as="div">
             {({ active }) => (
+              <Link
+                href={`/account-setting?user=${user?.name}&tab=settingInformation`}
+                className={`${
+                  active ? 'bg-slate-700 text-white' : 'text-gray-900'
+                } group flex w-full items-center rounded-md text-white px-2 py-2 text-sm`}
+              >
+                <Help theme="outline" size="20" fill="#ffffff" className="mr-3" />
+                Hỗ trợ
+              </Link>
+            )}
+          </Menu.Item>
+
+          <Menu.Item as="div">
+            {({ active }) => (
               <button
                 onClick={handleLogout}
                 className={`${
-                  active ? 'bg-violet-500 text-white' : 'text-gray-900'
-                } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                  active ? 'bg-slate-700 ' : 'text-gray-900'
+                } group flex w-full items-center rounded-md text-white px-2 py-2 text-sm`}
               >
-                <Logout className="mr-3" theme="outline" size="20" fill="#333" />
+                <Logout className="mr-3" theme="outline" size="20" fill="#ffffff" />
                 Đăng xuất
               </button>
             )}
