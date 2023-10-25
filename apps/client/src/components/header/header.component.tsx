@@ -16,7 +16,7 @@ import Link from 'next/link'
 import { SocketContext } from '../layouts/app-layout/app-layout'
 import { DropDownMenu } from './drop-down.component'
 import { LoginModal } from './login-modal.component'
-import { RechargeModal } from './recharge-form.component'
+import { RechargeModal } from './recharge-modal.component'
 
 import { trpc } from '~/utils/trpc'
 
