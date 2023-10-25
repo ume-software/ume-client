@@ -1,4 +1,4 @@
-FROM node:16-alpine
+FROM node:20-alpine
 
 ENV NODE_ENV development
 ENV NODE_OPTIONS=--max_old_space_size=1024
@@ -14,7 +14,7 @@ RUN yarn global add turbo
 WORKDIR /app
 
 # Install app dependencies
-COPY  ["yarn.lock", "package.json", "turbo.json", "./"] 
+COPY  ["yarn.lock", "package.json", "turbo.json", "./"]
 
 # Copy source files
 COPY . .
