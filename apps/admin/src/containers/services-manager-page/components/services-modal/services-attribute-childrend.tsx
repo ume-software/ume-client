@@ -220,7 +220,7 @@ export default function ServiceAttributes({
           <div className="flex items-center justify-end w-full">
             <div className="w-20">
               <Button
-                customCSS="bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 hover:scale-110"
+                customCSS="bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 hover:scale-110 px-2"
                 onClick={addChildComponent}
               >
                 <Plus theme="outline" size="24" fill="#fff" />

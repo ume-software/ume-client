@@ -34,7 +34,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
   const issuer = 'ADMIN'
   const MAX_NUMBER = '100000'
   const MAX_NUMBER_DISCOUNT = '100'
-  const [createAt, setCreateAt] = useState<any>(new Date().toLocaleDateString('en-GB'))
+  const [startDate, setstartDate] = useState<any>(new Date().toLocaleDateString('en-GB'))
   const [isSubmiting, setSubmiting] = useState(false)
   interface IFormValues {
     vourcherCode: string
@@ -65,6 +65,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
       numVoucherInDay: 1,
       minimize: 1,
       endDate: new Date().toISOString().split('T')[0],
+      startDate: new Date().toISOString().split('T')[0],
       applyTime: [],
       name: '',
       typeVoucher: CreateVoucherRequestTypeEnum.Discount,
@@ -80,7 +81,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
       maximumDiscountValue: 0,
     },
     validationSchema: Yup.object({
-      name: Yup.string().required('Name là bắt buộc'),
+      name: Yup.string().required('Tên là bắt buộc'),
       typeVoucher: Yup.string().required('Loại là bắt buộc'),
       discountUnit: Yup.string().required('discountUnit là bắt buộc'),
       audience: Yup.string().required('Đối tượng là bắt buộc'),
@@ -200,12 +201,19 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
     }
   }
   function convertToIsoDate(inputDate) {
-    const parts = inputDate.split('/')
-    const reversedDate = parts[2] + '-' + parts[1] + '-' + parts[0]
-    const newDate = new Date(reversedDate)
-    const isoDate = newDate.toISOString()
-
-    return isoDate
+    if (inputDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      return inputDate
+    }
+    const parts = inputDate.split('-')
+    if (parts.length === 3) {
+      const year = parts[0]
+      const month = parts[1]
+      const day = parts[2]
+      const isoDate = `${year}-${month}-${day}`
+      return isoDate
+    } else {
+      throw new Error('Invalid date format')
+    }
   }
   function convertToDate(inputDate) {
     const parts = inputDate.split('/')
@@ -229,7 +237,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
           numberUsablePerBooker: form.values.numUserCanUse,
           dailyUsageLimitPerBooker: form.values.numUserCanUseInDay,
           discountValue: form.values.minimize,
-          startDate: convertToIsoDate(createAt),
+          startDate: convertToIsoDate(form.values.startDate),
           endDate: convertToIsoDate(form.values.endDate),
           applyISODayOfWeek: form.values.applyTime,
           minimumBookingDurationForUsage: form.values.minimumBookingDurationForUsage,
@@ -273,13 +281,6 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
   }
   function closeHandleSmall() {
     openConfirmModalCancel()
-  }
-  function caculateDailyNumberIssued() {
-    const endDate = convertToDate(form.values.endDate)
-    const startDate = convertToDate(createAt)
-    const timeDifference: number = endDate.getTime() - startDate.getTime()
-    const daysDifference: number = Math.floor(timeDifference / (1000 * 60 * 60 * 24)) + 2
-    return daysDifference
   }
 
   const uploadImage = async () => {
@@ -356,12 +357,12 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                 </div>
               </div>
               <div className="flex flex-col justify-end w-2/5 ">
-                <div className="w-full h-12 text-white">
-                  Tên:
-                  <div className="inline-block w-2/3 ">
+                <div className="flex w-full h-12 text-white">
+                  <span className="w-8">*Tên:</span>
+                  <div className="inline-block w-2/3 ml-4">
                     <FormInput
                       name="name"
-                      className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 ml-4 border-opacity-30 ${
+                      className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8  border-opacity-30 ${
                         form.errors.name && form.touched.name ? 'placeholder:text-red-500' : ''
                       }`}
                       placeholder={!!form.errors.name && form.touched.name ? form.errors.name : 'Nhập Tên '}
@@ -375,11 +376,11 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                   </div>
                 </div>
                 <div className="flex h-12 text-white ">
-                  Mã:
-                  <div className="inline-block w-2/3 h-12">
+                  <span className="w-8"> Mã:</span>
+                  <div className="inline-block w-2/3 h-12 ml-4">
                     <FormInput
                       name="vourcherCode"
-                      className="bg-[#413F4D] border-2 border-[#FFFFFF] h-8 ml-4 border-opacity-30"
+                      className="bg-[#413F4D] border-2 border-[#FFFFFF] h-8  border-opacity-30"
                       placeholder="Mã: SUPPERSALE"
                       disabled={false}
                       onChange={(e) => {
@@ -403,7 +404,27 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
               </div>
               <div className="flex flex-col justify-end w-2/5 ">
                 <div className="h-12 text-white">
-                  Ngày phát hành: <span className="font-bold">{createAt}</span>
+                  Ngày phát hành:
+                  <div className="inline-block w-1/3 ">
+                    <FormInput
+                      name="startDate"
+                      className="bg-[#413F4D] border-2 border-[#FFFFFF] h-8 ml-4 border-opacity-30"
+                      type="date"
+                      pattern="\d{2}/\d{2}/\d{4}"
+                      onChange={(e) => {
+                        if (e.target.value > form.values.endDate) {
+                          form.setFieldValue('endDate', e.target.value)
+                        }
+                        form.handleChange(e)
+                      }}
+                      onBlur={form.handleBlur}
+                      value={form.values.startDate}
+                      error={!!form.errors.startDate && form.touched.startDate}
+                      errorMessage={form.errors.startDate}
+                      min={new Date().toISOString().split('T')[0]}
+                      required
+                    />
+                  </div>
                 </div>
                 <div className="h-12 text-white">
                   Ngày kết thúc:
@@ -418,7 +439,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                       value={form.values.endDate}
                       error={!!form.errors.endDate && form.touched.endDate}
                       errorMessage={form.errors.endDate}
-                      min={new Date().toISOString().split('T')[0]}
+                      min={form.values.startDate}
                       required
                     />
                   </div>

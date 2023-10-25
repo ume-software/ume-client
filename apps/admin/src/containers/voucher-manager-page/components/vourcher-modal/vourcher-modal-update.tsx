@@ -59,7 +59,7 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
   const issuer = voucherDetails?.admin?.name || voucherDetails?.provider?.name || ''
   const approverInit = voucherDetails?.admin?.name || ''
   const statusInit = voucherDetails?.status ?? ''
-  const createAt = voucherDetails?.createdAt ? new Date(voucherDetails?.createdAt).toLocaleDateString('en-GB') : ''
+  const startDateInit = voucherDetails?.startDate ? new Date(voucherDetails?.startDate).toISOString().split('T')[0] : ''
   const endDateInit = voucherDetails?.endDate ? new Date(voucherDetails?.endDate).toISOString().split('T')[0] : ''
   const numVoucherInit = voucherDetails?.numberIssued ?? 0
   const numUserCanUseInit = voucherDetails?.numberUsablePerBooker ?? 0
@@ -113,6 +113,7 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
       numVoucherInDay: numVoucherInDayInit,
       minimize: minimizeInit,
       endDate: endDateInit,
+      startDate: startDateInit,
       applyTime: applyTimeInit,
       name: nameInit,
       typeVoucher: typeVoucherInit,
@@ -128,7 +129,7 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
       maximumDiscountValue: maximumDiscountValueInit,
     },
     validationSchema: Yup.object({
-      name: Yup.string().required('Name là bắt buộc'),
+      name: Yup.string().required('Tên là bắt buộc'),
       typeVoucher: Yup.string().required('Loại là bắt buộc'),
       discountUnit: Yup.string().required('discountUnit là bắt buộc'),
       audience: Yup.string().required('Đối tượng là bắt buộc'),
@@ -151,6 +152,7 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
           numVoucherInDay: numVoucherInDayInit,
           minimize: minimizeInit,
           endDate: endDateInit,
+          startDate: startDateInit,
           applyTime: applyTimeInit,
           name: nameInit,
           typeVoucher: typeVoucherInit,
@@ -277,12 +279,19 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
     }
   }
   function convertToIsoDate(inputDate) {
-    const parts = inputDate.split('/')
-    const reversedDate = parts[2] + '-' + parts[1] + '-' + parts[0]
-    const newDate = new Date(reversedDate)
-    const isoDate = newDate.toISOString()
-
-    return isoDate
+    if (inputDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      return inputDate
+    }
+    const parts = inputDate.split('-')
+    if (parts.length === 3) {
+      const year = parts[0]
+      const month = parts[1]
+      const day = parts[2]
+      const isoDate = `${year}-${month}-${day}`
+      return isoDate
+    } else {
+      throw new Error('Invalid date format')
+    }
   }
   async function submitHandle() {
     setOpenConfirm(false)
@@ -299,6 +308,7 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
         dailyUsageLimitPerBooker: [form.values.numUserCanUseInDay, numUserCanUseInDayInit],
         discountValue: [form.values.minimize, minimizeInit],
         endDate: [convertToIsoDate(form.values.endDate), convertToIsoDate(endDateInit)],
+        startDate: [convertToIsoDate(form.values.startDate), convertToIsoDate(startDateInit)],
         applyISODayOfWeek: [form.values.applyTime, applyTimeInit],
         name: [form.values.name, nameInit],
         type: [form.values.typeVoucher, typeVoucherInit],
@@ -436,8 +446,8 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                 </div>
               </div>
               <div className="flex flex-col justify-end w-2/5 ">
-                <div className="w-full h-12 text-white">
-                  Tên:
+                <div className="flex w-full h-12 text-white">
+                  <span className="w-8">*Tên:</span>
                   <div className="inline-block w-2/3 ">
                     <FormInput
                       name="name"
@@ -456,7 +466,7 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                 </div>
 
                 <div className="flex h-12 text-white">
-                  Mã:
+                  <span className="w-8"> Mã:</span>
                   <div className="inline-block w-2/3 ">
                     <FormInput
                       name="vourcherCode"
@@ -487,7 +497,26 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
               </div>
               <div className="flex flex-col justify-end w-2/5 ">
                 <div className="h-12 text-white">
-                  Ngày phát hành: <span className="font-bold">{createAt}</span>
+                  Ngày phát hành:
+                  <div className="inline-block w-1/3 ">
+                    <FormInput
+                      name="startDate"
+                      className="bg-[#413F4D] border-2 border-[#FFFFFF] h-8 ml-4 border-opacity-30"
+                      type="date"
+                      onChange={(e) => {
+                        if (e.target.value > form.values.endDate) {
+                          form.setFieldValue('endDate', e.target.value)
+                        }
+                        form.handleChange(e)
+                      }}
+                      onBlur={form.handleBlur}
+                      value={form.values.startDate}
+                      error={!!form.errors.startDate && form.touched.startDate}
+                      errorMessage={form.errors.startDate}
+                      min={startDateInit}
+                      required
+                    />
+                  </div>
                 </div>
                 <div className="h-12 text-white">
                   Ngày kết thúc:
@@ -501,7 +530,7 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                       value={form.values.endDate}
                       error={!!form.errors.endDate && form.touched.endDate}
                       errorMessage={form.errors.endDate}
-                      min={endDateInit}
+                      min={endDateInit > form.values.startDate ? endDateInit : form.values.startDate}
                       required
                     />
                   </div>

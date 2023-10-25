@@ -144,7 +144,7 @@ const VoucherByAdmin = () => {
     <div>
       <div className="flex justify-between">
         <span className="content-title">Khuyến mãi của quản trị viên</span>
-        <Button customCSS="bg-[#7463f0] px-3 rounded-2xl active:bg-gray-600" onClick={addVourcherHandler}>
+        <Button customCSS="bg-[#7463f0] px-3 rounded-2xl active:bg-gray-600 py-2" onClick={addVourcherHandler}>
           <Plus theme="outline" size="24" fill="#fff" />
           Thêm khuyến mãi
         </Button>

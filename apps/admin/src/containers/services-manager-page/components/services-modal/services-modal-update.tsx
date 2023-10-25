@@ -479,11 +479,11 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
               <div className="flex items-center justify-center w-full h-full">
                 <div className="w-40">
                   <Button
-                    customCSS="bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 hover:scale-110"
+                    customCSS="bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 hover:scale-110 px-2"
                     onClick={addChildComponent}
                   >
                     <Plus theme="outline" size="24" fill="#fff" />
-                    Thêm dịch vụ
+                    Thêm thuộc tính
                   </Button>
                 </div>
               </div>
