@@ -1,6 +1,7 @@
 FROM node:20-alpine
 
 ENV NODE_ENV development
+ENV GENERATE_SOURCEMAP=false
 ENV NODE_OPTIONS=--max_old_space_size=1024
 
 # https://github.com/vercel/turbo/issues/2198
