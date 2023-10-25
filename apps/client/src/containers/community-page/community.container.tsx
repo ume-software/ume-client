@@ -2,7 +2,7 @@ import { CloseSmall, Earth, EveryUser } from '@icon-park/react'
 import { Modal } from '@ume/ui'
 import { useAuth } from '~/contexts/auth'
 
-import { ReactNode, useContext, useId, useState } from 'react'
+import { ReactNode, useId, useState } from 'react'
 
 import CreatePost from './components/create-post'
 import FollowingPost from './components/following-post'
@@ -87,7 +87,7 @@ const CommunityContainer = () => {
                 <div className="flex flex-col gap-5">
                   {postTypeData.map((item) => (
                     <div
-                      key={item.postTypeName}
+                      key={index}
                       className={`flex items-center p-3 rounded-xl gap-2 cursor-pointer hover:bg-gray-700
                       ${socialSelected.postTypeName === item.postTypeName ? 'bg-gray-700' : ''}`}
                       onClick={() => setSocialSelected(item)}

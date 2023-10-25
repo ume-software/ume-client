@@ -149,11 +149,8 @@ const TableSkeletonLoader = () => {
                 </div>
               </td>
               <td className="py-2">
-                <div className="min-w-[150px] flex justify-center items-center gap-2 bg-gray-300 animate-pulse">
-                  <div className="relative w-8 h-8">
-                    <span className="w-[100px] h-[40px]" />
-                  </div>
-                  <span className="w-[100px] h-[40px] bg-gray-300 animate-pulse" />
+                <div className="flex items-center justify-center bg-gray-300 animate-pulse">
+                  <span className="w-[100px] h-[40px]" />
                 </div>
               </td>
               <td className="py-2">
@@ -284,6 +281,25 @@ const SkeletonDetailProvider = () => {
   )
 }
 
+const SkeletonProviderService = () => {
+  return (
+    <div className="w-full max-h-screen grid grid-cols-4 gap-5">
+      <div className="col-span-2">
+        <BGFullGridSkeleton />
+      </div>
+      <div className="col-span-2">
+        <BGFullGridSkeleton />
+      </div>
+      <div className="col-span-2">
+        <BGFullGridSkeleton />
+      </div>
+      <div className="col-span-2">
+        <BGFullGridSkeleton />
+      </div>
+    </div>
+  )
+}
+
 export {
   PostSkeletonLoader,
   CommentSkeletonLoader,
@@ -296,4 +312,5 @@ export {
   ChatSkeleton,
   SkeletonForAccountSetting,
   SkeletonDetailProvider,
+  SkeletonProviderService,
 }

@@ -7,10 +7,10 @@ interface MenuForVoucherProps {
   buttonTitle: ReactNode
   buttonCustomCss?: string
   isDisplayDownButton?: boolean
-  datas: { key: string | number; label: string; [key: string]: any }[]
+  datas: { key: string | number; label: ReactNode; [key: string]: any }[]
   styleData?: string
   onChange: (e: any) => void
-  chooseData: { key: string | number; label: string; [key: string]: any }[]
+  chooseData: { key: string | number; label: ReactNode; [key: string]: any }[]
 }
 
 const MenuForVoucher = ({
@@ -28,11 +28,11 @@ const MenuForVoucher = ({
         <Menu.Button>
           <button
             className={`flex justify-between items-center gap-3 ${
-              buttonCustomCss ? buttonCustomCss : 'min-w-[110px]'
+              buttonCustomCss ?? 'min-w-[110px]'
             } text-lg font-semibold px-3 py-2 hover:bg-gray-700 rounded-xl`}
             type="button"
           >
-            {buttonTitle + ''}
+            {buttonTitle}
             {isDisplayDownButton && <Down theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />}
           </button>
         </Menu.Button>

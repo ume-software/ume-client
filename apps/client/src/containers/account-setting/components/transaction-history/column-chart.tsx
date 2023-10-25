@@ -1,20 +1,31 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
 import { CustomChart } from '~/components/custom-chart'
 
-const ColumnChart = () => {
-  const [dataCharts, setDataCharts] = useState<any[]>([
+const ColumnChart = (props: { seriesCharts: any[] }) => {
+  console.log(props.seriesCharts)
+
+  const categories = props.seriesCharts.map((item) => item.monthYear)
+  const collectData = props.seriesCharts.map((item) =>
+    item.amount.reduce((acc, curr) => (curr > 0 ? acc + curr : acc), 0),
+  )
+  const sendData = props.seriesCharts.map((item) =>
+    item.amount.reduce((acc, curr) => (curr < 0 ? acc + Math.abs(curr) : acc), 0),
+  )
+
+  const [dataCharts] = useState<any[]>([
     {
-      name: 'Chi hàng tháng',
-      data: [57, 23, 84, 6, 42],
+      name: 'Chi',
+      data: sendData,
       color: '#F73164',
     },
     {
-      name: 'Thu hàng tháng',
-      data: [57, 23, 84, 6, 42],
+      name: 'Thu',
+      data: collectData,
       color: '#6F4EF2',
     },
   ])
+
   const [optionsTop, setToptionsTop] = useState([
     {
       key: '1M',
@@ -72,16 +83,17 @@ const ColumnChart = () => {
 
   const tooltip = {
     formatter: function () {
-      var currentPoint: any = { ...this },
+      let currentPoint: any = { ...this },
         stackValues: any = `<span  style="font-size:14px"><b>Tháng</b></span><br/>`
       currentPoint.points.forEach(function (point: any) {
         const value = point.y?.valueOf() || 0
-
         stackValues +=
           `<div style={{display:"flex"}}>` +
           `<span style="font-size:30px;color:${point.color}">` +
           '\u25A0</span> ' +
-          `<span style="font-size:14px">${point?.series?.name}(Triệu VND): </span>
+          `<span style="font-size:14px">${point?.series?.name} (${point.point.category}): ${value.toLocaleString(
+            'en-US',
+          )} VND</span>
                         <span style="font-size:14px; font-weight: 500"></span>
                     </div>`
       })
@@ -119,6 +131,7 @@ const ColumnChart = () => {
             maxPointWidth: 50,
           },
         }}
+        category={categories}
         series={dataCharts}
         chart={{ height: 450 }}
         title={{
@@ -141,7 +154,7 @@ const ColumnChart = () => {
               fontFamily: 'Roboto',
             },
             formatter: function () {
-              return (this as any).value
+              return this.value
             },
           },
         }}

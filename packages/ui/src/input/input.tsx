@@ -42,9 +42,10 @@ export const TextArea = ({ className, ...props }: TextAreaProps) => {
 interface FormInputProps extends InputProps {
   error: boolean | undefined
   errorMessage: string | undefined
+  isDisable?: boolean
 }
 
-export const FormInput = ({ error, errorMessage, ...props }: FormInputProps) => {
+export const FormInput = ({ error, errorMessage, isDisable, ...props }: FormInputProps) => {
   return (
     <>
       <Input
@@ -53,6 +54,7 @@ export const FormInput = ({ error, errorMessage, ...props }: FormInputProps) => 
         className={`${
           error ? '!border-ume-error  !focus:border-ume-error !focus:outline-ume-error  !hover:border-ume-error' : ''
         } ${props.className} border border-slate-300 `}
+        disabled={isDisable}
       />
       {error ? <span className="block mt-1 text-ume-error text-[14px]">{errorMessage}</span> : null}
     </>
