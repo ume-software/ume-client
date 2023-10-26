@@ -116,19 +116,29 @@ const AccountSettingContainer = () => {
                     className={`flex items-center gap-2 px-2 py-3 rounded-xl cursor-pointer hover:bg-gray-700 ${
                       children.key == item.key && 'bg-gray-700'
                     }`}
-                    onClick={() => setChildren(item)}
+                    onClick={() => {
+                      if (
+                        !(
+                          (item.key == 'becomeProvider' && !user?.slug) ||
+                          (item.key == 'vouchers' && !user?.isProvider)
+                        )
+                      ) {
+                        setChildren(item)
+                      }
+                    }}
                   >
                     {item.key == 'becomeProvider' ? (
                       <>
                         <div className={`${!user?.slug && 'opacity-30'}`}>{item.icon}</div>
-                        <span
-                          className={`w-full flex justify-between items-center text-xl font-semibold truncate ${
-                            !user?.slug && 'opacity-30'
-                          }`}
-                        >
-                          {item.label}
-                          {!user?.slug && (
-                            <Tooltip placement="right" title={'Thêm đường dẫn để mở khóa tính nằng này'} arrow={true}>
+                        {!user?.slug ? (
+                          <Tooltip placement="right" title={'Thêm đường dẫn để mở khóa tính năng này'} arrow={true}>
+                            <span
+                              className={`w-full flex justify-between items-center text-xl font-semibold truncate ${
+                                !user?.slug && 'opacity-30'
+                              }`}
+                            >
+                              {item.label}
+
                               <Lock
                                 className="pl-3 opacity-30"
                                 theme="outline"
@@ -136,25 +146,30 @@ const AccountSettingContainer = () => {
                                 fill="#FFF"
                                 strokeLinejoin="bevel"
                               />
-                            </Tooltip>
-                          )}
-                        </span>
+                            </span>
+                          </Tooltip>
+                        ) : (
+                          <span className={`w-full flex justify-between items-center text-xl font-semibold truncate`}>
+                            {item.label}
+                          </span>
+                        )}
                       </>
                     ) : item.key == 'vouchers' ? (
                       <>
-                        <div className={`${!user?.isProvider && 'opacity-30'}`}>{item.icon}</div>
-                        <span
-                          className={`w-full flex justify-between items-center text-xl font-semibold truncate ${
-                            !user?.isProvider && 'opacity-30'
-                          }`}
-                        >
-                          {item.label}
-                          {!user?.isProvider && (
-                            <Tooltip
-                              placement="right"
-                              title={'Trở thành nhà cung cấp để mở khóa tính nằng này'}
-                              arrow={true}
+                        <div className={`${!user?.isProvider && 'opacity-30'}`}>{item.icon}</div>{' '}
+                        {!user?.isProvider ? (
+                          <Tooltip
+                            placement="right"
+                            title={'Trở thành nhà cung cấp để mở khóa tính năng này'}
+                            arrow={true}
+                          >
+                            <span
+                              className={`w-full flex justify-between items-center text-xl font-semibold truncate ${
+                                !user?.isProvider && 'opacity-30'
+                              }`}
                             >
+                              {item.label}
+
                               <Lock
                                 className="pl-3 opacity-30"
                                 theme="outline"
@@ -162,9 +177,13 @@ const AccountSettingContainer = () => {
                                 fill="#FFF"
                                 strokeLinejoin="bevel"
                               />
-                            </Tooltip>
-                          )}
-                        </span>
+                            </span>
+                          </Tooltip>
+                        ) : (
+                          <span className={`w-full flex justify-between items-center text-xl font-semibold truncate`}>
+                            {item.label}
+                          </span>
+                        )}
                       </>
                     ) : (
                       <>

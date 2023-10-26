@@ -3,6 +3,7 @@ import {
   CreateVoucherRequestRecipientTypeEnum,
   CreateVoucherRequestTypeEnum,
   UpdateUserProfileRequestGenderEnum,
+  UserPaymentSystemRequestPlatformEnum,
 } from 'ume-service-openapi'
 import { z } from 'zod'
 
@@ -10,6 +11,7 @@ import { createRouter } from './configurations'
 import {
   checkSlugUser,
   createServiceProvider,
+  createUserPaymentSystem,
   getAccountBalance,
   getHistoryTransaction,
   getIdentityInfo,
@@ -17,6 +19,7 @@ import {
   getServiceAttributeByServiceSlug,
   getServiceAttributeValueByServiceAttributeId,
   getUserBySlug,
+  getUserPaymentSystems,
   providerCheckVoucherCode,
   providerCreateVoucher,
   providerGetOwnServices,
@@ -249,5 +252,20 @@ export const identityRouter = createRouter()
     }),
     resolve: async ({ input, ctx }) => {
       return await getHistoryTransaction(input, ctx)
+    },
+  })
+  .query('getUserPaymentSystems', {
+    resolve: async ({ ctx }) => {
+      return await getUserPaymentSystems(ctx)
+    },
+  })
+  .mutation('createUserPaymentSystem', {
+    input: z.object({
+      platform: z.nativeEnum(UserPaymentSystemRequestPlatformEnum),
+      platformAccount: z.string(),
+      beneficiary: z.string(),
+    }),
+    resolve: async ({ input, ctx }) => {
+      return await createUserPaymentSystem(input, ctx)
     },
   })

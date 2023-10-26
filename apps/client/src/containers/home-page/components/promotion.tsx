@@ -18,19 +18,18 @@ export const Promotion = () => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [scrollPosition, setScrollPosition] = useState(0)
 
-  const {
-    data: hotProviders,
-    isLoading: loadingHotProvider,
-    isFetching: isFetchingHotProviders,
-  } = trpc.useQuery(['booking.getHotProviders'], {
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: 'always',
-    cacheTime: 0,
-    refetchOnMount: true,
-    onSuccess(data) {
-      setListHotProvider(data?.data?.row)
+  const { isLoading: loadingHotProvider, isFetching: isFetchingHotProviders } = trpc.useQuery(
+    ['booking.getHotProviders'],
+    {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: 'always',
+      cacheTime: 0,
+      refetchOnMount: true,
+      onSuccess(data) {
+        setListHotProvider(data?.data?.row)
+      },
     },
-  })
+  )
 
   const {
     data: providers,
@@ -87,7 +86,7 @@ export const Promotion = () => {
                   <Link
                     key={provider?.id}
                     href={`/profile/${provider?.slug ?? provider?.id}?tab=service&service=${
-                      provider.serviceSlug || provider.serviceId
+                      provider.serviceSlug ?? provider.serviceId
                     }`}
                   >
                     <PromoteCard data={provider} />
@@ -102,7 +101,7 @@ export const Promotion = () => {
                   <Link
                     key={provider?.id}
                     href={`/profile/${provider?.slug ?? provider?.id}?tab=service&service=${
-                      provider.serviceSlug || provider.serviceId
+                      provider.serviceSlug ?? provider.serviceId
                     }`}
                   >
                     <PromoteCard data={provider} />

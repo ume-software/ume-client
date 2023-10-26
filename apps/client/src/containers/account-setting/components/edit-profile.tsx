@@ -204,7 +204,7 @@ const EditProfile = () => {
               onError() {
                 notification.error({
                   message: 'Cập nhật thông tin thất bại',
-                  description: 'Có lỗi trong quá tring cập nhật thông tin. Vui lòng thử lại sau!',
+                  description: 'Có lỗi trong quá trình cập nhật thông tin. Vui lòng thử lại sau!',
                   placement: 'bottomLeft',
                 })
               },
@@ -213,14 +213,14 @@ const EditProfile = () => {
         } else {
           notification.error({
             message: 'Cập nhật thông tin thất bại',
-            description: 'Có lỗi trong quá tring cập nhật thông tin. Vui lòng thử lại sau!',
+            description: 'Có lỗi trong quá trình cập nhật thông tin. Vui lòng thử lại sau!',
             placement: 'bottomLeft',
           })
         }
       } catch (error) {
         notification.error({
           message: 'Cập nhật thông tin thất bại',
-          description: 'Có lỗi trong quá tring cập nhật thông tin. Vui lòng thử lại sau!',
+          description: 'Có lỗi trong quá trình cập nhật thông tin. Vui lòng thử lại sau!',
           placement: 'bottomLeft',
         })
       }
@@ -305,7 +305,7 @@ const EditProfile = () => {
         } catch (error) {
           notification.error({
             message: 'Cập nhật thông tin thất bại',
-            description: 'Có lỗi trong quá tring cập nhật thông tin. Vui lòng thử lại sau!',
+            description: 'Có lỗi trong quá trình cập nhật thông tin. Vui lòng thử lại sau!',
             placement: 'bottomLeft',
           })
         }
@@ -550,7 +550,7 @@ const EditProfile = () => {
                       onBlur={form.handleBlur}
                       disabled={!!userSettingData.data?.slug}
                       readOnly={!!userSettingData.data?.slug}
-                      error={!!form.errors.slug && form.touched.slug && checkSlugUserData?.data.isExisted}
+                      error={(!!form.errors.slug && form.touched.slug) || checkSlugUserData?.data.isExisted}
                       errorMessage={undefined}
                     />
                     {!!form.errors.slug && form.touched.slug && (

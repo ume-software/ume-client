@@ -1,4 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import coin from 'public/coin-icon.png'
+import { useAuth } from '~/contexts/auth'
 
 import { useEffect, useState } from 'react'
 
@@ -18,7 +20,7 @@ interface TransactionContentProps {
 }
 
 const TransactionContent: TransactionContentProps[] = [
-  { key: CoinHistoryResponseCoinTypeEnum.Admin, label: 'Admin chuyển cho bạn' },
+  { key: CoinHistoryResponseCoinTypeEnum.Admin, label: 'Admin chuyển tiền' },
   { key: CoinHistoryResponseCoinTypeEnum.BuyCoin, label: 'Mua coin' },
   { key: CoinHistoryResponseCoinTypeEnum.GetBooking, label: 'Nhận từ đơn hàng' },
   { key: CoinHistoryResponseCoinTypeEnum.GetDonate, label: 'Quà tặng' },
@@ -33,6 +35,8 @@ const TransactionContent: TransactionContentProps[] = [
 const TransactionHistory = () => {
   const [page, setPage] = useState<string>('1')
   const limit = '10'
+
+  const { user } = useAuth()
 
   const [transactionHistory, setTransactionHistory] = useState<CoinHistoryPagingResponse | undefined>(undefined)
   const [transactionHistoryArray, setTransactionHistoryArray] = useState<any[] | undefined>(undefined)
@@ -72,11 +76,11 @@ const TransactionHistory = () => {
     const resultArray = transactionHistory?.row?.map((transactionHistory) => {
       const transactionArray = Object.values(transactionHistory)
       const newTransactionArray = [
-        transactionArray[5],
+        TransactionContent.find((transContent) => transContent.key == transactionArray[5])?.label,
         <div className="flex items-center justify-center gap-2" key={transactionHistory[0]}>
           {transactionArray[6]} <Image src={coin} width={30} height={30} alt="coin" />
         </div>,
-        transactionArray[9] ?? 'Không có',
+        transactionArray[9] ?? user?.name,
         new Date(transactionArray[1]).toLocaleDateString('en-GB'),
         new Date(transactionArray[2]).toLocaleDateString('en-GB'),
       ]

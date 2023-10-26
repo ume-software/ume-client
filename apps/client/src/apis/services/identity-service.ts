@@ -13,6 +13,8 @@ import {
   UpdateUserProfileRequestGenderEnum,
   UpdateVoucherRequest,
   UserApi,
+  UserPaymentSystemApi,
+  UserPaymentSystemRequestPlatformEnum,
   VoucherApi,
 } from 'ume-service-openapi'
 
@@ -490,6 +492,51 @@ export const getHistoryTransaction = async (
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
       message: error.message || 'Fail to get coin history',
+    })
+  }
+}
+
+export const getUserPaymentSystems = async (ctx) => {
+  const cookies = parse(ctx.req.headers.cookie ?? '')
+  try {
+    const reponse = await new UserPaymentSystemApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).getUserPaymentSystems('unlimited', '1', '["$all"]')
+    return {
+      data: reponse.data,
+      success: true,
+      message: '',
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to get payment system',
+    })
+  }
+}
+
+export const createUserPaymentSystem = async (
+  query: { platform: UserPaymentSystemRequestPlatformEnum; platformAccount: string; beneficiary: string },
+  ctx,
+) => {
+  const cookies = parse(ctx.req.headers.cookie ?? '')
+  try {
+    const reponse = await new UserPaymentSystemApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).createUserPaymentSystem(query)
+    return {
+      data: reponse.data,
+      success: true,
+      message: '',
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to get payment system',
     })
   }
 }
