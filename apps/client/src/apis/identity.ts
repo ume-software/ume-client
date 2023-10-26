@@ -8,6 +8,7 @@ import { z } from 'zod'
 
 import { createRouter } from './configurations'
 import {
+  checkSlugUser,
   createServiceProvider,
   getAccountBalance,
   getHistoryTransaction,
@@ -53,6 +54,12 @@ export const identityRouter = createRouter()
     input: z.string(),
     resolve: async ({ input, ctx }) => {
       return await getUserBySlug(input, ctx)
+    },
+  })
+  .query('checkSlugUser', {
+    input: z.string(),
+    resolve: async ({ input, ctx }) => {
+      return await checkSlugUser(input, ctx)
     },
   })
   .mutation('updateUserProfile', {

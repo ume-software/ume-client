@@ -7,6 +7,7 @@ import { Button, FormInput, Input, Modal } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
 import { uploadImageBooking } from '~/apis/upload-media'
 import { GenderEnum } from '~/enumVariable/enumVariable'
+import useDebounce from '~/hooks/useDebounce'
 
 import { FormEvent, Fragment, useEffect, useRef, useState } from 'react'
 
@@ -83,13 +84,12 @@ const EditProfile = () => {
         .required('Số điện thoại là yêu cầu')
         .matches(vietnamesePhoneNumberRegExp, 'Định dạng không hợp lệ'),
     }),
-    onSubmit(values, { resetForm }) {
+    onSubmit(values) {
       setIsModalConfirmationVisible(true)
-      resetForm()
     },
   })
 
-  useEffect(() => {
+  const handleResetForm = () => {
     if (!isLoadingUserSettingData && userSettingData) {
       form.setValues({
         avatarUrl: userSettingData?.data?.avatarUrl ?? '',
@@ -104,7 +104,16 @@ const EditProfile = () => {
         username: userSettingData?.data?.username ?? '',
       })
     }
+  }
+
+  useEffect(() => {
+    handleResetForm()
   }, [userSettingData])
+
+  const debouncedValue = useDebounce<string>(form.values.slug, 500)
+  const { data: checkSlugUserData } = trpc.useQuery(['identity.checkSlugUser', debouncedValue], {
+    enabled: !!form.values.slug,
+  })
 
   const inforChange: boolean =
     (userSettingData?.data?.name ?? '') == form.values.name &&
@@ -541,11 +550,14 @@ const EditProfile = () => {
                       onBlur={form.handleBlur}
                       disabled={!!userSettingData.data?.slug}
                       readOnly={!!userSettingData.data?.slug}
-                      error={!!form.errors.slug && form.touched.slug}
+                      error={!!form.errors.slug && form.touched.slug && checkSlugUserData?.data.isExisted}
                       errorMessage={undefined}
                     />
                     {!!form.errors.slug && form.touched.slug && (
                       <p className="text-xs text-red-500">{form.errors.slug}</p>
+                    )}
+                    {!userSettingData.data?.slug && checkSlugUserData?.data.isExisted && (
+                      <p className="text-xs text-red-500">Đường dẫn này đãn được sử dụng</p>
                     )}
                   </div>
                   <div className="flex items-center gap-10">
@@ -690,9 +702,9 @@ const EditProfile = () => {
                   <Button
                     isActive={false}
                     isOutlinedButton={true}
-                    type="reset"
+                    type="button"
                     customCSS="w-[100px] text-xl p-2 rounded-xl hover:scale-105"
-                    onClick={form.handleReset}
+                    onClick={() => handleResetForm()}
                   >
                     Hủy
                   </Button>
@@ -701,7 +713,11 @@ const EditProfile = () => {
                     type="button"
                     isActive={true}
                     isOutlinedButton={true}
-                    onClick={() => setIsModalConfirmationVisible(true)}
+                    onClick={() => {
+                      if (!checkSlugUserData?.data.isExisted) {
+                        setIsModalConfirmationVisible(true)
+                      }
+                    }}
                   >
                     Thay đổi
                   </Button>

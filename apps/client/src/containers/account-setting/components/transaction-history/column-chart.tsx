@@ -3,8 +3,6 @@ import React, { useState } from 'react'
 import { CustomChart } from '~/components/custom-chart'
 
 const ColumnChart = (props: { seriesCharts: any[] }) => {
-  console.log(props.seriesCharts)
-
   const categories = props.seriesCharts.map((item) => item.monthYear)
   const collectData = props.seriesCharts.map((item) =>
     item.amount.reduce((acc, curr) => (curr > 0 ? acc + curr : acc), 0),
