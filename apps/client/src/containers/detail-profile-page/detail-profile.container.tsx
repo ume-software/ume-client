@@ -271,7 +271,7 @@ const DetailProfileContainer = () => {
           validationSchema={validationSchema}
         >
           {({ handleSubmit, handleChange, handleBlur, values, errors }) => (
-            <div className="text-white flex flex-col gap-5 p-10">
+            <div className="flex flex-col gap-5 p-10 text-white">
               <div className="space-y-2">
                 <label>Tiền quà: </label>
                 <InputWithAffix
@@ -289,7 +289,7 @@ const DetailProfileContainer = () => {
                   autoComplete="off"
                   onBlur={handleBlur}
                 />
-                {!!errors.donateValue && <p className="pl-3 text-red-500 text-xs">{errors.donateValue}</p>}
+                {!!errors.donateValue && <p className="pl-3 text-xs text-red-500">{errors.donateValue}</p>}
               </div>
               <div className="space-y-2">
                 <label>Nội dung: </label>
@@ -358,12 +358,12 @@ const DetailProfileContainer = () => {
       ) : (
         <>
           <div style={{ height: '380px', margin: '0 70px' }}>
-            <div className="absolute top-16 left-0" style={{ width: '100%', height: '416px' }}>
+            <div className="absolute left-0 top-16" style={{ width: '100%', height: '416px' }}>
               <Image layout="fill" src={detailBackground} alt="background" />
             </div>
-            <div className="h-full flex flex-col justify-end gap-5">
-              <div className="flex flex-row justify-between md:items-center items-baseline px-7 pb-5">
-                <div className="flex md:flex-row md:gap-x-8 flex-col gap-y-2" style={{ zIndex: 2 }}>
+            <div className="flex flex-col justify-end h-full gap-5">
+              <div className="flex flex-row items-baseline justify-between pb-5 md:items-center px-7">
+                <div className="flex flex-col md:flex-row md:gap-x-8 gap-y-2" style={{ zIndex: 2 }}>
                   <div style={{ width: 194, height: 182, position: 'relative' }}>
                     <Image
                       className="absolute rounded-full"
@@ -373,10 +373,10 @@ const DetailProfileContainer = () => {
                       alt="avatar"
                     />
                   </div>
-                  <div className="text-white flex flex-col gap-y-2 my-5">
-                    <p className="text-white text-3xl font-medium">{providerDetail?.name}</p>
+                  <div className="flex flex-col my-5 text-white gap-y-2">
+                    <p className="text-3xl font-medium text-white">{providerDetail?.name}</p>
                     <div className="flex flex-row items-center gap-3">
-                      <div className="bg-gray-700 p-2 rounded-full flex items-center gap-2">
+                      <div className="flex items-center gap-2 p-2 bg-gray-700 rounded-full">
                         <div>
                           {providerDetail?.gender == UserInformationResponseGenderEnum.Male && (
                             <Male theme="outline" size="20" fill="#3463f9" />
@@ -396,7 +396,7 @@ const DetailProfileContainer = () => {
                         <p>{caculateAge(providerDetail?.dob)}</p>
                       </div>
                       <Tooltip placement="bottomLeft" title={`${providerDetail?.isOnline ? 'Online' : 'Offline'}`}>
-                        <div className="bg-gray-700 p-2 rounded-full flex items-center gap-1">
+                        <div className="flex items-center gap-1 p-2 bg-gray-700 rounded-full">
                           <Dot theme="multi-color" size="24" fill={providerDetail?.isOnline ? '#008000' : '#FF0000'} />
                           <p>
                             {providerDetail?.providerConfig?.status == ProviderConfigResponseStatusEnum.Activated &&
@@ -437,17 +437,17 @@ const DetailProfileContainer = () => {
                       leaveFrom="transform opacity-100 scale-100"
                       leaveTo="transform opacity-0 scale-95"
                     >
-                      <Menu.Items className="absolute w-fit right-0 py-3 top-7 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                        <div className="w-max flex flex-col gap-2">
+                      <Menu.Items className="absolute right-0 py-3 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg w-fit top-7 ring-1 ring-black ring-opacity-5 focus:outline-none">
+                        <div className="flex flex-col gap-2 w-max">
                           {moreButtonDatas.map((item, index) => (
                             <div
                               key={index}
-                              className="hover:bg-purple-600 hover:text-white group cursor-pointer rounded-md px-2 py-1"
+                              className="px-2 py-1 rounded-md cursor-pointer hover:bg-purple-600 hover:text-white group"
                               onClick={() => {
                                 handleMenuButtonAction(item)
                               }}
                             >
-                              <div className="scale-x-100 group-hover:scale-x-95 flex items-center justify-between gap-2 group-hover:-translate-x-2 duration-300">
+                              <div className="flex items-center justify-between gap-2 duration-300 scale-x-100 group-hover:scale-x-95 group-hover:-translate-x-2">
                                 <div>{item.label}</div>
                                 {item.icon}
                               </div>
