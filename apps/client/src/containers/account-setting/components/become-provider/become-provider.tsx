@@ -6,14 +6,15 @@ import MomoLogo from 'public/momo-logo.png'
 import TpbankLogo from 'public/tpbank-logo.png'
 import VnPayLogo from 'public/vnpay-logo.png'
 import ZaloPayLogo from 'public/zalopay-logo.png'
+import 'swiper/swiper-bundle.css'
 import { useAuth } from '~/contexts/auth'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { Switch } from 'antd'
 import Image, { StaticImageData } from 'next/legacy/image'
 import { Swiper, SwiperSlide } from 'swiper/react'
-import { UserPaymentSystemRequestPlatformEnum } from 'ume-service-openapi'
+import { UserPaymentSystemRequestPlatformEnum, UserPaymentSystemResponse } from 'ume-service-openapi'
 
 import ServiceForm from './service-form'
 import UserPaymentPlatform from './user-payment-platform'
@@ -37,12 +38,17 @@ const paymentPlat: PaymentPlatform[] = [
 
 const BecomeProvider = () => {
   const { user } = useAuth()
-  const [checked, setChecked] = useState<boolean>(user!.isProvider)
+  const [checked, setChecked] = useState<boolean>(false)
   const [isModalVisible, setIsModalVisible] = useState(false)
+  const [paymentAccount, setPaymentAccount] = useState<UserPaymentSystemResponse | undefined>(undefined)
   const { data: userPaymentPlatformData, isLoading: isUserPaymentPlatformLoading } = trpc.useQuery([
     'identity.getUserPaymentSystems',
   ])
   const registerBecomeProvider = trpc.useMutation(['identity.registerBecomeProvider'])
+
+  useEffect(() => {
+    if (user) setChecked(user?.isProvider)
+  }, [user])
 
   const handleBecomeProvider = () => {
     checked
@@ -67,7 +73,7 @@ const BecomeProvider = () => {
     onClose: handleClose,
     title: <p className="text-white">Tài khoản rút tiền</p>,
     show: isModalVisible,
-    form: <UserPaymentPlatform handleCloseUserPaymentPlatform={handleClose} />,
+    form: <UserPaymentPlatform handleCloseUserPaymentPlatform={handleClose} paymentAccount={paymentAccount} />,
     backgroundColor: '#15151b',
     closeWhenClickOutSide: false,
     closeButtonOnConner: (
@@ -84,6 +90,11 @@ const BecomeProvider = () => {
       </>
     ),
   })
+
+  const handleViewPaymentAccount = (paymentAcc: UserPaymentSystemResponse) => {
+    setPaymentAccount(paymentAcc)
+    setIsModalVisible(true)
+  }
 
   return (
     <>
@@ -104,7 +115,7 @@ const BecomeProvider = () => {
               className="bg-red-600"
               checkedChildren={<CheckSmall theme="outline" size="23" fill="#fff" strokeLinejoin="bevel" />}
               unCheckedChildren={<CloseSmall theme="outline" size="23" fill="#fff" strokeLinejoin="bevel" />}
-              defaultChecked={checked}
+              checked={checked}
               onChange={handleBecomeProvider}
             />
           </div>
@@ -117,6 +128,7 @@ const BecomeProvider = () => {
                   isActive={true}
                   isOutlinedButton={true}
                   onClick={() => {
+                    setPaymentAccount(undefined)
                     setIsModalVisible(true)
                   }}
                 >
@@ -124,39 +136,45 @@ const BecomeProvider = () => {
                 </Button>
               </div>
               {!isUserPaymentPlatformLoading ? (
-                <Swiper spaceBetween={0} slidesPerView="auto" mousewheel={true}>
-                  {userPaymentPlatformData?.data?.row?.map((paymentPlatform) => (
-                    <SwiperSlide className="w-fit" key={paymentPlatform.id}>
-                      <div
-                        className={`flex items-center gap-5 border-2 border-white border-opacity-30 rounded-2xl p-3 duration-500 ease-in-out cursor-pointer hover:scale-105`}
+                <>
+                  <Swiper spaceBetween={20} slidesPerView="auto" mousewheel={true} direction="horizontal">
+                    {userPaymentPlatformData?.data?.row?.map((paymentPlatform) => (
+                      <SwiperSlide
+                        className="max-w-fit duration-500 ease-in-out cursor-pointer hover:scale-105"
+                        key={paymentPlatform.id}
+                        onClick={() => handleViewPaymentAccount(paymentPlatform)}
                       >
-                        <div className="relative w-[130px] h-[130px]">
-                          <Image
-                            key={paymentPlatform.id}
-                            className="absolute rounded-xl pointer-events-none object-cover"
-                            layout="fill"
-                            src={
-                              paymentPlat.find((paymentPlat) => paymentPlat.key == paymentPlatform.platform)?.imgSrc ??
-                              ImgForEmpty
-                            }
-                            alt={paymentPlatform.platform}
-                          />
+                        <div
+                          className={`flex items-center gap-5 border-2 border-white border-opacity-30 rounded-2xl p-3`}
+                        >
+                          <div className="relative w-[130px] h-[130px]">
+                            <Image
+                              key={paymentPlatform.id}
+                              className="absolute rounded-xl pointer-events-none object-cover"
+                              layout="fill"
+                              src={
+                                paymentPlat.find((paymentPlat) => paymentPlat.key == paymentPlatform.platform)
+                                  ?.imgSrc ?? ImgForEmpty
+                              }
+                              alt={paymentPlatform.platform}
+                            />
+                          </div>
+                          <div className="">
+                            <span className="flex gap-3">
+                              <p className="text-white opacity-30">Nền tảng:</p> {paymentPlatform.platform}
+                            </span>
+                            <span className="flex gap-3">
+                              <p className="text-white opacity-30">Số tài khoản:</p> {paymentPlatform.platformAccount}
+                            </span>
+                            <span className="flex gap-3">
+                              <p className="text-white opacity-30">Người nhận:</p> {paymentPlatform.beneficiary}
+                            </span>
+                          </div>
                         </div>
-                        <div className="">
-                          <span className="flex gap-3">
-                            <p className="text-white opacity-30">Nền tảng:</p> {paymentPlatform.platform}
-                          </span>
-                          <span className="flex gap-3">
-                            <p className="text-white opacity-30">Số tài khoản:</p> {paymentPlatform.platformAccount}
-                          </span>
-                          <span className="flex gap-3">
-                            <p className="text-white opacity-30">Người nhận:</p> {paymentPlatform.beneficiary}
-                          </span>
-                        </div>
-                      </div>
-                    </SwiperSlide>
-                  ))}
-                </Swiper>
+                      </SwiperSlide>
+                    ))}
+                  </Swiper>
+                </>
               ) : (
                 <SliderSkeletonLoader />
               )}

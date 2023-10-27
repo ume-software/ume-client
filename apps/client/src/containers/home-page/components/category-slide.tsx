@@ -16,7 +16,7 @@ const CategorySlide = (props: ICategoryProps) => {
         {props?.services.map((service) => (
           <SwiperSlide className="!w-[200px]" key={service.id}>
             <div className={`p-3 duration-500 ease-in-out cursor-pointer hover:scale-105`}>
-              <Link href={`/filter-service/${service.name}?service=${service.slug || service.id}`}>
+              <Link href={`/filter-service/${service.name}?service=${service.slug ?? service.id}`}>
                 <div className="relative w-[170px] h-[260px]">
                   <Image
                     key={service.id}

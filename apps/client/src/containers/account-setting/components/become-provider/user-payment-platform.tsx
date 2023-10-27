@@ -1,13 +1,16 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Menu, Transition } from '@headlessui/react'
 import { Check, CloseSmall, Down } from '@icon-park/react'
 import { Button, FormInput, FormInputWithAffix, Modal } from '@ume/ui'
+import coin from 'public/coin-icon.png'
+import { ActionEnum } from '~/enumVariable/enumVariable'
 
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 
 import { notification } from 'antd'
 import { useFormik } from 'formik'
-import { platform } from 'os'
-import { UserPaymentSystemRequestPlatformEnum } from 'ume-service-openapi'
+import Image from 'next/legacy/image'
+import { UserPaymentSystemRequestPlatformEnum, UserPaymentSystemResponse } from 'ume-service-openapi'
 import * as Yup from 'yup'
 
 import ConfirmForm from '~/components/confirm-form/confirmForm'
@@ -27,7 +30,11 @@ const platforms: PlatformProps[] = [
   { key: UserPaymentSystemRequestPlatformEnum.Zalopay, label: 'ZaloPay' },
 ]
 
-const UserPaymentPlatform = (props: { handleCloseUserPaymentPlatform: () => void }) => {
+const UserPaymentPlatform = (props: {
+  handleCloseUserPaymentPlatform: () => void
+  paymentAccount: UserPaymentSystemResponse | undefined
+}) => {
+  const [actionModal, setActionModal] = useState(ActionEnum.CREATE)
   const createUserPaymentSystem = trpc.useMutation('identity.createUserPaymentSystem')
   const utils = trpc.useContext()
   const [isMenuShow, setIsMenuShow] = useState<boolean>(false)
@@ -35,18 +42,36 @@ const UserPaymentPlatform = (props: { handleCloseUserPaymentPlatform: () => void
 
   const form = useFormik({
     initialValues: {
-      platform: platforms[0].key,
+      platform: '',
       platformAccount: '',
       beneficiary: '',
+      withdrawMoney: 1,
     },
     validationSchema: Yup.object({
-      platformAccount: Yup.string().required('Nền tảng là yêu cầu'),
+      platform: Yup.string().test('is-valid-platform', 'Nền tảng không hợp lệ', (value) => {
+        return platforms.some((platform) => platform.key === value)
+      }),
+      platformAccount: Yup.string().required('Số tài khoản là yêu cầu'),
       beneficiary: Yup.string().required('Tên người nhận là yêu cầu'),
+      withdrawMoney: Yup.number()
+        .lessThan(10001, 'Số tiền rút phải ít hơn 10.000')
+        .moreThan(0, 'Số tiền rút không được âm'),
     }),
     onSubmit() {
       setIsModalConfirmationVisible(true)
     },
   })
+
+  useEffect(() => {
+    if (props.paymentAccount) {
+      form.setValues({
+        platform: props.paymentAccount.platform,
+        platformAccount: props.paymentAccount.platformAccount,
+        beneficiary: props.paymentAccount.beneficiary,
+        withdrawMoney: 1,
+      })
+    }
+  }, [props.paymentAccount])
 
   const handleCreateUserPaymentSystem = () => {
     createUserPaymentSystem.mutate(
@@ -76,6 +101,10 @@ const UserPaymentPlatform = (props: { handleCloseUserPaymentPlatform: () => void
     )
   }
 
+  const handleWithdraw = () => {
+    console.log(actionModal)
+  }
+
   const handleClose = () => {
     setIsModalConfirmationVisible(false)
   }
@@ -91,7 +120,7 @@ const UserPaymentPlatform = (props: { handleCloseUserPaymentPlatform: () => void
           description="Bạn có chấp nhận thay đổi thông tin cá nhân hay không?"
           onClose={handleClose}
           onOk={() => {
-            handleCreateUserPaymentSystem()
+            actionModal == ActionEnum.CREATE ? handleCreateUserPaymentSystem() : handleWithdraw()
           }}
         />
       </>
@@ -121,8 +150,16 @@ const UserPaymentPlatform = (props: { handleCloseUserPaymentPlatform: () => void
           <div>
             <FormInputWithAffix
               name="platform"
-              className={`bg-zinc-800 rounded border border-white border-opacity-30`}
-              styleInput="bg-zinc-800 border-none focus:border-none outline-none"
+              className={`${
+                props.paymentAccount && form.values.platform == props.paymentAccount?.platform
+                  ? 'bg-zinc-800'
+                  : 'bg-gray-700'
+              } rounded border border-white border-opacity-30`}
+              styleInput={`${
+                props.paymentAccount && form.values.platform == props.paymentAccount?.platform
+                  ? 'bg-zinc-800'
+                  : 'bg-gray-700'
+              } border-none focus:border-none outline-none`}
               value={form.values.platform}
               onChange={(e) => form.handleChange(e)}
               onBlur={form.handleBlur}
@@ -133,9 +170,6 @@ const UserPaymentPlatform = (props: { handleCloseUserPaymentPlatform: () => void
               component={<Down theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />}
               onClick={() => setIsMenuShow(true)}
             />
-            {!!form.errors.platform && form.touched.platform && (
-              <p className="text-xs text-red-500">{form.errors.platform}</p>
-            )}
             <div className="relative w-full">
               <Menu>
                 <Transition
@@ -197,13 +231,20 @@ const UserPaymentPlatform = (props: { handleCloseUserPaymentPlatform: () => void
                 </Transition>
               </Menu>
             </div>
+            {!!form.errors.platform && form.touched.platform && (
+              <p className="text-xs text-red-500">{form.errors.platform}</p>
+            )}
           </div>
         </div>
         <div className="space-y-2">
           <label>Tài khoản nhận tiền</label>
           <FormInput
             name="platformAccount"
-            className={`bg-zinc-800 border border-white border-opacity-30`}
+            className={`${
+              props.paymentAccount && form.values.platformAccount == props.paymentAccount?.platformAccount
+                ? 'bg-zinc-800'
+                : 'bg-gray-700'
+            } border border-white border-opacity-30`}
             value={form.values.platformAccount}
             onChange={(e) => form.handleChange(e)}
             onBlur={form.handleBlur}
@@ -219,7 +260,11 @@ const UserPaymentPlatform = (props: { handleCloseUserPaymentPlatform: () => void
           <label>Tên người nhận</label>
           <FormInput
             name="beneficiary"
-            className={`bg-zinc-800 border border-white border-opacity-30`}
+            className={`${
+              props.paymentAccount && form.values.beneficiary == props.paymentAccount?.beneficiary
+                ? 'bg-zinc-800'
+                : 'bg-gray-700'
+            } border border-white border-opacity-30`}
             value={form.values.beneficiary}
             onChange={(e) => form.handleChange(e)}
             onBlur={form.handleBlur}
@@ -231,6 +276,41 @@ const UserPaymentPlatform = (props: { handleCloseUserPaymentPlatform: () => void
             <p className="text-xs text-red-500">{form.errors.beneficiary}</p>
           )}
         </div>
+        {props.paymentAccount?.id &&
+          !(
+            form.values.platform != props.paymentAccount?.platform ||
+            form.values.platformAccount != props.paymentAccount?.platformAccount ||
+            form.values.beneficiary != props.paymentAccount?.beneficiary
+          ) && (
+            <div className="space-y-2">
+              <label>Số tiền rút</label>
+              <FormInputWithAffix
+                name="withdrawMoney"
+                type="number"
+                className={`${
+                  props.paymentAccount && form.values.platform == props.paymentAccount?.platform
+                    ? 'bg-zinc-800'
+                    : 'bg-gray-700'
+                } rounded border border-white border-opacity-30`}
+                styleInput={`${
+                  props.paymentAccount && form.values.platform == props.paymentAccount?.platform
+                    ? 'bg-zinc-800'
+                    : 'bg-gray-700'
+                } border-none focus:border-none outline-none`}
+                value={form.values.withdrawMoney}
+                onChange={(e) => form.handleChange(e)}
+                onBlur={form.handleBlur}
+                error={!!form.errors.withdrawMoney && form.touched.withdrawMoney}
+                errorMessage={''}
+                autoComplete="off"
+                position={'right'}
+                component={<Image src={coin} width={30} height={30} alt="coin" />}
+              />
+              {!!form.errors.withdrawMoney && form.touched.withdrawMoney && (
+                <p className="text-xs text-red-500">{form.errors.withdrawMoney}</p>
+              )}
+            </div>
+          )}
 
         <div className="flex justify-center gap-5 mt-5">
           <Button
@@ -238,17 +318,36 @@ const UserPaymentPlatform = (props: { handleCloseUserPaymentPlatform: () => void
             isOutlinedButton={true}
             type="button"
             customCSS="w-[100px] text-xl p-2 rounded-xl hover:scale-105"
+            onClick={props.handleCloseUserPaymentPlatform}
           >
             Hủy
           </Button>
-          <Button
-            customCSS="w-[100px] text-xl p-2 rounded-xl hover:scale-105"
-            type="submit"
-            isActive={true}
-            isOutlinedButton={true}
-          >
-            Lưu
-          </Button>
+
+          {form.values.platform != props.paymentAccount?.platform ||
+          form.values.platformAccount != props.paymentAccount?.platformAccount ||
+          form.values.beneficiary != props.paymentAccount?.beneficiary ? (
+            <Button
+              customCSS="w-[100px] text-xl p-2 rounded-xl hover:scale-105"
+              type="submit"
+              isActive={true}
+              isOutlinedButton={true}
+              onClick={() => {
+                props.paymentAccount?.id ? setActionModal(ActionEnum.UPDATE) : setActionModal(ActionEnum.CREATE)
+              }}
+            >
+              Lưu
+            </Button>
+          ) : (
+            <Button
+              customCSS="w-[100px] text-xl p-2 rounded-xl hover:scale-105"
+              type="submit"
+              isActive={true}
+              isOutlinedButton={true}
+              onClick={() => setActionModal(ActionEnum.WITHDRAW)}
+            >
+              Rút tiền
+            </Button>
+          )}
         </div>
       </form>
     </>

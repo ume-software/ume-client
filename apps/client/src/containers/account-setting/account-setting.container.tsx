@@ -78,7 +78,9 @@ const AccountSettingContainer = () => {
   const accessToken = parse(document.cookie).accessToken
   const { user } = useAuth()
 
-  const [children, setChildren] = useState<SettingTypeProps>(settingType[0])
+  const [children, setChildren] = useState<SettingTypeProps>(
+    settingType.find((item) => item.key == slug.tab) ?? settingType[0],
+  )
 
   const handleChangeTab = (item: string) => {
     router.replace(
@@ -100,8 +102,8 @@ const AccountSettingContainer = () => {
   }, [accessToken])
 
   useEffect(() => {
-    handleChangeTab(children.key)
-  }, [children])
+    setChildren(settingType.find((item) => item.key == slug.tab) ?? settingType[0])
+  }, [slug.tab])
 
   return (
     <>
@@ -123,7 +125,7 @@ const AccountSettingContainer = () => {
                           (item.key == 'vouchers' && !user?.isProvider)
                         )
                       ) {
-                        setChildren(item)
+                        handleChangeTab(item.key)
                       }
                     }}
                   >
