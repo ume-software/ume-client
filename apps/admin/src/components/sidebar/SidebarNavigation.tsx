@@ -159,60 +159,32 @@ export const SidebarNavigation: SidebarNavigationItem[] = [
         icon: <ChartHistogramTwo theme="outline" size="22" fill="#fff" />,
       },
       {
-        label: 'Yêu cầu nạp tiền',
-        key: 'pay-request',
+        label: (
+          <Link href="/transaction-manager/deposit" rel="noopener noreferrer">
+            Giao dịch nạp tiền
+          </Link>
+        ),
+        key: 'deposit',
         icon: <Income theme="outline" size="22" fill="#fff" />,
-        children: [
-          {
-            label: (
-              <Link href="/#" rel="noopener noreferrer">
-                Yêu cầu mới nhất
-              </Link>
-            ),
-            key: 'latest-pay-request',
-          },
-          {
-            label: (
-              <Link href="/#" rel="noopener noreferrer">
-                Tất cả yêu cầu
-              </Link>
-            ),
-            key: 'all-pay-request',
-          },
-        ],
-      },
-      {
-        label: 'Yêu cầu rút tiền',
-        key: 'withdraw-request',
-        icon: <Expenses theme="outline" size="22" fill="#fff" />,
-        children: [
-          {
-            label: (
-              <Link href="/#" rel="noopener noreferrer">
-                Yêu cầu mới nhất
-              </Link>
-            ),
-            key: 'latest-withdraw-request',
-          },
-          {
-            label: (
-              <Link href="/#" rel="noopener noreferrer">
-                Tất cả yêu cầu
-              </Link>
-            ),
-            key: 'all-withdraw-request',
-          },
-        ],
       },
       {
         label: (
-          <Link href="/#" rel="noopener noreferrer">
-            Lịch sử giao dịch
+          <Link href="/transaction-manager/withdraw" rel="noopener noreferrer">
+            Giao dịch rút tiền
           </Link>
         ),
-        key: 'deposit-history',
-        icon: <History theme="outline" size="22" fill="#fff" />,
+        key: 'withdraw',
+        icon: <Expenses theme="outline" size="22" fill="#fff" />,
       },
+      // {
+      //   label: (
+      //     <Link href="/#" rel="noopener noreferrer">
+      //       Lịch sử giao dịch
+      //     </Link>
+      //   ),
+      //   key: 'deposit-history',
+      //   icon: <History theme="outline" size="22" fill="#fff" />,
+      // },
     ],
   },
   {
