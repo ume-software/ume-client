@@ -16,14 +16,7 @@ export const signinService = async ({ username, password }, ctx) => {
       username: username,
       password: password,
     })
-    const { admin, accessToken, refreshToken } = response.data
-    // try {
-    //   if (typeof window !== 'undefined') {
-    //     window.localStorage.setItem('user', JSON.stringify(admin))
-    //   }
-    // } catch (localStorageError) {
-    //   console.error('Error storing data in localStorage:', localStorageError)
-    // }
+    const { accessToken, refreshToken } = response.data
     ctx.res.setHeader('Set-Cookie', [
       serialize('accessToken', accessToken ?? '', {
         path: '/',

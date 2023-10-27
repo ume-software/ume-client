@@ -44,7 +44,7 @@ const statusFilterItems = [
 ]
 
 const mappingStatus = {
-  all: 'Trạng thái',
+  all: 'Tất cả',
   false: 'Tạm dừng',
   true: 'Hoạt động',
 }
@@ -154,8 +154,8 @@ const ServicesManagerPage = () => {
             <div className="flex">
               <FilterDropdown
                 id={'status'}
-                CustomCss="min-w-[7rem]"
-                title={`${mappingStatus[filter.isActivated]}`}
+                CustomCss="w-[12rem]"
+                title={`Trạng thái: ${mappingStatus[filter.isActivated]}`}
                 items={statusFilterItems}
                 handleFilter={handleFilter}
               />
@@ -184,9 +184,13 @@ const ServicesManagerPage = () => {
             itemRender={(page, type) => (
               <div className="text-white">
                 {type == 'prev' ? (
-                  <Left theme="outline" size="24" fill="#fff" />
+                  <div className="mt-1.5 ml-1">
+                    <Left theme="outline" size="24" fill="#fff" />
+                  </div>
                 ) : type == 'next' ? (
-                  <Right theme="outline" size="24" fill="#fff" />
+                  <div className="mt-1.5">
+                    <Right theme="outline" size="24" fill="#fff" />
+                  </div>
                 ) : (
                   page
                 )}
