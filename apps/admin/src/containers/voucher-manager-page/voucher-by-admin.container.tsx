@@ -192,9 +192,13 @@ const VoucherByAdmin = () => {
           itemRender={(page, type) => (
             <div className="text-white">
               {type == 'prev' ? (
-                <Left theme="outline" size="24" fill="#fff" />
+                <div className="mt-1.5 ml-1">
+                  <Left theme="outline" size="24" fill="#fff" />
+                </div>
               ) : type == 'next' ? (
-                <Right theme="outline" size="24" fill="#fff" />
+                <div className="mt-1.5">
+                  <Right theme="outline" size="24" fill="#fff" />
+                </div>
               ) : (
                 page
               )}

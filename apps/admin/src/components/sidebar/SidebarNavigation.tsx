@@ -1,11 +1,15 @@
 import {
   ChartHistogramTwo,
+  EveryUser,
   Expenses,
-  GameHandle,
+  GameEmoji,
   History,
   Income,
   RightUser,
+  Setting,
   SettingTwo,
+  Ticket,
+  TransactionOrder,
   User,
   UserBusiness,
   UserToUserTransmission,
@@ -16,16 +20,17 @@ import React, { ReactNode } from 'react'
 import Link from 'next/link'
 
 export interface SidebarNavigationItem {
-  label: ReactNode
-  key: string
+  label?: ReactNode
+  key?: string
   children?: SidebarNavigationItem[]
   icon?: React.ReactNode
 }
 
-const SidebarNavigation: SidebarNavigationItem[] = [
+export const SidebarNavigation: SidebarNavigationItem[] = [
   {
     label: 'Quản trị',
     key: 'admin',
+    icon: <SettingTwo theme="outline" size="24" fill="#fff" />,
     children: [
       {
         label: (
@@ -34,12 +39,12 @@ const SidebarNavigation: SidebarNavigationItem[] = [
           </Link>
         ),
         key: 'admin-member',
-        icon: <RightUser theme="outline" size="22" fill="#fff" />,
+        icon: <UserBusiness theme="outline" size="22" fill="#fff" />,
       },
       {
         label: 'Cấu hình',
         key: 'setting',
-        icon: <SettingTwo theme="outline" size="22" fill="#fff" />,
+        icon: <Setting theme="outline" size="22" fill="#fff" />,
         children: [
           {
             label: (
@@ -64,6 +69,7 @@ const SidebarNavigation: SidebarNavigationItem[] = [
   {
     label: 'Quản lý tài khoản',
     key: 'account',
+    icon: <EveryUser theme="outline" size="24" fill="#fff" />,
     children: [
       {
         label: (
@@ -86,11 +92,12 @@ const SidebarNavigation: SidebarNavigationItem[] = [
       {
         label: (
           <Link href="/provider-manager" rel="noopener noreferrer">
-            Quản lý provider
+            Quản lý nhà cung cấp
           </Link>
         ),
         key: 'provider-manager',
-        icon: <UserBusiness theme="outline" size="22" fill="#fff" />,
+
+        icon: <RightUser theme="outline" size="22" fill="#fff" />,
       },
       {
         label: (
@@ -124,6 +131,7 @@ const SidebarNavigation: SidebarNavigationItem[] = [
   {
     label: 'Quản lý dịch vụ',
     key: 'service',
+    icon: <GameEmoji theme="outline" size="24" fill="#fff" />,
     children: [
       {
         label: (
@@ -132,13 +140,14 @@ const SidebarNavigation: SidebarNavigationItem[] = [
           </Link>
         ),
         key: 'service-manager',
-        icon: <GameHandle theme="outline" size="22" fill="#fff" />,
+        icon: <GameEmoji theme="outline" size="22" fill="#fff" />,
       },
     ],
   },
   {
     label: 'Quản lý giao dịch',
     key: 'transaction',
+    icon: <TransactionOrder theme="outline" size="24" fill="#fff" />,
     children: [
       {
         label: (
@@ -209,6 +218,7 @@ const SidebarNavigation: SidebarNavigationItem[] = [
   {
     label: 'Quản lý khuyến mãi',
     key: 'voucher',
+    icon: <Ticket theme="outline" size="24" fill="#fff" />,
     children: [
       {
         label: (
@@ -239,7 +249,7 @@ const SidebarNavigation: SidebarNavigationItem[] = [
                 Tất cả khuyến mãi
               </Link>
             ),
-            key: 'all-voucher',
+            key: 'voucher-by-provider',
           },
           {
             label: (
@@ -247,12 +257,10 @@ const SidebarNavigation: SidebarNavigationItem[] = [
                 Khuyến mãi chờ duyệt
               </Link>
             ),
-            key: 'pending-voucher',
+            key: 'approve-provider-voucher',
           },
         ],
       },
     ],
   },
 ]
-
-export default SidebarNavigation
