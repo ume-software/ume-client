@@ -51,6 +51,8 @@ const TransactionHistory = () => {
     },
   )
 
+  console.log(transactionHistory)
+
   useEffect(() => {
     const monthYearAmountMap = {}
 

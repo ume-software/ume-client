@@ -443,28 +443,33 @@ const AddSkillForm = () => {
     const [start1, end1] = period1.map((time) => time.split(':').map(Number))
     const [start2, end2] = period2.map((time) => time.split(':').map(Number))
 
-    const startMinutes1 = start1[0] * 60 + start1[1]
+    const startMinutes1 = (end2[0] < start2[0] ? 24 - start1[0] : start1[0]) * 60 + start1[1]
     const endMinutes1 = end1[0] * 60 + end1[1]
-    const startMinutes2 = start2[0] * 60 + start2[1]
+    const startMinutes2 = (end2[0] < start2[0] ? 24 - start2[0] : start2[0]) * 60 + start2[1]
     const endMinutes2 = end2[0] * 60 + end2[1]
+
     const isEntirelyIncluded =
-      (startMinutes1 >= startMinutes2 && endMinutes1 <= endMinutes2) ||
-      (startMinutes1 >= startMinutes2 && startMinutes1 <= endMinutes2 && endMinutes1 >= startMinutes2)
+      (end2[0] < start2[0] && startMinutes1 >= startMinutes2 && startMinutes1 <= endMinutes2) ||
+      (startMinutes1 >= startMinutes2 && startMinutes1 <= endMinutes2) ||
+      (end2[0] < start2[0] && endMinutes1 <= startMinutes2 && endMinutes1 >= endMinutes2) ||
+      (end2[0] < start2[0] && endMinutes1 >= start2[0] * 60 + start2[1]) ||
+      (end2[0] > start2[0] && endMinutes1 >= startMinutes2 && endMinutes1 <= endMinutes2) ||
+      (end2[0] > start2[0] && endMinutes1 <= start2[0] * 60 + start2[1])
 
-    const isStartIncluded = startMinutes1 >= startMinutes2 && startMinutes1 <= endMinutes2
-
-    return isEntirelyIncluded || isStartIncluded
+    return isEntirelyIncluded
   }
 
   const handleSpecialTimeChange = (index: number, value: string, type: string, time_slotIndex: number) => {
     const updatedAttributes = [...attributes]
     switch (type) {
       case 'startTimeOfDay':
-        const found = updatedAttributes[index].specialTimeLot.some((timeSlot) => {
-          return isTimePeriodIncluded(
-            [value, updatedAttributes[index].specialTimeLot[time_slotIndex].endTimeOfDay ?? ''],
-            [timeSlot.startTimeOfDay ?? '', timeSlot.endTimeOfDay ?? ''],
-          )
+        const found = updatedAttributes[index].specialTimeLot.some((timeSlot, time_slot_index) => {
+          if (time_slot_index != time_slotIndex) {
+            return isTimePeriodIncluded(
+              [value, updatedAttributes[index].specialTimeLot[time_slotIndex].endTimeOfDay ?? ''],
+              [timeSlot.startTimeOfDay ?? '', timeSlot.endTimeOfDay ?? ''],
+            )
+          }
         })
 
         if (found) {
@@ -480,11 +485,13 @@ const AddSkillForm = () => {
 
         break
       case 'endTimeOfDay':
-        const foundEOD = updatedAttributes[index].specialTimeLot.some((timeSlot) => {
-          return isTimePeriodIncluded(
-            [updatedAttributes[index].specialTimeLot[time_slotIndex].startTimeOfDay ?? '', value],
-            [timeSlot.startTimeOfDay ?? '', timeSlot.endTimeOfDay ?? ''],
-          )
+        const foundEOD = updatedAttributes[index].specialTimeLot.some((timeSlot, time_slot_index) => {
+          if (time_slot_index != time_slotIndex) {
+            return isTimePeriodIncluded(
+              [updatedAttributes[index].specialTimeLot[time_slotIndex].startTimeOfDay ?? '', value],
+              [timeSlot.startTimeOfDay ?? '', timeSlot.endTimeOfDay ?? ''],
+            )
+          }
         })
         if (foundEOD) {
           messageApi.open({
