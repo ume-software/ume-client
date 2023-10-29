@@ -2,7 +2,6 @@ import { Menu, Transition } from '@headlessui/react'
 import { CloseSmall, CopyOne, Dot, Female, Lock, Male, More, PaperMoneyTwo, ShareTwo } from '@icon-park/react'
 import { Button, InputWithAffix, Modal, TextArea } from '@ume/ui'
 import coin from 'public/coin-icon.png'
-import TestImage4 from 'public/cover.png'
 import detailBackground from 'public/detail-cover-background.png'
 import ImgForEmpty from 'public/img-for-empty.png'
 import lgbtIcon from 'public/rainbow-flag-11151.svg'
@@ -12,7 +11,7 @@ import { Fragment, ReactElement, useState } from 'react'
 
 import { ConfigProvider, Tooltip, message, notification, theme } from 'antd'
 import { Formik } from 'formik'
-import Image, { StaticImageData } from 'next/legacy/image'
+import Image from 'next/legacy/image'
 import { useRouter } from 'next/router'
 import {
   ProviderConfigResponseStatusEnum,
@@ -102,7 +101,7 @@ const DetailProfileContainer = () => {
   const basePath = router.asPath.split('?')[0]
   const slug = router.query
 
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, user } = useAuth()
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
 
   const [messageApi, contextHolder] = message.useMessage()
@@ -440,18 +439,22 @@ const DetailProfileContainer = () => {
                       <Menu.Items className="absolute right-0 py-3 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg w-fit top-7 ring-1 ring-black ring-opacity-5 focus:outline-none">
                         <div className="flex flex-col gap-2 w-max">
                           {moreButtonDatas.map((item, index) => (
-                            <div
-                              key={index}
-                              className="px-2 py-1 rounded-md cursor-pointer hover:bg-purple-600 hover:text-white group"
-                              onClick={() => {
-                                handleMenuButtonAction(item)
-                              }}
-                            >
-                              <div className="flex items-center justify-between gap-2 duration-300 scale-x-100 group-hover:scale-x-95 group-hover:-translate-x-2">
-                                <div>{item.label}</div>
-                                {item.icon}
-                              </div>
-                            </div>
+                            <>
+                              {user?.id == providerDetail?.id && item.key != 'Donate' && (
+                                <div
+                                  key={index}
+                                  className="px-2 py-1 rounded-md cursor-pointer hover:bg-purple-600 hover:text-white group"
+                                  onClick={() => {
+                                    handleMenuButtonAction(item)
+                                  }}
+                                >
+                                  <div className="flex items-center justify-between gap-2 duration-300 scale-x-100 group-hover:scale-x-95 group-hover:-translate-x-2">
+                                    <div>{item.label}</div>
+                                    {item.icon}
+                                  </div>
+                                </div>
+                              )}
+                            </>
                           ))}
                         </div>
                       </Menu.Items>
@@ -462,16 +465,33 @@ const DetailProfileContainer = () => {
 
               <div className="flex flex-row gap-10" style={{ zIndex: 2 }}>
                 {tabDatas.map((item) => (
-                  <span
-                    className={`text-white xl:text-2xl text-xl font-medium p-4 cursor-pointer ${
-                      item.key == selectedTab.key ? 'border-b-4 border-purple-700' : ''
-                    }`}
-                    key={item.key}
-                    onClick={() => handleChangeTab(item)}
-                    data-tab={item.label}
-                  >
-                    {item.label}
-                  </span>
+                  <>
+                    {providerDetail?.isProvider ? (
+                      <span
+                        className={`text-white xl:text-2xl text-xl font-medium p-4 cursor-pointer ${
+                          item.key == selectedTab.key ? 'border-b-4 border-purple-700' : ''
+                        }`}
+                        key={item.key}
+                        onClick={() => handleChangeTab(item)}
+                        data-tab={item.label}
+                      >
+                        {item.label}
+                      </span>
+                    ) : (
+                      item.key != 'Service' && (
+                        <span
+                          className={`text-white xl:text-2xl text-xl font-medium p-4 cursor-pointer ${
+                            item.key == selectedTab.key ? 'border-b-4 border-purple-700' : ''
+                          }`}
+                          key={item.key}
+                          onClick={() => handleChangeTab(item)}
+                          data-tab={item.label}
+                        >
+                          {item.label}
+                        </span>
+                      )
+                    )}
+                  </>
                 ))}
               </div>
             </div>
@@ -479,7 +499,7 @@ const DetailProfileContainer = () => {
           <div className="p-5">
             <span className="text-white">
               <div className="flex justify-center my-10">
-                {selectedTab.key == 'Service' && <InformationTab data={providerDetail!} />}
+                {providerDetail?.isProvider && selectedTab.key == 'Service' && <InformationTab data={providerDetail} />}
                 {selectedTab.key == 'Album' && <AlbumTab data={providerDetail!} />}
                 {selectedTab.key == 'Post' && <PostTab providerId={providerDetail!.slug} />}
               </div>

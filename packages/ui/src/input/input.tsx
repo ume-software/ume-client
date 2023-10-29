@@ -1,9 +1,6 @@
-import { Copy, Download, PreviewCloseOne, PreviewOpen } from '@icon-park/react'
+import { PreviewCloseOne, PreviewOpen } from '@icon-park/react'
 
 import React, { ReactNode, useState } from 'react'
-
-import { nanoid } from 'nanoid'
-import ReactTooltip from 'react-tooltip'
 
 import './input.css'
 
