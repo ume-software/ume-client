@@ -41,7 +41,7 @@ export const DropDownMenu = ({ user, handleLogout }: MenuProps) => {
           <Menu.Item as="div">
             {({ active }) => (
               <Link
-                href={`/profile/${user?.id}`}
+                href={`/profile/${user?.slug ?? user?.id}?tab=${user.isProvider ? 'Service' : 'Album'}`}
                 className={`${
                   active ? 'bg-slate-700' : 'text-gray-900'
                 } group flex w-full items-center rounded-md px-2 text-white py-2 text-sm`}
@@ -53,14 +53,15 @@ export const DropDownMenu = ({ user, handleLogout }: MenuProps) => {
           </Menu.Item>
           <Menu.Item as="div">
             {({ active }) => (
-              <button
+              <Link
+                href={`/account-setting?user=${user?.name}&tab=transactionHistory`}
                 className={`${
                   active ? 'bg-slate-700' : 'text-gray-900'
                 } group flex w-full items-center rounded-md  text-white px-2 py-2 text-sm`}
               >
                 <WalletOne theme="outline" size="20" fill="#ffffff" className="mr-3" />
                 Lich sử giao dịch
-              </button>
+              </Link>
             )}
           </Menu.Item>
           <Menu.Item as="div">

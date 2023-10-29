@@ -1,16 +1,20 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+
 /* eslint-disable jsx-a11y/alt-text */
 import { Menu, Transition } from '@headlessui/react'
 import { Check, CheckOne, CloseSmall, Pencil } from '@icon-park/react'
-import { Button, Input, Modal } from '@ume/ui'
+import { Button, FormInput, Input, Modal } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
 import { uploadImageBooking } from '~/apis/upload-media'
 import { GenderEnum } from '~/enumVariable/enumVariable'
+import useDebounce from '~/hooks/useDebounce'
 
 import { FormEvent, Fragment, useEffect, useRef, useState } from 'react'
 
 import { notification } from 'antd'
+import { useFormik } from 'formik'
 import Image from 'next/legacy/image'
-import { UserInformationResponse } from 'ume-service-openapi'
+import * as Yup from 'yup'
 
 import ConfirmForm from '~/components/confirm-form/confirmForm'
 import { SkeletonForAccountSetting } from '~/components/skeleton-load'
@@ -20,19 +24,6 @@ import { trpc } from '~/utils/trpc'
 interface GenderProps {
   key: GenderEnum
   name: string
-}
-
-interface AccountSettingProps {
-  avatarUrl: string | undefined
-  dob: string | undefined
-  email: string | undefined
-  gender: GenderProps
-  isVerified: boolean | undefined
-  latestOnline: null
-  name: string | undefined
-  phone: string | undefined
-  slug: string | undefined
-  username: string | undefined
 }
 
 interface SelectedImageProps {
@@ -51,12 +42,8 @@ const genderData: GenderProps[] = [
 
 const EditProfile = () => {
   const today = new Date().toISOString().split('T')[0]
-  const [userSettingData, setUserSettingData] = useState<UserInformationResponse | undefined>(undefined)
-  const { isLoading: isLoadingUserSettingData } = trpc.useQuery(['identity.identityInfo'], {
-    onSuccess(data) {
-      setUserSettingData(data.data)
-    },
-  })
+
+  const { data: userSettingData, isLoading: isLoadingUserSettingData } = trpc.useQuery(['identity.identityInfo'])
   const utils = trpc.useContext()
 
   const updateInformation = trpc.useMutation(['identity.updateUserProfile'])
@@ -74,40 +61,67 @@ const EditProfile = () => {
 
   const editAccountInforFormRef = useRef<HTMLFormElement>(null)
 
-  const [settingAccount, setSettingAccount] = useState<AccountSettingProps>({
-    avatarUrl: undefined,
-    dob: undefined,
-    email: undefined,
-    gender: genderData.find((gender) => gender.key == userSettingData?.gender!) ?? genderData[0],
-    isVerified: undefined,
-    latestOnline: null,
-    name: undefined,
-    phone: undefined,
-    slug: undefined,
-    username: undefined,
-  })
-  const inforChange: boolean =
-    userSettingData?.name == settingAccount.name &&
-    userSettingData?.avatarUrl == settingAccount.avatarUrl &&
-    userSettingData?.dob == settingAccount.dob &&
-    userSettingData?.gender == settingAccount.gender.key &&
-    userSettingData?.phone == settingAccount.phone &&
-    userSettingData?.slug == settingAccount.slug
+  const vietnamesePhoneNumberRegExp = /^(03|05|07|08|09)\d{8}$/
 
-  const handleReturnInitState = () => {
-    setSettingAccount({
-      avatarUrl: userSettingData?.avatarUrl,
-      dob: userSettingData?.dob,
-      email: userSettingData?.email,
-      gender: genderData.find((gender) => gender.key == userSettingData?.gender!) ?? genderData[0],
-      isVerified: userSettingData?.isVerified,
+  const form = useFormik({
+    initialValues: {
+      avatarUrl: '',
+      dob: '',
+      email: '',
+      gender: genderData[0],
+      isVerified: false,
       latestOnline: null,
-      name: userSettingData?.name,
-      phone: userSettingData?.phone,
-      slug: userSettingData?.slug,
-      username: userSettingData?.username,
-    })
+      name: '',
+      phone: '',
+      slug: '',
+      username: '',
+    },
+    validationSchema: Yup.object({
+      name: Yup.string().required('Tên là yêu cầu'),
+      dob: Yup.string().required('Ngày sinh là yêu cầu'),
+      slug: Yup.string().required('Đường dẫn là yêu cầu'),
+      phone: Yup.string()
+        .required('Số điện thoại là yêu cầu')
+        .matches(vietnamesePhoneNumberRegExp, 'Định dạng không hợp lệ'),
+    }),
+    onSubmit(values) {
+      setIsModalConfirmationVisible(true)
+    },
+  })
+
+  const handleResetForm = () => {
+    if (!isLoadingUserSettingData && userSettingData) {
+      form.setValues({
+        avatarUrl: userSettingData?.data?.avatarUrl ?? '',
+        dob: userSettingData?.data?.dob?.split('T')[0] ?? '',
+        email: userSettingData?.data?.email ?? '',
+        gender: genderData.find((gender) => gender.key == userSettingData?.data?.gender) ?? genderData[0],
+        isVerified: userSettingData?.data?.isVerified,
+        latestOnline: null,
+        name: userSettingData?.data?.name ?? '',
+        phone: userSettingData?.data?.phone ?? '',
+        slug: userSettingData?.data?.slug ?? '',
+        username: userSettingData?.data?.username ?? '',
+      })
+    }
   }
+
+  useEffect(() => {
+    handleResetForm()
+  }, [userSettingData])
+
+  const debouncedValue = useDebounce<string>(form.values.slug, 500)
+  const { data: checkSlugUserData } = trpc.useQuery(['identity.checkSlugUser', debouncedValue], {
+    enabled: !!form.values.slug,
+  })
+
+  const inforChange: boolean =
+    (userSettingData?.data?.name ?? '') == form.values.name &&
+    (userSettingData?.data?.avatarUrl ?? '') == form.values.avatarUrl &&
+    (userSettingData?.data?.dob?.split('T')[0] ?? '') == form.values.dob &&
+    (userSettingData?.data?.gender ?? '') == form.values.gender.key &&
+    (userSettingData?.data?.phone ?? '') == form.values.phone &&
+    (userSettingData?.data?.slug ?? '') == form.values.slug
 
   const handleClose = () => {
     setIsModalConfirmationVisible(false)
@@ -124,6 +138,7 @@ const EditProfile = () => {
             ...image,
             avatarURL: URL.createObjectURL(file),
           }))
+          form.setFieldValue('avatarUrl', URL.createObjectURL(file))
           break
         case 1:
           setSelectedImage((image) => ({
@@ -189,7 +204,7 @@ const EditProfile = () => {
               onError() {
                 notification.error({
                   message: 'Cập nhật thông tin thất bại',
-                  description: 'Có lỗi trong quá tring cập nhật thông tin. Vui lòng thử lại sau!',
+                  description: 'Có lỗi trong quá trình cập nhật thông tin. Vui lòng thử lại sau!',
                   placement: 'bottomLeft',
                 })
               },
@@ -198,14 +213,14 @@ const EditProfile = () => {
         } else {
           notification.error({
             message: 'Cập nhật thông tin thất bại',
-            description: 'Có lỗi trong quá tring cập nhật thông tin. Vui lòng thử lại sau!',
+            description: 'Có lỗi trong quá trình cập nhật thông tin. Vui lòng thử lại sau!',
             placement: 'bottomLeft',
           })
         }
       } catch (error) {
         notification.error({
           message: 'Cập nhật thông tin thất bại',
-          description: 'Có lỗi trong quá tring cập nhật thông tin. Vui lòng thử lại sau!',
+          description: 'Có lỗi trong quá trình cập nhật thông tin. Vui lòng thử lại sau!',
           placement: 'bottomLeft',
         })
       }
@@ -229,10 +244,11 @@ const EditProfile = () => {
             updateInformation.mutate(
               {
                 avatarUrl: String(responseData.data.data.results),
-                dob: settingAccount.dob ?? undefined,
-                gender: settingAccount.gender.key,
-                name: settingAccount.name?.trim(),
-                slug: settingAccount.slug?.trim() ?? undefined,
+                dob: form.values.dob,
+                gender: form.values.gender.key,
+                name: form.values.name?.trim(),
+                slug: form.values.slug?.trim(),
+                // phone:form.values.phone,
               },
               {
                 onSuccess() {
@@ -268,10 +284,11 @@ const EditProfile = () => {
         try {
           updateInformation.mutate(
             {
-              dob: settingAccount.dob ?? undefined,
-              gender: settingAccount.gender.key,
-              name: settingAccount.name?.trim(),
-              slug: settingAccount.slug?.trim() ?? undefined,
+              dob: form.values.dob,
+              gender: form.values.gender.key,
+              name: form.values.name?.trim(),
+              slug: form.values.slug?.trim(),
+              // phone:form.values.phone,
             },
             {
               onSuccess() {
@@ -288,7 +305,7 @@ const EditProfile = () => {
         } catch (error) {
           notification.error({
             message: 'Cập nhật thông tin thất bại',
-            description: 'Có lỗi trong quá tring cập nhật thông tin. Vui lòng thử lại sau!',
+            description: 'Có lỗi trong quá trình cập nhật thông tin. Vui lòng thử lại sau!',
             placement: 'bottomLeft',
           })
         }
@@ -328,11 +345,6 @@ const EditProfile = () => {
       </>
     ),
   })
-
-  useEffect(() => {
-    handleReturnInitState()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userSettingData])
 
   const vertificationModal = Modal.useEditableForm({
     onOK: () => {},
@@ -462,11 +474,11 @@ const EditProfile = () => {
   return (
     <div className="w-full px-10">
       <p className="text-4xl font-bold">Thông tin cá nhân</p>
-      {!isLoadingUserSettingData && userSettingData && settingAccount ? (
+      {!isLoadingUserSettingData && userSettingData?.success ? (
         <>
           <form
             ref={editAccountInforFormRef}
-            onSubmit={handleUpdateInformation}
+            onSubmit={form.handleSubmit}
             className="flex flex-col items-center w-full gap-5 p-10"
           >
             <div className="flex items-center justify-start w-full gap-24">
@@ -476,7 +488,13 @@ const EditProfile = () => {
                     className="rounded-lg"
                     layout="fill"
                     objectFit="cover"
-                    src={selectedImage.avatarURL ? selectedImage.avatarURL : userSettingData.avatarUrl ?? ImgForEmpty}
+                    src={
+                      selectedImage.avatarURL
+                        ? selectedImage.avatarURL
+                        : form.values.avatarUrl != ''
+                        ? form.values.avatarUrl
+                        : ImgForEmpty
+                    }
                     alt="Personal Image"
                   />
                 </div>
@@ -495,56 +513,104 @@ const EditProfile = () => {
                 <div className="flex flex-col gap-6">
                   <div className="space-y-2">
                     <label>Tên</label>
-                    <Input
+                    <FormInput
+                      name="name"
                       className={`${
-                        settingAccount.name == userSettingData.name ? 'bg-zinc-800' : 'bg-gray-700'
+                        form.values.name == (userSettingData.data?.name ?? '') ? 'bg-zinc-800' : 'bg-gray-700'
                       } border border-white border-opacity-30`}
-                      value={settingAccount.name}
-                      onChange={(e) => setSettingAccount((prevData) => ({ ...prevData, name: e.target.value }))}
+                      value={form.values.name}
+                      onChange={(e) => form.handleChange(e)}
+                      onBlur={form.handleBlur}
+                      error={!!form.errors.name && form.touched.name}
+                      errorMessage={''}
+                      autoComplete="off"
                     />
+                    {!!form.errors.name && form.touched.name && (
+                      <p className="text-xs text-red-500">{form.errors.name}</p>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <label>Đường dẫn của bạn</label>
-                    <Input
+                    <FormInput
+                      name="slug"
                       className={`${
-                        settingAccount.slug == userSettingData.slug ? 'bg-zinc-800' : 'bg-gray-700'
-                      } border border-white border-opacity-30`}
+                        form.values.slug == (userSettingData.data?.slug ?? '') ? 'bg-zinc-800' : 'bg-gray-700'
+                      } ${
+                        !userSettingData.data?.slug
+                          ? 'border border-white border-opacity-30'
+                          : '!border-none !hover:border-none !focus:border-none outline-0'
+                      }`}
                       placeholder="nguyen_van_a"
-                      value={settingAccount.slug}
+                      value={form.values.slug}
                       onChange={(e) => {
-                        setSettingAccount((prevData) => ({ ...prevData, slug: e.target.value.replace(/ /g, '-') }))
+                        const updatedValue = e.target.value.replace(/ /g, '-')
+                        e.target.value = updatedValue
+                        form.handleChange(e)
                       }}
-                      disabled={!!userSettingData?.slug}
+                      onBlur={form.handleBlur}
+                      disabled={!!userSettingData.data?.slug}
+                      readOnly={!!userSettingData.data?.slug}
+                      error={(!!form.errors.slug && form.touched.slug) || checkSlugUserData?.data.isExisted}
+                      errorMessage={undefined}
                     />
+                    {!!form.errors.slug && form.touched.slug && (
+                      <p className="text-xs text-red-500">{form.errors.slug}</p>
+                    )}
+                    {!userSettingData.data?.slug && checkSlugUserData?.data.isExisted && (
+                      <p className="text-xs text-red-500">Đường dẫn này đãn được sử dụng</p>
+                    )}
                   </div>
                   <div className="flex items-center gap-10">
                     <div className="space-y-2">
                       <label>Email</label>
-                      <Input className="bg-zinc-800 focus:outline-none" value={userSettingData.email} readOnly />
+                      <Input
+                        name="email"
+                        className="bg-zinc-800 focus:outline-none"
+                        value={form.values.email}
+                        readOnly
+                      />
                     </div>
                     <div className="space-y-2">
                       <label>Số điện thoại</label>
-                      <Input
+                      <FormInput
+                        type="text"
+                        name="phone"
                         className={`${
-                          settingAccount.phone == userSettingData.phone ? 'bg-zinc-800' : 'bg-gray-700'
+                          form.values.phone == (userSettingData.data?.phone ?? '') ? 'bg-zinc-800' : 'bg-gray-700'
                         } border border-white border-opacity-30`}
-                        value={settingAccount.phone}
-                        onChange={(e) => setSettingAccount((prevData) => ({ ...prevData, phone: e.target.value }))}
+                        value={form.values.phone}
+                        onChange={(e) => form.handleChange(e)}
+                        onBlur={form.handleBlur}
+                        error={!!form.errors.phone && form.touched.phone}
+                        errorMessage={''}
+                        autoComplete="off"
                       />
+                      {!!form.errors.phone && form.touched.phone && (
+                        <p className="text-xs text-red-500">{form.errors.phone}</p>
+                      )}
                     </div>
                   </div>
                   <div className="flex items-center gap-10">
                     <div className="space-y-2">
                       <label>Ngày sinh</label>
-                      <Input
+                      <FormInput
+                        name="dob"
                         type="date"
                         className={`${
-                          settingAccount.dob == userSettingData.dob ? 'bg-zinc-800' : 'bg-gray-700'
+                          form.values.dob == (userSettingData.data?.dob?.split('T')[0] ?? '')
+                            ? 'bg-zinc-800'
+                            : 'bg-gray-700'
                         } border border-white border-opacity-30`}
                         max={today}
-                        value={settingAccount.dob}
-                        onChange={(e) => setSettingAccount((prevData) => ({ ...prevData, dob: e.target.value }))}
+                        value={form.values.dob}
+                        onChange={(e) => form.handleChange(e)}
+                        onBlur={form.handleBlur}
+                        error={!!form.errors.dob && form.touched.dob}
+                        errorMessage={''}
                       />
+                      {!!form.errors.dob && form.touched.dob && (
+                        <p className="text-xs text-red-500">{form.errors.dob}</p>
+                      )}
                     </div>
                     <div className="space-y-2">
                       <label>Giới tính</label>
@@ -553,10 +619,10 @@ const EditProfile = () => {
                           <Menu.Button>
                             <button
                               className={`min-w-[110px] text-xl font-semibold px-8 py-2 ${
-                                settingAccount.gender.key == userSettingData.gender ? 'bg-zinc-800' : 'bg-gray-700'
+                                form.values.gender.key == userSettingData.data?.gender ? 'bg-zinc-800' : 'bg-gray-700'
                               } hover:bg-gray-700 rounded-xl`}
                             >
-                              {settingAccount.gender.name}
+                              {form.values.gender.name}
                             </button>
                           </Menu.Button>
                           <Transition
@@ -576,14 +642,16 @@ const EditProfile = () => {
                                 {genderData.map((genData, index) => (
                                   <div
                                     className={`flex gap-5 items-center ${
-                                      genData.key === settingAccount.gender.key ? 'bg-gray-700' : ''
+                                      genData.key === form.values.gender.key ? 'bg-gray-700' : ''
                                     } hover:bg-gray-700 cursor-pointer p-3 rounded-lg`}
                                     key={index}
-                                    onClick={() => setSettingAccount((prevData) => ({ ...prevData, gender: genData }))}
+                                    onClick={() => {
+                                      form.setFieldValue('gender', genData)
+                                    }}
                                   >
                                     <p className="font-semibold text-mg">{genData.name}</p>
                                     <div>
-                                      {genData.key === settingAccount.gender.key ? (
+                                      {genData.key === form.values.gender.key ? (
                                         <Check theme="filled" size="10" fill="#FFFFFF" strokeLinejoin="bevel" />
                                       ) : (
                                         ''
@@ -601,7 +669,7 @@ const EditProfile = () => {
                   <div className="space-y-2">
                     <label>Xác minh danh tính</label>
                     <div>
-                      {userSettingData.isVerified ? (
+                      {userSettingData.data?.isVerified ? (
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2 px-4 py-2 text-white bg-green-600 rounded-md w-fit">
                             <CheckOne theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" /> Đã xác minh
@@ -636,7 +704,7 @@ const EditProfile = () => {
                     isOutlinedButton={true}
                     type="button"
                     customCSS="w-[100px] text-xl p-2 rounded-xl hover:scale-105"
-                    onClick={() => handleReturnInitState()}
+                    onClick={() => handleResetForm()}
                   >
                     Hủy
                   </Button>
@@ -646,7 +714,9 @@ const EditProfile = () => {
                     isActive={true}
                     isOutlinedButton={true}
                     onClick={() => {
-                      setIsModalConfirmationVisible(true)
+                      if (!checkSlugUserData?.data.isExisted) {
+                        setIsModalConfirmationVisible(true)
+                      }
                     }}
                   >
                     Thay đổi
