@@ -42,7 +42,7 @@ const TransactionHistory = () => {
   const [transactionHistoryArray, setTransactionHistoryArray] = useState<any[] | undefined>(undefined)
   const [seriesCharts, setSeriesCharts] = useState<any[] | undefined>(undefined)
 
-  const { isLoading: isTransactionHistoryLoading } = trpc.useQuery(
+  const { isLoading: isTransactionHistoryLoading, isFetching: isTransactionHistoryFetching } = trpc.useQuery(
     ['identity.getHistoryTransaction', { page, limit }],
     {
       onSuccess(data) {
@@ -58,7 +58,7 @@ const TransactionHistory = () => {
 
     transactionHistory?.row?.map((transactionHistory) => {
       const updatedAt = new Date(transactionHistory.updatedAt ?? '')
-      const monthYear = `${updatedAt.getFullYear()}-${(updatedAt.getMonth() + 1).toString().padStart(2, '0')}` // Format: YYYY-MM
+      const monthYear = `${updatedAt.getFullYear()}-${(updatedAt.getMonth() + 1).toString().padStart(2, '0')}`
       const amount = transactionHistory.amount
 
       if (monthYearAmountMap[monthYear]) {
@@ -82,7 +82,7 @@ const TransactionHistory = () => {
         <div className="flex items-center justify-center gap-2" key={transactionHistory[0]}>
           {transactionArray[6]} <Image src={coin} width={30} height={30} alt="coin" />
         </div>,
-        transactionArray[9] ?? user?.name,
+        transactionArray[12]?.recipient?.name ?? user?.name,
         new Date(transactionArray[1]).toLocaleDateString('en-GB'),
         new Date(transactionArray[2]).toLocaleDateString('en-GB'),
       ]
@@ -101,21 +101,27 @@ const TransactionHistory = () => {
               <ColumnChart seriesCharts={seriesCharts} />
               <div className="flex flex-col gap-3">
                 <p className="text-xl font-bold">Chi tiết giao dịch</p>
-                <Table
-                  dataHeader={['Loại', 'Số lượng coin', 'Người nhận', 'Ngày tạo giao dịch', 'Ngày hoàn thành']}
-                  dataBody={transactionHistoryArray}
-                  page={page}
-                  setPage={setPage}
-                  limit={limit}
-                  totalItem={Number(transactionHistory?.count ?? 0)}
-                  contentItem={'giao dịch'}
-                  watchAction={false}
-                  onWatch={() => {}}
-                  editAction={false}
-                  onEdit={() => {}}
-                  deleteAction={false}
-                  onDelete={() => {}}
-                />
+                {!isTransactionHistoryFetching ? (
+                  <>
+                    <Table
+                      dataHeader={['Loại', 'Số lượng coin', 'Người nhận', 'Ngày tạo giao dịch', 'Ngày hoàn thành']}
+                      dataBody={transactionHistoryArray}
+                      page={page}
+                      setPage={setPage}
+                      limit={limit}
+                      totalItem={Number(transactionHistory?.count ?? 0)}
+                      contentItem={'giao dịch'}
+                      watchAction={false}
+                      onWatch={() => {}}
+                      editAction={false}
+                      onEdit={() => {}}
+                      deleteAction={false}
+                      onDelete={() => {}}
+                    />
+                  </>
+                ) : (
+                  <TableSkeletonLoader />
+                )}
               </div>
             </div>
           </>

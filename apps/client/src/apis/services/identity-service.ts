@@ -482,7 +482,7 @@ export const getHistoryTransaction = async (
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).getHistoryCoin(query.limit, query.page, '["$all"]', query.where, query.order)
+    }).getHistoryCoin(query.limit, query.page, '["$all",{"user":["$all"]}]', query.where, query.order)
     return {
       data: reponse.data,
       success: true,

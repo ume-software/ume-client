@@ -440,7 +440,22 @@ const DetailProfileContainer = () => {
                         <div className="flex flex-col gap-2 w-max">
                           {moreButtonDatas.map((item, index) => (
                             <>
-                              {user?.id == providerDetail?.id && item.key != 'Donate' && (
+                              {user?.id == providerDetail?.id ? (
+                                item.key != 'Donate' && (
+                                  <div
+                                    key={index}
+                                    className="px-2 py-1 rounded-md cursor-pointer hover:bg-purple-600 hover:text-white group"
+                                    onClick={() => {
+                                      handleMenuButtonAction(item)
+                                    }}
+                                  >
+                                    <div className="flex items-center justify-between gap-2 duration-300 scale-x-100 group-hover:scale-x-95 group-hover:-translate-x-2">
+                                      <div>{item.label}</div>
+                                      {item.icon}
+                                    </div>
+                                  </div>
+                                )
+                              ) : (
                                 <div
                                   key={index}
                                   className="px-2 py-1 rounded-md cursor-pointer hover:bg-purple-600 hover:text-white group"
