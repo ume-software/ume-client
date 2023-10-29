@@ -3,6 +3,7 @@ import { createRouter } from './configurations'
 import { identityRouter } from './identity'
 import { providerRouter } from './provider'
 import { servicesRouter } from './services'
+import { transactionRouter } from './transaction'
 import { userRouter } from './user'
 import { voucherRouter } from './voucher'
 
@@ -13,4 +14,5 @@ export const rootRouter = createRouter()
   .merge('provider.', providerRouter)
   .merge('voucher.', voucherRouter)
   .merge('services.', servicesRouter)
+  .merge('transaction.', transactionRouter)
 export type RootRouterTypes = typeof rootRouter
