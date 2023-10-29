@@ -217,7 +217,6 @@ const DepositTransactionContainer = () => {
           <Button isActive={false} customCSS="flex justify-center items-center">
             <Eyes
               onClick={() => {
-                console.log(record.id)
                 openDepositDetailHandler(record.id)
               }}
               className="p-2 mr-2 rounded-full hover:bg-gray-500"

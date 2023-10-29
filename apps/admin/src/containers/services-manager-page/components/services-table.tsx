@@ -63,7 +63,7 @@ const ServicesTable = ({ servicesList, isLoading }) => {
       title: <div className="flex items-center justify-center">Số người dùng</div>,
       dataIndex: 'countProviderUsed',
       key: 'countProviderUsed',
-      render: (countProviderUsed) => <div className="w-full flex justify-center">{countProviderUsed}</div>,
+      render: (countProviderUsed) => <div className="flex justify-center w-full">{countProviderUsed}</div>,
     },
     {
       title: <div className="flex items-center justify-center">Trạng thái</div>,

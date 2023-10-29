@@ -38,7 +38,6 @@ export default function ViewDepositDetail({ requestId, openValue, closeFunction 
       },
     },
   )
-  console.log(depositDetail)
   const avatarUrl = depositDetail?.requester?.avatarUrl
   const name = depositDetail?.requester?.name
   const username = depositDetail?.requester?.username
