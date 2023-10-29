@@ -11,7 +11,7 @@ export interface IBanModalProps {
   closeFunction: any
   openValue: boolean
   className?: any
-  excuteFunction: any | undefined
+  excuteFunction: any
 }
 
 export default function BanModal({ isBanned, name, openValue, closeFunction, excuteFunction }: IBanModalProps) {

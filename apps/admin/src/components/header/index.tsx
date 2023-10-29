@@ -73,8 +73,8 @@ export const Header = ({ handleOpen, openSideBar, setOpenPopupSideBar, openPopup
         width <= 900 ? 'pl-7%' : !openSideBar || width <= 1200 ? 'pl-[9%]' : 'pl-[23%]'
       } shadow-md`}
     >
-      <div className="flex items-center ml-5 justify-between flex-1 h-full align-middle">
-        <div onClick={handleOpenSideBar} className="p-1 cursor-pointer rounded-full hover:bg-gray-500">
+      <div className="flex items-center justify-between flex-1 h-full align-middle">
+        <div onClick={handleOpenSideBar} className="p-1 rounded-full cursor-pointer hover:bg-gray-500">
           <HamburgerButton theme="outline" size="22" fill="#fff" />
         </div>
         {width <= 900 && (
@@ -83,7 +83,7 @@ export const Header = ({ handleOpen, openSideBar, setOpenPopupSideBar, openPopup
           </div>
         )}
         <div className="min-w-[6.5rem] flex justify-between items-center">
-          <div className="mr-10 pt-2">
+          <div className="pt-2 mr-10">
             <Badge size="small" count={20}>
               <div className="rounded-full p-[0.25rem] bg-gray-500">
                 <Remind theme="outline" size={width <= 900 ? '20' : '24'} fill="#fff" />
