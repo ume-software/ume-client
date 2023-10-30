@@ -951,52 +951,62 @@ const AddSkillForm = () => {
                             {attr.specialTimeLot?.map((timeSlot, time_slot_index) => (
                               <>
                                 <div className="flex items-center gap-3" key={time_slot_index}>
-                                  <div className="flex items-center gap-3">
-                                    <Input
-                                      placeholder="Thời gian bắt đầu"
-                                      value={timeSlot.startTimeOfDay}
-                                      type="time"
-                                      name="startTimeOfDay"
-                                      onChange={(e) =>
-                                        handleSpecialTimeChange(
-                                          index,
-                                          e.target.value,
-                                          'startTimeOfDay',
-                                          time_slot_index,
-                                        )
-                                      }
-                                      className="max-w-[150px] bg-zinc-800 text-white border border-white border-opacity-30 !pr-1 rounded-xl my-2"
-                                    />
-                                    <Input
-                                      placeholder="Thời gian kết thúc"
-                                      value={timeSlot.endTimeOfDay}
-                                      type="time"
-                                      name="endTimeOfDay"
-                                      onChange={(e) =>
-                                        handleSpecialTimeChange(index, e.target.value, 'endTimeOfDay', time_slot_index)
-                                      }
-                                      className="max-w-[150px] bg-zinc-800 text-white border border-white border-opacity-30 !pr-1 rounded-xl my-2"
-                                    />
-
-                                    <InputWithAffix
-                                      placeholder="Giá"
-                                      value={timeSlot.amount}
-                                      type="number"
-                                      name="amount"
-                                      onChange={(e) =>
-                                        handleSpecialTimeChange(
-                                          index,
-                                          String(Number(e.target.value) > 0 ? e.target.value : 1),
-                                          'amount',
-                                          time_slot_index,
-                                        )
-                                      }
-                                      className="max-w-[100px] bg-zinc-800 border border-white border-opacity-30 rounded-xl my-2"
-                                      styleInput={`bg-zinc-800 rounded-xl border-none focus:outline-none`}
-                                      iconStyle="border-none"
-                                      position="right"
-                                      component={<Image src={coin} width={100} height={100} alt="coin" />}
-                                    />
+                                  <div className="grid 2xl:grid-cols-6 grid-cols-4 items-center 2xl:gap-3 gap-1">
+                                    <div className="col-span-2 min-w-[105px]">
+                                      <Input
+                                        placeholder="Thời gian bắt đầu"
+                                        value={timeSlot.startTimeOfDay}
+                                        type="time"
+                                        name="startTimeOfDay"
+                                        onChange={(e) =>
+                                          handleSpecialTimeChange(
+                                            index,
+                                            e.target.value,
+                                            'startTimeOfDay',
+                                            time_slot_index,
+                                          )
+                                        }
+                                        className="max-w-[180px] bg-zinc-800 text-white border border-white border-opacity-30 !pr-1 rounded-xl my-2"
+                                      />
+                                    </div>
+                                    <div className="col-span-2 min-w-[105px]">
+                                      <Input
+                                        placeholder="Thời gian kết thúc"
+                                        value={timeSlot.endTimeOfDay}
+                                        type="time"
+                                        name="endTimeOfDay"
+                                        onChange={(e) =>
+                                          handleSpecialTimeChange(
+                                            index,
+                                            e.target.value,
+                                            'endTimeOfDay',
+                                            time_slot_index,
+                                          )
+                                        }
+                                        className="max-w-[180px] bg-zinc-800 text-white border border-white border-opacity-30 !pr-1 rounded-xl my-2"
+                                      />
+                                    </div>
+                                    <div className="col-span-2">
+                                      <InputWithAffix
+                                        placeholder="Giá"
+                                        value={timeSlot.amount}
+                                        type="number"
+                                        name="amount"
+                                        onChange={(e) =>
+                                          handleSpecialTimeChange(
+                                            index,
+                                            String(Number(e.target.value) > 0 ? e.target.value : 1),
+                                            'amount',
+                                            time_slot_index,
+                                          )
+                                        }
+                                        className="max-w-[100px] bg-zinc-800 border border-white border-opacity-30 rounded-xl my-2"
+                                        styleInput={`bg-zinc-800 rounded-xl border-none focus:outline-none`}
+                                        iconStyle="border-none"
+                                        position="right"
+                                        component={<Image src={coin} width={100} height={100} alt="coin" />}
+                                      />
+                                    </div>
                                   </div>
                                   <Button
                                     customCSS={`text-xl p-2 bg-red-500 hover:scale-105 rounded-xl`}
