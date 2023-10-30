@@ -126,36 +126,25 @@ const TableSkeletonLoader = () => {
 
   return (
     <div className="border border-gray-300 rounded-2xl p-3 animate-pulse">
-      <table className="w-full text-center">
+      <table className="text-center overflow-hidden">
         <thead>
           <tr>
-            <th className="py-2">
-              <div className="relative w-[100px] h-[40px] bg-gray-300 animate-pulse"></div>
-            </th>
-            <th className="py-2">
-              <div className="relative w-[100px] h-[40px] bg-gray-300 animate-pulse"></div>
-            </th>
-            <th className="py-2">
-              <div className="relative w-[100px] h-[40px] bg-gray-300 animate-pulse"></div>
+            <th className="w-full py-2">
+              <div className="relative w-full h-[40px] bg-gray-300 animate-pulse"></div>
             </th>
           </tr>
         </thead>
         <tbody>
           {Array.from({ length: skeletonRowCount }, (_, index) => (
             <tr key={index} className="">
-              <td className="py-2">
+              <td className="w-full py-2">
                 <div className="flex items-center justify-center bg-gray-300 animate-pulse">
-                  <span className="w-[100px] h-[40px]" />
+                  <span className="w-full h-[40px]" />
                 </div>
               </td>
-              <td className="py-2">
+              <td className="w-full py-2">
                 <div className="flex items-center justify-center bg-gray-300 animate-pulse">
-                  <span className="w-[100px] h-[40px]" />
-                </div>
-              </td>
-              <td className="py-2">
-                <div className="flex items-center justify-center bg-gray-300 animate-pulse">
-                  <span className="w-[100px] h-[40px]" />
+                  <span className="w-full h-[40px]" />
                 </div>
               </td>
             </tr>

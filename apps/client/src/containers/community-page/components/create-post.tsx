@@ -2,7 +2,7 @@ import { AddPicture, DeleteFive } from '@icon-park/react'
 import { Button, TextArea } from '@ume/ui'
 import { uploadAudioBooking, uploadImageBooking } from '~/apis/upload-media'
 
-import { ChangeEvent, FormEvent, Key, SetStateAction, useEffect, useId, useRef, useState } from 'react'
+import { ChangeEvent, FormEvent, useEffect, useId, useState } from 'react'
 
 import { notification } from 'antd'
 import { ThumbnailResponseTypeEnum } from 'ume-service-openapi'
@@ -87,7 +87,7 @@ const CreatePost = (props: any) => {
         createNewPost.mutate(
           {
             content: content,
-            thumbnails: (await fileUpload).thumbnails,
+            thumbnails: fileUpload.thumbnails,
           },
           {
             onSuccess: (data) => {
@@ -165,14 +165,14 @@ const CreatePost = (props: any) => {
             </div>
           </div>
         </div>
-        <div className="p-5 mt-3">
+        <div className="p-5 mt-3 w-full text-center">
           <Button
-            customCSS={`!rounded-2xl w-full !text-white py-1 font-semibold text-lg text-center ${
-              !(content === '' && !!!mediaFiles) && 'hover:scale-105'
+            customCSS={`!rounded-2xl w-full min-w-[170px] !text-white py-2 font-semibold text-lg ${
+              !(content === '' && !mediaFiles) && 'hover:scale-105'
             }`}
             type="submit"
             isActive={true}
-            isOutlinedButton={!(content === '' && !!!mediaFiles)}
+            isOutlinedButton={!(content === '' && !mediaFiles)}
             isLoading={createNewPost.isLoading}
           >
             Tạo bài viết

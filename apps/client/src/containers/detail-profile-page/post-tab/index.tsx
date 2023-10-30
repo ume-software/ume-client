@@ -1,5 +1,8 @@
+import ImgForEmpty from 'public/img-for-empty.png'
+
 import { useCallback, useEffect, useRef, useState } from 'react'
 
+import Image from 'next/legacy/image'
 import { PostPagingResponse } from 'ume-service-openapi'
 
 import PostItem from './post-item'
@@ -47,7 +50,7 @@ const PostTab = (props: { providerId: string }) => {
 
   return (
     <>
-      <div ref={containerRef} className="w-full h-screen mt-3 text-center px-10">
+      <div ref={containerRef} className="w-full h-screen 2xl:mt-3 mt-0 text-center px-10">
         {(isPostByUserSlugLoading ?? isPostByUserSlugFetching) && postByUserSlug ? (
           <>
             <div className="w-full grid grid-cols-8 gap-10">
@@ -61,9 +64,16 @@ const PostTab = (props: { providerId: string }) => {
         ) : (
           <>
             <div className="w-full grid grid-cols-8 gap-10">
-              {postByUserSlug?.map((data, index) => (
-                <PostItem key={index} data={data} />
-              ))}
+              {(postByUserSlug?.length ?? 0) > 0 ? (
+                postByUserSlug?.map((data, index) => <PostItem key={index} data={data} />)
+              ) : (
+                <div className="col-span-full flex justify-center">
+                  <div className="w-[70%]">
+                    <Image src={ImgForEmpty} alt="EmptyImage" />
+                    <p className="text-xl font-semibold text-center">Chưa có bài viết</p>
+                  </div>
+                </div>
+              )}
             </div>
           </>
         )}

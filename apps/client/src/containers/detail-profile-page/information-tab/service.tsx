@@ -30,7 +30,7 @@ const Service = (props: { data: ProviderServiceResponse }) => {
   }
 
   const handleSendFeedback = () => {
-    if (!!feedback.rate) {
+    if (feedback.rate) {
       postFeedback.mutate(
         { id: props.data.id!.toString(), feedback: { amountStar: feedback.rate, content: feedback.content } },
         {
