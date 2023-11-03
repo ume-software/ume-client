@@ -248,7 +248,7 @@ const EditProfile = () => {
                 gender: form.values.gender.key,
                 name: form.values.name?.trim(),
                 slug: form.values.slug?.trim(),
-                // phone:form.values.phone,
+                phone: form.values.phone,
               },
               {
                 onSuccess() {
@@ -288,7 +288,7 @@ const EditProfile = () => {
               gender: form.values.gender.key,
               name: form.values.name?.trim(),
               slug: form.values.slug?.trim(),
-              // phone: form.values.phone,
+              phone: form.values.phone,
             },
             {
               onSuccess() {
@@ -530,7 +530,14 @@ const EditProfile = () => {
                     )}
                   </div>
                   <div className="space-y-2">
-                    <label>Đường dẫn của bạn</label>
+                    <label className="flex items-end gap-3">
+                      Đường dẫn của bạn{' '}
+                      {!userSettingData.data?.slug && (
+                        <p className="text-xs text-red-600 font-semibold opacity-80">
+                          *( Chỉ được cập nhật một lần duy nhất )
+                        </p>
+                      )}
+                    </label>
                     <FormInput
                       name="slug"
                       className={`${

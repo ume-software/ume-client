@@ -75,6 +75,7 @@ export const identityRouter = createRouter()
       slug: z.optional(z.string()),
       gender: z.optional(z.nativeEnum(UpdateUserProfileRequestGenderEnum)),
       dob: z.optional(z.string()),
+      phone: z.optional(z.string()),
       avatarUrl: z.optional(z.string()),
     }),
     resolve: async ({ input, ctx }) => {

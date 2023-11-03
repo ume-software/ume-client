@@ -137,6 +137,7 @@ export const updateUserProfile = async (
     slug?: string
     gender?: UpdateUserProfileRequestGenderEnum
     dob?: string
+    phone?: string
     avatarUrl?: string
   },
   ctx,
@@ -152,6 +153,7 @@ export const updateUserProfile = async (
       avatarUrl: query.avatarUrl,
       dob: query.dob,
       gender: query.gender,
+      phone: query.phone,
       slug: query.slug,
     })
     return {
