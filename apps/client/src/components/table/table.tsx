@@ -18,7 +18,7 @@ interface ITable {
   editAction: boolean
   onEdit: (id?: number) => void
   deleteAction: boolean
-  onDelete: () => void
+  onDelete: (id?: number) => void
 }
 
 const Table = ({
@@ -65,16 +65,14 @@ const Table = ({
     <>
       <div className="text-end font-semibold text-lg opacity-50">
         {Number(page) * Number(limit) - Number(limit) != 0 ? Number(page) * Number(limit) - Number(limit) : 1} -{' '}
-        {totalItem > Number(limit) ? (Number(limit) * Number(page)).toFixed(0) : totalItem} trên {totalItem}{' '}
-        {contentItem}
+        {totalItem > Number(limit) * Number(page) ? (Number(limit) * Number(page)).toFixed(0) : totalItem} trên{' '}
+        {totalItem} {contentItem}
       </div>
       <table className="w-full rounded-xl bg-[#292734] overflow-hidden">
         {totalItem <= 0 ? (
-          <>
-            <div className="w-full h-full text-center">
-              <Image layout="intrinsic" src={ImgForEmpty} alt="Personal Image" width={800} height={500} />
-            </div>
-          </>
+          <div className="w-full h-full text-center">
+            <Image layout="intrinsic" src={ImgForEmpty} alt="Personal Image" width={800} height={500} />
+          </div>
         ) : (
           <>
             <thead className="bg-purple-600">
@@ -128,7 +126,7 @@ const Table = ({
                             fill="#fff"
                             strokeLinejoin="bevel"
                             className="cursor-pointer"
-                            onClick={() => onDelete()}
+                            onClick={() => onDelete(Number(page) * indexRow)}
                           />
                         )}
                       </div>
@@ -147,6 +145,7 @@ const Table = ({
               <div
                 className={`w-full h-full flex justify-center items-center rounded-full border-2 border-white opacity-50 cursor-pointer hover:bg-white hover:bg-opacity-50`}
                 onClick={handleSlideLeft}
+                onKeyDown={() => {}}
               >
                 <Left theme="filled" size="20" fill="#fff" strokeLinejoin="bevel" />
               </div>
@@ -156,36 +155,28 @@ const Table = ({
           id="slider"
           className="max-w-[230px] overflow-hidden flex justify-start items-center gap-3 mt-5 overflow-x-scroll scroll scroll-smooth hide-scrollbar"
         >
-          {Number((Number(totalItem) / Number(limit) + (Number(totalItem) / Number(limit) > 1 ? 1 : 0)).toFixed(0)) >
-          1 ? (
+          {Math.floor(Number(totalItem) / Number(limit) + (Number(totalItem) / Number(limit) > 1 ? 1 : 0)) > 1 ? (
             [
-              ...Array(
-                Number(
-                  (Number(totalItem) / Number(limit) + (Number(totalItem) / Number(limit) > 1 ? 1 : 0)).toFixed(0),
-                ),
-              ),
+              ...Array(Math.floor(Number(totalItem) / Number(limit) + (Number(totalItem) / Number(limit) > 1 ? 1 : 0))),
             ].map((_, index) => (
-              <>
-                <div key={index}>
-                  <div
-                    className={`w-[36px] h-[36px] flex justify-center items-center rounded-full border-2 border-white cursor-pointer hover:bg-white hover:bg-opacity-50 ${
-                      Number(page) == index + 1 ? 'bg-white text-black' : 'opacity-50'
-                    }`}
-                    onClick={() => handleChangePage(index + 1)}
-                  >
-                    {index + 1}
-                  </div>
+              <div key={index}>
+                <div
+                  className={`w-[36px] h-[36px] flex justify-center items-center rounded-full border-2 border-white cursor-pointer hover:bg-white hover:bg-opacity-50 ${
+                    Number(page) == index + 1 ? 'bg-white text-black' : 'opacity-50'
+                  }`}
+                  onClick={() => handleChangePage(index + 1)}
+                  onKeyDown={() => {}}
+                >
+                  {index + 1}
                 </div>
-              </>
+              </div>
             ))
           ) : (
-            <>
-              <div
-                className={`w-[36px] h-[36px] flex justify-center items-center rounded-full border-2 border-white cursor-pointer hover:bg-white hover:bg-opacity-50 bg-white text-black`}
-              >
-                1
-              </div>
-            </>
+            <div
+              className={`w-[36px] h-[36px] flex justify-center items-center rounded-full border-2 border-white cursor-pointer hover:bg-white hover:bg-opacity-50 bg-white text-black`}
+            >
+              1
+            </div>
           )}
         </div>
         <div className="w-[46px] h-[46px]">
@@ -193,6 +184,7 @@ const Table = ({
             <div
               className={`w-full h-full flex justify-center items-center rounded-full border-2 border-white opacity-50 cursor-pointer hover:bg-white hover:bg-opacity-50`}
               onClick={handleSlideRight}
+              onKeyDown={() => {}}
             >
               <Right theme="filled" size="20" fill="#fff" strokeLinejoin="bevel" />
             </div>

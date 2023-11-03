@@ -27,8 +27,8 @@ interface IEnumType {
 }
 const mappingRecipientType: IEnumType[] = [
   { key: CreateVoucherRequestRecipientTypeEnum.All, label: 'Tất cả' },
-  { key: CreateVoucherRequestRecipientTypeEnum.FirstTimeBooking, label: 'Người lần đầu thuê' },
-  { key: CreateVoucherRequestRecipientTypeEnum.PreviousBooking, label: ' Người đã từng thuê' },
+  { key: CreateVoucherRequestRecipientTypeEnum.FirstTimeBooking, label: 'Lần đầu thuê' },
+  { key: CreateVoucherRequestRecipientTypeEnum.PreviousBooking, label: ' Người từng thuê' },
   { key: CreateVoucherRequestRecipientTypeEnum.SelectiveBooker, label: ' Top 5 người thuê' },
   { key: CreateVoucherRequestRecipientTypeEnum.Top10Booker, label: ' Top 10 người thuê' },
   { key: CreateVoucherRequestRecipientTypeEnum.Top5Booker, label: 'Người đặt chọn' },
@@ -81,9 +81,11 @@ const Voucher = () => {
         new Date(voucherArray[23]).toLocaleDateString('en-GB'),
         <div className="flex justify-center" key={voucherArray[0]}>
           <p
-            className={`w-fit px-2 py-1 text-lg font-semibold rounded-xl text-[${
-              mappingStatus.find((statusType) => statusType.key == voucherArray[28])?.textColor
-            }] bg-[${mappingStatus.find((statusType) => statusType.key == voucherArray[28])?.color}]`}
+            className={`w-fit px-2 py-1 text-lg font-semibold rounded-xl`}
+            style={{
+              background: `${mappingStatus.find((statusType) => statusType.key == voucherArray[28])?.color}`,
+              color: `${mappingStatus.find((statusType) => statusType.key == voucherArray[28])?.textColor}`,
+            }}
           >
             {mappingStatus.find((statusType) => statusType.key == voucherArray[28])?.label}
           </p>
@@ -226,7 +228,7 @@ const Voucher = () => {
       {isModalVisible && VoucherModal}
       <div className="w-full px-10">
         <p className="text-4xl font-bold">Khuyến mãi</p>
-        <div className="flex flex-col gap-5 mt-10 pr-5 space-y-10">
+        <div className="flex flex-col gap-5 mt-10 space-y-10">
           <div className="flex flex-col gap-3">
             <div className="flex items-end justify-between">
               <p className="text-xl font-bold">Danh sách khuyến mãi của tôi</p>

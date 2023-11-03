@@ -46,7 +46,7 @@ const ReportTicket = () => {
       <div className="w-full px-10">
         <p className="text-4xl font-bold">Tố cáo</p>
 
-        <div className="flex flex-col gap-5 mt-10 pr-5 space-y-10">
+        <div className="flex flex-col gap-5 mt-10 space-y-10">
           <div className="flex flex-col gap-3">
             <div className="flex items-end justify-between">
               <p className="text-xl font-bold">Chi tiết tố cáo</p>

@@ -80,7 +80,7 @@ const CommmentPost = (props: CommentPostProps) => {
       if (comment != '') {
         try {
           commentForPostId.mutate(
-            { id: props.postID, commentPostRequest: { content: comment, parentCommentId: '' } },
+            { id: props.postID, commentPostRequest: { content: comment, parentCommentId: undefined } },
             {
               onSuccess: (data) => {
                 if (data.success) {

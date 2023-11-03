@@ -102,7 +102,7 @@ const BecomeProvider = () => {
       <div className="w-full px-10">
         <p className="text-4xl font-bold">Trở thành nhà cung cấp</p>
 
-        <div className="w-[80%] mt-10 px-5 space-y-10">
+        <div className="w-full mt-10 px-5 space-y-10">
           <div className="flex items-center justify-between gap-5 py-10 border-b border-white border-opacity-30">
             <div className="flex flex-col gap-2">
               <p className="text-lg">Trở thành nhà cung cấp dịch vụ của chúng tôi</p>

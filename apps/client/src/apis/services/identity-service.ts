@@ -7,6 +7,7 @@ import {
   BuyCoinRequestApi,
   CoinApi,
   CreateVoucherRequest,
+  CreateWithdrawRequestUnitCurrencyEnum,
   ProviderServiceApi,
   ServiceApi,
   ServiceAttributeApi,
@@ -537,6 +538,72 @@ export const createUserPaymentSystem = async (
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
       message: error.message || 'Fail to get payment system',
+    })
+  }
+}
+
+export const getWithdrawRequests = async (query: { limit: string; page: string }, ctx) => {
+  const cookies = parse(ctx.req.headers.cookie ?? '')
+  try {
+    const reponse = await new CoinApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).getWithdrawRequests(query.limit, query.page, '["$all",{"userPaymentSystem":["$all"]}]')
+    return {
+      data: reponse.data,
+      success: true,
+      message: '',
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to get withdraw request',
+    })
+  }
+}
+
+export const createWithdrawRequests = async (
+  query: { amountCoin: number; unitCurrency: CreateWithdrawRequestUnitCurrencyEnum; userPaymentSystemId: string },
+  ctx,
+) => {
+  const cookies = parse(ctx.req.headers.cookie ?? '')
+  try {
+    const reponse = await new CoinApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).createWithdrawRequest(query)
+    return {
+      data: reponse.data,
+      success: true,
+      message: '',
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to create withdraw request',
+    })
+  }
+}
+
+export const cancelWithdrawRequests = async (withdrawalRequestId: string, ctx) => {
+  const cookies = parse(ctx.req.headers.cookie ?? '')
+  try {
+    const reponse = await new CoinApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).userCancelCoinRequest(withdrawalRequestId)
+    return {
+      data: reponse.data,
+      success: true,
+      message: '',
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to cancel withdraw request',
     })
   }
 }

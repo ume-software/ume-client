@@ -88,10 +88,10 @@ export const Header: React.FC = () => {
   }, [socketContext.socketNotificateContext[0]])
 
   return (
-    <div className="fixed z-50 flex items-center justify-between w-full h-16 bg-umeHeader ">
+    <div className="fixed !z-50 flex items-center justify-between w-full h-16 bg-umeHeader ">
       <LoginModal isModalLoginVisible={isModalLoginVisible} setIsModalLoginVisible={setIsModalLoginVisible} />
       <RechargeModal showRechargeModal={showRechargeModal} setShowRechargeModal={setShowRechargeModal} />
-      <div className="flex items-center">
+      <div className="flex items-center z-50">
         <span className="pl-2">
           <Link href={'/home'}>
             <Image width={160} height={40} alt="logo-ume" src={logo} layout="fixed" />
