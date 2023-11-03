@@ -165,26 +165,28 @@ const TransactionHistory = () => {
         <div className="flex flex-col gap-5 mt-10 space-y-10">
           <ColumnChart seriesCharts={seriesCharts} />
 
-          <div className="flex flex-col gap-3">
-            <p className="text-xl font-bold">Yêu cầu rút tiền</p>
-            <Table
-              dataHeader={['Nền tảng', 'Số tài khoản', 'Số lượng coin', 'Số tiền', 'Trạng thái', 'Ngày tạo']}
-              dataBody={withdrawRequestArray as any}
-              page={withdrawRequestPage}
-              setPage={setWithdrawRequestPage}
-              limit={limit}
-              totalItem={Number(windrawRequest?.count ?? 0)}
-              contentItem={'yêu cầu'}
-              watchAction={true}
-              onWatch={(index) => handleViewWithdrawDetail(withdrawRequestIds[index ?? 0] ?? '')}
-              editAction={false}
-              onEdit={() => {}}
-              deleteAction={true}
-              onDelete={(index) => {
-                handleCancelWithdrawDetail(withdrawRequestIds[index ?? 0] ?? '')
-              }}
-            />
-          </div>
+          {user?.isVerified && (
+            <div className="flex flex-col gap-3">
+              <p className="text-xl font-bold">Yêu cầu rút tiền</p>
+              <Table
+                dataHeader={['Nền tảng', 'Số tài khoản', 'Số lượng coin', 'Số tiền', 'Trạng thái', 'Ngày tạo']}
+                dataBody={withdrawRequestArray as any}
+                page={withdrawRequestPage}
+                setPage={setWithdrawRequestPage}
+                limit={limit}
+                totalItem={Number(windrawRequest?.count ?? 0)}
+                contentItem={'yêu cầu'}
+                watchAction={true}
+                onWatch={(index) => handleViewWithdrawDetail(withdrawRequestIds[index ?? 0] ?? '')}
+                editAction={false}
+                onEdit={() => {}}
+                deleteAction={true}
+                onDelete={(index) => {
+                  handleCancelWithdrawDetail(withdrawRequestIds[index ?? 0] ?? '')
+                }}
+              />
+            </div>
+          )}
 
           <div className="flex flex-col gap-3">
             <p className="text-xl font-bold">Chi tiết giao dịch</p>
