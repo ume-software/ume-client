@@ -632,7 +632,7 @@ const AddSkillForm = () => {
                     amount: bookingCost.amount,
                   }
                 })
-              : undefined) as any,
+              : []) as any,
             handleProviderServiceAttributes: req.createServiceAttributes.map((serAttr) => {
               return {
                 id: serAttr.id ?? '',
@@ -674,6 +674,7 @@ const AddSkillForm = () => {
                 placement: 'bottomLeft',
               })
               utils.invalidateQueries('identity.providerGetServiceHaveNotRegistered')
+              utils.invalidateQueries('identity.providerGetOwnServices')
             },
             onError() {
               notification.error({
@@ -936,7 +937,7 @@ const AddSkillForm = () => {
                             onChange={(e) =>
                               handleServicePriceChange(index, Number(Number(e.target.value) > 0 ? e.target.value : 1))
                             }
-                            className="max-w-[100px] bg-zinc-800 border border-white border-opacity-30 rounded-xl my-2"
+                            className="max-w-[120px] bg-zinc-800 border border-white border-opacity-30 rounded-xl my-2"
                             styleInput={`bg-zinc-800 rounded-xl border-none focus:outline-none`}
                             iconStyle="border-none"
                             position="right"
@@ -1000,7 +1001,7 @@ const AddSkillForm = () => {
                                             time_slot_index,
                                           )
                                         }
-                                        className="max-w-[100px] bg-zinc-800 border border-white border-opacity-30 rounded-xl my-2"
+                                        className="max-w-[120px] bg-zinc-800 border border-white border-opacity-30 rounded-xl my-2"
                                         styleInput={`bg-zinc-800 rounded-xl border-none focus:outline-none`}
                                         iconStyle="border-none"
                                         position="right"

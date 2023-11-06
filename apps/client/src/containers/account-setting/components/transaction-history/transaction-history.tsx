@@ -161,33 +161,48 @@ const TransactionHistory = () => {
   return (
     <div className="w-full px-10">
       <p className="text-4xl font-bold">Lịch sử giao dịch</p>
-      {!isTransactionHistoryLoading && !isWithdrawRequestLoading && seriesCharts && transactionHistoryArray ? (
-        <div className="flex flex-col gap-5 mt-10 space-y-10">
+
+      <div className="flex flex-col gap-5 mt-10 space-y-10">
+        {!isTransactionHistoryLoading && seriesCharts ? (
           <ColumnChart seriesCharts={seriesCharts} />
-
-          {user?.isVerified && (
-            <div className="flex flex-col gap-3">
-              <p className="text-xl font-bold">Yêu cầu rút tiền</p>
-              <Table
-                dataHeader={['Nền tảng', 'Số tài khoản', 'Số lượng coin', 'Số tiền', 'Trạng thái', 'Ngày tạo']}
-                dataBody={withdrawRequestArray as any}
-                page={withdrawRequestPage}
-                setPage={setWithdrawRequestPage}
-                limit={limit}
-                totalItem={Number(windrawRequest?.count ?? 0)}
-                contentItem={'yêu cầu'}
-                watchAction={true}
-                onWatch={(index) => handleViewWithdrawDetail(withdrawRequestIds[index ?? 0] ?? '')}
-                editAction={false}
-                onEdit={() => {}}
-                deleteAction={true}
-                onDelete={(index) => {
-                  handleCancelWithdrawDetail(withdrawRequestIds[index ?? 0] ?? '')
-                }}
-              />
+        ) : (
+          <div className="w-full h-[350px] flex justify-center gap-10 mt-20 mb-10">
+            <div className="w-full h-[350px] bg-gray-300 rounded-lg animate-pulse">
+              <span className="w-full h-full" />
             </div>
-          )}
+          </div>
+        )}
 
+        {!isWithdrawRequestLoading && withdrawRequestArray ? (
+          <>
+            {user?.isVerified && (
+              <div className="flex flex-col gap-3">
+                <p className="text-xl font-bold">Yêu cầu rút tiền</p>
+                <Table
+                  dataHeader={['Nền tảng', 'Số tài khoản', 'Số lượng coin', 'Số tiền', 'Trạng thái', 'Ngày tạo']}
+                  dataBody={withdrawRequestArray as any}
+                  page={withdrawRequestPage}
+                  setPage={setWithdrawRequestPage}
+                  limit={limit}
+                  totalItem={Number(windrawRequest?.count ?? 0)}
+                  contentItem={'yêu cầu'}
+                  watchAction={true}
+                  onWatch={(index) => handleViewWithdrawDetail(withdrawRequestIds[index ?? 0] ?? '')}
+                  editAction={false}
+                  onEdit={() => {}}
+                  deleteAction={true}
+                  onDelete={(index) => {
+                    handleCancelWithdrawDetail(withdrawRequestIds[index ?? 0] ?? '')
+                  }}
+                />
+              </div>
+            )}
+          </>
+        ) : (
+          <TableSkeletonLoader />
+        )}
+
+        {!isTransactionHistoryLoading && transactionHistoryArray ? (
           <div className="flex flex-col gap-3">
             <p className="text-xl font-bold">Chi tiết giao dịch</p>
             <Table
@@ -206,17 +221,10 @@ const TransactionHistory = () => {
               onDelete={() => {}}
             />
           </div>
-        </div>
-      ) : (
-        <>
-          <div className="w-full h-[350px] flex justify-center gap-10 mt-20 mb-10">
-            <div className="w-full h-[350px] bg-gray-300 rounded-lg animate-pulse">
-              <span className="w-full h-full" />
-            </div>
-          </div>
+        ) : (
           <TableSkeletonLoader />
-        </>
-      )}
+        )}
+      </div>
     </div>
   )
 }

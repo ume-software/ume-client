@@ -1,4 +1,4 @@
-import { CheckSmall, CloseSmall } from '@icon-park/react'
+import { CheckSmall, CloseSmall, Plus } from '@icon-park/react'
 import { Button, Modal } from '@ume/ui'
 import BidvLogo from 'public/bidv-logo.png'
 import ImgForEmpty from 'public/img-for-empty.png'
@@ -8,6 +8,7 @@ import VnPayLogo from 'public/vnpay-logo.png'
 import ZaloPayLogo from 'public/zalopay-logo.png'
 import 'swiper/swiper-bundle.css'
 import { useAuth } from '~/contexts/auth'
+import { ActionEnum } from '~/enumVariable/enumVariable'
 
 import { useEffect, useState } from 'react'
 
@@ -18,6 +19,7 @@ import { UserPaymentSystemRequestPlatformEnum, UserPaymentSystemResponse } from 
 
 import ServiceForm from './service-form'
 import UserPaymentPlatform from './user-payment-platform'
+import UserRequestWithdraw from './user-request-withdraw'
 
 import { SliderSkeletonLoader } from '~/components/skeleton-load'
 
@@ -39,6 +41,7 @@ const paymentPlat: PaymentPlatform[] = [
 const BecomeProvider = () => {
   const { user } = useAuth()
   const [checked, setChecked] = useState<boolean>(false)
+  const [actionModal, setActionModal] = useState(ActionEnum.CREATE)
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [paymentAccount, setPaymentAccount] = useState<UserPaymentSystemResponse | undefined>(undefined)
   const { data: userPaymentPlatformData, isLoading: isUserPaymentPlatformLoading } = trpc.useQuery([
@@ -73,7 +76,18 @@ const BecomeProvider = () => {
     onClose: handleClose,
     title: <p className="text-white">Tài khoản rút tiền</p>,
     show: isModalVisible,
-    form: <UserPaymentPlatform handleCloseUserPaymentPlatform={handleClose} paymentAccount={paymentAccount} />,
+    form: (
+      <>
+        {actionModal == ActionEnum.CREATE ? (
+          <UserPaymentPlatform handleCloseUserPaymentPlatform={handleClose} paymentAccount={paymentAccount} />
+        ) : (
+          <UserRequestWithdraw
+            handleCloseUserPaymentPlatform={handleClose}
+            userPaymentPlatformData={userPaymentPlatformData?.data.row}
+          />
+        )}
+      </>
+    ),
     backgroundColor: '#15151b',
     closeWhenClickOutSide: false,
     closeButtonOnConner: (
@@ -128,15 +142,16 @@ const BecomeProvider = () => {
                   isActive={true}
                   isOutlinedButton={true}
                   onClick={() => {
+                    setActionModal(ActionEnum.WITHDRAW)
                     setPaymentAccount(undefined)
                     setIsModalVisible(true)
                   }}
                 >
-                  Tài khoản rút tiền
+                  Yêu cầu rút tiền
                 </Button>
               </div>
               {!isUserPaymentPlatformLoading ? (
-                <>
+                <div className="relative">
                   <Swiper spaceBetween={20} slidesPerView="auto" mousewheel={true} direction="horizontal">
                     {userPaymentPlatformData?.data?.row?.map((paymentPlatform) => (
                       <SwiperSlide
@@ -174,7 +189,23 @@ const BecomeProvider = () => {
                       </SwiperSlide>
                     ))}
                   </Swiper>
-                </>
+                  <div className="absolute h-full flex items-center pl-3 top-0 right-0 bg-umeBackground z-10">
+                    <Button
+                      customCSS={`text-sm p-2 hover:scale-105 rounded-xl`}
+                      type="button"
+                      isActive={true}
+                      isOutlinedButton={true}
+                      onClick={() => {
+                        setActionModal(ActionEnum.CREATE)
+                        setPaymentAccount(undefined)
+                        setIsModalVisible(true)
+                      }}
+                    >
+                      <Plus theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />
+                      <p>Thêm tài khoản</p>
+                    </Button>
+                  </div>
+                </div>
               ) : (
                 <SliderSkeletonLoader />
               )}

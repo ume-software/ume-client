@@ -20,6 +20,10 @@ const PostTab = (props: { providerId: string }) => {
     isLoading: isPostByUserSlugLoading,
     isFetching: isPostByUserSlugFetching,
   } = trpc.useQuery(['booking.getPostByUserSlug', { userSlug: props.providerId, page: page }], {
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: 'always',
+    cacheTime: 0,
+    refetchOnMount: true,
     onSuccess(data) {
       setPostByUserSlug((prevData) => [...(prevData ?? []), ...(data?.data?.row ?? [])])
     },

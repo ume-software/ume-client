@@ -2,14 +2,12 @@
 import { Menu, Transition } from '@headlessui/react'
 import { Check, CloseSmall, Down } from '@icon-park/react'
 import { Button, FormInput, FormInputWithAffix, Modal } from '@ume/ui'
-import coin from 'public/coin-icon.png'
 import { ActionEnum } from '~/enumVariable/enumVariable'
 
 import { Fragment, useEffect, useState } from 'react'
 
 import { notification } from 'antd'
 import { useFormik } from 'formik'
-import Image from 'next/legacy/image'
 import { UserPaymentSystemRequestPlatformEnum, UserPaymentSystemResponse } from 'ume-service-openapi'
 import * as Yup from 'yup'
 
@@ -37,9 +35,8 @@ const UserPaymentPlatform = (props: {
 }) => {
   const [actionModal, setActionModal] = useState(ActionEnum.CREATE)
   const createUserPaymentSystem = trpc.useMutation('identity.createUserPaymentSystem')
-  const accountBalance = trpc.useQuery(['identity.account-balance'])
-  const createWithdrawRequest = trpc.useMutation('identity.createWithdrawRequests')
   const utils = trpc.useContext()
+  const [platformFilter, setPlatformFilter] = useState<PlatformProps[]>(platforms)
   const [isMenuShow, setIsMenuShow] = useState<boolean>(false)
   const [isModalConfirmationVisible, setIsModalConfirmationVisible] = useState(false)
 
@@ -49,7 +46,6 @@ const UserPaymentPlatform = (props: {
       platform: '',
       platformAccount: '',
       beneficiary: '',
-      withdrawMoney: 1,
     },
     validationSchema: Yup.object({
       platform: Yup.string().test('is-valid-platform', 'Nền tảng không hợp lệ', (value) => {
@@ -57,9 +53,6 @@ const UserPaymentPlatform = (props: {
       }),
       platformAccount: Yup.string().required('Số tài khoản là yêu cầu'),
       beneficiary: Yup.string().required('Tên người nhận là yêu cầu'),
-      withdrawMoney: Yup.number()
-        .lessThan(10001, `Số coin rút phải ít hơn 10.000`)
-        .moreThan(0, 'Số coin rút phải lớn hơn 0'),
     }),
     onSubmit() {
       setIsModalConfirmationVisible(true)
@@ -73,10 +66,19 @@ const UserPaymentPlatform = (props: {
         platform: props.paymentAccount.platform,
         platformAccount: props.paymentAccount.platformAccount,
         beneficiary: props.paymentAccount.beneficiary,
-        withdrawMoney: 1,
       })
     }
   }, [props.paymentAccount])
+
+  useEffect(() => {
+    setPlatformFilter(
+      platforms.filter(
+        (platform) =>
+          platform.key.toLowerCase().includes(form.values.platform.toLowerCase()) ||
+          platform.label.toLowerCase().includes(form.values.platform.toLowerCase()),
+      ),
+    )
+  }, [form.values.platform])
 
   const handleCreateUserPaymentSystem = () => {
     createUserPaymentSystem.mutate(
@@ -110,51 +112,6 @@ const UserPaymentPlatform = (props: {
     console.log(actionModal)
   }
 
-  const handleWithdraw = () => {
-    console.log(actionModal)
-
-    if (form.values.withdrawMoney <= (accountBalance.data?.data.totalCoinsAvailable ?? 0)) {
-      if (form.values.id != '') {
-        createWithdrawRequest.mutate(
-          {
-            userPaymentSystemId: form.values.id,
-            unitCurrency: 'VND',
-            amountCoin:
-              form.values.withdrawMoney -
-              form.values.withdrawMoney *
-                (platforms.find((platform) => platform.key == form.values.platform)?.feeWithdraw ?? 0),
-          },
-          {
-            onSuccess() {
-              props.handleCloseUserPaymentPlatform()
-              utils.invalidateQueries(['identity.account-balance'])
-              notification.success({
-                message: 'Gửi yêu cầu rút tiền thành công',
-                description: 'Yêu cầu rút tiền của bạn đã được gửi đi',
-                placement: 'bottomLeft',
-              })
-            },
-            onError() {
-              notification.error({
-                message: 'Gửi yêu cầu rút tiền thất bại',
-                description: 'Yêu cầu rút tiền gửi thất bại. Vui lòng thử lại sau!',
-                placement: 'bottomLeft',
-              })
-            },
-          },
-        )
-      } else {
-        handleCreateUserPaymentSystem()
-      }
-    } else {
-      notification.error({
-        message: 'Số dư không đủ',
-        description: 'Số dư khổng đủ. Vui lòng kiểm tra lại!',
-        placement: 'bottomLeft',
-      })
-    }
-  }
-
   const handleClose = () => {
     setIsModalConfirmationVisible(false)
   }
@@ -170,11 +127,7 @@ const UserPaymentPlatform = (props: {
           description="Bạn có chấp nhận thay đổi thông tin cá nhân hay không?"
           onClose={handleClose}
           onOk={() => {
-            actionModal == ActionEnum.CREATE
-              ? handleCreateUserPaymentSystem()
-              : actionModal == ActionEnum.UPDATE
-              ? handleUpdateUserPaymentSystem()
-              : handleWithdraw()
+            actionModal == ActionEnum.CREATE ? handleCreateUserPaymentSystem() : handleUpdateUserPaymentSystem()
           }}
         />
       </>
@@ -222,7 +175,14 @@ const UserPaymentPlatform = (props: {
               autoComplete="off"
               position={'right'}
               component={<Down theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />}
-              onClick={() => setIsMenuShow(true)}
+              onClick={() => {
+                setIsMenuShow(true)
+                setPlatformFilter(
+                  platforms.filter(
+                    (platform) => platform.key.toLowerCase().includes('') || platform.label.toLowerCase().includes(''),
+                  ),
+                )
+              }}
             />
             <div className="relative w-full">
               <Menu>
@@ -237,7 +197,7 @@ const UserPaymentPlatform = (props: {
                   show={isMenuShow}
                 >
                   <Menu.Items
-                    className="absolute right-0 left-0 p-2 origin-top-right bg-[#292734] divide-y divide-gray-100 rounded-xl shadow-lg w-full max-h-[150px] overflow-y-auto ring-1 ring-black ring-opacity-5 focus:outline-none custom-scrollbar"
+                    className="absolute right-0 left-0 p-2 origin-top-right bg-[#292734] divide-y divide-gray-100 rounded-xl shadow-lg w-full max-h-[150px] overflow-y-auto ring-1 ring-black ring-opacity-5 focus:outline-none hide-scrollbar"
                     style={{ zIndex: 5 }}
                   >
                     <div
@@ -245,34 +205,28 @@ const UserPaymentPlatform = (props: {
                       style={{ zIndex: 10 }}
                       onMouseLeave={() => setIsMenuShow(false)}
                     >
-                      {platforms
-                        .filter(
-                          (platform) =>
-                            platform.key.toLowerCase().includes(form.values.platform.toLowerCase()) ||
-                            platform.label.toLowerCase().includes(form.values.platform.toLowerCase()),
-                        )
-                        .map((platform) => (
-                          <>
-                            <div
-                              className={`flex gap-5 items-center ${
-                                form.values.platform == platform.key ? 'bg-gray-700' : ''
-                              } hover:bg-gray-700 cursor-pointer p-3 rounded-lg`}
-                              onClick={() => {
-                                form.setFieldValue('platform', platform.key)
-                              }}
-                              onKeyDown={() => {}}
-                            >
-                              <p className="font-semibold text-mg">{platform.label}</p>
-                              <div>
-                                {form.values.platform == platform.key ? (
-                                  <Check theme="filled" size="10" fill="#FFFFFF" strokeLinejoin="bevel" />
-                                ) : (
-                                  ''
-                                )}
-                              </div>
+                      {platformFilter.map((platform) => (
+                        <>
+                          <div
+                            className={`flex gap-5 items-center ${
+                              form.values.platform == platform.key ? 'bg-gray-700' : ''
+                            } hover:bg-gray-700 cursor-pointer p-3 rounded-lg`}
+                            onClick={() => {
+                              form.setFieldValue('platform', platform.key)
+                            }}
+                            onKeyDown={() => {}}
+                          >
+                            <p className="font-semibold text-mg">{platform.label}</p>
+                            <div>
+                              {form.values.platform == platform.key ? (
+                                <Check theme="filled" size="10" fill="#FFFFFF" strokeLinejoin="bevel" />
+                              ) : (
+                                ''
+                              )}
                             </div>
-                          </>
-                        ))}
+                          </div>
+                        </>
+                      ))}
 
                       {!(
                         platforms.filter(
@@ -331,58 +285,6 @@ const UserPaymentPlatform = (props: {
             <p className="text-xs text-red-500">{form.errors.beneficiary}</p>
           )}
         </div>
-        {props.paymentAccount?.id &&
-          !(
-            form.values.platform != props.paymentAccount?.platform ||
-            form.values.platformAccount != props.paymentAccount?.platformAccount ||
-            form.values.beneficiary != props.paymentAccount?.beneficiary
-          ) && (
-            <>
-              <div className="space-y-2">
-                <label>Số tiền rút</label>
-                <FormInputWithAffix
-                  name="withdrawMoney"
-                  type="number"
-                  className={`${
-                    props.paymentAccount && form.values.platform == props.paymentAccount?.platform
-                      ? 'bg-zinc-800'
-                      : 'bg-gray-700'
-                  } rounded border border-white border-opacity-30`}
-                  styleInput={`${
-                    props.paymentAccount && form.values.platform == props.paymentAccount?.platform
-                      ? 'bg-zinc-800'
-                      : 'bg-gray-700'
-                  } border-none focus:border-none outline-none`}
-                  value={form.values.withdrawMoney}
-                  onChange={(e) => form.handleChange(e)}
-                  onBlur={form.handleBlur}
-                  error={!!form.errors.withdrawMoney && form.touched.withdrawMoney}
-                  errorMessage={''}
-                  autoComplete="off"
-                  position={'right'}
-                  component={<Image src={coin} width={30} height={30} alt="coin" />}
-                />
-                {!!form.errors.withdrawMoney && form.touched.withdrawMoney && (
-                  <p className="text-xs text-red-500">{form.errors.withdrawMoney}</p>
-                )}
-              </div>
-              <div className="flex justify-between items-center text-2xl font-bold space-y-2">
-                <p>Tổng: </p>
-                <span className="flex justify-start items-center gap-2">
-                  {(
-                    (form.values.withdrawMoney -
-                      form.values.withdrawMoney *
-                        (platforms.find((platform) => platform.key == form.values.platform)?.feeWithdraw ?? 0)) *
-                    1000
-                  ).toLocaleString('en-US', {
-                    currency: 'VND',
-                  })}
-                  <p className="text-xs italic"> VND</p>
-                </span>
-              </div>
-            </>
-          )}
-
         <div className="flex justify-center gap-5 mt-5">
           <Button
             isActive={false}
@@ -394,31 +296,29 @@ const UserPaymentPlatform = (props: {
             Hủy
           </Button>
 
-          {form.values.platform != props.paymentAccount?.platform ||
-          form.values.platformAccount != props.paymentAccount?.platformAccount ||
-          form.values.beneficiary != props.paymentAccount?.beneficiary ? (
-            <Button
-              customCSS="w-[100px] text-xl p-2 rounded-xl hover:scale-105"
-              type="submit"
-              isActive={true}
-              isOutlinedButton={true}
-              onClick={() => {
-                props.paymentAccount?.id ? setActionModal(ActionEnum.UPDATE) : setActionModal(ActionEnum.CREATE)
-              }}
-            >
-              Lưu
-            </Button>
-          ) : (
-            <Button
-              customCSS="w-[100px] text-xl p-2 rounded-xl hover:scale-105"
-              type="submit"
-              isActive={true}
-              isOutlinedButton={true}
-              onClick={() => setActionModal(ActionEnum.WITHDRAW)}
-            >
-              Rút tiền
-            </Button>
-          )}
+          <Button
+            customCSS={`w-[100px] text-xl p-2 rounded-xl ${
+              !(
+                form.values.platform != props.paymentAccount?.platform ||
+                form.values.platformAccount != props.paymentAccount?.platformAccount ||
+                form.values.beneficiary != props.paymentAccount?.beneficiary
+              )
+                ? 'cursor-not-allowed opacity-30'
+                : 'hover:scale-105'
+            }`}
+            type="submit"
+            isActive={
+              form.values.platform != props.paymentAccount?.platform ||
+              form.values.platformAccount != props.paymentAccount?.platformAccount ||
+              form.values.beneficiary != props.paymentAccount?.beneficiary
+            }
+            isOutlinedButton={true}
+            onClick={() => {
+              props.paymentAccount?.id ? setActionModal(ActionEnum.UPDATE) : setActionModal(ActionEnum.CREATE)
+            }}
+          >
+            Lưu
+          </Button>
         </div>
       </form>
     </>
