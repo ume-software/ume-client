@@ -168,7 +168,10 @@ const UserPaymentPlatform = (props: {
                   : 'bg-gray-700'
               } border-none focus:border-none outline-none`}
               value={form.values.platform}
-              onChange={(e) => form.handleChange(e)}
+              onChange={(e) => {
+                form.handleChange(e)
+                setIsMenuShow(true)
+              }}
               onBlur={form.handleBlur}
               error={!!form.errors.platform && form.touched.platform}
               errorMessage={''}

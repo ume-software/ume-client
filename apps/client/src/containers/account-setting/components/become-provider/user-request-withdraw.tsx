@@ -141,7 +141,10 @@ const UserRequestWithdraw = (props: {
               className={`bg-zinc-800 border border-white border-opacity-30`}
               styleInput={`bg-zinc-800 border-none focus:border-none outline-none`}
               value={form.values.platformAccount}
-              onChange={(e) => form.handleChange(e)}
+              onChange={(e) => {
+                form.handleChange(e)
+                setIsMenuShow(true)
+              }}
               onBlur={form.handleBlur}
               error={!!form.errors.platformAccount && form.touched.platformAccount}
               errorMessage={''}
