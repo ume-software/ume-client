@@ -52,7 +52,7 @@ export const Header: React.FC = () => {
 
   const { isLoading: isRechargeLoading } = trpc.useQuery(['identity.account-balance'], {
     onSuccess(data) {
-      setBalance(data.data.totalCoinsAvailable)
+      setBalance(data.data.totalBalanceAvailable)
     },
     enabled: isAuthenticated,
   })

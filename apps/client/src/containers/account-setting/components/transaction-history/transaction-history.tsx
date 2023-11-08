@@ -5,7 +5,7 @@ import { useAuth } from '~/contexts/auth'
 import { useEffect, useState } from 'react'
 
 import Image from 'next/legacy/image'
-import { CoinHistoryPagingResponse, CoinHistoryResponseCoinTypeEnum } from 'ume-service-openapi'
+import { BalanceHistoryPagingResponse, BalanceHistoryResponseCoinTypeEnum } from 'ume-service-openapi'
 
 import ColumnChart from './column-chart'
 
@@ -20,16 +20,16 @@ interface TransactionContentProps {
 }
 
 const TransactionContent: TransactionContentProps[] = [
-  { key: CoinHistoryResponseCoinTypeEnum.Admin, label: 'Admin chuyển tiền' },
-  { key: CoinHistoryResponseCoinTypeEnum.BuyCoin, label: 'Mua coin' },
-  { key: CoinHistoryResponseCoinTypeEnum.GetBooking, label: 'Nhận từ đơn hàng' },
-  { key: CoinHistoryResponseCoinTypeEnum.GetDonate, label: 'Quà tặng' },
-  { key: CoinHistoryResponseCoinTypeEnum.GetGift, label: 'Quà tặng' },
-  { key: CoinHistoryResponseCoinTypeEnum.GetMission, label: 'Nhận từ nhiệm vụ' },
-  { key: CoinHistoryResponseCoinTypeEnum.SpendBooking, label: 'Đặt đơn' },
-  { key: CoinHistoryResponseCoinTypeEnum.SpendDonate, label: 'Tặng quà' },
-  { key: CoinHistoryResponseCoinTypeEnum.SpendGift, label: 'Tặng quà' },
-  { key: CoinHistoryResponseCoinTypeEnum.Withdraw, label: 'Rút tiền' },
+  { key: BalanceHistoryResponseCoinTypeEnum.Admin, label: 'Admin chuyển tiền' },
+  { key: BalanceHistoryResponseCoinTypeEnum.Deposit, label: 'Nạp tiền' },
+  { key: BalanceHistoryResponseCoinTypeEnum.GetBooking, label: 'Nhận từ đơn hàng' },
+  { key: BalanceHistoryResponseCoinTypeEnum.GetDonate, label: 'Quà tặng' },
+  { key: BalanceHistoryResponseCoinTypeEnum.GetGift, label: 'Quà tặng' },
+  { key: BalanceHistoryResponseCoinTypeEnum.GetMission, label: 'Nhận từ nhiệm vụ' },
+  { key: BalanceHistoryResponseCoinTypeEnum.SpendBooking, label: 'Đặt đơn' },
+  { key: BalanceHistoryResponseCoinTypeEnum.SpendDonate, label: 'Tặng quà' },
+  { key: BalanceHistoryResponseCoinTypeEnum.SpendGift, label: 'Tặng quà' },
+  { key: BalanceHistoryResponseCoinTypeEnum.Withdraw, label: 'Rút tiền' },
 ]
 
 const TransactionHistory = () => {
@@ -38,7 +38,7 @@ const TransactionHistory = () => {
 
   const { user } = useAuth()
 
-  const [transactionHistory, setTransactionHistory] = useState<CoinHistoryPagingResponse | undefined>(undefined)
+  const [transactionHistory, setTransactionHistory] = useState<BalanceHistoryPagingResponse | undefined>(undefined)
   const [transactionHistoryArray, setTransactionHistoryArray] = useState<any[] | undefined>(undefined)
   const [seriesCharts, setSeriesCharts] = useState<any[] | undefined>(undefined)
 
@@ -97,7 +97,7 @@ const TransactionHistory = () => {
         <p className="text-4xl font-bold">Lịch sử giao dịch</p>
         {!isTransactionHistoryLoading && seriesCharts && transactionHistoryArray ? (
           <>
-            <div className="flex flex-col gap-5 mt-10 pr-5 space-y-10">
+            <div className="flex flex-col gap-5 pr-5 mt-10 space-y-10">
               <ColumnChart seriesCharts={seriesCharts} />
               <div className="flex flex-col gap-3">
                 <p className="text-xl font-bold">Chi tiết giao dịch</p>

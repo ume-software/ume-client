@@ -37,7 +37,7 @@ export const getUserCoinHistories = async (
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).adminGetUserCoinHistoryBySlug(query.slug, '10', query.page, '["$all"]', query.where, query.order)
+    }).adminGetUserBalanceHistoryBySlug(query.slug, '10', query.page, '["$all"]', query.where, query.order)
 
     return {
       data: response.data,

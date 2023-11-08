@@ -79,14 +79,7 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
   }, [props.data, slug.service, myVoucher?.row])
 
   const handleCreateBooking = (booking: BookingProviderRequest) => {
-    // if (!props.data.isOnline ?? props.data.providerConfig?.status != ProviderConfigResponseStatusEnum.Activated) {
-    //   notification.warning({
-    //     message: 'Tài khoản chưa sẵn sàng',
-    //     description: 'Tài khoản hiện chưa sẵn sàng lúc này. Vui lòng thử lại vào lúc khác!',
-    //     placement: 'bottomLeft',
-    //   })
-    // } else
-    if (accountBalance.data?.data.totalCoinsAvailable! >= total) {
+    if (accountBalance.data?.data.totalBalanceAvailable! >= total) {
       try {
         createBooking.mutate(booking, {
           onSuccess: (data) => {

@@ -14,4 +14,3 @@ export const transationRouter = createRouter().query('getTransactionList', {
     return await getWaitingTransactions(ctx, input)
   },
 })
-s
