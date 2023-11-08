@@ -121,6 +121,7 @@ const DetailProfileContainer = () => {
       router.replace('/404')
     },
   })
+
   const donationForRecipient = trpc.useMutation(['booking.donationForRecipient'])
   const utils = trpc.useContext()
 
@@ -445,16 +446,17 @@ const DetailProfileContainer = () => {
                     >
                       <Menu.Items className="absolute right-0 py-3 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg w-fit top-7 ring-1 ring-black ring-opacity-5 focus:outline-none">
                         <div className="flex flex-col gap-2 w-max">
-                          {moreButtonDatas.map((item, index) => (
+                          {moreButtonDatas.map((item) => (
                             <>
                               {user?.id == providerDetail?.id ? (
                                 item.key != 'Donate' && (
                                   <div
-                                    key={index}
+                                    key={item.key}
                                     className="px-2 py-1 rounded-md cursor-pointer hover:bg-purple-600 hover:text-white group"
                                     onClick={() => {
                                       handleMenuButtonAction(item)
                                     }}
+                                    onKeyDown={() => {}}
                                   >
                                     <div className="flex items-center justify-between gap-2 duration-300 scale-x-100 group-hover:scale-x-95 group-hover:-translate-x-2">
                                       <div>{item.label}</div>
@@ -464,11 +466,12 @@ const DetailProfileContainer = () => {
                                 )
                               ) : (
                                 <div
-                                  key={index}
+                                  key={item.key}
                                   className="px-2 py-1 rounded-md cursor-pointer hover:bg-purple-600 hover:text-white group"
                                   onClick={() => {
                                     handleMenuButtonAction(item)
                                   }}
+                                  onKeyDown={() => {}}
                                 >
                                   <div className="flex items-center justify-between gap-2 duration-300 scale-x-100 group-hover:scale-x-95 group-hover:-translate-x-2">
                                     <div>{item.label}</div>
@@ -496,6 +499,7 @@ const DetailProfileContainer = () => {
                         key={item.key}
                         onClick={() => handleChangeTab(item)}
                         data-tab={item.label}
+                        onKeyDown={() => {}}
                       >
                         {item.label}
                       </span>
@@ -508,6 +512,7 @@ const DetailProfileContainer = () => {
                           key={item.key}
                           onClick={() => handleChangeTab(item)}
                           data-tab={item.label}
+                          onKeyDown={() => {}}
                         >
                           {item.label}
                         </span>

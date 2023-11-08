@@ -49,7 +49,7 @@ const genderData: GenderProps[] = [
   { key: GenderEnum.PRIVATE, name: 'Ẩn' },
 ]
 
-const FilterContainer = (props) => {
+const FilterContainer = () => {
   const router = useRouter()
   const basePath = router.asPath.split('?')[0]
   const serviceName = router.asPath.split('/')[2].split('?')[0].replace(/%20/g, ' ')
@@ -60,7 +60,7 @@ const FilterContainer = (props) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [scrollPosition, setScrollPosition] = useState(0)
   const [listProviderFilter, setListProviderFilter] = useState<FilterProviderPagingResponse['row']>([])
-  const [page, setPage] = useState<string>(String(slug.page) || '1')
+  const [page, setPage] = useState<string>(String(slug.page) ?? '1')
   const [searchText, setSearchText] = useState<string>('')
   const debouncedValue = useDebounce<string>(searchText, 500)
   const [gender, setGender] = useState<GenderProps>(genderData[0])
@@ -99,7 +99,7 @@ const FilterContainer = (props) => {
       cacheTime: 0,
       refetchOnMount: true,
       onSuccess(data) {
-        setListProviderFilter((prevData) => [...(prevData || []), ...(data?.data?.row || [])])
+        setListProviderFilter((prevData) => [...(prevData ?? []), ...(data?.data?.row ?? [])])
       },
     },
   )
@@ -198,7 +198,7 @@ const FilterContainer = (props) => {
               placement="bottom"
               trigger="click"
             >
-              {priceRange[0] != min || priceRange[1] != max ? (
+              {priceRange[0] != min ?? priceRange[1] != max ? (
                 <div className="flex gap-3 text-xl font-bold border border-light-50">
                   <div className="flex items-center gap-1">
                     {priceRange[0]}
@@ -243,6 +243,7 @@ const FilterContainer = (props) => {
                         } hover:bg-gray-700 cursor-pointer p-3 rounded-lg`}
                         key={index}
                         onClick={() => setGender(genData)}
+                        onKeyDown={() => {}}
                       >
                         <p className="font-semibold text-mg">{genData.name}</p>
                         <div>
@@ -289,6 +290,7 @@ const FilterContainer = (props) => {
                         } hover:bg-gray-700 cursor-pointer p-3 rounded-lg`}
                         key={item.key}
                         onClick={() => setOrder(item)}
+                        onKeyDown={() => {}}
                       >
                         <p className="font-semibold text-mg">{item.name}</p>
                         <div>
@@ -313,13 +315,16 @@ const FilterContainer = (props) => {
             <PlayerSkeletonLoader />
           </>
         ) : (
-          <div ref={containerRef} className="grid gap-6 mt-2 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1">
+          <div
+            ref={containerRef}
+            className="grid gap-6 mt-2 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1"
+          >
             {listProviderFilter?.length != 0 ? (
               listProviderFilter?.map((provider) => (
                 <Link
                   key={provider?.id}
                   href={`/profile/${provider?.slug ?? provider?.id}?tab=service&service=${
-                    provider.serviceSlug || provider.serviceId
+                    provider.serviceSlug ?? provider.serviceId
                   }`}
                 >
                   <PromoteCard data={provider} />

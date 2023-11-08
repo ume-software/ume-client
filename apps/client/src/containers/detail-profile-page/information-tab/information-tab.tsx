@@ -15,7 +15,7 @@ import { useRouter } from 'next/router'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { UserInformationResponse } from 'ume-service-openapi'
 
-import BookingPlayer from '../booking/booking-provider.container'
+import BookingProvider from '../booking/booking-provider.container'
 import PersonalIntroduce from './personal-introduce'
 import Service from './service'
 
@@ -109,7 +109,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
   }
   const handleOrderOpen = () => {
     if (isAuthenticated) {
-      setChildrenDrawer(<BookingPlayer data={props.data} />)
+      setChildrenDrawer(<BookingProvider data={props.data} />)
     } else {
       setIsModalLoginVisible(true)
     }
@@ -197,6 +197,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                           !gameSelected ? 'bg-gray-700' : ''
                         }`}
                         onClick={() => handleSelected(undefined)}
+                        onKeyDown={() => {}}
                       >
                         <People theme="outline" size="25" fill="#fff" />
                         <p className="xl:text-lg lg:text-sm text-xs lg:font-semibold font-normal truncate">Về tui</p>
@@ -294,7 +295,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                             type="button"
                             onClick={handleOrderOpen}
                           >
-                            Order
+                            Thuê
                           </button>
                         }
                         token={isAuthenticated}

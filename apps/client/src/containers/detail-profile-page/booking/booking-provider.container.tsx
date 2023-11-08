@@ -1,13 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Menu, Transition } from '@headlessui/react'
-import { Down, Time } from '@icon-park/react'
-import { InputWithAffix } from '@ume/ui'
+import { CloseSmall, Down, Minus, Plus, Right, Time } from '@icon-park/react'
+import { InputWithAffix, Modal } from '@ume/ui'
 import coin from 'public/coin-icon.png'
 import ImgForEmpty from 'public/img-for-empty.png'
 
 import { Fragment, useEffect, useState } from 'react'
 
-import { notification } from 'antd'
+import { Drawer, notification } from 'antd'
 import Image from 'next/legacy/image'
 import { useRouter } from 'next/router'
 import {
@@ -23,6 +23,7 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
   const router = useRouter()
   const slug = router.query
 
+  const [isModalVoucherOpen, setIsModalVoucherOpen] = useState<boolean>(false)
   const voucherLimit = '10'
   const voucherPage = '1'
   const [myVoucher, setMyVoucher] = useState<VoucherPagingResponse | undefined>(undefined)
@@ -55,7 +56,7 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
         ? (voucher?.discountValue ?? 0) / 100
         : 0
 
-    setTotal(selectedItem?.defaultCost ?? 0)
+    setTotal((selectedItem?.defaultCost ?? 0) * booking.bookingPeriod)
 
     setTotalAfterDiscount(
       voucher?.discountUnit == VoucherResponseDiscountUnitEnum.Cash
@@ -77,6 +78,27 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
       voucherIds: myVoucher?.row && myVoucher?.row?.length > 0 ? [String(myVoucher.row[0].code)] : [],
     }))
   }, [props.data, slug.service, myVoucher?.row])
+
+  // const voucherModal = Modal.useEditableForm({
+  //   onOK: () => {},
+  //   onClose: () => setIsModalVoucherOpen(false),
+  //   show: isModalVoucherOpen,
+  //   title: <p className="text-white">Khuyến mãi</p>,
+  //   form: <div className="z-50"></div>,
+  //   backgroundColor: '#15151b',
+  //   closeWhenClickOutSide: true,
+  //   closeButtonOnConner: (
+  //     <CloseSmall
+  //       onClick={() => setIsModalVoucherOpen(false)}
+  //       onKeyDown={() => {}}
+  //       tabIndex={1}
+  //       className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
+  //       theme="outline"
+  //       size="24"
+  //       fill="#FFFFFF"
+  //     />
+  //   ),
+  // })
 
   const handleCreateBooking = (booking: BookingProviderRequest) => {
     // if (!props.data.isOnline ?? props.data.providerConfig?.status != ProviderConfigResponseStatusEnum.Activated) {
@@ -121,7 +143,7 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
 
   return (
     <>
-      <div className="h-[85vh] p-10 pb-0 overflow-auto custom-scrollbar">
+      <div className="h-[85vh] p-10 pb-1 overflow-auto custom-scrollbar">
         <div className="h-full flex flex-col justify-between">
           <div className="grid grid-cols-10 border-b-2 border-[#B9B8CC] pb-5">
             <div className="col-span-4">
@@ -185,6 +207,7 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
                                   setBooking((prevData) => ({ ...prevData, providerServiceId: data.id ?? '' }))
                                   setMenuShow('')
                                 }}
+                                onKeyDown={() => {}}
                               >
                                 <p className="col-span-1 text-md font-semibold">{data.service?.name}</p>
                               </div>
@@ -205,92 +228,82 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
                   <label htmlFor="bookingPeriod" className="text-xl font-medium ">
                     Chọn thời gian:
                   </label>
-                  <InputWithAffix
-                    type="number"
-                    position="left"
-                    placeholder="Chọn thời gian"
-                    className="!bg-zinc-800 w-fit rounded-xl border border-white border-opacity-30"
-                    styleInput="bg-transparent border-transparent border-l-white border-opacity-30 hover:border-transparent hover:border-l-white hover:border-opacity-30 focus:outline-none"
-                    min={1}
-                    defaultValue={1}
-                    value={booking.bookingPeriod}
-                    onChange={(e) => {
-                      setBooking((prevData) => ({
-                        ...prevData,
-                        bookingPeriod: Number(Number(e.target.value) > 0 ? e.target.value : 0),
-                      }))
-                    }}
-                    component={<Time className="pr-2" theme="outline" size="15" fill="#FFF" strokeLinejoin="bevel" />}
-                  />
+                  <div className="flex items-center gap-3">
+                    <InputWithAffix
+                      type="number"
+                      position="left"
+                      placeholder="Chọn thời gian"
+                      className="!bg-zinc-800 w-fit rounded-xl border border-white border-opacity-30"
+                      styleInput="bg-transparent border-transparent border-l-white border-opacity-30 hover:border-transparent hover:border-l-white hover:border-opacity-30 focus:outline-none"
+                      min={1}
+                      defaultValue={1}
+                      value={booking.bookingPeriod}
+                      readOnly
+                      component={<Time className="pr-2" theme="outline" size="15" fill="#FFF" strokeLinejoin="bevel" />}
+                    />
+
+                    <div
+                      className={`p-2 bg-zinc-800 rounded-lg ${
+                        booking.bookingPeriod == 1 ? 'opacity-30 cursor-not-allowed' : 'cursor-pointer'
+                      }`}
+                      onClick={() => {
+                        booking.bookingPeriod > 1 &&
+                          setBooking((prevData) => ({
+                            ...prevData,
+                            bookingPeriod: booking.bookingPeriod - 1,
+                          }))
+                      }}
+                      onKeyDown={() => {}}
+                    >
+                      <Minus theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
+                    </div>
+                    <div
+                      className="p-2 bg-zinc-800 rounded-lg cursor-pointer"
+                      onClick={() => {
+                        setBooking((prevData) => ({
+                          ...prevData,
+                          bookingPeriod: booking.bookingPeriod + 1,
+                        }))
+                      }}
+                      onKeyDown={() => {}}
+                    >
+                      <Plus theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
           <div className="grid grid-cols-10 place-items-start pt-5 pb-5">
             <div className="col-span-2">
-              <label htmlFor="bookingPeriod" className="text-2xl font-medium text-white opacity-40">
+              <label htmlFor="bookingPeriod" className="text-2xl font-medium text-white">
                 Mã giảm giá:
               </label>
             </div>
             <div className="col-span-8">
-              <div className="relative">
-                <Menu>
-                  <Menu.Button>
-                    <button
-                      className={`flex justify-between items-center gap-3 min-w-[250px] text-lg font-semibold px-3 py-2 border border-white border-opacity-30 bg-zinc-800 hover:bg-gray-700 rounded-xl`}
-                      type="button"
-                      onClick={() => setMenuShow('Voucher')}
-                    >
-                      {myVoucher?.row && myVoucher?.row?.length > 0 ? myVoucher.row[0]?.code : <>Khuyến mãi</>}
-                      <Down theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />
-                    </button>
-                  </Menu.Button>
-                  <Transition
-                    as={Fragment}
-                    enter="transition ease-out duration-400"
-                    enterFrom="transform opacity-0 scale-95"
-                    enterTo="transform opacity-100 scale-100"
-                    leave="transition ease-in duration-400"
-                    leaveFrom="transform opacity-100 scale-100"
-                    leaveTo="transform opacity-0 scale-95"
-                    show={menuShow == 'Voucher'}
-                  >
-                    <Menu.Items
-                      className="absolute right-0 left-0 p-2 origin-top-right bg-[#292734] divide-y divide-gray-100 rounded-xl shadow-lg w-full max-h-[200px] overflow-y-auto ring-1 ring-black ring-opacity-5 focus:outline-none hide-scrollbar"
-                      style={{ zIndex: 5 }}
-                    >
-                      <div className="flex flex-col gap-2" style={{ zIndex: 10 }} onMouseLeave={() => setMenuShow('')}>
-                        {myVoucher?.row && myVoucher?.row?.length > 0 ? (
-                          myVoucher?.row?.map((data, index) => (
-                            <div
-                              className={`flex gap-5 items-center ${
-                                booking.voucherIds?.[0] == data.code && 'bg-gray-500'
-                              } hover:bg-gray-700 cursor-pointer p-3 rounded-lg`}
-                              key={index}
-                              onClick={() => {
-                                setBooking((prevData) => ({
-                                  ...prevData,
-                                  voucherIds: Array.isArray(data.code) ? data.code : prevData.voucherIds,
-                                }))
-                                setMenuShow('Voucher')
-                              }}
-                            >
-                              <div className="min-w-[500px] grid grid-cols-5 gap-5">
-                                <p className="col-span-1 text-md font-semibold">{data.code}</p>
-                                <p className="col-span-1 text-md font-semibold">
-                                  {data.discountValue} {data.discountUnit}
-                                </p>
-                              </div>
-                            </div>
-                          ))
-                        ) : (
-                          <>Không có khuyến mãi dành cho bạn!</>
-                        )}
-                      </div>
-                    </Menu.Items>
-                  </Transition>
-                </Menu>
+              <div className="cursor-pointer" onClick={() => setIsModalVoucherOpen(true)} onKeyDown={() => {}}>
+                <InputWithAffix
+                  type="text"
+                  position="right"
+                  placeholder="Chọn khuyến mãi"
+                  className="!bg-zinc-800 w-fit rounded-xl border border-white border-opacity-30"
+                  styleInput="bg-transparent border-transparent border-l-white border-opacity-30 hover:border-transparent hover:border-l-white hover:border-opacity-30 focus:outline-none"
+                  value={booking.voucherIds}
+                  readOnly
+                  component={<Right theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />}
+                />
               </div>
+            </div>
+            <div className="max-w-[200px]">
+              <Drawer
+                title="Two-level Drawer"
+                width={320}
+                closable={false}
+                onClose={() => setIsModalVoucherOpen(false)}
+                open={isModalVoucherOpen}
+              >
+                This is two-level drawer
+              </Drawer>
             </div>
           </div>
           <div className="flex justify-between border-b-2 border-[#B9B8CC] pb-5">
