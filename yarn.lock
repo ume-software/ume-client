@@ -6946,9 +6946,9 @@ ume-identity-service-openapi@latest:
     axios "^0.27.2"
 
 ume-service-openapi@latest:
-  version "1.3.5"
-  resolved "https://registry.yarnpkg.com/ume-service-openapi/-/ume-service-openapi-1.3.5.tgz#d918dccf4ed1f00619ba0e9bdece346980742147"
-  integrity sha512-s7GnvGq/uHOeq/dFhUmc6GtS7som5BVUrkrOJBOT7+2VwmB6zdbWTGaZjnTDlVP3KM6luZBHOz7ojJYqGY0/eA==
+  version "1.3.6"
+  resolved "https://registry.yarnpkg.com/ume-service-openapi/-/ume-service-openapi-1.3.6.tgz#94a46a8db78f31cd0208ad70e63c3b28572f991a"
+  integrity sha512-67HpfXNJjEXq0BCths1/6gt/2lK+MwEnexrfR5W/7W6/rGzFaxqORd4c2u+xoyZPThpiDEfsFZapz0MuUd7+1w==
   dependencies:
     axios "^0.27.2"
 
