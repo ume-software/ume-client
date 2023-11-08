@@ -12,7 +12,7 @@ import Image from 'next/legacy/image'
 import { UserPaymentSystemPagingResponse } from 'ume-service-openapi'
 import * as Yup from 'yup'
 
-import ConfirmForm from '~/components/confirm-form/confirmForm'
+import ConfirmForm from '~/components/confirm-form/confirm-form'
 
 import { trpc } from '~/utils/trpc'
 
@@ -57,7 +57,7 @@ const UserRequestWithdraw = (props: {
   }, [form.values.platformAccountId, form.values.platformAccount])
 
   const handleWithdraw = () => {
-    if (form.values.withdrawMoney <= (accountBalance.data?.data.totalCoinsAvailable ?? 0)) {
+    if (form.values.withdrawMoney <= (accountBalance.data?.data.totalBalanceAvailable ?? 0)) {
       createWithdrawRequest.mutate(
         {
           userPaymentSystemId: form.values.platformAccount.split('-')[0],

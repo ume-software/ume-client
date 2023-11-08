@@ -53,11 +53,11 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
   const updateVoucherAdmin = trpc.useMutation(['voucher.updateVoucherAdmin'])
   const MAX_NUMBER = '100000'
   const MAX_NUMBER_DISCOUNT = '100'
-  const ImageInit = voucherDetails?.image || empty_img
-  const nameInit = voucherDetails?.name || ''
-  const vourcherCodeInit = voucherDetails?.code || ''
-  const issuer = voucherDetails?.admin?.name || voucherDetails?.provider?.name || ''
-  const approverInit = voucherDetails?.admin?.name || ''
+  const ImageInit = voucherDetails?.image ?? empty_img
+  const nameInit = voucherDetails?.name ?? ''
+  const vourcherCodeInit = voucherDetails?.code ?? ''
+  const issuer = voucherDetails?.admin?.name ?? voucherDetails?.provider?.name ?? ''
+  const approverInit = voucherDetails?.admin?.name ?? ''
   const statusInit = voucherDetails?.status ?? ''
   const startDateInit = voucherDetails?.startDate ? new Date(voucherDetails?.startDate).toISOString().split('T')[0] : ''
   const endDateInit = voucherDetails?.endDate ? new Date(voucherDetails?.endDate).toISOString().split('T')[0] : ''
@@ -169,6 +169,7 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
         },
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [endDateInit])
 
   const [adminCheckVoucherCodeExisted, setAdminCheckVoucherCodeExisted] = useState<CheckExistedResponse>()
@@ -389,9 +390,9 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
   }
   function isDisableButton() {
     return (
-      !form.isValid ||
-      !form.dirty ||
-      (adminCheckVoucherCodeExisted?.isExisted ? (debouncedValue != vourcherCodeInit ? true : false) : false)
+      !form.isValid ??
+      !form.dirty ??
+      (adminCheckVoucherCodeExisted?.isExisted ? debouncedValue !== vourcherCodeInit : false)
     )
   }
   return (
@@ -423,7 +424,7 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                       className="overflow-hidden rounded-2xl"
                       width={144}
                       height={208}
-                      src={form.values.imageSource!!}
+                      src={form.values.imageSource}
                       alt=""
                       objectFit="cover"
                     />

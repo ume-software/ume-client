@@ -1,6 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-
-/* eslint-disable jsx-a11y/alt-text */
 import { Menu, Transition } from '@headlessui/react'
 import { Check, CheckOne, CloseSmall, Pencil } from '@icon-park/react'
 import { Button, FormInput, Input, Modal } from '@ume/ui'
@@ -16,7 +13,7 @@ import { useFormik } from 'formik'
 import Image from 'next/legacy/image'
 import * as Yup from 'yup'
 
-import ConfirmForm from '~/components/confirm-form/confirmForm'
+import ConfirmForm from '~/components/confirm-form/confirm-form'
 import { SkeletonForAccountSetting } from '~/components/skeleton-load'
 
 import { trpc } from '~/utils/trpc'
@@ -108,6 +105,7 @@ const EditProfile = () => {
 
   useEffect(() => {
     handleResetForm()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userSettingData])
 
   const debouncedValue = useDebounce<string>(form.values.slug, 500)
@@ -318,31 +316,27 @@ const EditProfile = () => {
     onClose: handleClose,
     show: isModalConfirmationVisible,
     form: (
-      <>
-        <ConfirmForm
-          title="Thay đổi thông tin cá nhân"
-          description="Bạn có chấp nhận thay đổi thông tin cá nhân hay không?"
-          onClose={handleClose}
-          onOk={() => {
-            handleUpdateInformation()
-          }}
-        />
-      </>
+      <ConfirmForm
+        title="Thay đổi thông tin cá nhân"
+        description="Bạn có chấp nhận thay đổi thông tin cá nhân hay không?"
+        onClose={handleClose}
+        onOk={() => {
+          handleUpdateInformation()
+        }}
+      />
     ),
     backgroundColor: '#15151b',
     closeWhenClickOutSide: true,
     closeButtonOnConner: (
-      <>
-        <CloseSmall
-          onClick={handleClose}
-          onKeyDown={(e) => e.key === 'Enter' && handleClose()}
-          tabIndex={1}
-          className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
-          theme="outline"
-          size="24"
-          fill="#FFFFFF"
-        />
-      </>
+      <CloseSmall
+        onClick={handleClose}
+        onKeyDown={(e) => e.key === 'Enter' && handleClose()}
+        tabIndex={1}
+        className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
+        theme="outline"
+        size="24"
+        fill="#FFFFFF"
+      />
     ),
   })
 
@@ -353,121 +347,117 @@ const EditProfile = () => {
     customModalCSS: 'top-0 overflow-y-auto custom-scrollbar',
     closeWhenClickOutSide: true,
     form: (
-      <>
-        <form
-          className="min-h-[75%] max-h-[95%] flex flex-col justify-between px-5 pb-5 gap-5 overflow-y-auto custom-scrollbar"
-          onSubmit={handleUploadImage}
-        >
-          <div className="pb-3 text-xl font-bold text-white border-b border-opacity-30">Xác minh danh tính</div>
-          <p className="text-white opacity-50">*Dùng ảnh CCCD hoặc Passport</p>
-          <div className="min-h-[75%] max-h-full flex flex-col gap-10 text-md text-white overflow-y-auto custom-scrollbar">
-            <div>
-              <label>Ảnh mặt trước</label>
-              <div className="relative">
-                <div className="relative w-full h-[300px] bg-white bg-opacity-30 rounded-xl">
-                  {!selectedImage.frontVertificationImage && (
-                    <div className="absolute top-0 bottom-0 left-0 right-0 z-10 flex items-center justify-center w-full h-full border-2 border-white border-dashed rounded-xl">
-                      <p className="text-4xl font-bold text-white">+</p>
-                    </div>
-                  )}
-                  <Image
-                    className="rounded-lg"
-                    layout="fill"
-                    objectFit="scale-down"
-                    src={selectedImage.frontVertificationImage ? selectedImage.frontVertificationImage : ImgForEmpty}
-                    alt="Personal Image"
-                  />
-                </div>
-                <input
-                  className="absolute top-0 left-0 z-20 w-full h-full opacity-0 cursor-pointer"
-                  type="file"
-                  name="files"
-                  onChange={(e) => handleImageChange(e, 1)}
-                />
-              </div>
-            </div>
-            <div>
-              <label>Ảnh mặt sau</label>
-              <div className="relative">
-                <div className="relative w-full h-[300px] bg-white bg-opacity-30 rounded-xl">
+      <form
+        className="min-h-[75%] max-h-[95%] flex flex-col justify-between px-5 pb-5 gap-5 overflow-y-auto custom-scrollbar"
+        onSubmit={handleUploadImage}
+      >
+        <div className="pb-3 text-xl font-bold text-white border-b border-opacity-30">Xác minh danh tính</div>
+        <p className="text-white opacity-50">*Dùng ảnh CCCD hoặc Passport</p>
+        <div className="min-h-[75%] max-h-full flex flex-col gap-10 text-md text-white overflow-y-auto custom-scrollbar">
+          <div>
+            <label>Ảnh mặt trước</label>
+            <div className="relative">
+              <div className="relative w-full h-[300px] bg-white bg-opacity-30 rounded-xl">
+                {!selectedImage.frontVertificationImage && (
                   <div className="absolute top-0 bottom-0 left-0 right-0 z-10 flex items-center justify-center w-full h-full border-2 border-white border-dashed rounded-xl">
                     <p className="text-4xl font-bold text-white">+</p>
                   </div>
-                  <Image
-                    className="rounded-lg"
-                    layout="fill"
-                    objectFit="scale-down"
-                    src={selectedImage.backVertificationImage ? selectedImage.backVertificationImage : ImgForEmpty}
-                    alt="Personal Image"
-                  />
-                </div>
-                <input
-                  className="absolute top-0 left-0 z-20 w-full h-full opacity-0 cursor-pointer"
-                  type="file"
-                  name="files"
-                  onChange={(e) => handleImageChange(e, 2)}
+                )}
+                <Image
+                  className="rounded-lg"
+                  layout="fill"
+                  objectFit="scale-down"
+                  src={selectedImage.frontVertificationImage ? selectedImage.frontVertificationImage : ImgForEmpty}
+                  alt="Personal Image"
                 />
               </div>
-            </div>
-            <div>
-              <label>Ảnh khuôn mặt</label>
-              <div className="relative">
-                <div className="relative w-full h-[300px] bg-white bg-opacity-30 rounded-xl">
-                  <div className="absolute top-0 bottom-0 left-0 right-0 z-10 flex items-center justify-center w-full h-full border-2 border-white border-dashed rounded-xl">
-                    <p className="text-4xl font-bold text-white">+</p>
-                  </div>
-                  <Image
-                    className="rounded-lg"
-                    layout="fill"
-                    objectFit="scale-down"
-                    src={selectedImage.faceImage ? selectedImage.faceImage : ImgForEmpty}
-                    alt="Personal Image"
-                  />
-                </div>
-                <input
-                  className="absolute top-0 left-0 z-20 w-full h-full opacity-0 cursor-pointer"
-                  type="file"
-                  name="files"
-                  onChange={(e) => handleImageChange(e, 3)}
-                />
-              </div>
+              <input
+                className="absolute top-0 left-0 z-20 w-full h-full opacity-0 cursor-pointer"
+                type="file"
+                name="files"
+                onChange={(e) => handleImageChange(e, 1)}
+              />
             </div>
           </div>
-          <div className="min-h-[50px] flex justify-around items-start">
-            <Button
-              isActive={false}
-              isOutlinedButton={true}
-              customCSS="w-[100px] text-xl p-2 rounded-xl hover:scale-105"
-              onClick={() => handleClose()}
-            >
-              Hủy
-            </Button>
+          <div>
+            <label>Ảnh mặt sau</label>
+            <div className="relative">
+              <div className="relative w-full h-[300px] bg-white bg-opacity-30 rounded-xl">
+                <div className="absolute top-0 bottom-0 left-0 right-0 z-10 flex items-center justify-center w-full h-full border-2 border-white border-dashed rounded-xl">
+                  <p className="text-4xl font-bold text-white">+</p>
+                </div>
+                <Image
+                  className="rounded-lg"
+                  layout="fill"
+                  objectFit="scale-down"
+                  src={selectedImage.backVertificationImage ? selectedImage.backVertificationImage : ImgForEmpty}
+                  alt="Personal Image"
+                />
+              </div>
+              <input
+                className="absolute top-0 left-0 z-20 w-full h-full opacity-0 cursor-pointer"
+                type="file"
+                name="files"
+                onChange={(e) => handleImageChange(e, 2)}
+              />
+            </div>
+          </div>
+          <div>
+            <label>Ảnh khuôn mặt</label>
+            <div className="relative">
+              <div className="relative w-full h-[300px] bg-white bg-opacity-30 rounded-xl">
+                <div className="absolute top-0 bottom-0 left-0 right-0 z-10 flex items-center justify-center w-full h-full border-2 border-white border-dashed rounded-xl">
+                  <p className="text-4xl font-bold text-white">+</p>
+                </div>
+                <Image
+                  className="rounded-lg"
+                  layout="fill"
+                  objectFit="scale-down"
+                  src={selectedImage.faceImage ? selectedImage.faceImage : ImgForEmpty}
+                  alt="Personal Image"
+                />
+              </div>
+              <input
+                className="absolute top-0 left-0 z-20 w-full h-full opacity-0 cursor-pointer"
+                type="file"
+                name="files"
+                onChange={(e) => handleImageChange(e, 3)}
+              />
+            </div>
+          </div>
+        </div>
+        <div className="min-h-[50px] flex justify-around items-start">
+          <Button
+            isActive={false}
+            isOutlinedButton={true}
+            customCSS="w-[100px] text-xl p-2 rounded-xl hover:scale-105"
+            onClick={() => handleClose()}
+          >
+            Hủy
+          </Button>
 
-            <Button
-              customCSS="w-[150px] text-xl p-2 rounded-xl hover:scale-105"
-              type="submit"
-              isActive={true}
-              isOutlinedButton={true}
-            >
-              Xác minh
-            </Button>
-          </div>
-        </form>
-      </>
+          <Button
+            customCSS="w-[150px] text-xl p-2 rounded-xl hover:scale-105"
+            type="submit"
+            isActive={true}
+            isOutlinedButton={true}
+          >
+            Xác minh
+          </Button>
+        </div>
+      </form>
     ),
     backgroundColor: '#15151b',
     closeButtonOnConner: (
-      <>
-        <CloseSmall
-          onClick={handleClose}
-          onKeyDown={(e) => e.key === 'Enter' && handleClose()}
-          tabIndex={1}
-          className="bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25"
-          theme="outline"
-          size="24"
-          fill="#FFFFFF"
-        />
-      </>
+      <CloseSmall
+        onClick={handleClose}
+        onKeyDown={(e) => e.key === 'Enter' && handleClose()}
+        tabIndex={1}
+        className="bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25"
+        theme="outline"
+        size="24"
+        fill="#FFFFFF"
+      />
     ),
   })
 

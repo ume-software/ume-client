@@ -1,16 +1,16 @@
-import { CloseSmall, DeleteOne, Minus, Plus } from '@icon-park/react'
+import { DeleteOne, Minus, Plus } from '@icon-park/react'
 import { Button, FormInput } from '@ume/ui'
 
 import * as React from 'react'
 
-import { FormikErrors, useFormik } from 'formik'
+import { useFormik } from 'formik'
 import {
   HandleServiceAttributeRequestHandleTypeEnum,
   HandleServiceAttributeValueRequestHandleTypeEnum,
 } from 'ume-service-openapi'
 import * as Yup from 'yup'
 
-import ServiceAttributeValues from './services-atrribute-value'
+import { ServiceAttributeValues } from './services-atrribute-value'
 
 export interface IServiceAttributesProps {
   serviceAttributesData: any
@@ -20,13 +20,13 @@ export interface IServiceAttributesProps {
   isReadOnly?: boolean
 }
 
-export default function ServiceAttributes({
+const ServiceAttributes = ({
   index,
   serviceAttributesData,
   setServiceAttributesData,
   removeChildComponent,
   isReadOnly,
-}: IServiceAttributesProps) {
+}: IServiceAttributesProps) => {
   const form = useFormik({
     initialValues: {
       id: (serviceAttributesData.id as string) || '',
@@ -112,7 +112,7 @@ export default function ServiceAttributes({
             <FormInput
               autoComplete="off"
               name="attribute"
-              className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 
+              className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30
             ${form.errors.attribute && form.touched.attribute ? 'placeholder:text-red-500' : ''}
             `}
               placeholder={'Tên thuộc tính: Trống'}
@@ -126,7 +126,7 @@ export default function ServiceAttributes({
             <FormInput
               autoComplete="off"
               name="attribute"
-              className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 
+              className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30
             ${form.errors.attribute && form.touched.attribute ? 'placeholder:text-red-500' : ''}
             `}
               placeholder={
@@ -150,7 +150,7 @@ export default function ServiceAttributes({
           {isReadOnly ? (
             <FormInput
               name="viAttribute"
-              className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 
+              className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30
             ${form.errors.viAttribute && form.touched.viAttribute ? 'placeholder:text-red-500' : ''}
             `}
               placeholder={'Tên tiếng việt: Trống'}
@@ -163,7 +163,7 @@ export default function ServiceAttributes({
             <FormInput
               autoComplete="off"
               name="viAttribute"
-              className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 
+              className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30
             ${form.errors.viAttribute && form.touched.viAttribute ? 'placeholder:text-red-500' : ''}
             `}
               placeholder={
@@ -233,3 +233,5 @@ export default function ServiceAttributes({
     </div>
   )
 }
+
+export default ServiceAttributes

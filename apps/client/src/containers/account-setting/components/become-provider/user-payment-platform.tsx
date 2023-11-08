@@ -4,14 +4,14 @@ import { Check, CloseSmall, Down } from '@icon-park/react'
 import { Button, FormInput, FormInputWithAffix, Modal } from '@ume/ui'
 import { ActionEnum } from '~/enumVariable/enumVariable'
 
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useEffect, useId, useState } from 'react'
 
 import { notification } from 'antd'
 import { useFormik } from 'formik'
 import { UserPaymentSystemRequestPlatformEnum, UserPaymentSystemResponse } from 'ume-service-openapi'
 import * as Yup from 'yup'
 
-import ConfirmForm from '~/components/confirm-form/confirmForm'
+import ConfirmForm from '~/components/confirm-form/confirm-form'
 
 import { trpc } from '~/utils/trpc'
 
@@ -33,6 +33,7 @@ const UserPaymentPlatform = (props: {
   handleCloseUserPaymentPlatform: () => void
   paymentAccount: UserPaymentSystemResponse | undefined
 }) => {
+  const index = useId()
   const [actionModal, setActionModal] = useState(ActionEnum.CREATE)
   const createUserPaymentSystem = trpc.useMutation('identity.createUserPaymentSystem')
   const utils = trpc.useContext()
@@ -121,37 +122,33 @@ const UserPaymentPlatform = (props: {
     onClose: handleClose,
     show: isModalConfirmationVisible,
     form: (
-      <>
-        <ConfirmForm
-          title="Thay đổi thông tin cá nhân"
-          description="Bạn có chấp nhận thay đổi thông tin cá nhân hay không?"
-          onClose={handleClose}
-          onOk={() => {
-            actionModal == ActionEnum.CREATE ? handleCreateUserPaymentSystem() : handleUpdateUserPaymentSystem()
-          }}
-        />
-      </>
+      <ConfirmForm
+        title="Thay đổi thông tin cá nhân"
+        description="Bạn có chấp nhận thay đổi thông tin cá nhân hay không?"
+        onClose={handleClose}
+        onOk={() => {
+          actionModal == ActionEnum.CREATE ? handleCreateUserPaymentSystem() : handleUpdateUserPaymentSystem()
+        }}
+      />
     ),
     backgroundColor: '#15151b',
     closeWhenClickOutSide: true,
     closeButtonOnConner: (
-      <>
-        <CloseSmall
-          onClick={handleClose}
-          onKeyDown={(e) => e.key === 'Enter' && handleClose()}
-          tabIndex={1}
-          className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
-          theme="outline"
-          size="24"
-          fill="#FFFFFF"
-        />
-      </>
+      <CloseSmall
+        onClick={handleClose}
+        onKeyDown={(e) => e.key === 'Enter' && handleClose()}
+        tabIndex={1}
+        className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
+        theme="outline"
+        size="24"
+        fill="#FFFFFF"
+      />
     ),
   })
   return (
     <>
       {isModalConfirmationVisible && confirmModal}
-      <form onSubmit={form.handleSubmit} className="text-white flex flex-col gap-7 p-10">
+      <form onSubmit={form.handleSubmit} className="flex flex-col p-10 text-white gap-7">
         <div className="space-y-2">
           <label>Nền tảng</label>
           <div>
@@ -208,36 +205,39 @@ const UserPaymentPlatform = (props: {
                       style={{ zIndex: 10 }}
                       onMouseLeave={() => setIsMenuShow(false)}
                     >
-                      {platformFilter.map((platform) => (
-                        <>
+                      {platforms
+                        .filter(
+                          (platform) =>
+                            platform.key.toLowerCase().includes(form.values.platform.toLowerCase()) ||
+                            platform.label.toLowerCase().includes(form.values.platform.toLowerCase()),
+                        )
+                        .map((platform) => (
                           <div
                             className={`flex gap-5 items-center ${
                               form.values.platform == platform.key ? 'bg-gray-700' : ''
                             } hover:bg-gray-700 cursor-pointer p-3 rounded-lg`}
+                            key={index}
+                            onKeyDown={() => {}}
                             onClick={() => {
                               form.setFieldValue('platform', platform.key)
                             }}
-                            onKeyDown={() => {}}
                           >
                             <p className="font-semibold text-mg">{platform.label}</p>
                             <div>
                               {form.values.platform == platform.key ? (
-                                <Check theme="filled" size="10" fill="#FFFFFF" strokeLinejoin="bevel" />
+                                <Check theme="filled" size="10" key={index} fill="#FFFFFF" strokeLinejoin="bevel" />
                               ) : (
                                 ''
                               )}
                             </div>
                           </div>
-                        </>
-                      ))}
+                        ))}
 
-                      {!(
-                        platforms.filter(
-                          (platform) =>
-                            platform.key.toLowerCase().includes(form.values.platform.toLowerCase()) ||
-                            platform.label.toLowerCase().includes(form.values.platform.toLowerCase()),
-                        ).length > 0
-                      ) && <p className="text-md font-normal">Không có kết quả</p>}
+                      {platforms.filter(
+                        (platform) =>
+                          platform.key.toLowerCase().includes(form.values.platform.toLowerCase()) ||
+                          platform.label.toLowerCase().includes(form.values.platform.toLowerCase()),
+                      ).length <= 0 && <p className="font-normal text-md">Không có kết quả</p>}
                     </div>
                   </Menu.Items>
                 </Transition>

@@ -6,8 +6,8 @@ import { useEffect, useId, useState } from 'react'
 
 import Image from 'next/legacy/image'
 import {
-  CoinHistoryPagingResponse,
-  CoinHistoryResponseCoinTypeEnum,
+  BalanceHistoryPagingResponse,
+  BalanceHistoryResponseCoinTypeEnum,
   VoucherResponseStatusEnum,
 } from 'ume-service-openapi'
 
@@ -25,16 +25,16 @@ interface IEnumType {
 }
 
 const TransactionContent: IEnumType[] = [
-  { key: CoinHistoryResponseCoinTypeEnum.Admin, label: 'Admin chuyển tiền' },
-  { key: CoinHistoryResponseCoinTypeEnum.BuyCoin, label: 'Mua coin' },
-  { key: CoinHistoryResponseCoinTypeEnum.GetBooking, label: 'Nhận từ đơn hàng' },
-  { key: CoinHistoryResponseCoinTypeEnum.GetDonate, label: 'Quà tặng' },
-  { key: CoinHistoryResponseCoinTypeEnum.GetGift, label: 'Quà tặng' },
-  { key: CoinHistoryResponseCoinTypeEnum.GetMission, label: 'Nhận từ nhiệm vụ' },
-  { key: CoinHistoryResponseCoinTypeEnum.SpendBooking, label: 'Đặt đơn' },
-  { key: CoinHistoryResponseCoinTypeEnum.SpendDonate, label: 'Tặng quà' },
-  { key: CoinHistoryResponseCoinTypeEnum.SpendGift, label: 'Tặng quà' },
-  { key: CoinHistoryResponseCoinTypeEnum.Withdraw, label: 'Rút tiền' },
+  { key: BalanceHistoryResponseCoinTypeEnum.Admin, label: 'Admin chuyển tiền' },
+  { key: BalanceHistoryResponseCoinTypeEnum.Deposit, label: 'Nạp tiền' },
+  { key: BalanceHistoryResponseCoinTypeEnum.GetBooking, label: 'Nhận từ đơn hàng' },
+  { key: BalanceHistoryResponseCoinTypeEnum.GetDonate, label: 'Quà tặng' },
+  { key: BalanceHistoryResponseCoinTypeEnum.GetGift, label: 'Quà tặng' },
+  { key: BalanceHistoryResponseCoinTypeEnum.GetMission, label: 'Nhận từ nhiệm vụ' },
+  { key: BalanceHistoryResponseCoinTypeEnum.SpendBooking, label: 'Đặt đơn' },
+  { key: BalanceHistoryResponseCoinTypeEnum.SpendDonate, label: 'Tặng quà' },
+  { key: BalanceHistoryResponseCoinTypeEnum.SpendGift, label: 'Tặng quà' },
+  { key: BalanceHistoryResponseCoinTypeEnum.Withdraw, label: 'Rút tiền' },
 ]
 
 const mappingStatus: IEnumType[] = [
@@ -51,7 +51,7 @@ const TransactionHistory = () => {
 
   const { user } = useAuth()
 
-  const [transactionHistory, setTransactionHistory] = useState<CoinHistoryPagingResponse | undefined>(undefined)
+  const [transactionHistory, setTransactionHistory] = useState<BalanceHistoryPagingResponse | undefined>(undefined)
   const [windrawRequest, setWindrawRequest] = useState<any>(undefined)
   const [transactionHistoryArray, setTransactionHistoryArray] = useState<any[] | undefined>(undefined)
   const [withdrawRequestArray, setWithdrawRequestArray] = useState<any[] | undefined>(undefined)

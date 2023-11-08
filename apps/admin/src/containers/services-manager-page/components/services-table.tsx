@@ -7,8 +7,8 @@ import React, { useState } from 'react'
 import { Table, Tag, notification } from 'antd'
 import Image from 'next/image'
 
-import ServicesModalUpdate from './services-modal/services-modal-update'
-import ServicesModalView from './services-modal/services-modal-view'
+import { ServicesModalUpdate } from './services-modal/services-modal-update'
+import { ServicesModalView } from './services-modal/services-modal-view'
 
 import ComfirmModal from '~/components/modal-base/comfirm-modal'
 
@@ -34,7 +34,7 @@ const ServicesTable = ({ servicesList, isLoading }) => {
   const [openServicesModalView, setOpenServicesModalView] = useState(false)
   const [openServicesModalUpdate, setOpenServicesModalUpdate] = useState(false)
   const [openConfirm, setOpenConfirm] = useState(false)
-  const [isActivated, setIsActivate] = useState()
+  const [activated, setActivate] = useState()
   const [selectedService, setSelectedService] = useState<any>()
   const updateService = trpc.useMutation(['services.updateService'])
   const columns = [
@@ -63,7 +63,7 @@ const ServicesTable = ({ servicesList, isLoading }) => {
       title: <div className="flex items-center justify-center">Số người dùng</div>,
       dataIndex: 'countProviderUsed',
       key: 'countProviderUsed',
-      render: (countProviderUsed) => <div className="w-full flex justify-center">{countProviderUsed}</div>,
+      render: (countProviderUsed) => <div className="flex justify-center w-full">{countProviderUsed}</div>,
     },
     {
       title: <div className="flex items-center justify-center">Trạng thái</div>,
@@ -90,36 +90,34 @@ const ServicesTable = ({ servicesList, isLoading }) => {
       key: 'action',
       render: (record) => {
         return (
-          <>
-            <div className="flex justify-end w-full">
-              <Button isActive={false}>
-                <Eyes
-                  onClick={() => {
-                    openModalHandle('view', record.key)
-                  }}
-                  className="p-2 mr-2 rounded-full hover:bg-gray-500"
-                  theme="outline"
-                  size="18"
-                  fill="#fff"
-                />
-              </Button>
-              <Button
-                isActive={false}
+          <div className="flex justify-end w-full">
+            <Button isActive={false}>
+              <Eyes
                 onClick={() => {
-                  openModalHandle('update', record.key)
+                  openModalHandle('view', record.key)
                 }}
-              >
-                <Write className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="18" fill="#1677ff" />
-              </Button>
-              <Button isActive={false} onClick={() => handleOpenConfirm(record)}>
-                {record.isActivated ? (
-                  <ReduceOne className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="20" fill="#ff0000" />
-                ) : (
-                  <CheckOne className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="20" fill="#22c55e" />
-                )}
-              </Button>
-            </div>
-          </>
+                className="p-2 mr-2 rounded-full hover:bg-gray-500"
+                theme="outline"
+                size="18"
+                fill="#fff"
+              />
+            </Button>
+            <Button
+              isActive={false}
+              onClick={() => {
+                openModalHandle('update', record.key)
+              }}
+            >
+              <Write className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="18" fill="#1677ff" />
+            </Button>
+            <Button isActive={false} onClick={() => handleOpenConfirm(record)}>
+              {record.isActivated ? (
+                <ReduceOne className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="20" fill="#ff0000" />
+              ) : (
+                <CheckOne className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="20" fill="#22c55e" />
+              )}
+            </Button>
+          </div>
         )
       },
     },
@@ -159,7 +157,7 @@ const ServicesTable = ({ servicesList, isLoading }) => {
         {
           id: selectedService?.id,
           updateServiceRequest: {
-            isActivated: !isActivated,
+            isActivated: !activated,
             name: selectedService?.name,
             imageUrl: selectedService?.imageUrl,
           },
@@ -167,7 +165,7 @@ const ServicesTable = ({ servicesList, isLoading }) => {
         {
           onSuccess(data, variables, context) {
             if (data.success) {
-              if (isActivated) {
+              if (activated) {
                 notification.success({
                   message: 'Dừng hoạt động thành công!',
                   description: 'Dịch vụ đã bị dừng hoạt động',
@@ -191,7 +189,7 @@ const ServicesTable = ({ servicesList, isLoading }) => {
 
   function handleOpenConfirm(record) {
     setSelectedService(record)
-    setIsActivate(record.isActivated)
+    setActivate(record.isActivated)
     setOpenConfirm(true)
   }
   return (
@@ -215,10 +213,10 @@ const ServicesTable = ({ servicesList, isLoading }) => {
         closeFunction={handlecloseConfirm}
         openValue={openConfirm}
         isComfirmFunction={handleConfirmFunction}
-        titleValue={isActivated ? 'Xác nhận dừng hoạt động' : 'Xác nhận mở hoạt động'}
+        titleValue={activated ? 'Xác nhận dừng hoạt động' : 'Xác nhận mở hoạt động'}
       >
         <div className="p-4 text-white">
-          Bạn có chắc chắn muốn {!isActivated ? ' mở hoạt động ' : ' dừng hoạt động '} Dịch vụ này?
+          Bạn có chắc chắn muốn {!activated ? ' mở hoạt động ' : ' dừng hoạt động '} Dịch vụ này?
         </div>
       </ComfirmModal>
     </div>

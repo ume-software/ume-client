@@ -1,12 +1,11 @@
-import { DeleteOne, Plus } from '@icon-park/react'
+import { Plus } from '@icon-park/react'
 import { Button, FormInput } from '@ume/ui'
 import { uploadImageServices } from '~/api/upload-media'
 
-import * as React from 'react'
 import { useRef, useState } from 'react'
 
 import { notification } from 'antd'
-import { FormikErrors, useFormik } from 'formik'
+import { useFormik } from 'formik'
 import Image from 'next/legacy/image'
 import {
   HandleServiceAttributeRequestHandleTypeEnum,

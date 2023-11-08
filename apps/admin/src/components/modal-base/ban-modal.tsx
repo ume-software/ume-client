@@ -10,11 +10,16 @@ export interface IBanModalProps {
   name?: any
   closeFunction: any
   openValue: boolean
-  className?: any
-  excuteFunction: any | undefined
+  excuteFunction: any
 }
 
-export default function BanModal({ isBanned, name, openValue, closeFunction, excuteFunction }: IBanModalProps) {
+export default function BanModal({
+  isBanned,
+  name,
+  openValue,
+  closeFunction,
+  excuteFunction,
+}: Readonly<IBanModalProps>) {
   const titleValue = !isBanned ? `Chặn ${name}` : `Bỏ chặn ${name}`
   const [content, setContent] = React.useState<string>('')
   const [openConfirm, setOpenConfirm] = React.useState(false)

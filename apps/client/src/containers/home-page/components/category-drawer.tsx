@@ -24,7 +24,7 @@ function CategoryDrawer({ data, loadingService }) {
                   <Link href={`/filter-service/${category.name}?service=${category.slug || category.id}`}>
                     <div className="relative w-[170px] h-[230px]">
                       <Image
-                        className="mb-4 rounded-lg pointer-events-none object-cover"
+                        className="object-cover mb-4 rounded-lg pointer-events-none"
                         layout="fill"
                         src={category.imageUrl}
                         alt={category.name}
@@ -41,15 +41,13 @@ function CategoryDrawer({ data, loadingService }) {
     )
   }
   return (
-    <>
-      <CustomDrawer
-        drawerTitle="Tất cả dịch vụ"
-        customOpenBtn="p-2 mr-2 rounded-xl cursor-pointer justify-self-end font-semibold active:bg-gray-200 hover:bg-gray-500"
-        openBtn={<div onClick={handleAllServiceOpen}>Tất cả dịch vụ</div>}
-      >
-        {childrenDrawer}
-      </CustomDrawer>
-    </>
+    <CustomDrawer
+      drawerTitle="Tất cả dịch vụ"
+      customOpenBtn="p-2 mr-2 rounded-xl cursor-pointer justify-self-end font-semibold active:bg-gray-200 hover:bg-gray-500"
+      openBtn={<div onClick={handleAllServiceOpen}>Tất cả dịch vụ</div>}
+    >
+      {childrenDrawer}
+    </CustomDrawer>
   )
 }
 

@@ -53,46 +53,37 @@ const LikePost = (props: { postID: string }) => {
     }
   })
 
-  // useEffect(() => {
-  //   if (page !== '1') {
-  //     refetchLikePostByID()
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [page])
-
   return (
-    <>
-      <div ref={containerRef} className="h-[500px] text-white overflow-y-scroll custom-scrollbar p-3">
-        {loadingLikePostByID && !fetchingLikePostByID ? (
-          <CommentSkeletonLoader />
-        ) : (
-          <>
-            {likePostData.map((data) => (
-              <Link key={data?.id} href={`#${data?.user?.slug}`}>
-                <div className="flex justify-between items-center m-5 p-2 rounded-xl hover:bg-gray-700">
-                  <div className="flex items-center gap-2">
-                    <div className="relative w-[50px] h-[50px]">
-                      <Image
-                        className="absolute rounded-full"
-                        layout="fill"
-                        objectFit="cover"
-                        src={data?.user?.avatarUrl}
-                        alt="Provider Image"
-                      />
-                    </div>
-                    <p className="font-semibold text-lg">{data?.user?.name}</p>
+    <div ref={containerRef} className="h-[500px] text-white overflow-y-scroll custom-scrollbar p-3">
+      {loadingLikePostByID && !fetchingLikePostByID ? (
+        <CommentSkeletonLoader />
+      ) : (
+        <>
+          {likePostData.map((data) => (
+            <Link key={data?.id} href={`#${data?.user?.slug}`}>
+              <div className="flex items-center justify-between p-2 m-5 rounded-xl hover:bg-gray-700">
+                <div className="flex items-center gap-2">
+                  <div className="relative w-[50px] h-[50px]">
+                    <Image
+                      className="absolute rounded-full"
+                      layout="fill"
+                      objectFit="cover"
+                      src={data?.user?.avatarUrl}
+                      alt="Provider Image"
+                    />
                   </div>
-                  <div>
-                    <Like theme="filled" size="20" fill="#FFFFFF" strokeLinejoin="bevel" />
-                  </div>
+                  <p className="text-lg font-semibold">{data?.user?.name}</p>
                 </div>
-              </Link>
-            ))}
-          </>
-        )}
-        {fetchingLikePostByID ? <CommentSkeletonLoader /> : ''}
-      </div>
-    </>
+                <div>
+                  <Like theme="filled" size="20" fill="#FFFFFF" strokeLinejoin="bevel" />
+                </div>
+              </div>
+            </Link>
+          ))}
+        </>
+      )}
+      {fetchingLikePostByID ? <CommentSkeletonLoader /> : ''}
+    </div>
   )
 }
 export default LikePost

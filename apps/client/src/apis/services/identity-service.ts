@@ -4,10 +4,9 @@ import { getEnv } from '~/env'
 import { parse } from 'cookie'
 import {
   AuthApi,
-  BuyCoinRequestApi,
-  CoinApi,
+  BalanceApi,
   CreateVoucherRequest,
-  CreateWithdrawRequestUnitCurrencyEnum,
+  DepositRequestApi,
   ProviderServiceApi,
   ServiceApi,
   ServiceAttributeApi,
@@ -46,11 +45,11 @@ export const getIdentityInfo = async (ctx) => {
 export const getAccountBalance = async (ctx) => {
   const cookies = parse(ctx.req.headers.cookie)
   try {
-    const response = await new CoinApi({
+    const response = await new BalanceApi({
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).getTotalCoin()
+    }).getTotalBalance()
     return {
       data: response.data,
       success: true,
@@ -67,12 +66,12 @@ export const getAccountBalance = async (ctx) => {
 export const requestRecharge = async ({ total, platform }, ctx) => {
   const cookies = parse(ctx.req.headers.cookie ?? '')
   try {
-    const reponse = await new BuyCoinRequestApi({
+    const reponse = await new DepositRequestApi({
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).createBuyCoinRequest({
-      amountCoin: Number.parseInt(total),
+    }).createDepositRequest({
+      amountBalance: total,
       platform: platform,
       unitCurrency: 'VND',
     })
@@ -481,11 +480,11 @@ export const getHistoryTransaction = async (
 ) => {
   const cookies = parse(ctx.req.headers.cookie ?? '')
   try {
-    const reponse = await new CoinApi({
+    const reponse = await new BalanceApi({
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).getHistoryCoin(query.limit, query.page, '["$all",{"user":["$all"]}]', query.where, query.order)
+    }).getHistoryBalance(query.limit, query.page, '["$all"]', query.where, query.order)
     return {
       data: reponse.data,
       success: true,

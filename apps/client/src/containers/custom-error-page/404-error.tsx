@@ -4,9 +4,7 @@ import Head from 'next/head'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
 
-import { AppLayout } from '~/components/layouts/app-layout/app-layout'
-
-const Error404CustomPage = (props) => {
+const Error404CustomPage = () => {
   return (
     <div className="bg-umeBackground">
       <Head>

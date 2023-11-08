@@ -1,9 +1,9 @@
-import { DeleteOne, Minus } from '@icon-park/react'
-import { Button, FormInput } from '@ume/ui'
+import { Minus } from '@icon-park/react'
+import { FormInput } from '@ume/ui'
 
 import * as React from 'react'
 
-import { FormikErrors, useFormik } from 'formik'
+import { useFormik } from 'formik'
 import { HandleServiceAttributeValueRequestHandleTypeEnum } from 'ume-service-openapi'
 import * as Yup from 'yup'
 
@@ -14,11 +14,11 @@ export interface IServiceAttributeValuesProps {
   handleType?: HandleServiceAttributeValueRequestHandleTypeEnum
 }
 
-export default function ServiceAttributeValues({
+export const ServiceAttributeValues = ({
   serviceAttributeValuesData,
   setServiceAttributeValuesData,
   isReadOnly,
-}: IServiceAttributeValuesProps) {
+}: IServiceAttributeValuesProps) => {
   const form = useFormik({
     initialValues: {
       id: (serviceAttributeValuesData.id as string) || '',
@@ -58,7 +58,7 @@ export default function ServiceAttributeValues({
         {isReadOnly ? (
           <FormInput
             name="value"
-            className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 
+            className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30
             ${form.errors.value && form.touched.value ? 'placeholder:text-red-500' : ''}
             `}
             placeholder={'Tên thuộc tính: Trống'}
@@ -71,7 +71,7 @@ export default function ServiceAttributeValues({
           <FormInput
             autoComplete="off"
             name="value"
-            className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 
+            className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30
             ${form.errors.value && form.touched.value ? 'placeholder:text-red-500' : ''}
             `}
             placeholder={form.errors.value && form.touched.value ? form.errors.value : 'Tên thuộc tính: Silver'}
@@ -93,7 +93,7 @@ export default function ServiceAttributeValues({
         {isReadOnly ? (
           <FormInput
             name="viValue"
-            className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 
+            className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30
             ${form.errors.viValue && form.touched.viValue ? 'placeholder:text-red-500' : ''}
             `}
             placeholder={'Tên tiếng việt: Trống '}
@@ -106,7 +106,7 @@ export default function ServiceAttributeValues({
           <FormInput
             autoComplete="off"
             name="viValue"
-            className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 
+            className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30
             ${form.errors.viValue && form.touched.viValue ? 'placeholder:text-red-500' : ''}
             `}
             placeholder={form.errors.viValue && form.touched.viValue ? form.errors.viValue : 'Tên tiếng việt: Bạc '}

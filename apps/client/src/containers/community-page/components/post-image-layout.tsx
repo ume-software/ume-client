@@ -25,7 +25,7 @@ const PostImageLayout = (props) => {
         </div>
       ) : (
         <>
-          <div className="w-full flex gap-1">
+          <div className="flex w-full gap-1">
             {props.data?.slice(0, MAX_VISIBLE_IMAGES).map((media, index) => (
               <div className="relative w-full h-[250px]" key={index}>
                 {media.type === ThumbnailResponseTypeEnum.Image ? (
@@ -63,7 +63,7 @@ const PostImageLayout = (props) => {
 
                 {remainingImages != 1 && (
                   <div className="absolute top-0 left-0 bottom-0 right-0 bg-[#00000090]">
-                    <div className="h-full flex justify-center items-center">
+                    <div className="flex items-center justify-center h-full">
                       <p className="text-2xl font-semibold">+{remainingImages} more</p>
                     </div>
                   </div>

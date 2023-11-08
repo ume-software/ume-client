@@ -54,17 +54,15 @@ const CommunityContainer = () => {
     backgroundColor: '#15151b',
     closeWhenClickOutSide: true,
     closeButtonOnConner: (
-      <>
-        <CloseSmall
-          onClick={handleClose}
-          onKeyDown={(e) => e.key === 'Enter' && handleClose()}
-          tabIndex={1}
-          className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
-          theme="outline"
-          size="24"
-          fill="#FFFFFF"
-        />
-      </>
+      <CloseSmall
+        onClick={handleClose}
+        onKeyDown={(e) => e.key === 'Enter' && handleClose()}
+        tabIndex={1}
+        className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
+        theme="outline"
+        size="24"
+        fill="#FFFFFF"
+      />
     ),
   })
 
@@ -81,10 +79,10 @@ const CommunityContainer = () => {
       {isModalVisible && CreatePostModal}
       <div className="min-h-screen" style={{ margin: '0 70px' }}>
         <div className="grid grid-cols-10 gap-10 text-white">
-          <div className="xl:col-span-2 col-span-6 relative">
-            <div className="flex xl:flex-col xl:items-start items-center gap-10 xl:border-none border-b-2 border-white border-opacity-30 xl:sticky fixed xl:top-20 top-16 left-0 right-20 z-[5]">
-              <div className="xl:block w-full flex justify-between items-center gap-2 xl:px-5 px-20 xl:py-8 py-2 xl:bg-zinc-800 bg-umeBackground xl:rounded-2xl">
-                <div className="flex xl:flex-col gap-5">
+          <div className="col-span-2">
+            <div className="sticky flex flex-col gap-10 top-20">
+              <div className="p-10 bg-zinc-800 rounded-2xl">
+                <div className="flex flex-col gap-5">
                   {postTypeData.map((item) => (
                     <div
                       key={index}
@@ -110,7 +108,7 @@ const CommunityContainer = () => {
               </div>
               <div className="xl:block hidden xl:w-full">
                 <div
-                  className="rounded-full w-full min-w-[200px] text-white bg-purple-700 py-2 font-medium xl:text-xl lg:text-lg text-md hover:scale-105 text-center cursor-pointer"
+                  className="w-full py-2 text-xl font-medium text-center text-white bg-purple-700 rounded-full cursor-pointer hover:scale-105"
                   onClick={handleCreatePost}
                   onKeyDown={() => {}}
                 >

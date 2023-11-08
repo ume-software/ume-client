@@ -14,7 +14,7 @@ import {
 
 import VourcherModal from './voucher-modal'
 
-import ConfirmForm from '~/components/confirm-form/confirmForm'
+import ConfirmForm from '~/components/confirm-form/confirm-form'
 import { TableSkeletonLoader } from '~/components/skeleton-load'
 import Table from '~/components/table/table'
 
@@ -100,7 +100,7 @@ const Voucher = () => {
             setIsModalConfirmationVisible(true)
             setIdSelectedVoucher(voucherArray[0])
           }}
-          disabled={!(voucherArray[28] == VoucherResponseStatusEnum.Approved)}
+          disabled={voucherArray[28] != VoucherResponseStatusEnum.Approved}
         />,
       ]
       return newVoucherArray
@@ -135,28 +135,24 @@ const Voucher = () => {
     show: isModalVisible,
     customModalCSS: 'w-fit top-5 overflow-y-auto custom-scrollbar',
     form: (
-      <>
-        <VourcherModal
-          handleCloseModalVoucher={handleClose}
-          actionModal={modalStatus}
-          voucherSelected={voucherSelected}
-        />
-      </>
+      <VourcherModal
+        handleCloseModalVoucher={handleClose}
+        actionModal={modalStatus}
+        voucherSelected={voucherSelected}
+      />
     ),
     backgroundColor: '#15151b',
     closeWhenClickOutSide: true,
     closeButtonOnConner: (
-      <>
-        <CloseSmall
-          onClick={handleClose}
-          onKeyDown={(e) => e.key === 'Enter' && handleClose()}
-          tabIndex={1}
-          className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
-          theme="outline"
-          size="24"
-          fill="#FFFFFF"
-        />
-      </>
+      <CloseSmall
+        onClick={handleClose}
+        onKeyDown={(e) => e.key === 'Enter' && handleClose()}
+        tabIndex={1}
+        className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
+        theme="outline"
+        size="24"
+        fill="#FFFFFF"
+      />
     ),
   })
 
@@ -194,31 +190,27 @@ const Voucher = () => {
     onClose: handleCloseComfirmModal,
     show: isModalConfirmationVisible,
     form: (
-      <>
-        <ConfirmForm
-          title="Thay đổi thông tin khuyến mãi"
-          description="Bạn có chấp nhận thay đổi thông tin khuyến mãi này hay không?"
-          onClose={handleCloseComfirmModal}
-          onOk={() => {
-            handleChangeStatusVoucher(idSelectedVoucher)
-          }}
-        />
-      </>
+      <ConfirmForm
+        title="Thay đổi thông tin khuyến mãi"
+        description="Bạn có chấp nhận thay đổi thông tin khuyến mãi này hay không?"
+        onClose={handleCloseComfirmModal}
+        onOk={() => {
+          handleChangeStatusVoucher(idSelectedVoucher)
+        }}
+      />
     ),
     backgroundColor: '#15151b',
     closeWhenClickOutSide: true,
     closeButtonOnConner: (
-      <>
-        <CloseSmall
-          onClick={handleCloseComfirmModal}
-          onKeyDown={(e) => e.key === 'Enter' && handleClose()}
-          tabIndex={1}
-          className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
-          theme="outline"
-          size="24"
-          fill="#FFFFFF"
-        />
-      </>
+      <CloseSmall
+        onClick={handleCloseComfirmModal}
+        onKeyDown={(e) => e.key === 'Enter' && handleClose()}
+        tabIndex={1}
+        className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
+        theme="outline"
+        size="24"
+        fill="#FFFFFF"
+      />
     ),
   })
 
@@ -265,9 +257,7 @@ const Voucher = () => {
                 onDelete={() => {}}
               />
             ) : (
-              <>
-                <TableSkeletonLoader />
-              </>
+              <TableSkeletonLoader />
             )}
           </div>
         </div>

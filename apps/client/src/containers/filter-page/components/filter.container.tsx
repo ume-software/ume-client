@@ -188,7 +188,7 @@ const FilterContainer = () => {
               className="w-full outline-none border-none bg-[#292734] focus:outline-[#6d3fe0] max-h-10 rounded-xl"
               placeholder="Nhập tên player..."
               onChange={(e) => setSearchText(e.target.value)}
-              onKeyPress={(e) => handleKeyPress(e)}
+              onKeyDown={(e) => handleKeyPress(e)}
             />
           </div>
           <div className="flex items-center gap-2">
@@ -311,9 +311,7 @@ const FilterContainer = () => {
       </div>
       <div className="container mx-auto my-10">
         {loadingProviderFilter && !isFetchingProviderFilter ? (
-          <>
-            <PlayerSkeletonLoader />
-          </>
+          <PlayerSkeletonLoader />
         ) : (
           <div
             ref={containerRef}

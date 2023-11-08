@@ -2,7 +2,7 @@ import { GrinningFaceWithOpenMouth, MoreOne, PhoneTelephone, Picture, Videocamer
 import { useAuth } from '~/contexts/auth'
 import useChatScroll from '~/hooks/useChatScroll'
 
-import { ReactNode, useContext, useEffect, useId, useRef, useState } from 'react'
+import { ReactNode, useContext, useEffect, useRef, useState } from 'react'
 
 import Image from 'next/legacy/image'
 import Link from 'next/link'
@@ -14,11 +14,11 @@ import { CommentSkeletonLoader } from '~/components/skeleton-load'
 import { getSocket } from '~/utils/constants'
 import { trpc } from '~/utils/trpc'
 
-interface actionButtonProps {
+interface ActionButtonProps {
   actionButton: ReactNode
 }
 
-const actionButtons: actionButtonProps[] = [
+const actionButtons: ActionButtonProps[] = [
   {
     actionButton: <Videocamera theme="outline" size="20" fill="#FFFFFF" strokeLinejoin="bevel" />,
   },
@@ -56,7 +56,7 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
   }, [socketContext?.socketChattingContext, isAuthenticated])
 
   const mappingMember: { [key: string]: MemberChatChannelResponse } = convertArrayObjectToObject(
-    chattingMessageChannel?.data.members || [],
+    chattingMessageChannel?.data.members ?? [],
     'userId',
   )
 
@@ -85,7 +85,7 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
         <CommentSkeletonLoader />
       ) : (
         <div className="relative max-h-screen overflow-hidden">
-          <div className="w-full flex items-center justify-between">
+          <div className="flex items-center justify-between w-full">
             <Link
               href={`/profile/${images[0].providerInformation.slug || images[0].providerInformation.id}`}
               className="w-3/4 p-2 rounded-lg hover:bg-gray-700"
@@ -97,7 +97,7 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
                       className="absolute rounded-full"
                       layout="fill"
                       objectFit="cover"
-                      src={images[0].userInformation.avatarUrl!}
+                      src={images[0].userInformation.avatarUrl}
                       alt="Avatar"
                     />
                   </div>
@@ -116,7 +116,7 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
               ))}
             </div>
           </div>
-          <div className="flex flex-col gap-2 h-full overflow-y-auto">
+          <div className="flex flex-col h-full gap-2 overflow-y-auto">
             <div className="flex gap-2 pb-5 overflow-auto border-b-2 border-[#B9B8CC] custom-scrollbar"></div>
             <div className="bg-[#413F4D] p-2 rounded-3xl"></div>
           </div>
@@ -176,7 +176,7 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
                   placeholder="Nhập tin nhắn"
                   value={messageInput}
                   onChange={(e) => setMessageInput(e.target.value)}
-                  onKeyPress={handleKeyPress}
+                  onKeyDown={handleKeyPress}
                 />
                 <div className="absolute transform -translate-y-1/2 rounded-full cursor-pointer top-1/2 right-3 z-4 hover:bg-gray-500 active:bg-gray-400">
                   <GrinningFaceWithOpenMouth theme="outline" size="24" fill="#FFFFFF" strokeLinejoin="bevel" />

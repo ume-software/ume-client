@@ -24,7 +24,7 @@ import AlbumTab from './album-tab/album-tab'
 import InformationTab from './information-tab/information-tab'
 import PostTab from './post-tab'
 
-import ConfirmForm from '~/components/confirm-form/confirmForm'
+import ConfirmForm from '~/components/confirm-form/confirm-form'
 import { LoginModal } from '~/components/header/login-modal.component'
 import { SkeletonDetailProvider } from '~/components/skeleton-load'
 
