@@ -6,8 +6,7 @@ import { useState } from 'react'
 
 import { Select, Space } from 'antd'
 import Image from 'next/legacy/image'
-import { prismaSelectToJsonString } from 'query-string-prisma-ume'
-import { CreateVoucherRequestDiscountUnitEnum, VoucherResponse } from 'ume-service-openapi'
+import { CreateVoucherRequestDiscountUnitEnum } from 'ume-service-openapi'
 
 import ModalBase from '~/components/modal-base'
 

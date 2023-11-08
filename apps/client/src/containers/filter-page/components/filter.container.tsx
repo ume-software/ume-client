@@ -99,7 +99,7 @@ const FilterContainer = (props) => {
       cacheTime: 0,
       refetchOnMount: true,
       onSuccess(data) {
-        setListProviderFilter((prevData) => [...(prevData || []), ...(data?.data?.row || [])])
+        setListProviderFilter((prevData) => [...(prevData ?? []), ...(data?.data?.row ?? [])])
       },
     },
   )
@@ -188,7 +188,7 @@ const FilterContainer = (props) => {
               className="w-full outline-none border-none bg-[#292734] focus:outline-[#6d3fe0] max-h-10 rounded-xl"
               placeholder="Nhập tên player..."
               onChange={(e) => setSearchText(e.target.value)}
-              onKeyPress={(e) => handleKeyPress(e)}
+              onKeyDown={(e) => handleKeyPress(e)}
             />
           </div>
           <div className="flex items-center gap-2">
@@ -309,9 +309,7 @@ const FilterContainer = (props) => {
       </div>
       <div className="container mx-auto my-10">
         {loadingProviderFilter && !isFetchingProviderFilter ? (
-          <>
-            <PlayerSkeletonLoader />
-          </>
+          <PlayerSkeletonLoader />
         ) : (
           <div ref={containerRef} className="grid gap-6 mt-2 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1">
             {listProviderFilter?.length != 0 ? (
@@ -319,7 +317,7 @@ const FilterContainer = (props) => {
                 <Link
                   key={provider?.id}
                   href={`/profile/${provider?.slug ?? provider?.id}?tab=service&service=${
-                    provider.serviceSlug || provider.serviceId
+                    provider.serviceSlug ?? provider.serviceId
                   }`}
                 >
                   <PromoteCard data={provider} />

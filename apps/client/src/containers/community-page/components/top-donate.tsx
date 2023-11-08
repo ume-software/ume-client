@@ -16,7 +16,7 @@ const durationArray: DurationProps[] = [
   { key: '1M', nameVi: 'Tháng' },
 ]
 
-const TopDonation = (props) => {
+const TopDonation = () => {
   const [duration, setDuration] = useState<string>('1W')
   const [userDonation, setUserDonation] = useState<TopDonationDonorPagingResponse['row'] | undefined>(undefined)
   const [providerDonation, setProviderDonation] = useState<TopDonationRecipientPagingResponse['row'] | undefined>(
@@ -47,17 +47,15 @@ const TopDonation = (props) => {
     <>
       <div className="flex gap-3">
         {durationArray.map((item, index) => (
-          <>
-            <div
-              key={item.key}
-              className={`w-[80px] text-center rounded-xl py-2 cursor-pointer ${
-                item.key == duration ? ' bg-purple-600' : 'bg-zinc-800'
-              }`}
-              onClick={() => setDuration(item.key)}
-            >
-              {item.nameVi}
-            </div>
-          </>
+          <div
+            key={item.key}
+            className={`w-[80px] text-center rounded-xl py-2 cursor-pointer ${
+              item.key == duration ? ' bg-purple-600' : 'bg-zinc-800'
+            }`}
+            onClick={() => setDuration(item.key)}
+          >
+            {item.nameVi}
+          </div>
         ))}
       </div>
       <div className="flex flex-col gap-5 mt-5">

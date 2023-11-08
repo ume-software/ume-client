@@ -9,7 +9,7 @@ import { PrismaWhereConditionType, prismaWhereConditionToJsonString } from 'quer
 import { ServicePagingResponse } from 'ume-service-openapi'
 
 import ServicesModalCreate from './components/services-modal/services-modal-create'
-import ServicesModalUpdate from './components/services-modal/services-modal-update'
+import { ServicesModalUpdate } from './components/services-modal/services-modal-update'
 import ServicesTable from './components/services-table'
 
 import FilterDropdown from '~/components/filter-dropdown'

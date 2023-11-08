@@ -46,29 +46,23 @@ const PostTab = (props: { providerId: string }) => {
   }, [scrollPosition])
 
   return (
-    <>
-      <div ref={containerRef} className="w-full h-screen mt-3 text-center px-10">
-        {(isPostByUserSlugLoading ?? isPostByUserSlugFetching) && postByUserSlug ? (
-          <>
-            <div className="w-full grid grid-cols-8 gap-10">
-              {[...Array(8)].map((_, index) => (
-                <div key={index} className="w-[100%] h-[350px] col-span-2">
-                  <div className="w-full h-full animate-pulse flex-row items-center justify-center rounded-xl bg-gray-300"></div>
-                </div>
-              ))}
+    <div ref={containerRef} className="w-full h-screen px-10 mt-3 text-center">
+      {(isPostByUserSlugLoading ?? isPostByUserSlugFetching) && postByUserSlug ? (
+        <div className="grid w-full grid-cols-8 gap-10">
+          {[...Array(8)].map((_, index) => (
+            <div key={index} className="w-[100%] h-[350px] col-span-2">
+              <div className="flex-row items-center justify-center w-full h-full bg-gray-300 animate-pulse rounded-xl"></div>
             </div>
-          </>
-        ) : (
-          <>
-            <div className="w-full grid grid-cols-8 gap-10">
-              {postByUserSlug?.map((data, index) => (
-                <PostItem key={index} data={data} />
-              ))}
-            </div>
-          </>
-        )}
-      </div>
-    </>
+          ))}
+        </div>
+      ) : (
+        <div className="grid w-full grid-cols-8 gap-10">
+          {postByUserSlug?.map((data, index) => (
+            <PostItem key={index} data={data} />
+          ))}
+        </div>
+      )}
+    </div>
   )
 }
 export default PostTab

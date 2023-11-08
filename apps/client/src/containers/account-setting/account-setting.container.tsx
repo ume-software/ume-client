@@ -106,102 +106,91 @@ const AccountSettingContainer = () => {
   }, [slug.tab])
 
   return (
-    <>
-      <div className="min-h-screen bg-umeBackground grid grid-cols-10 text-white">
-        <div className="col-span-2">
-          <div className="min-w-[150px] min-h-[85%] max-h-[85%] p-10 bg-zinc-800 rounded-3xl sticky top-20 bottom-20 overflow-y-auto hide-scrollbar">
-            <div className="flex flex-col gap-5">
-              {settingType.map((item) => (
-                <>
-                  <div
-                    key={item.key}
-                    className={`flex items-center gap-2 px-2 py-3 rounded-xl cursor-pointer hover:bg-gray-700 ${
-                      children.key == item.key && 'bg-gray-700'
-                    }`}
-                    onClick={() => {
-                      if (
-                        !(
-                          (item.key == 'becomeProvider' && !user?.slug) ||
-                          (item.key == 'vouchers' && !user?.isProvider)
-                        )
-                      ) {
-                        handleChangeTab(item.key)
-                      }
-                    }}
-                  >
-                    {item.key == 'becomeProvider' ? (
-                      <>
-                        <div className={`${!user?.slug && 'opacity-30'}`}>{item.icon}</div>
-                        {!user?.slug ? (
-                          <Tooltip placement="right" title={'Thêm đường dẫn để mở khóa tính năng này'} arrow={true}>
-                            <span
-                              className={`w-full flex justify-between items-center text-xl font-semibold truncate ${
-                                !user?.slug && 'opacity-30'
-                              }`}
-                            >
-                              {item.label}
+    <div className="grid min-h-screen grid-cols-10 text-white bg-umeBackground">
+      <div className="col-span-2">
+        <div className="min-w-[150px] min-h-[85%] max-h-[85%] p-10 bg-zinc-800 rounded-3xl sticky top-20 bottom-20 overflow-y-auto hide-scrollbar">
+          <div className="flex flex-col gap-5">
+            {settingType.map((item) => (
+              <div
+                key={item.key}
+                className={`flex items-center gap-2 px-2 py-3 rounded-xl cursor-pointer hover:bg-gray-700 ${
+                  children.key == item.key && 'bg-gray-700'
+                }`}
+                onClick={() => {
+                  if (
+                    !((item.key == 'becomeProvider' && !user?.slug) || (item.key == 'vouchers' && !user?.isProvider))
+                  ) {
+                    handleChangeTab(item.key)
+                  }
+                }}
+              >
+                {item.key == 'becomeProvider' ? (
+                  <>
+                    <div className={`${!user?.slug && 'opacity-30'}`}>{item.icon}</div>
+                    {!user?.slug ? (
+                      <Tooltip placement="right" title={'Thêm đường dẫn để mở khóa tính năng này'} arrow={true}>
+                        <span
+                          className={`w-full flex justify-between items-center text-xl font-semibold truncate ${
+                            !user?.slug && 'opacity-30'
+                          }`}
+                        >
+                          {item.label}
 
-                              <Lock
-                                className="pl-3 opacity-30"
-                                theme="outline"
-                                size="20"
-                                fill="#FFF"
-                                strokeLinejoin="bevel"
-                              />
-                            </span>
-                          </Tooltip>
-                        ) : (
-                          <span className={`w-full flex justify-between items-center text-xl font-semibold truncate`}>
-                            {item.label}
-                          </span>
-                        )}
-                      </>
-                    ) : item.key == 'vouchers' ? (
-                      <>
-                        <div className={`${!user?.isProvider && 'opacity-30'}`}>{item.icon}</div>{' '}
-                        {!user?.isProvider ? (
-                          <Tooltip
-                            placement="right"
-                            title={'Trở thành nhà cung cấp để mở khóa tính năng này'}
-                            arrow={true}
-                          >
-                            <span
-                              className={`w-full flex justify-between items-center text-xl font-semibold truncate ${
-                                !user?.isProvider && 'opacity-30'
-                              }`}
-                            >
-                              {item.label}
-
-                              <Lock
-                                className="pl-3 opacity-30"
-                                theme="outline"
-                                size="20"
-                                fill="#FFF"
-                                strokeLinejoin="bevel"
-                              />
-                            </span>
-                          </Tooltip>
-                        ) : (
-                          <span className={`w-full flex justify-between items-center text-xl font-semibold truncate`}>
-                            {item.label}
-                          </span>
-                        )}
-                      </>
+                          <Lock
+                            className="pl-3 opacity-30"
+                            theme="outline"
+                            size="20"
+                            fill="#FFF"
+                            strokeLinejoin="bevel"
+                          />
+                        </span>
+                      </Tooltip>
                     ) : (
-                      <>
-                        <div>{item.icon}</div>
-                        <p className="text-xl font-semibold truncate">{item.label}</p>
-                      </>
+                      <span className={`w-full flex justify-between items-center text-xl font-semibold truncate`}>
+                        {item.label}
+                      </span>
                     )}
-                  </div>
-                </>
-              ))}
-            </div>
+                  </>
+                ) : item.key == 'vouchers' ? (
+                  <>
+                    <div className={`${!user?.isProvider && 'opacity-30'}`}>{item.icon}</div>{' '}
+                    {!user?.isProvider ? (
+                      <Tooltip placement="right" title={'Trở thành nhà cung cấp để mở khóa tính năng này'} arrow={true}>
+                        <span
+                          className={`w-full flex justify-between items-center text-xl font-semibold truncate ${
+                            !user?.isProvider && 'opacity-30'
+                          }`}
+                        >
+                          {item.label}
+
+                          <Lock
+                            className="pl-3 opacity-30"
+                            theme="outline"
+                            size="20"
+                            fill="#FFF"
+                            strokeLinejoin="bevel"
+                          />
+                        </span>
+                      </Tooltip>
+                    ) : (
+                      <span className={`w-full flex justify-between items-center text-xl font-semibold truncate`}>
+                        {item.label}
+                      </span>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <div>{item.icon}</div>
+                    <p className="text-xl font-semibold truncate">{item.label}</p>
+                  </>
+                )}
+              </div>
+            ))}
           </div>
         </div>
-        <div className="min-w-[770px] col-span-8">{children.children}</div>
       </div>
-    </>
+      <div className="min-w-[770px] col-span-8">{children.children}</div>
+    </div>
   )
 }
 export default AccountSettingContainer

@@ -1,19 +1,15 @@
-import { DeleteOne, Plus } from '@icon-park/react'
 import { Button, FormInput } from '@ume/ui'
 import empty_img from 'public/empty_error.png'
 
-import * as React from 'react'
-import { useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
-import { Select } from 'antd'
-import { FormikErrors, useFormik } from 'formik'
+import { useFormik } from 'formik'
 import Image from 'next/legacy/image'
 import { ServiceResponse } from 'ume-service-openapi'
 import * as Yup from 'yup'
 
 import ServiceAttributes from './services-attribute-childrend'
 
-import FilterDropdown from '~/components/filter-dropdown'
 import ModalBase from '~/components/modal-base'
 import ComfirmModal from '~/components/modal-base/comfirm-modal'
 
@@ -25,7 +21,7 @@ export interface IServicesModalViewProps {
   idService: string
 }
 
-export default function ServicesModalView({ idService, closeFunction, openValue }: IServicesModalViewProps) {
+export const ServicesModalView = ({ idService, closeFunction, openValue }: IServicesModalViewProps) => {
   const [servicesDetails, setServicesDetails] = useState<ServiceResponse>()
   const SELECT = [
     '$all',
@@ -40,30 +36,24 @@ export default function ServicesModalView({ idService, closeFunction, openValue 
       $where: { deletedAt: null },
     },
   ]
-  const { isLoading, isFetching } = trpc.useQuery(
-    ['services.getServiceDetails', { id: idService, select: JSON.stringify(SELECT) }],
-    {
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: 'always',
-      onSuccess(data) {
-        setServicesDetails(data.data)
-      },
+  trpc.useQuery(['services.getServiceDetails', { id: idService, select: JSON.stringify(SELECT) }], {
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: 'always',
+    onSuccess(data) {
+      setServicesDetails(data.data)
     },
-  )
+  })
   const titleValue = 'Xem dịch vụ'
   const [openConfirm, setOpenConfirm] = useState(false)
-  const [isCreate, setIsCreate] = useState<boolean>(false)
-  const [isSubmiting, setSubmiting] = useState(false)
-  const imageInputRef = useRef<HTMLInputElement>(null)
   const nameInit = servicesDetails?.name
   const viNameInit = servicesDetails?.viName
-  const imageUrlInit = servicesDetails?.imageUrl || empty_img
+  const imageUrlInit = servicesDetails?.imageUrl ?? empty_img
   const isActivatedInit = true
   const numberUsedInit = 100
   const createdAtInit = servicesDetails?.createdAt
     ? new Date(servicesDetails?.createdAt).toLocaleDateString('en-GB')
     : ''
-  const serviceAttributesInit = servicesDetails?.serviceAttributes || []
+  const serviceAttributesInit = servicesDetails?.serviceAttributes ?? []
 
   const form = useFormik({
     initialValues: {
@@ -99,13 +89,12 @@ export default function ServicesModalView({ idService, closeFunction, openValue 
         .min(0, ''),
     }),
     onSubmit: (values, { resetForm }) => {
-      setSubmiting(true)
       openConfirmModal()
       resetForm()
     },
   })
 
-  React.useEffect(() => {
+  useEffect(() => {
     form.setFieldValue('name', nameInit)
     form.setFieldValue('viName', viNameInit)
     form.setFieldValue('imageUrl', imageUrlInit)
@@ -113,6 +102,7 @@ export default function ServicesModalView({ idService, closeFunction, openValue 
     form.setFieldValue('serviceAttributes', serviceAttributesInit)
     form.setFieldValue('numberUsed', numberUsedInit)
     form.setFieldValue('createdAt', createdAtInit)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [servicesDetails])
 
   function closeHandleSmall() {
@@ -122,12 +112,10 @@ export default function ServicesModalView({ idService, closeFunction, openValue 
     setOpenConfirm(true)
   }
   function openConfirmModal() {
-    setIsCreate(true)
     setOpenConfirm(true)
   }
   function closeComfirmFormHandle() {
     setOpenConfirm(false)
-    setIsCreate(false)
   }
   function clearData() {
     form.resetForm()
@@ -137,38 +125,7 @@ export default function ServicesModalView({ idService, closeFunction, openValue 
     clearData()
     closeFunction()
   }
-  const handleImageClick = () => {
-    if (imageInputRef) {
-      imageInputRef.current?.click()
-    }
-  }
-  const handleMediaChange = (e) => {
-    const file = e.target.files[0]
-    if (file && file.type.startsWith('image/')) {
-      const reader = new FileReader()
-      reader.onload = () => {
-        form.setFieldValue('selectedImage', file)
-        form.setFieldValue('imageUrl', URL.createObjectURL(file))
-      }
-      reader.readAsDataURL(file)
-    }
-  }
 
-  const addChildComponent = () => {
-    form.setFieldValue('serviceAttributes', [
-      ...form.values.serviceAttributes,
-      {
-        attribute: '',
-        viAttribute: '',
-        isActivated: true,
-        serviceAttributeValues: [],
-      },
-    ])
-  }
-  const mappingStatus = {
-    false: 'Tạm dừng',
-    true: 'Hoạt động',
-  }
   async function submitHandle() {
     closeHandle()
   }

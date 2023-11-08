@@ -54,17 +54,15 @@ const CommunityContainer = () => {
     backgroundColor: '#15151b',
     closeWhenClickOutSide: true,
     closeButtonOnConner: (
-      <>
-        <CloseSmall
-          onClick={handleClose}
-          onKeyDown={(e) => e.key === 'Enter' && handleClose()}
-          tabIndex={1}
-          className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
-          theme="outline"
-          size="24"
-          fill="#FFFFFF"
-        />
-      </>
+      <CloseSmall
+        onClick={handleClose}
+        onKeyDown={(e) => e.key === 'Enter' && handleClose()}
+        tabIndex={1}
+        className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
+        theme="outline"
+        size="24"
+        fill="#FFFFFF"
+      />
     ),
   })
 
@@ -82,7 +80,7 @@ const CommunityContainer = () => {
       <div className="min-h-screen" style={{ margin: '0 70px' }}>
         <div className="grid grid-cols-10 gap-10 text-white">
           <div className="col-span-2">
-            <div className="flex flex-col gap-10 sticky top-20">
+            <div className="sticky flex flex-col gap-10 top-20">
               <div className="p-10 bg-zinc-800 rounded-2xl">
                 <div className="flex flex-col gap-5">
                   {postTypeData.map((item) => (
@@ -100,7 +98,7 @@ const CommunityContainer = () => {
               </div>
               <div>
                 <div
-                  className="rounded-full w-full text-white bg-purple-700 py-2 font-medium text-xl hover:scale-105 text-center cursor-pointer"
+                  className="w-full py-2 text-xl font-medium text-center text-white bg-purple-700 rounded-full cursor-pointer hover:scale-105"
                   onClick={handleCreatePost}
                 >
                   Tạo bài viết

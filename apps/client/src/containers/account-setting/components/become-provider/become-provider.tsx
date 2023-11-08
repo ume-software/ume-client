@@ -77,17 +77,15 @@ const BecomeProvider = () => {
     backgroundColor: '#15151b',
     closeWhenClickOutSide: false,
     closeButtonOnConner: (
-      <>
-        <CloseSmall
-          onClick={handleClose}
-          onKeyDown={(e) => e.key === 'Enter' && handleClose()}
-          tabIndex={1}
-          className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
-          theme="outline"
-          size="24"
-          fill="#FFFFFF"
-        />
-      </>
+      <CloseSmall
+        onClick={handleClose}
+        onKeyDown={(e) => e.key === 'Enter' && handleClose()}
+        tabIndex={1}
+        className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
+        theme="outline"
+        size="24"
+        fill="#FFFFFF"
+      />
     ),
   })
 
@@ -121,8 +119,8 @@ const BecomeProvider = () => {
           </div>
           <div className="flex flex-col gap-10">
             <div className="space-y-5">
-              <div className="w-full flex justify-between items-end">
-                <p className="text-md font-semibold">Tài khoản rút tiền</p>
+              <div className="flex items-end justify-between w-full">
+                <p className="font-semibold text-md">Tài khoản rút tiền</p>
                 <Button
                   customCSS="text-md py-2 px-5 rounded-xl hover:scale-105"
                   isActive={true}
@@ -136,52 +134,50 @@ const BecomeProvider = () => {
                 </Button>
               </div>
               {!isUserPaymentPlatformLoading ? (
-                <>
-                  <Swiper spaceBetween={20} slidesPerView="auto" mousewheel={true} direction="horizontal">
-                    {userPaymentPlatformData?.data?.row?.map((paymentPlatform) => (
-                      <SwiperSlide
-                        className="max-w-fit duration-500 ease-in-out cursor-pointer hover:scale-105"
-                        key={paymentPlatform.id}
-                        onClick={() => handleViewPaymentAccount(paymentPlatform)}
+                <Swiper spaceBetween={20} slidesPerView="auto" mousewheel={true} direction="horizontal">
+                  {userPaymentPlatformData?.data?.row?.map((paymentPlatform) => (
+                    <SwiperSlide
+                      className="duration-500 ease-in-out cursor-pointer max-w-fit hover:scale-105"
+                      key={paymentPlatform.id}
+                      onClick={() => handleViewPaymentAccount(paymentPlatform)}
+                    >
+                      <div
+                        className={`flex items-center gap-5 border-2 border-white border-opacity-30 rounded-2xl p-3`}
                       >
-                        <div
-                          className={`flex items-center gap-5 border-2 border-white border-opacity-30 rounded-2xl p-3`}
-                        >
-                          <div className="relative w-[130px] h-[130px]">
-                            <Image
-                              key={paymentPlatform.id}
-                              className="absolute rounded-xl pointer-events-none object-cover"
-                              layout="fill"
-                              src={
-                                paymentPlat.find((paymentPlat) => paymentPlat.key == paymentPlatform.platform)
-                                  ?.imgSrc ?? ImgForEmpty
-                              }
-                              alt={paymentPlatform.platform}
-                            />
-                          </div>
-                          <div className="">
-                            <span className="flex gap-3">
-                              <p className="text-white opacity-30">Nền tảng:</p> {paymentPlatform.platform}
-                            </span>
-                            <span className="flex gap-3">
-                              <p className="text-white opacity-30">Số tài khoản:</p> {paymentPlatform.platformAccount}
-                            </span>
-                            <span className="flex gap-3">
-                              <p className="text-white opacity-30">Người nhận:</p> {paymentPlatform.beneficiary}
-                            </span>
-                          </div>
+                        <div className="relative w-[130px] h-[130px]">
+                          <Image
+                            key={paymentPlatform.id}
+                            className="absolute object-cover pointer-events-none rounded-xl"
+                            layout="fill"
+                            src={
+                              paymentPlat.find((paymentPlat) => paymentPlat.key == paymentPlatform.platform)?.imgSrc ??
+                              ImgForEmpty
+                            }
+                            alt={paymentPlatform.platform}
+                          />
                         </div>
-                      </SwiperSlide>
-                    ))}
-                  </Swiper>
-                </>
+                        <div className="">
+                          <span className="flex gap-3">
+                            <p className="text-white opacity-30">Nền tảng:</p> {paymentPlatform.platform}
+                          </span>
+                          <span className="flex gap-3">
+                            <p className="text-white opacity-30">Số tài khoản:</p> {paymentPlatform.platformAccount}
+                          </span>
+                          <span className="flex gap-3">
+                            <p className="text-white opacity-30">Người nhận:</p> {paymentPlatform.beneficiary}
+                          </span>
+                        </div>
+                      </div>
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
               ) : (
                 <SliderSkeletonLoader />
               )}
             </div>
             {checked && (
               <div className="space-y-3">
-                <p className="text-md font-semibold">Dịch vụ</p>
+                <p className="font-semibold text-md">Dịch vụ</p>
                 <ServiceForm />
               </div>
             )}

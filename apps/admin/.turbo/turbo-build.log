@@ -6,25 +6,37 @@ warn  - Invalid next.config.js options detected:
 
 See more info here: https://nextjs.org/docs/messages/invalid-next-config
 info  - Linting and checking validity of types...
+info  - Creating an optimized production build...
+info  - Compiled successfully
+info  - Collecting page data...
+info  - Generating static pages (0/8)
+info  - Generating static pages (2/8)
+info  - Generating static pages (4/8)
+info  - Generating static pages (6/8)
+info  - Generating static pages (8/8)
+info  - Finalizing page optimization...
 
-./src/containers/voucher-manager-page/components/vourcher-modal/vourcher-modal-update.tsx
-154:6  Warning: React Hook React.useEffect has missing dependencies: 'ImageInit', 'applyTimeInit', 'audienceInit', 'descriptionInit', 'discountUnitInit', 'form', 'minimizeInit', 'nameInit', 'numUserCanUseInDayInit', 'numUserCanUseInit', 'numVoucherInDayInit', 'numVoucherInit', 'statusInit', 'typeVoucherInit', and 'vourcherCodeInit'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+Route (pages)                              Size     First Load JS
+┌ λ /                                      257 B           193 kB
+├   /_app                                  0 B             192 kB
+├ λ /404                                   334 B           193 kB
+├ λ /api/status                            0 B             192 kB
+├ λ /api/trpc/[trpc]                       0 B             192 kB
+├ ○ /dashboard                             1.8 kB          194 kB
+├ ○ /kyc-manager/[task]                    1.88 kB         194 kB
+├ ○ /provider-manager                      1.84 kB         194 kB
+├ ○ /services-manager                      1.84 kB         194 kB
+├ ○ /signin                                1.81 kB         194 kB
+├ ○ /transaction-manager/[task]            1.86 kB         194 kB
+├ ○ /user-manager                          1.84 kB         194 kB
+└ ○ /voucher-manager/[task]                1.9 kB          194 kB
++ First Load JS shared by all              198 kB
+  ├ chunks/framework-22108eb722d84e59.js   45.4 kB
+  ├ chunks/main-1549b305685c3af3.js        26.7 kB
+  ├ chunks/pages/_app-bba878bf4dee0c38.js  118 kB
+  ├ chunks/webpack-99c442de4e130d65.js     2.14 kB
+  └ css/23ca0c312ee5a57a.css               5.84 kB
 
-info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules
-Failed to compile.
+λ  (Server)  server-side renders at runtime (uses getInitialProps or getServerSideProps)
+○  (Static)  automatically rendered as static HTML (uses no initial props)
 
-./src/components/common-table/table.tsx:6:45
-Type error: File name '/Users/huyqtrieu/Desktop/Personal/ume-client/apps/admin/src/components/common-table/Pagination.tsx' differs from already included file name '/Users/huyqtrieu/Desktop/Personal/ume-client/apps/admin/src/components/common-table/pagination.tsx' only in casing.
-  The file is in the program because:
-    Root file specified for compilation
-    Imported via './Pagination' from file '/Users/huyqtrieu/Desktop/Personal/ume-client/apps/admin/src/components/common-table/table.tsx'
-
-[0m [90m 4 | [39m[36mimport[39m type { [33mColumnsType[39m } [36mfrom[39m [32m'antd/es/table'[39m[0m
-[0m [90m 5 | [39m[0m
-[0m[31m[1m>[22m[39m[90m 6 | [39m[36mimport[39m [33mPagination[39m[33m,[39m { [33mPaginationProps[39m } [36mfrom[39m [32m'./Pagination'[39m[0m
-[0m [90m   | [39m                                            [31m[1m^[22m[39m[0m
-[0m [90m 7 | [39m[0m
-[0m [90m 8 | [39m[36mexport[39m type [33mICommonTableProps[39m [33m=[39m [33mPaginationProps[39m [33m&[39m {[0m
-[0m [90m 9 | [39m  columns[33m:[39m [33mColumnsType[39m[33m<[39m[33many[39m[33m>[39m[0m
-error Command failed with exit code 1.
-info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.

@@ -1,28 +1,18 @@
 import { ArrowLeft, Dot } from '@icon-park/react'
 import { CustomDrawer } from '@ume/ui'
-import cover from 'public/cover.png'
 import Chat from '~/containers/chat/chat.container'
 import { useAuth } from '~/contexts/auth'
 
-import { ReactNode, useContext, useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
-import Image, { StaticImageData } from 'next/legacy/image'
+import Image from 'next/legacy/image'
 
 import { LoginModal } from '../header/login-modal.component'
 import { DrawerContext, SocketContext } from '../layouts/app-layout/app-layout'
 
 import { trpc } from '~/utils/trpc'
 
-interface chatProps {
-  imgSrc: string | StaticImageData
-  name: string
-  message?: {
-    player?: { context: any; time: Date }[]
-    me?: { context: any; time: Date }[]
-  }
-}
-
-export const Sidebar = (props) => {
+export const Sidebar = () => {
   const { childrenDrawer, setChildrenDrawer } = useContext(DrawerContext)
 
   const { isAuthenticated, user } = useAuth()
@@ -78,7 +68,14 @@ export const Sidebar = (props) => {
         <CustomDrawer
           customOpenBtn={`p-2 bg-gray-700 rounded-full cursor-pointer hover:bg-gray-500 active:bg-gray-400`}
           openBtn={
-            <div onClick={() => handleChatOpen()}>
+            <div
+              onClick={() => handleChatOpen()}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  handleChatOpen()
+                }
+              }}
+            >
               <ArrowLeft theme="outline" size="30" fill="#fff" />
             </div>
           }

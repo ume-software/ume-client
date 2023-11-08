@@ -23,7 +23,7 @@ import * as Yup from 'yup'
 
 import MenuForVoucher from './menu-voucher'
 
-import ConfirmForm from '~/components/confirm-form/confirmForm'
+import ConfirmForm from '~/components/confirm-form/confirm-form'
 
 import { trpc } from '~/utils/trpc'
 
@@ -87,11 +87,13 @@ const timeInWeekType: IEnumType[] = [
   },
 ]
 
-export default function VourcherModal(props: {
-  handleCloseModalVoucher: () => void
-  actionModal: string
-  voucherSelected: VoucherResponse | undefined
-}) {
+export default function VourcherModal(
+  props: Readonly<{
+    handleCloseModalVoucher: () => void
+    actionModal: string
+    voucherSelected?: VoucherResponse
+  }>,
+) {
   const { user } = useAuth()
   const issuer = user?.name
   const today = new Date().toISOString().split('T')[0]
@@ -318,35 +320,31 @@ export default function VourcherModal(props: {
     onClose: handleClose,
     show: isModalConfirmationVisible,
     form: (
-      <>
-        <ConfirmForm
-          title={`${props.actionModal == ActionEnum.CREATE ? 'Tạo khuyến mãi mới' : 'Cập hật khuyến mãi'}`}
-          description={`${
-            props.actionModal == ActionEnum.CREATE
-              ? 'Bạn có chấp nhận tạo khuyến mãi mới hay không?'
-              : 'Bạn có chấp nhận cập khuyến mãi này hay không?'
-          }`}
-          onClose={handleClose}
-          onOk={() => {
-            props.actionModal == ActionEnum.CREATE ? handleSubmitCreateVoucher() : handleSubmitUpdateVoucher()
-          }}
-        />
-      </>
+      <ConfirmForm
+        title={`${props.actionModal == ActionEnum.CREATE ? 'Tạo khuyến mãi mới' : 'Cập hật khuyến mãi'}`}
+        description={`${
+          props.actionModal == ActionEnum.CREATE
+            ? 'Bạn có chấp nhận tạo khuyến mãi mới hay không?'
+            : 'Bạn có chấp nhận cập khuyến mãi này hay không?'
+        }`}
+        onClose={handleClose}
+        onOk={() => {
+          props.actionModal == ActionEnum.CREATE ? handleSubmitCreateVoucher() : handleSubmitUpdateVoucher()
+        }}
+      />
     ),
     backgroundColor: '#15151b',
     closeWhenClickOutSide: true,
     closeButtonOnConner: (
-      <>
-        <CloseSmall
-          onClick={handleClose}
-          onKeyDown={(e) => e.key === 'Enter' && handleClose()}
-          tabIndex={1}
-          className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
-          theme="outline"
-          size="24"
-          fill="#FFFFFF"
-        />
-      </>
+      <CloseSmall
+        onClick={handleClose}
+        onKeyDown={(e) => e.key === 'Enter' && handleClose()}
+        tabIndex={1}
+        className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
+        theme="outline"
+        size="24"
+        fill="#FFFFFF"
+      />
     ),
   })
 
@@ -574,6 +572,7 @@ export default function VourcherModal(props: {
                 }
                 `}
                 onClick={handleImageClick}
+                onKeyDown={() => {}}
               >
                 {form.values.imageSource && (
                   <Image
@@ -605,7 +604,7 @@ export default function VourcherModal(props: {
             <div className="flex flex-col justify-end w-2/5">
               <div className="w-full text-white">
                 Tên* :
-                <div className="relative h-12 ml-4 inline-block w-2/3">
+                <div className="relative inline-block w-2/3 h-12 ml-4">
                   <FormInput
                     name="name"
                     type="text"
@@ -623,13 +622,13 @@ export default function VourcherModal(props: {
                     errorMessage={''}
                   />
                   {!!form.errors.name && form.touched.name && (
-                    <p className="absolute bottom-0 text-red-500 text-xs">{form.errors.name}</p>
+                    <p className="absolute bottom-0 text-xs text-red-500">{form.errors.name}</p>
                   )}
                 </div>
               </div>
               <div className="h-12 text-white">
                 Mã* :
-                <div className="relative h-12 ml-4 inline-block w-2/3">
+                <div className="relative inline-block w-2/3 h-12 ml-4">
                   <FormInput
                     name="vourcherCode"
                     className={`${
@@ -652,12 +651,12 @@ export default function VourcherModal(props: {
                     type="text"
                   />
                   {!!form.errors.vourcherCode && form.touched.vourcherCode && (
-                    <p className="absolute bottom-0 text-red-500 text-xs">{form.errors.vourcherCode}</p>
+                    <p className="absolute bottom-0 text-xs text-red-500">{form.errors.vourcherCode}</p>
                   )}
                   {!isCheckVoucherCodeLoading ? (
                     props.actionModal == ActionEnum.CREATE &&
                     checkVoucherCode?.data.isExisted && (
-                      <p className="absolute bottom-0 text-red-500 text-xs">Mã này đã được sử dụng</p>
+                      <p className="absolute bottom-0 text-xs text-red-500">Mã này đã được sử dụng</p>
                     )
                   ) : (
                     <span
@@ -694,7 +693,7 @@ export default function VourcherModal(props: {
                   />
                 </div>
               </div>
-              <div className="h-12 flex justify-start text-white">
+              <div className="flex justify-start h-12 text-white">
                 Ngày kết thúc* :
                 <div className="relative inline-block w-1/3 ml-4">
                   <FormInput
@@ -715,7 +714,7 @@ export default function VourcherModal(props: {
                     required
                   />
                   {!!form.errors.endDate && form.touched.endDate && (
-                    <p className="absolute bottom-0 text-red-500 text-xs">{form.errors.endDate}</p>
+                    <p className="absolute bottom-0 text-xs text-red-500">{form.errors.endDate}</p>
                   )}
                 </div>
               </div>
@@ -726,7 +725,7 @@ export default function VourcherModal(props: {
           </div>
 
           <div className="flex w-auto px-4 border-b-2 border-[#FFFFFF80] pb-5">
-            <div className="flex flex-col justify-end w-3/5 mt-5 gap-3">
+            <div className="flex flex-col justify-end w-3/5 gap-3 mt-5">
               <div className="text-white">
                 Số lượng phát hành* :
                 <div className="relative inline-block w-2/5 h-12 ml-4">
@@ -749,7 +748,7 @@ export default function VourcherModal(props: {
                     />
                   </div>
                   {!!form.errors.numVoucher && form.touched.numVoucher && (
-                    <p className="absolute bottom-0 text-red-500 text-xs">{form.errors.numVoucher}</p>
+                    <p className="absolute bottom-0 text-xs text-red-500">{form.errors.numVoucher}</p>
                   )}
                 </div>
               </div>
@@ -777,7 +776,7 @@ export default function VourcherModal(props: {
                     />
                   </div>
                   {!!form.errors.numUserCanUse && form.touched.numUserCanUse && (
-                    <p className="absolute bottom-0 text-red-500 text-xs">{form.errors.numUserCanUse}</p>
+                    <p className="absolute bottom-0 text-xs text-red-500">{form.errors.numUserCanUse}</p>
                   )}
                 </div>
               </div>
@@ -813,10 +812,10 @@ export default function VourcherModal(props: {
                   />
                 }
               </div>
-              <div className="h-12 text-white flex items-center">
+              <div className="flex items-center h-12 text-white">
                 Số giờ tối thiểu để sử dụng:
-                <div className="relative ml-4 h-12 flex items-center w-6/12 ">
-                  <div className="w-5/12 flex items-center">
+                <div className="relative flex items-center w-6/12 h-12 ml-4 ">
+                  <div className="flex items-center w-5/12">
                     <FormInput
                       name="minimumBookingDurationForUsage"
                       className={`${
@@ -870,7 +869,7 @@ export default function VourcherModal(props: {
                     />
                   </div>
                   {!!form.errors.numVoucherInDay && form.touched.numVoucherInDay && (
-                    <p className="absolute bottom-0 text-red-500 text-xs">{form.errors.numVoucherInDay}</p>
+                    <p className="absolute bottom-0 text-xs text-red-500">{form.errors.numVoucherInDay}</p>
                   )}
                 </div>
               </div>
@@ -896,13 +895,13 @@ export default function VourcherModal(props: {
                   />
                 </div>
                 {!!form.errors.numUserCanUseInDay && form.touched.numUserCanUseInDay && (
-                  <p className="absolute bottom-0 right-0 text-red-500 text-xs">{form.errors.numUserCanUseInDay}</p>
+                  <p className="absolute bottom-0 right-0 text-xs text-red-500">{form.errors.numUserCanUseInDay}</p>
                 )}
               </div>
               <div className="flex items-center gap-3 text-white">
-                <div className="relative h-12 flex items-center">
+                <div className="relative flex items-center h-12">
                   Giảm* :
-                  <div className="w-4/12 ml-4 flex items-center">
+                  <div className="flex items-center w-4/12 ml-4">
                     <FormInput
                       name="discountValue"
                       className={`${
@@ -921,7 +920,7 @@ export default function VourcherModal(props: {
                       max={100}
                     />
                   </div>
-                  <div className="w-4/12 ml-1 flex items-center">
+                  <div className="flex items-center w-4/12 ml-1">
                     <MenuForVoucher
                       buttonTitle={moneyType.find((item) => item.key == form.values.discountUnit)?.label}
                       buttonCustomCss={`min-w-[50px] ${
@@ -938,9 +937,9 @@ export default function VourcherModal(props: {
                   )}
                 </div>
                 {form.values.discountUnit == CreateVoucherRequestDiscountUnitEnum.Percent && (
-                  <div className="relative w-6/12 h-12 flex items-center">
+                  <div className="relative flex items-center w-6/12 h-12">
                     Giảm tối đa:
-                    <div className="w-5/12 flex items-center">
+                    <div className="flex items-center w-5/12">
                       <FormInput
                         name="minimize"
                         className={`${
@@ -979,10 +978,10 @@ export default function VourcherModal(props: {
                   onChange={(e) => handleRecipientType(e.key)}
                 />
               </div>
-              <div className="h-12 text-white flex items-center">
+              <div className="flex items-center h-12 text-white">
                 Số tiền tối thiểu để sử dụng:
-                <div className="relative w-6/12 h-12 flex items-center">
-                  <div className="w-8/12 flex items-center">
+                <div className="relative flex items-center w-6/12 h-12">
+                  <div className="flex items-center w-8/12">
                     <FormInput
                       name="minimumBookingTotalPriceForUsage"
                       className={`${
@@ -1033,9 +1032,7 @@ export default function VourcherModal(props: {
         </div>
         <div className="flex justify-center gap-10 pb-4 mt-6">
           {props.voucherSelected?.status == VoucherResponseStatusEnum.Approved ? (
-            <>
-              <p className="text-white opacity-30">Bạn chỉ có thể chỉnh sửa voucher chưa được admin chấp nhận</p>
-            </>
+            <p className="text-white opacity-30">Bạn chỉ có thể chỉnh sửa voucher chưa được admin chấp nhận</p>
           ) : (
             <>
               <Button
