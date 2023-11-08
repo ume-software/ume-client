@@ -1,6 +1,6 @@
 import { useAuth } from '~/contexts/auth'
 
-import { useCallback, useContext, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { notification } from 'antd'
 import Image from 'next/image'
@@ -177,15 +177,15 @@ const Notificate = (props: { type: string }) => {
                     {item?.id === result && props.type === 'order' ? (
                       <div>Bạn đã xử lý yêu cầu này!</div>
                     ) : (
-                      <div className="flex justify-around gap-5 pt-3 px-3">
+                      <div className="flex justify-around gap-5 px-3 pt-3">
                         <div
-                          className="rounded-lg w-full text-white bg-purple-700 py-1 font-normal text-md hover:scale-105 text-center cursor-pointer"
+                          className="w-full py-1 font-normal text-center text-white bg-purple-700 rounded-lg cursor-pointer text-md hover:scale-105"
                           onClick={() => handleAcceptBooking(item?.id, item?.booker?.name)}
                         >
                           Chấp nhận
                         </div>
                         <div
-                          className="rounded-lg w-full text-purple-700 border-2 border-purple-700 py-1 font-normal text-md hover:scale-105 text-center cursor-pointer"
+                          className="w-full py-1 font-normal text-center text-purple-700 border-2 border-purple-700 rounded-lg cursor-pointer text-md hover:scale-105"
                           onClick={() => handleUnacceptBooking(item?.id, item?.booker?.name)}
                         >
                           Từ chối

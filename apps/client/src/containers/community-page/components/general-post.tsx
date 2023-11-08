@@ -1,6 +1,6 @@
 import { useAuth } from '~/contexts/auth'
 
-import { useCallback, useContext, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { PostResponse } from 'ume-service-openapi'
 
@@ -75,9 +75,7 @@ const GeneralPost = () => {
   return (
     <>
       {loadingSuggestPost && suggestPostData === undefined ? (
-        <>
-          <PostSkeletonLoader />
-        </>
+        <PostSkeletonLoader />
       ) : (
         <div ref={containerRef}>
           {suggestPostData?.map((data, index) => (

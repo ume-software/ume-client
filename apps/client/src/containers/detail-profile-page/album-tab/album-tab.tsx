@@ -53,17 +53,15 @@ const AlbumTab = (props: { data: UserInformationResponse }) => {
     backgroundColor: '#15151b',
     closeWhenClickOutSide: true,
     closeButtonOnConner: (
-      <>
-        <CloseSmall
-          onClick={handleClose}
-          onKeyDown={(e) => e.key === 'Enter' && handleClose()}
-          tabIndex={1}
-          className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
-          theme="outline"
-          size="24"
-          fill="#FFFFFF"
-        />
-      </>
+      <CloseSmall
+        onClick={handleClose}
+        onKeyDown={(e) => e.key === 'Enter' && handleClose()}
+        tabIndex={1}
+        className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
+        theme="outline"
+        size="24"
+        fill="#FFFFFF"
+      />
     ),
   })
 
@@ -101,37 +99,33 @@ const AlbumTab = (props: { data: UserInformationResponse }) => {
       {isPostModal && PostModal}
       <div ref={containerRef} className="w-full px-10">
         {album && album.length > 0 ? (
-          <>
-            <div className="w-full grid grid-cols-8 gap-10">
-              {album.map((item, index) => (
-                <div
-                  className="w-[100%] h-[350px] place-content-center relative col-span-2 rounded-xl overflow-hidden border-2 border-white border-opacity-30 cursor-pointer"
-                  key={index}
-                  onClick={() => handleOpenImageModal(item.postId)}
-                >
-                  <Image
-                    className="absolute top-0 left-0 right-0"
-                    layout="fill"
-                    objectFit="cover"
-                    src={item.url}
-                    alt="Person Image"
-                  />
-                </div>
-              ))}
-            </div>
-          </>
+          <div className="grid w-full grid-cols-8 gap-10">
+            {album.map((item, index) => (
+              <div
+                className="w-[100%] h-[350px] place-content-center relative col-span-2 rounded-xl overflow-hidden border-2 border-white border-opacity-30 cursor-pointer"
+                key={index}
+                onClick={() => handleOpenImageModal(item.postId)}
+              >
+                <Image
+                  className="absolute top-0 left-0 right-0"
+                  layout="fill"
+                  objectFit="cover"
+                  src={item.url}
+                  alt="Person Image"
+                />
+              </div>
+            ))}
+          </div>
         ) : (
           <div className="w-full h-screen mt-3 text-center">
             {isLoadingAlbum ?? isAlbumFetching ? (
-              <>
-                <div className="w-full grid grid-cols-8 gap-10">
-                  {[...Array(8)].map((_, index) => (
-                    <div key={index} className="w-[100%] h-[350px] col-span-2">
-                      <div className="w-full h-full animate-pulse flex-row items-center justify-center rounded-xl bg-gray-300"></div>
-                    </div>
-                  ))}
-                </div>
-              </>
+              <div className="grid w-full grid-cols-8 gap-10">
+                {[...Array(8)].map((_, index) => (
+                  <div key={index} className="w-[100%] h-[350px] col-span-2">
+                    <div className="flex-row items-center justify-center w-full h-full bg-gray-300 animate-pulse rounded-xl"></div>
+                  </div>
+                ))}
+              </div>
             ) : (
               <Image src={ImgForEmpty} alt="EmptyImage" />
             )}

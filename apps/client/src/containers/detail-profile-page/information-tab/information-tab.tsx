@@ -1,5 +1,5 @@
 import { Down, Gamepad, People, Right } from '@icon-park/react'
-import { Button, CustomDrawer } from '@ume/ui'
+import { CustomDrawer } from '@ume/ui'
 import coin from 'public/coin-icon.png'
 import ImgForEmpty from 'public/img-for-empty.png'
 import Chat from '~/containers/chat/chat.container'
@@ -67,11 +67,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
 
   const handleChatOpen = async () => {
     if (isAuthenticated) {
-      setChildrenDrawer(
-        <>
-          <ChatSkeleton />
-        </>,
-      )
+      setChildrenDrawer(<ChatSkeleton />)
       try {
         createNewChatChannel.mutate(
           {
@@ -116,150 +112,146 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
         <LoginModal isModalLoginVisible={isModalLoginVisible} setIsModalLoginVisible={setIsModalLoginVisible} />
       </div>
       {props.data ? (
-        <>
-          <div className="grid w-full grid-cols-10 gap-10 px-10">
-            <div className="col-span-2">
-              <div className="sticky p-10 bg-zinc-800 rounded-3xl top-20">
-                <div className="flex flex-col gap-5">
-                  <div
-                    className={`flex items-center p-3 rounded-xl gap-2 cursor-pointer hover:bg-gray-700 ${
-                      !gameSelected ? 'bg-gray-700' : ''
-                    }`}
-                    onClick={() => handleSelected(undefined)}
-                  >
-                    <People theme="outline" size="18" fill="#fff" />
-                    <p className="text-xl font-semibold ">Đôi chút về tui</p>
+        <div className="grid w-full grid-cols-10 gap-10 px-10">
+          <div className="col-span-2">
+            <div className="sticky p-10 bg-zinc-800 rounded-3xl top-20">
+              <div className="flex flex-col gap-5">
+                <div
+                  className={`flex items-center p-3 rounded-xl gap-2 cursor-pointer hover:bg-gray-700 ${
+                    !gameSelected ? 'bg-gray-700' : ''
+                  }`}
+                  onClick={() => handleSelected(undefined)}
+                >
+                  <People theme="outline" size="18" fill="#fff" />
+                  <p className="text-xl font-semibold ">Đôi chút về tui</p>
+                </div>
+                <div className="flex flex-col gap-5 cursor-pointer">
+                  <div className="flex flex-row items-center gap-2 p-3" onClick={handleGamesToggle}>
+                    <Gamepad theme="outline" size="18" fill="#fff" />
+                    <p className="text-xl font-semibold">Game tui chơi</p>
+                    {gamesToggle ? (
+                      <Down theme="outline" size="20" fill="#fff" />
+                    ) : (
+                      <Right theme="outline" size="20" fill="#fff" />
+                    )}
                   </div>
-                  <div className="flex flex-col gap-5 cursor-pointer">
-                    <div className="flex flex-row items-center gap-2 p-3" onClick={handleGamesToggle}>
-                      <Gamepad theme="outline" size="18" fill="#fff" />
-                      <p className="text-xl font-semibold">Game tui chơi</p>
-                      {gamesToggle ? (
-                        <Down theme="outline" size="20" fill="#fff" />
-                      ) : (
-                        <Right theme="outline" size="20" fill="#fff" />
-                      )}
-                    </div>
-                    <div
-                      className={`pl-5 gap-3 ${
-                        gamesToggle
-                          ? 'flex flex-col items-start h-[500px] overflow-y-scroll overflow-x-hidden hide-scrollbar'
-                          : 'hidden'
-                      }`}
-                    >
-                      {props.data?.providerServices?.map((item) => (
-                        <div
-                          key={item.id}
-                          className={`flex lg:flex-row flex-col items-center group gap-3 hover:bg-gray-700 p-1 rounded-xl ${
-                            gameSelected && (gameSelected == item.service?.slug || gameSelected == item.serviceId)
-                              ? 'bg-gray-700'
-                              : ''
-                          }`}
-                          onClick={() => handleSelected(item.service?.slug ?? item.serviceId)}
-                        >
-                          <Image src={item?.service?.imageUrl ?? ImgForEmpty} alt="Game Image" width={60} height={80} />
-                          <div className="max-w-[150px] min-w-[150px]">
-                            <p className="font-semibold text-lg text-white z-[4] truncate group-hover:w-fit">
-                              {item?.service?.name}
+                  <div
+                    className={`pl-5 gap-3 ${
+                      gamesToggle
+                        ? 'flex flex-col items-start h-[500px] overflow-y-scroll overflow-x-hidden hide-scrollbar'
+                        : 'hidden'
+                    }`}
+                  >
+                    {props.data?.providerServices?.map((item) => (
+                      <div
+                        key={item.id}
+                        className={`flex lg:flex-row flex-col items-center group gap-3 hover:bg-gray-700 p-1 rounded-xl ${
+                          gameSelected && (gameSelected == item.service?.slug || gameSelected == item.serviceId)
+                            ? 'bg-gray-700'
+                            : ''
+                        }`}
+                        onClick={() => handleSelected(item.service?.slug ?? item.serviceId)}
+                      >
+                        <Image src={item?.service?.imageUrl ?? ImgForEmpty} alt="Game Image" width={60} height={80} />
+                        <div className="max-w-[150px] min-w-[150px]">
+                          <p className="font-semibold text-lg text-white z-[4] truncate group-hover:w-fit">
+                            {item?.service?.name}
+                          </p>
+                          <div className="flex items-center">
+                            <Image src={coin} width={20} height={20} alt="coin" />
+                            <p className="font-semibold text-md text-white opacity-30 z-[4] truncate group-hover:w-fit">
+                              {item.defaultCost} / 1h
                             </p>
-                            <div className="flex items-center">
-                              <Image src={coin} width={20} height={20} alt="coin" />
-                              <p className="font-semibold text-md text-white opacity-30 z-[4] truncate group-hover:w-fit">
-                                {item.defaultCost} / 1h
-                              </p>
-                            </div>
                           </div>
                         </div>
-                      ))}
-                    </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
             </div>
-            <div className="col-span-5">
-              <div className="flex flex-col gap-8">
-                {selectedService && gameSelected ? (
-                  <Service data={selectedService} />
-                ) : (
-                  <PersonalIntroduce data={props.data} />
-                )}
-              </div>
+          </div>
+          <div className="col-span-5">
+            <div className="flex flex-col gap-8">
+              {selectedService && gameSelected ? (
+                <Service data={selectedService} />
+              ) : (
+                <PersonalIntroduce data={props.data} />
+              )}
             </div>
-            <div className="col-span-3">
-              <div className="sticky flex flex-col gap-3 top-20">
-                <div className="relative w-full h-[450px] bg-zinc-800 rounded-3xl p-10">
-                  <Image
-                    className="absolute rounded-xl"
-                    layout="fill"
-                    objectFit="cover"
-                    src={props.data?.avatarUrl ?? ImgForEmpty}
-                    alt="Empty Image"
-                  />
-                </div>
-                {user?.id != props.data?.id ? (
-                  <div className="flex flex-col gap-5 my-10">
+          </div>
+          <div className="col-span-3">
+            <div className="sticky flex flex-col gap-3 top-20">
+              <div className="relative w-full h-[450px] bg-zinc-800 rounded-3xl p-10">
+                <Image
+                  className="absolute rounded-xl"
+                  layout="fill"
+                  objectFit="cover"
+                  src={props.data?.avatarUrl ?? ImgForEmpty}
+                  alt="Empty Image"
+                />
+              </div>
+              {user?.id != props.data?.id ? (
+                <div className="flex flex-col gap-5 my-10">
+                  <CustomDrawer
+                    customOpenBtn={`rounded-full text-purple-700 border-2 border-purple-700 font-semibold text-2xl cursor-pointer hover:scale-105 text-center`}
+                    openBtn={
+                      <button
+                        className="w-full h-full py-2 bg-transparent focus:outline-none"
+                        type="button"
+                        onClick={handleChatOpen}
+                      >
+                        {createNewChatChannel.isLoading && (
+                          <span
+                            className={`spinner h-5 w-5 animate-spin rounded-full border-[3px] border-r-transparent dark:border-navy-300 dark:border-r-transparent border-white
+`}
+                          />
+                        )}
+                        Chat
+                      </button>
+                    }
+                    token={isAuthenticated}
+                  >
+                    {childrenDrawer}
+                  </CustomDrawer>
+
+                  {!props.data?.isBanned && (
                     <CustomDrawer
-                      customOpenBtn={`rounded-full text-purple-700 border-2 border-purple-700 font-semibold text-2xl cursor-pointer hover:scale-105 text-center`}
+                      drawerTitle="Xác nhận đặt"
+                      customOpenBtn="rounded-full text-white bg-purple-700 font-semibold text-2xl cursor-pointer hover:scale-105 text-center"
                       openBtn={
                         <button
-                          className="bg-transparent w-full h-full py-2 focus:outline-none"
+                          className="w-full h-full py-2 bg-transparent focus:outline-none"
                           type="button"
-                          onClick={handleChatOpen}
+                          onClick={handleOrderOpen}
                         >
-                          {createNewChatChannel.isLoading && (
-                            <span
-                              className={`spinner h-5 w-5 animate-spin rounded-full border-[3px] border-r-transparent dark:border-navy-300 dark:border-r-transparent border-white
-`}
-                            />
-                          )}
-                          Chat
+                          Order
                         </button>
                       }
                       token={isAuthenticated}
                     >
                       {childrenDrawer}
                     </CustomDrawer>
-
-                    {!props.data?.isBanned && (
-                      <CustomDrawer
-                        drawerTitle="Xác nhận đặt"
-                        customOpenBtn="rounded-full text-white bg-purple-700 font-semibold text-2xl cursor-pointer hover:scale-105 text-center"
-                        openBtn={
-                          <button
-                            className="bg-transparent w-full h-full py-2 focus:outline-none"
-                            type="button"
-                            onClick={handleOrderOpen}
-                          >
-                            Order
-                          </button>
-                        }
-                        token={isAuthenticated}
-                      >
-                        {childrenDrawer}
-                      </CustomDrawer>
-                    )}
-                  </div>
-                ) : (
-                  <></>
-                )}
-              </div>
+                  )}
+                </div>
+              ) : (
+                <></>
+              )}
             </div>
           </div>
-        </>
+        </div>
       ) : (
-        <>
-          <div className="grid w-screen h-screen grid-cols-10 gap-10 px-10">
-            <div className="col-span-2">
-              <BGFullGridSkeleton />
-            </div>
-            <div className="col-span-5">
-              <BGFullGridSkeleton />
-            </div>
-            <div className="col-span-3">
-              <BGFullGridSkeleton />
-            </div>
+        <div className="grid w-screen h-screen grid-cols-10 gap-10 px-10">
+          <div className="col-span-2">
+            <BGFullGridSkeleton />
           </div>
-        </>
+          <div className="col-span-5">
+            <BGFullGridSkeleton />
+          </div>
+          <div className="col-span-3">
+            <BGFullGridSkeleton />
+          </div>
+        </div>
       )}
     </>
   )

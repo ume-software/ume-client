@@ -73,44 +73,40 @@ export const Promotion = () => {
   return (
     <>
       {(loadingProvider ?? loadingHotProvider) && !isFetchingProviders && !isFetchingHotProviders ? (
-        <>
-          <PlayerSkeletonLoader />
-        </>
+        <PlayerSkeletonLoader />
       ) : (
-        <>
-          <div ref={containerRef} className="container mx-auto my-10">
-            <div className="flex flex-col gap-5">
-              <p className="text-3xl font-bold text-white">Hot Player</p>
-              <div className="grid gap-6 mt-2 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1">
-                {listHotProvider?.map((provider) => (
-                  <Link
-                    key={provider?.id}
-                    href={`/profile/${provider?.slug ?? provider?.id}?tab=service&service=${
-                      provider.serviceSlug ?? provider.serviceId
-                    }`}
-                  >
-                    <PromoteCard data={provider} />
-                  </Link>
-                ))}
-              </div>
-            </div>
-            <div className="flex flex-col gap-5 mt-10 pb-5">
-              <p className="text-3xl font-bold text-white">Ume Player</p>
-              <div className="grid gap-6 mt-2 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1">
-                {listProvider?.map((provider) => (
-                  <Link
-                    key={provider?.id}
-                    href={`/profile/${provider?.slug ?? provider?.id}?tab=service&service=${
-                      provider.serviceSlug ?? provider.serviceId
-                    }`}
-                  >
-                    <PromoteCard data={provider} />
-                  </Link>
-                ))}
-              </div>
+        <div ref={containerRef} className="container mx-auto my-10">
+          <div className="flex flex-col gap-5">
+            <p className="text-3xl font-bold text-white">Hot Player</p>
+            <div className="grid gap-6 mt-2 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1">
+              {listHotProvider?.map((provider) => (
+                <Link
+                  key={provider?.id}
+                  href={`/profile/${provider?.slug ?? provider?.id}?tab=service&service=${
+                    provider.serviceSlug ?? provider.serviceId
+                  }`}
+                >
+                  <PromoteCard data={provider} />
+                </Link>
+              ))}
             </div>
           </div>
-        </>
+          <div className="flex flex-col gap-5 pb-5 mt-10">
+            <p className="text-3xl font-bold text-white">Ume Player</p>
+            <div className="grid gap-6 mt-2 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1">
+              {listProvider?.map((provider) => (
+                <Link
+                  key={provider?.id}
+                  href={`/profile/${provider?.slug ?? provider?.id}?tab=service&service=${
+                    provider.serviceSlug ?? provider.serviceId
+                  }`}
+                >
+                  <PromoteCard data={provider} />
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
       )}
       {isFetchingProviders && <PlayerSkeletonLoader />}
     </>

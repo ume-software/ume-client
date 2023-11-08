@@ -120,11 +120,9 @@ export const Header: React.FC = () => {
             <button onClick={() => setShowRechargeModal(true)}>
               <div className="flex items-center justify-end rounded-full bg-[#37354F] pr-2 pl-4 mr-2 self-center text-white">
                 {isRechargeLoading ? (
-                  <>
-                    <span
-                      className={`spinner h-3 w-3 animate-spin rounded-full border-[2px] border-r-transparent dark:border-navy-300 dark:border-r-transparent border-white`}
-                    />
-                  </>
+                  <span
+                    className={`spinner h-3 w-3 animate-spin rounded-full border-[2px] border-r-transparent dark:border-navy-300 dark:border-r-transparent border-white`}
+                  />
                 ) : (
                   <p className="text-lg font-semibold">{balance}</p>
                 )}
@@ -202,18 +200,16 @@ export const Header: React.FC = () => {
           )}
           <span className="my-auto mr-5">
             {isNil(accessToken) && isNil(userInfo) ? (
-              <>
-                <Button
-                  name="register"
-                  customCSS="bg-[#37354F] py-2 hover:bg-slate-500 duration-300 !rounded-3xl max-h-10 w-[120px] text-[15px] "
-                  type="button"
-                  onClick={() => {
-                    setIsModalLoginVisible(true)
-                  }}
-                >
-                  Đăng nhập
-                </Button>
-              </>
+              <Button
+                name="register"
+                customCSS="bg-[#37354F] py-2 hover:bg-slate-500 duration-300 !rounded-3xl max-h-10 w-[120px] text-[15px] "
+                type="button"
+                onClick={() => {
+                  setIsModalLoginVisible(true)
+                }}
+              >
+                Đăng nhập
+              </Button>
             ) : (
               <div className="mt-1 bg-[#292734]">
                 <DropDownMenu user={userInfo} handleLogout={handleLogout} />
