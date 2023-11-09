@@ -60,7 +60,7 @@ const FilterContainer = () => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [scrollPosition, setScrollPosition] = useState(0)
   const [listProviderFilter, setListProviderFilter] = useState<FilterProviderPagingResponse['row']>([])
-  const [page, setPage] = useState<string>(String(slug.page) ?? '1')
+  const [page, setPage] = useState<string>(String(slug.page) || '1')
   const [searchText, setSearchText] = useState<string>('')
   const debouncedValue = useDebounce<string>(searchText, 500)
   const [gender, setGender] = useState<GenderProps>(genderData[0])
@@ -198,7 +198,7 @@ const FilterContainer = () => {
               placement="bottom"
               trigger="click"
             >
-              {priceRange[0] != min ?? priceRange[1] != max ? (
+              {priceRange[0] != min || priceRange[1] != max ? (
                 <div className="flex gap-3 text-xl font-bold border border-light-50">
                   <div className="flex items-center gap-1">
                     {priceRange[0]}
