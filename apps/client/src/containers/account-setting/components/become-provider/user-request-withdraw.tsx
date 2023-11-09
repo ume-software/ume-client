@@ -62,7 +62,7 @@ const UserRequestWithdraw = (props: {
         {
           userPaymentSystemId: form.values.platformAccount.split('-')[0],
           unitCurrency: 'VND',
-          amountCoin: form.values.withdrawMoney,
+          amountBalance: form.values.withdrawMoney,
         },
         {
           onSuccess() {
