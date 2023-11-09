@@ -7,7 +7,7 @@ import { useEffect, useId, useState } from 'react'
 import Image from 'next/legacy/image'
 import {
   BalanceHistoryPagingResponse,
-  BalanceHistoryResponseCoinTypeEnum,
+  BalanceHistoryResponseBalanceTypeEnum,
   VoucherResponseStatusEnum,
 } from 'ume-service-openapi'
 
@@ -25,16 +25,16 @@ interface IEnumType {
 }
 
 const TransactionContent: IEnumType[] = [
-  { key: BalanceHistoryResponseCoinTypeEnum.Admin, label: 'Admin chuyển tiền' },
-  { key: BalanceHistoryResponseCoinTypeEnum.Deposit, label: 'Nạp tiền' },
-  { key: BalanceHistoryResponseCoinTypeEnum.GetBooking, label: 'Nhận từ đơn hàng' },
-  { key: BalanceHistoryResponseCoinTypeEnum.GetDonate, label: 'Quà tặng' },
-  { key: BalanceHistoryResponseCoinTypeEnum.GetGift, label: 'Quà tặng' },
-  { key: BalanceHistoryResponseCoinTypeEnum.GetMission, label: 'Nhận từ nhiệm vụ' },
-  { key: BalanceHistoryResponseCoinTypeEnum.SpendBooking, label: 'Đặt đơn' },
-  { key: BalanceHistoryResponseCoinTypeEnum.SpendDonate, label: 'Tặng quà' },
-  { key: BalanceHistoryResponseCoinTypeEnum.SpendGift, label: 'Tặng quà' },
-  { key: BalanceHistoryResponseCoinTypeEnum.Withdraw, label: 'Rút tiền' },
+  { key: BalanceHistoryResponseBalanceTypeEnum.Admin, label: 'Admin chuyển tiền' },
+  { key: BalanceHistoryResponseBalanceTypeEnum.Deposit, label: 'Nạp tiền' },
+  { key: BalanceHistoryResponseBalanceTypeEnum.GetBooking, label: 'Nhận từ đơn hàng' },
+  { key: BalanceHistoryResponseBalanceTypeEnum.GetDonate, label: 'Quà tặng' },
+  { key: BalanceHistoryResponseBalanceTypeEnum.GetGift, label: 'Quà tặng' },
+  { key: BalanceHistoryResponseBalanceTypeEnum.GetMission, label: 'Nhận từ nhiệm vụ' },
+  { key: BalanceHistoryResponseBalanceTypeEnum.SpendBooking, label: 'Đặt đơn' },
+  { key: BalanceHistoryResponseBalanceTypeEnum.SpendDonate, label: 'Tặng quà' },
+  { key: BalanceHistoryResponseBalanceTypeEnum.SpendGift, label: 'Tặng quà' },
+  { key: BalanceHistoryResponseBalanceTypeEnum.Withdraw, label: 'Rút tiền' },
 ]
 
 const mappingStatus: IEnumType[] = [

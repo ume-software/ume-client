@@ -285,7 +285,7 @@ export const identityRouter = createRouter()
   })
   .mutation('createWithdrawRequests', {
     input: z.object({
-      amountCoin: z.number(),
+      amountBalance: z.number(),
       unitCurrency: z.nativeEnum(CreateWithdrawRequestUnitCurrencyEnum),
       userPaymentSystemId: z.string(),
     }),

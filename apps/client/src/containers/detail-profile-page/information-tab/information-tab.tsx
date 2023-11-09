@@ -128,6 +128,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                         !gameSelected ? 'bg-gray-700' : ''
                       }`}
                       onClick={() => handleSelected(undefined)}
+                      onKeyDown={() => {}}
                     >
                       <People theme="outline" size="18" fill="#fff" />
                       <p className="xl:text-lg lg:text-sm text-xs lg:font-semibold font-normal truncate">
@@ -135,7 +136,11 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                       </p>
                     </div>
                     <div className="flex flex-col gap-5 cursor-pointer">
-                      <div className="flex flex-row items-center gap-2 p-3" onClick={handleGamesToggle}>
+                      <div
+                        className="flex flex-row items-center gap-2 p-3"
+                        onClick={handleGamesToggle}
+                        onKeyDown={() => {}}
+                      >
                         <Gamepad theme="outline" size="18" fill="#fff" />
                         <p className="xl:text-lg lg:text-sm text-xs lg:font-semibold font-normal truncate">
                           Game tui chơi
@@ -162,6 +167,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                                 : ''
                             }`}
                             onClick={() => handleSelected(item.service?.slug ?? item.serviceId)}
+                            onKeyDown={() => {}}
                           >
                             <Image
                               src={item?.service?.imageUrl ?? ImgForEmpty}
@@ -290,7 +296,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                           type="button"
                           onClick={handleOrderOpen}
                         >
-                          Order
+                          Thuê
                         </button>
                       }
                       token={isAuthenticated}

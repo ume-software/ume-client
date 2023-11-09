@@ -6,6 +6,7 @@ import {
   AuthApi,
   BalanceApi,
   CreateVoucherRequest,
+  CreateWithdrawRequestUnitCurrencyEnum,
   DepositRequestApi,
   ProviderServiceApi,
   ServiceApi,
@@ -493,7 +494,7 @@ export const getHistoryTransaction = async (
   } catch (error) {
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
-      message: error.message || 'Fail to get coin history',
+      message: error.message || 'Fail to get balance history',
     })
   }
 }
@@ -546,7 +547,7 @@ export const createUserPaymentSystem = async (
 export const getWithdrawRequests = async (query: { limit: string; page: string }, ctx) => {
   const cookies = parse(ctx.req.headers.cookie ?? '')
   try {
-    const reponse = await new CoinApi({
+    const reponse = await new BalanceApi({
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
@@ -565,12 +566,12 @@ export const getWithdrawRequests = async (query: { limit: string; page: string }
 }
 
 export const createWithdrawRequests = async (
-  query: { amountCoin: number; unitCurrency: CreateWithdrawRequestUnitCurrencyEnum; userPaymentSystemId: string },
+  query: { amountBalance: number; unitCurrency: CreateWithdrawRequestUnitCurrencyEnum; userPaymentSystemId: string },
   ctx,
 ) => {
   const cookies = parse(ctx.req.headers.cookie ?? '')
   try {
-    const reponse = await new CoinApi({
+    const reponse = await new BalanceApi({
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
@@ -591,11 +592,11 @@ export const createWithdrawRequests = async (
 export const cancelWithdrawRequests = async (withdrawalRequestId: string, ctx) => {
   const cookies = parse(ctx.req.headers.cookie ?? '')
   try {
-    const reponse = await new CoinApi({
+    const reponse = await new BalanceApi({
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).userCancelCoinRequest(withdrawalRequestId)
+    }).userCancelBalanceRequest(withdrawalRequestId)
     return {
       data: reponse.data,
       success: true,

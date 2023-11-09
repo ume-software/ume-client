@@ -1,6 +1,5 @@
 import { CheckOne, CloseSmall } from '@icon-park/react'
 import { Button, FieldLabel, FormInput, Modal } from '@ume/ui'
-import coin from 'public/coin-icon.png'
 import momo from 'public/momo-logo.png'
 import vnpay from 'public/vnpay-logo.png'
 import { RechargeEnum } from '~/enumVariable/enumVariable'
@@ -43,11 +42,7 @@ const RechargeForm = ({ handleClose, qrContent, setQRContent }: ReachargeFromPro
   const index = useId()
   const [platform, setPlatform] = useState<PaymentPlatformArrayProps>(paymentPlatformArray[0])
   const validationSchema = Yup.object().shape({
-    balance: Yup.string()
-      .required('Xin hãy nhập số tiền')
-      .matches(/^\d+$/)
-      .min(1)
-      .max(7, 'Chỉ được nhập nhiều nhất 7 chữ số'),
+    balance: Yup.string().required('Xin hãy nhập số tiền').min(1).max(9, 'Chỉ được nhập nhiều nhất 9 chữ số'),
   })
 
   const requestRecharge = trpc.useMutation(['identity.request-recharge'])
@@ -83,65 +78,95 @@ const RechargeForm = ({ handleClose, qrContent, setQRContent }: ReachargeFromPro
             {!qrContent && (
               <Formik
                 initialValues={{
-                  balance: '10',
+                  balance: '10,000',
                 }}
-                onSubmit={(values) => {
-                  requestRecharge.mutate(
-                    {
-                      total: values.balance,
-                      platform: platform.paymentPlatform,
-                    },
-                    {
-                      onSuccess: (data) => {
-                        if (data.data.dataStringType == RechargeEnum.REDIRECT_URL) {
-                          handleClose()
-                          window.open(`${data.data.dataString}`, '_blank')
-                        } else if (data.data.dataStringType == RechargeEnum.QR) {
-                          setQRContent(data.data)
-                        }
+                onSubmit={(values, { setErrors, setFieldError }) => {
+                  if (Number(values.balance.replace(/,/g, '')) >= 10000) {
+                    requestRecharge.mutate(
+                      {
+                        total: values.balance.replace(/,/g, ''),
+                        platform: platform.paymentPlatform,
                       },
-                    },
-                  )
+                      {
+                        onSuccess: (data) => {
+                          if (data.data.dataStringType == RechargeEnum.REDIRECT_URL) {
+                            handleClose()
+                            window.open(`${data.data.dataString}`, '_blank')
+                          } else if (data.data.dataStringType == RechargeEnum.QR) {
+                            setQRContent(data.data)
+                          }
+                        },
+                      },
+                    )
+                  } else {
+                    setErrors({
+                      balance: 'Số tiền tối thiểu là 10,000 VND',
+                    })
+                    setFieldError('balance', 'Số tiền tối thiểu là 10,000 VND')
+                  }
                 }}
                 validationSchema={validationSchema}
               >
-                {({ handleSubmit, handleChange, handleBlur, values, errors, isSubmitting, setValues }) => (
+                {({ handleSubmit, handleBlur, values, errors, isSubmitting, setValues, setFieldValue }) => (
                   <form>
                     <div className="grid w-full grid-cols-6 mb-5 place-items-center">
                       {coinRechangeValue.map((price) => (
                         <div
                           key={index}
-                          className={`w-[130px] col-span-6 md:col-span-3 lg:col-span-2 py-1 px-5 mb-3 bg-[#413F4D] ${
-                            Number(values.balance) == price / 1000 ? 'border-purple-700 border-2' : ''
+                          className={`w-[140px] col-span-2 py-1 px-5 mb-3 bg-[#413F4D] ${
+                            Number(values.balance.replace(/,/g, '')) == price ? 'border-purple-700 border-2' : ''
                           } rounded-xl cursor-pointer`}
-                          onClick={() => setValues({ balance: (price / 1000).toString() }, true)}
+                          onClick={() =>
+                            setValues(
+                              {
+                                balance: price
+                                  .toLocaleString('en-US', {
+                                    currency: 'VND',
+                                  })
+                                  .toString(),
+                              },
+                              true,
+                            )
+                          }
                           onKeyDown={() => {}}
                         >
-                          <div className="flex items-center justify-start">
-                            <p>{price / 1000}</p>
-                            <Image src={coin} width={40} height={40} alt="coin" />
-                          </div>
-                          <div className="flex items-center">
+                          <div className="flex items-center justify-center text-lg font-semibold">
                             <p>
-                              {(price + price * platform.tax).toLocaleString('en-US', {
+                              {price.toLocaleString('en-US', {
                                 currency: 'VND',
                               })}
                             </p>
-                            <span className="text-xs italic"> VND</span>
+                            <span className="text-xs italic"> đ</span>
+                          </div>
+                          <div className="flex justify-between items-center text-xs">
+                            <p>Giá bán: </p>
+                            <div className="flex items-center">
+                              <p>
+                                {(price + price * platform.tax).toLocaleString('en-US', {
+                                  currency: 'VND',
+                                })}
+                              </p>
+                              <span className="text-xs italic"> đ</span>
+                            </div>
                           </div>
                         </div>
                       ))}
                     </div>
                     <div>
                       <div className="flex flex-col gap-1 mb-2">
-                        <FieldLabel labelName="Nhập số lượng ume coin cần nạp" className="text-sm text-slate-400" />
+                        <FieldLabel labelName="Nhập số tiền cần nạp" className="text-sm text-slate-400" />
                         <FormInput
                           className="bg-[#413F4D] text-white"
-                          type="number"
-                          min={1}
+                          type="text"
                           value={values.balance}
                           name="balance"
-                          onChange={handleChange}
+                          onChange={(e) => {
+                            const inputValue = e.target.value.replace(/,/g, '')
+                            const numericValue = parseFloat(inputValue)
+                            const formattedValue = isNaN(numericValue) ? '0' : numericValue.toLocaleString()
+
+                            setFieldValue('balance', formattedValue)
+                          }}
                           onBlur={handleBlur}
                           error={!!errors.balance}
                           errorMessage={errors.balance}
@@ -152,12 +177,12 @@ const RechargeForm = ({ handleClose, qrContent, setQRContent }: ReachargeFromPro
                         <p className="text-xl font-semibold">Tổng:</p>
                         <div className="flex items-center gap-1">
                           <p className="text-xl font-semibold">
-                            {((Number(values.balance) + Number(values.balance) * platform.tax) * 1000).toLocaleString(
-                              'en-US',
-                              {
-                                currency: 'VND',
-                              },
-                            )}
+                            {(
+                              Number(values.balance.replace(/,/g, '')) +
+                              Number(values.balance.replace(/,/g, '')) * platform.tax
+                            ).toLocaleString('en-US', {
+                              currency: 'VND',
+                            })}
                           </p>
                           <span className="text-xs italic"> VND</span>
                         </div>
@@ -165,7 +190,7 @@ const RechargeForm = ({ handleClose, qrContent, setQRContent }: ReachargeFromPro
                       <div className="flex items-center justify-center mt-2">
                         <div>
                           <Button
-                            customCSS={`!rounded-2xl w-full !text-white py-2 px-3 font-semibold text-lg text-center ${
+                            customCSS={`!rounded-2xl w-full !text-white py-2 px-8 font-semibold text-lg text-center ${
                               values.balance && 'hover:scale-105'
                             }`}
                             type="button"

@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Menu, Transition } from '@headlessui/react'
-import { CloseSmall, Down, Minus, Plus, Right, Time } from '@icon-park/react'
-import { InputWithAffix, Modal } from '@ume/ui'
+import { Down, Minus, Plus, Right, Time } from '@icon-park/react'
+import { InputWithAffix } from '@ume/ui'
 import coin from 'public/coin-icon.png'
 import ImgForEmpty from 'public/img-for-empty.png'
 
@@ -16,6 +16,8 @@ import {
   VoucherPagingResponse,
   VoucherResponseDiscountUnitEnum,
 } from 'ume-service-openapi'
+
+import VoucherApply from './voucher-apply'
 
 import { trpc } from '~/utils/trpc'
 
@@ -32,6 +34,9 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
       setMyVoucher(data.data)
     },
   })
+
+  console.log(myVoucher)
+
   const [menuShow, setMenuShow] = useState<string>('')
   const accountBalance = trpc.useQuery(['identity.account-balance'])
   const createBooking = trpc.useMutation(['booking.createBooking'])
@@ -78,27 +83,6 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
       voucherIds: myVoucher?.row && myVoucher?.row?.length > 0 ? [String(myVoucher.row[0].code)] : [],
     }))
   }, [props.data, slug.service, myVoucher?.row])
-
-  // const voucherModal = Modal.useEditableForm({
-  //   onOK: () => {},
-  //   onClose: () => setIsModalVoucherOpen(false),
-  //   show: isModalVoucherOpen,
-  //   title: <p className="text-white">Khuyến mãi</p>,
-  //   form: <div className="z-50"></div>,
-  //   backgroundColor: '#15151b',
-  //   closeWhenClickOutSide: true,
-  //   closeButtonOnConner: (
-  //     <CloseSmall
-  //       onClick={() => setIsModalVoucherOpen(false)}
-  //       onKeyDown={() => {}}
-  //       tabIndex={1}
-  //       className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
-  //       theme="outline"
-  //       size="24"
-  //       fill="#FFFFFF"
-  //     />
-  //   ),
-  // })
 
   const handleCreateBooking = (booking: BookingProviderRequest) => {
     if (accountBalance.data?.data.totalBalanceAvailable! >= total) {
@@ -289,13 +273,13 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
             </div>
             <div className="max-w-[200px]">
               <Drawer
-                title="Two-level Drawer"
+                title={<p className="text-white">Khuyến mãi</p>}
                 width={320}
                 closable={false}
                 onClose={() => setIsModalVoucherOpen(false)}
                 open={isModalVoucherOpen}
               >
-                This is two-level drawer
+                <VoucherApply setIsModalVoucherOpen={setIsModalVoucherOpen} />
               </Drawer>
             </div>
           </div>
@@ -304,7 +288,7 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
             <div className="flex items-end gap-2">
               {total != totalAfterDiscount && (
                 <span className="flex items-center text-xl font-bold line-through opacity-30">
-                  {booking.bookingPeriod}h giá {total} <Image src={coin} width={30} height={30} alt="coin" />
+                  {booking.bookingPeriod}h giá {total} <span className="text-xs italic"> đ</span>
                 </span>
               )}
               <p className="flex items-center text-3xl font-bold ">
