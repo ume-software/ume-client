@@ -37,7 +37,6 @@ const UserPaymentPlatform = (props: {
   const [actionModal, setActionModal] = useState(ActionEnum.CREATE)
   const createUserPaymentSystem = trpc.useMutation('identity.createUserPaymentSystem')
   const utils = trpc.useContext()
-  const [platformFilter, setPlatformFilter] = useState<PlatformProps[]>(platforms)
   const [isMenuShow, setIsMenuShow] = useState<boolean>(false)
   const [isModalConfirmationVisible, setIsModalConfirmationVisible] = useState(false)
 
@@ -70,16 +69,6 @@ const UserPaymentPlatform = (props: {
       })
     }
   }, [props.paymentAccount])
-
-  useEffect(() => {
-    setPlatformFilter(
-      platforms.filter(
-        (platform) =>
-          platform.key.toLowerCase().includes(form.values.platform.toLowerCase()) ||
-          platform.label.toLowerCase().includes(form.values.platform.toLowerCase()),
-      ),
-    )
-  }, [form.values.platform])
 
   const handleCreateUserPaymentSystem = () => {
     createUserPaymentSystem.mutate(
@@ -177,11 +166,6 @@ const UserPaymentPlatform = (props: {
               component={<Down theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />}
               onClick={() => {
                 setIsMenuShow(true)
-                setPlatformFilter(
-                  platforms.filter(
-                    (platform) => platform.key.toLowerCase().includes('') || platform.label.toLowerCase().includes(''),
-                  ),
-                )
               }}
             />
             <div className="relative w-full">
