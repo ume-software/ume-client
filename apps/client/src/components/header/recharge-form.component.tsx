@@ -113,7 +113,7 @@ const RechargeForm = ({ handleClose, qrContent, setQRContent }: ReachargeFromPro
                       {coinRechangeValue.map((price) => (
                         <div
                           key={index}
-                          className={`w-[140px] col-span-2 py-1 px-5 mb-3 bg-[#413F4D] ${
+                          className={`w-[135px] col-span-2 py-1 px-5 mb-3 bg-[#413F4D] ${
                             Number(values.balance.replace(/,/g, '')) == price ? 'border-purple-700 border-2' : ''
                           } rounded-xl cursor-pointer`}
                           onClick={() =>
@@ -139,7 +139,7 @@ const RechargeForm = ({ handleClose, qrContent, setQRContent }: ReachargeFromPro
                             <span className="text-xs italic"> đ</span>
                           </div>
                           <div className="flex justify-between items-center text-xs">
-                            <p>Giá bán: </p>
+                            <p>Giá: </p>
                             <div className="flex items-center">
                               <p>
                                 {(price + price * platform.tax).toLocaleString('en-US', {

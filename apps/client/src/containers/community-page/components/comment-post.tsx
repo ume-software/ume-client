@@ -126,20 +126,24 @@ const CommmentPost = (props: CommentPostProps) => {
           ) : (
             <>
               {commnetPostData.map((data) => (
-                <Link key={index} href={`#${data?.user?.slug}`}>
+                <>
                   <div className="flex items-start gap-3 p-1 m-5 rounded-xl">
-                    <div className="relative min-w-[50px] min-h-[50px]">
-                      <Image
-                        className="absolute rounded-full"
-                        layout="fill"
-                        objectFit="cover"
-                        src={data?.user?.avatarUrl}
-                        alt="Provider Image"
-                      />
-                    </div>
+                    <Link key={index} href={`profile/${data?.user?.slug ?? data?.userId}`}>
+                      <div className="relative min-w-[50px] min-h-[50px]">
+                        <Image
+                          className="absolute rounded-full"
+                          layout="fill"
+                          objectFit="cover"
+                          src={data?.user?.avatarUrl}
+                          alt="Provider Image"
+                        />
+                      </div>
+                    </Link>
                     <div>
                       <div className="flex flex-col items-start justify-start gap-2 p-2 rounded-xl bg-[#47474780]">
-                        <p className="text-lg font-semibold">{data?.user?.name}</p>
+                        <Link key={index} href={`profile/${data?.user?.slug ?? data?.userId}`}>
+                          <p className="text-lg font-semibold">{data?.user?.name}</p>
+                        </Link>
                         <div>{data?.content}</div>
                       </div>
                       <p className="text-sm font-normal opacity-40">
@@ -147,7 +151,7 @@ const CommmentPost = (props: CommentPostProps) => {
                       </p>
                     </div>
                   </div>
-                </Link>
+                </>
               ))}
             </>
           )}
@@ -162,6 +166,7 @@ const CommmentPost = (props: CommentPostProps) => {
               <div
                 className="flex items-center p-2 bg-gray-700 rounded-full cursor-pointer"
                 onClick={handleSendComment}
+                onKeyDown={() => {}}
               >
                 <Send theme="filled" size="25" fill="#FFFFFF" strokeLinejoin="bevel" />
               </div>

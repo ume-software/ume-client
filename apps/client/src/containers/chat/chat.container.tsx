@@ -92,6 +92,7 @@ const Chat = (props: { providerId?: string }) => {
                   channelSelected?._id === item._id ? 'border-l-3 bg-gray-700 rounded-lg' : ''
                 }  hover:bg-gray-700 hover:rounded-lg`}
                         onClick={() => handleSelected(item._id)}
+                        onKeyDown={() => {}}
                       >
                         <div className="w-1/4">
                           <div className="relative w-12 h-12">

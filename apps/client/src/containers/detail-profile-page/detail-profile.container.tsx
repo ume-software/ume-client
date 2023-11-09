@@ -7,7 +7,7 @@ import ImgForEmpty from 'public/img-for-empty.png'
 import lgbtIcon from 'public/rainbow-flag-11151.svg'
 import { useAuth } from '~/contexts/auth'
 
-import { Fragment, ReactElement, useState } from 'react'
+import { Fragment, ReactElement, useEffect, useState } from 'react'
 
 import { ConfigProvider, Tooltip, message, notification, theme } from 'antd'
 import { Formik } from 'formik'
@@ -130,6 +130,14 @@ const DetailProfileContainer = () => {
       return tab.key.toString() == slug.tab?.toString()
     }) ?? tabDatas[0],
   )
+
+  useEffect(() => {
+    if (!providerDetail?.isProvider) {
+      setSelectedTab(tabDatas[1])
+    } else {
+      setSelectedTab(tabDatas[0])
+    }
+  }, [providerDetail])
 
   const handleChangeTab = (item: TabDataProps) => {
     router.replace(
