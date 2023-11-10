@@ -2,6 +2,7 @@ import {
   CreateVoucherRequestDiscountUnitEnum,
   CreateVoucherRequestRecipientTypeEnum,
   CreateVoucherRequestTypeEnum,
+  CreateWithdrawRequestUnitCurrencyEnum,
   UpdateUserProfileRequestGenderEnum,
   UserPaymentSystemRequestPlatformEnum,
 } from 'ume-service-openapi'
@@ -9,9 +10,11 @@ import { z } from 'zod'
 
 import { createRouter } from './configurations'
 import {
+  cancelWithdrawRequests,
   checkSlugUser,
   createServiceProvider,
   createUserPaymentSystem,
+  createWithdrawRequests,
   getAccountBalance,
   getHistoryTransaction,
   getIdentityInfo,
@@ -20,6 +23,7 @@ import {
   getServiceAttributeValueByServiceAttributeId,
   getUserBySlug,
   getUserPaymentSystems,
+  getWithdrawRequests,
   providerCheckVoucherCode,
   providerCreateVoucher,
   providerGetOwnServices,
@@ -71,6 +75,7 @@ export const identityRouter = createRouter()
       slug: z.optional(z.string()),
       gender: z.optional(z.nativeEnum(UpdateUserProfileRequestGenderEnum)),
       dob: z.optional(z.string()),
+      phone: z.optional(z.string()),
       avatarUrl: z.optional(z.string()),
     }),
     resolve: async ({ input, ctx }) => {
@@ -267,5 +272,30 @@ export const identityRouter = createRouter()
     }),
     resolve: async ({ input, ctx }) => {
       return await createUserPaymentSystem(input, ctx)
+    },
+  })
+  .query('getWithdrawRequests', {
+    input: z.object({
+      limit: z.string(),
+      page: z.string(),
+    }),
+    resolve: async ({ input, ctx }) => {
+      return await getWithdrawRequests(input, ctx)
+    },
+  })
+  .mutation('createWithdrawRequests', {
+    input: z.object({
+      amountBalance: z.number(),
+      unitCurrency: z.nativeEnum(CreateWithdrawRequestUnitCurrencyEnum),
+      userPaymentSystemId: z.string(),
+    }),
+    resolve: async ({ input, ctx }) => {
+      return await createWithdrawRequests(input, ctx)
+    },
+  })
+  .mutation('cancelWithdrawRequests', {
+    input: z.string(),
+    resolve: async ({ input, ctx }) => {
+      return await cancelWithdrawRequests(input, ctx)
     },
   })

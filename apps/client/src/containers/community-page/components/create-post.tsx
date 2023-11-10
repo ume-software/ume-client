@@ -86,7 +86,7 @@ const CreatePost = (props: any) => {
         createNewPost.mutate(
           {
             content: content,
-            thumbnails: (await fileUpload).thumbnails,
+            thumbnails: fileUpload.thumbnails,
           },
           {
             onSuccess: (data) => {

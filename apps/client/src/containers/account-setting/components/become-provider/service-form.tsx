@@ -632,7 +632,7 @@ const AddSkillForm = () => {
                     amount: bookingCost.amount,
                   }
                 })
-              : undefined) as any,
+              : []) as any,
             handleProviderServiceAttributes: req.createServiceAttributes.map((serAttr) => {
               return {
                 id: serAttr.id ?? '',
@@ -674,6 +674,7 @@ const AddSkillForm = () => {
                 placement: 'bottomLeft',
               })
               utils.invalidateQueries('identity.providerGetServiceHaveNotRegistered')
+              utils.invalidateQueries('identity.providerGetOwnServices')
             },
             onError() {
               notification.error({

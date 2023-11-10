@@ -132,6 +132,7 @@ const PostItem = (props: { data: PostResponse }) => {
               position: 'relative',
             }}
             onClick={() => handleOpenImageModal(props.data.id)}
+            onKeyDown={() => {}}
           >
             <PostImageLayout data={props.data?.thumbnails} />
           </div>
@@ -147,11 +148,11 @@ const PostItem = (props: { data: PostResponse }) => {
                 className="cursor-pointer"
                 onClick={handleLikePost}
               />
-              <p className="text-xl font-medium cursor-pointer" onClick={handleLikeOpen}>
+              <p className="text-xl font-medium cursor-pointer" onClick={handleLikeOpen} onKeyDown={() => {}}>
                 {(props.data.likeCount ?? 0) + postLike}
               </p>
             </div>
-            <div className="flex items-center gap-3" onClick={handleCommentOpen}>
+            <div className="flex items-center gap-3" onClick={handleCommentOpen} onKeyDown={() => {}}>
               <Comment theme="outline" size="25" fill="#FFFFFF" />
               <p className="text-xl font-medium cursor-pointer">{(props.data.commentCount ?? 0) + postComment}</p>
             </div>

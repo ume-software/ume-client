@@ -4,7 +4,7 @@ import { Dot, Gift, Remind } from '@icon-park/react'
 import { Button } from '@ume/ui'
 import coin from 'public/coin-icon.png'
 import logo from 'public/ume-logo-2.svg'
-import Notificate from '~/containers/notificate/notificate.container'
+import Notificate from '~/containers/notificate/order-notificate.container'
 import { useAuth } from '~/contexts/auth'
 
 import React, { Fragment, ReactElement, useCallback, useContext, useEffect, useId, useState } from 'react'
@@ -60,11 +60,11 @@ export const Header: React.FC = () => {
   const tabDatas: TabProps[] = [
     {
       label: `Chính`,
-      children: <Notificate type={'main'} />,
+      children: <Notificate />,
     },
     {
       label: `Đơn`,
-      children: <Notificate type={'order'} />,
+      children: <Notificate />,
     },
   ]
 
@@ -88,10 +88,10 @@ export const Header: React.FC = () => {
   }, [socketContext.socketNotificateContext[0]])
 
   return (
-    <div className="fixed z-50 flex items-center justify-between w-full h-16 bg-umeHeader ">
+    <div className="fixed !z-50 flex items-center justify-between w-full h-16 bg-umeHeader ">
       <LoginModal isModalLoginVisible={isModalLoginVisible} setIsModalLoginVisible={setIsModalLoginVisible} />
       <RechargeModal showRechargeModal={showRechargeModal} setShowRechargeModal={setShowRechargeModal} />
-      <div className="flex items-center">
+      <div className="flex items-center z-50">
         <span className="pl-2">
           <Link href={'/home'}>
             <Image width={160} height={40} alt="logo-ume" src={logo} layout="fixed" />
@@ -167,7 +167,7 @@ export const Header: React.FC = () => {
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95"
                   >
-                    <Menu.Items className="absolute right-0 p-5 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg w-96 ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <Menu.Items className="absolute right-0 p-5 origin-top-right text-white divide-y divide-gray-200 rounded-md shadow-lg bg-umeHeader w-96 ring-1 ring-black ring-opacity-30 focus:outline-none">
                       <div className="flex flex-row gap-10" style={{ zIndex: 2 }}>
                         {tabDatas.map((item) => (
                           <a

@@ -1,9 +1,8 @@
 import { ArrowRight, Search } from '@icon-park/react'
 import { Button } from '~/button'
 import { InputWithAffix } from '~/input'
-import { TextInput } from '~/text-input'
 
-import React, { ReactNode, useState } from 'react'
+import { ReactNode, useState } from 'react'
 
 import { Drawer } from 'antd'
 
@@ -13,7 +12,6 @@ interface DrawerProps {
   isSearch?: boolean
   customOpenBtn?: string
   openBtn?: ReactNode
-  handleClose?: () => void
   textInputStyle?: string
   token?: boolean
   footer?: ReactNode
@@ -21,7 +19,6 @@ interface DrawerProps {
 const CustomDrawer = ({
   customOpenBtn,
   openBtn,
-  handleClose,
   textInputStyle,
   token,
   footer,
@@ -42,9 +39,6 @@ const CustomDrawer = ({
   }
   const onClose = () => {
     setDrawerOpen(false)
-  }
-  handleClose = () => {
-    onClose()
   }
 
   const drawerFooter = () => {
@@ -117,6 +111,7 @@ const CustomDrawer = ({
         className="bg-black"
         title={drawerHeader()}
         // size="large"
+        zIndex={30}
         placement="right"
         footer={footer && drawerFooter()}
         closable={false}
