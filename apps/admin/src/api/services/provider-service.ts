@@ -181,7 +181,7 @@ export const getProviderTotalCoin = async (
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).adminGetTotalCoinByProviderSlug(query?.slug!!)
+    }).adminGetTotalBalanceByProviderSlug(query?.slug!!)
     return {
       data: response.data,
       success: true,

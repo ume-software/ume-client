@@ -58,7 +58,7 @@ export const getUserTotalCoin = async (ctx, { slug }) => {
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).adminGetTotalCoinByUserSlug(slug)
+    }).adminGetTotalBalanceByUserSlug(slug)
 
     return {
       data: response.data,

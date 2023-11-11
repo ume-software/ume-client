@@ -596,7 +596,7 @@ export const cancelWithdrawRequests = async (withdrawalRequestId: string, ctx) =
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).userCancelBalanceRequest(withdrawalRequestId)
+    }).userCancelWithdrawRequest(withdrawalRequestId)
     return {
       data: reponse.data,
       success: true,
