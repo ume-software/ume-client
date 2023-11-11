@@ -18,7 +18,7 @@ interface ITable {
   editAction: boolean
   onEdit: (id?: number) => void
   deleteAction: boolean
-  onDelete: () => void
+  onDelete: (id?: number) => void
 }
 
 const Table = ({
@@ -65,8 +65,8 @@ const Table = ({
     <>
       <div className="text-lg font-semibold opacity-50 text-end">
         {Number(page) * Number(limit) - Number(limit) != 0 ? Number(page) * Number(limit) - Number(limit) : 1} -{' '}
-        {totalItem > Number(limit) ? (Number(limit) * Number(page)).toFixed(0) : totalItem} trên {totalItem}{' '}
-        {contentItem}
+        {totalItem > Number(limit) * Number(page) ? (Number(limit) * Number(page)).toFixed(0) : totalItem} trên{' '}
+        {totalItem} {contentItem}
       </div>
       <table className="w-full rounded-xl bg-[#292734] overflow-hidden">
         {totalItem <= 0 ? (
@@ -126,7 +126,7 @@ const Table = ({
                             fill="#fff"
                             strokeLinejoin="bevel"
                             className="cursor-pointer"
-                            onClick={() => onDelete()}
+                            onClick={() => onDelete(Number(page) * indexRow)}
                           />
                         )}
                       </div>

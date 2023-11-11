@@ -44,7 +44,7 @@ const PromoteCard = (props: { data: FilterProviderResponse }) => {
         <div className="w-[140px] h-[140px] relative -translate-y-6 group-hover:scale-110 duration-500">
           <Image
             className="absolute ease-in-out rounded-2xl object-cover"
-            src={props?.data?.avatarUrl || ''}
+            src={props?.data?.avatarUrl ?? ''}
             alt="image_provider"
             layout="fill"
             loading="lazy"
@@ -65,10 +65,16 @@ const PromoteCard = (props: { data: FilterProviderResponse }) => {
       <div className="flex flex-col gap-3 pr-5">
         <div className="w-fit flex items-center gap-3 bg-purple-600 p-2 mb-2 rounded-md text-white">
           <p className="text-md font-semibold">{props?.data?.serviceName}</p>
-          <div className="flex items-center gap-1 text-lg font-bold">
-            <Star theme="filled" size="15" fill="#FFBB00" strokeLinejoin="bevel" />{' '}
-            {(Number(props?.data?.star) || 0).toFixed(1)}
-          </div>
+          {props?.data?.star ? (
+            <div className="flex items-center gap-1 text-lg font-bold">
+              <>
+                <Star theme="filled" size="15" fill="#FFBB00" strokeLinejoin="bevel" />
+                {Number(props?.data?.star ?? 0).toFixed(1)}
+              </>
+            </div>
+          ) : (
+            ''
+          )}
         </div>
         <p className="text-xl font-bold">{props?.data?.name}</p>
         {/* <div className="">

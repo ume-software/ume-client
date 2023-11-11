@@ -54,7 +54,7 @@ const EditProfile = () => {
   })
 
   const [isModalConfirmationVisible, setIsModalConfirmationVisible] = useState(false)
-  const [isModalVertificationVisible, setIsModaVertificationlVisible] = useState(false)
+  const [isModalVertificationVisible, setIsModalVertificationVisible] = useState(false)
 
   const editAccountInforFormRef = useRef<HTMLFormElement>(null)
 
@@ -75,7 +75,7 @@ const EditProfile = () => {
     },
     validationSchema: Yup.object({
       name: Yup.string().required('Tên là yêu cầu'),
-      dob: Yup.string().required('Ngày sinh là yêu cầu'),
+      dob: Yup.date().required('Ngày sinh là yêu cầu'),
       slug: Yup.string().required('Đường dẫn là yêu cầu'),
       phone: Yup.string()
         .required('Số điện thoại là yêu cầu')
@@ -123,7 +123,7 @@ const EditProfile = () => {
 
   const handleClose = () => {
     setIsModalConfirmationVisible(false)
-    setIsModaVertificationlVisible(false)
+    setIsModalVertificationVisible(false)
   }
 
   const handleImageChange = (event, index: number) => {
@@ -191,7 +191,7 @@ const EditProfile = () => {
                   backVertificationImage: undefined,
                   faceImage: undefined,
                 }))
-                setIsModaVertificationlVisible(false)
+                setIsModalVertificationVisible(false)
                 utils.invalidateQueries('identity.identityInfo')
                 notification.success({
                   message: 'Cập nhật thông tin thành công',
@@ -246,7 +246,7 @@ const EditProfile = () => {
                 gender: form.values.gender.key,
                 name: form.values.name?.trim(),
                 slug: form.values.slug?.trim(),
-                // phone:form.values.phone,
+                phone: form.values.phone,
               },
               {
                 onSuccess() {
@@ -286,7 +286,7 @@ const EditProfile = () => {
               gender: form.values.gender.key,
               name: form.values.name?.trim(),
               slug: form.values.slug?.trim(),
-              // phone:form.values.phone,
+              phone: form.values.phone,
             },
             {
               onSuccess() {
@@ -520,7 +520,14 @@ const EditProfile = () => {
                     )}
                   </div>
                   <div className="space-y-2">
-                    <label>Đường dẫn của bạn</label>
+                    <label className="flex items-end gap-3">
+                      Đường dẫn của bạn{' '}
+                      {!userSettingData.data?.slug && (
+                        <p className="text-xs text-red-600 font-semibold opacity-80">
+                          *( Chỉ được cập nhật một lần duy nhất )
+                        </p>
+                      )}
+                    </label>
                     <FormInput
                       name="slug"
                       className={`${
@@ -675,7 +682,7 @@ const EditProfile = () => {
                             customCSS="py-2 px-7 rounded-xl hover:scale-105"
                             type="button"
                             onClick={() => {
-                              setIsModaVertificationlVisible(true)
+                              setIsModalVertificationVisible(true)
                             }}
                           >
                             Xác minh danh tính
@@ -705,8 +712,22 @@ const EditProfile = () => {
                     isActive={true}
                     isOutlinedButton={true}
                     onClick={() => {
-                      if (!checkSlugUserData?.data.isExisted) {
+                      if (form.values.dob != '' && form.values.phone != '') {
                         setIsModalConfirmationVisible(true)
+                      } else {
+                        if (form.values.dob == '') {
+                          form.setFieldError('dob', 'Ngày sinh là yêu cầu')
+                          form.setFieldTouched('dob', true)
+                        }
+                        if (form.values.phone == '') {
+                          form.setFieldError('phone', 'Số điện thoại là yêu cầu')
+                          form.setFieldTouched('phone', true)
+                        }
+                        notification.warning({
+                          message: 'Thiếu thông tin',
+                          description: 'Vui lòng kiểm tra lại số điện thoại và ngày sinh!',
+                          placement: 'bottomLeft',
+                        })
                       }
                     }}
                   >

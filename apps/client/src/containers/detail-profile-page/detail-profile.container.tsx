@@ -7,7 +7,7 @@ import ImgForEmpty from 'public/img-for-empty.png'
 import lgbtIcon from 'public/rainbow-flag-11151.svg'
 import { useAuth } from '~/contexts/auth'
 
-import { Fragment, ReactElement, useState } from 'react'
+import { Fragment, ReactElement, useEffect, useState } from 'react'
 
 import { ConfigProvider, Tooltip, message, notification, theme } from 'antd'
 import { Formik } from 'formik'
@@ -121,6 +121,7 @@ const DetailProfileContainer = () => {
       router.replace('/404')
     },
   })
+
   const donationForRecipient = trpc.useMutation(['booking.donationForRecipient'])
   const utils = trpc.useContext()
 
@@ -129,6 +130,14 @@ const DetailProfileContainer = () => {
       return tab.key.toString() == slug.tab?.toString()
     }) ?? tabDatas[0],
   )
+
+  useEffect(() => {
+    if (!providerDetail?.isProvider) {
+      setSelectedTab(tabDatas[1])
+    } else {
+      setSelectedTab(tabDatas[0])
+    }
+  }, [providerDetail])
 
   const handleChangeTab = (item: TabDataProps) => {
     router.replace(
@@ -397,17 +406,24 @@ const DetailProfileContainer = () => {
                       <Tooltip placement="bottomLeft" title={`${providerDetail?.isOnline ? 'Online' : 'Offline'}`}>
                         <div className="flex items-center gap-1 p-2 bg-gray-700 rounded-full">
                           <Dot theme="multi-color" size="24" fill={providerDetail?.isOnline ? '#008000' : '#FF0000'} />
-                          <p>
-                            {providerDetail?.providerConfig?.status == ProviderConfigResponseStatusEnum.Activated &&
-                              'Sẵn sàng'}
-                          </p>
-                          <p>
-                            {providerDetail?.providerConfig?.status == ProviderConfigResponseStatusEnum.Busy && 'Bận'}
-                          </p>
-                          <p>
-                            {providerDetail?.providerConfig?.status ==
-                              ProviderConfigResponseStatusEnum.StoppedAcceptingBooking && 'Ngừng nhận đơn'}
-                          </p>
+                          {providerDetail?.isOnline ? (
+                            <>
+                              <p>
+                                {providerDetail?.providerConfig?.status == ProviderConfigResponseStatusEnum.Activated &&
+                                  'Sẵn sàng'}
+                              </p>
+                              <p>
+                                {providerDetail?.providerConfig?.status == ProviderConfigResponseStatusEnum.Busy &&
+                                  'Bận'}
+                              </p>
+                              <p>
+                                {providerDetail?.providerConfig?.status ==
+                                  ProviderConfigResponseStatusEnum.StoppedAcceptingBooking && 'Ngừng nhận đơn'}
+                              </p>
+                            </>
+                          ) : (
+                            'Offline'
+                          )}
                         </div>
                       </Tooltip>
                     </div>
@@ -438,15 +454,32 @@ const DetailProfileContainer = () => {
                     >
                       <Menu.Items className="absolute right-0 py-3 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg w-fit top-7 ring-1 ring-black ring-opacity-5 focus:outline-none">
                         <div className="flex flex-col gap-2 w-max">
-                          {moreButtonDatas.map((item, index) => (
+                          {moreButtonDatas.map((item) => (
                             <>
-                              {user?.id == providerDetail?.id && item.key != 'Donate' && (
+                              {user?.id == providerDetail?.id ? (
+                                item.key != 'Donate' && (
+                                  <div
+                                    key={item.key}
+                                    className="px-2 py-1 rounded-md cursor-pointer hover:bg-purple-600 hover:text-white group"
+                                    onClick={() => {
+                                      handleMenuButtonAction(item)
+                                    }}
+                                    onKeyDown={() => {}}
+                                  >
+                                    <div className="flex items-center justify-between gap-2 duration-300 scale-x-100 group-hover:scale-x-95 group-hover:-translate-x-2">
+                                      <div>{item.label}</div>
+                                      {item.icon}
+                                    </div>
+                                  </div>
+                                )
+                              ) : (
                                 <div
-                                  key={index}
+                                  key={item.key}
                                   className="px-2 py-1 rounded-md cursor-pointer hover:bg-purple-600 hover:text-white group"
                                   onClick={() => {
                                     handleMenuButtonAction(item)
                                   }}
+                                  onKeyDown={() => {}}
                                 >
                                   <div className="flex items-center justify-between gap-2 duration-300 scale-x-100 group-hover:scale-x-95 group-hover:-translate-x-2">
                                     <div>{item.label}</div>
@@ -474,6 +507,7 @@ const DetailProfileContainer = () => {
                         key={item.key}
                         onClick={() => handleChangeTab(item)}
                         data-tab={item.label}
+                        onKeyDown={() => {}}
                       >
                         {item.label}
                       </span>
@@ -486,6 +520,7 @@ const DetailProfileContainer = () => {
                           key={item.key}
                           onClick={() => handleChangeTab(item)}
                           data-tab={item.label}
+                          onKeyDown={() => {}}
                         >
                           {item.label}
                         </span>

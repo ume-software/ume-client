@@ -49,7 +49,7 @@ const genderData: GenderProps[] = [
   { key: GenderEnum.PRIVATE, name: 'Ẩn' },
 ]
 
-const FilterContainer = (props) => {
+const FilterContainer = () => {
   const router = useRouter()
   const basePath = router.asPath.split('?')[0]
   const serviceName = router.asPath.split('/')[2].split('?')[0].replace(/%20/g, ' ')
@@ -243,6 +243,7 @@ const FilterContainer = (props) => {
                         } hover:bg-gray-700 cursor-pointer p-3 rounded-lg`}
                         key={index}
                         onClick={() => setGender(genData)}
+                        onKeyDown={() => {}}
                       >
                         <p className="font-semibold text-mg">{genData.name}</p>
                         <div>
@@ -289,6 +290,7 @@ const FilterContainer = (props) => {
                         } hover:bg-gray-700 cursor-pointer p-3 rounded-lg`}
                         key={item.key}
                         onClick={() => setOrder(item)}
+                        onKeyDown={() => {}}
                       >
                         <p className="font-semibold text-mg">{item.name}</p>
                         <div>
@@ -311,7 +313,10 @@ const FilterContainer = (props) => {
         {loadingProviderFilter && !isFetchingProviderFilter ? (
           <PlayerSkeletonLoader />
         ) : (
-          <div ref={containerRef} className="grid gap-6 mt-2 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1">
+          <div
+            ref={containerRef}
+            className="grid gap-6 mt-2 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1"
+          >
             {listProviderFilter?.length != 0 ? (
               listProviderFilter?.map((provider) => (
                 <Link

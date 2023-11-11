@@ -11,7 +11,7 @@ const FilterPage = (props) => {
         <title>UME | {props?.serviceName}</title>
       </Head>
       <AppLayout {...props}>
-        <FilterContainer serviceName={props?.serviceName} />
+        <FilterContainer />
       </AppLayout>
     </>
   )
