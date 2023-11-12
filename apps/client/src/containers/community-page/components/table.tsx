@@ -1,4 +1,3 @@
-import coin from 'public/coin-icon.png'
 import medalTop1 from 'public/first-place-medal.png'
 import medalTop2 from 'public/second-place-medal.png'
 import medalTop3 from 'public/third-place-medal.png'
@@ -53,7 +52,7 @@ const Table = (props: {
                       <td className="py-2">
                         <div className="flex items-center justify-center">
                           {Math.floor(data?.totalCoinDonation) || Math.floor(data?.actualReceivingAmount)}
-                          <Image src={coin} width={40} height={40} alt="coin" />
+                          <span className="text-xs italic"> đ</span>
                         </div>
                       </td>
                     </tr>

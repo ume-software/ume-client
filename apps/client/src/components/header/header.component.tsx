@@ -2,7 +2,6 @@
 import { Menu, Transition } from '@headlessui/react'
 import { Dot, Gift, Remind } from '@icon-park/react'
 import { Button } from '@ume/ui'
-import coin from 'public/coin-icon.png'
 import logo from 'public/ume-logo-2.svg'
 import Notificate from '~/containers/notificate/order-notificate.container'
 import { useAuth } from '~/contexts/auth'
@@ -120,14 +119,24 @@ export const Header: React.FC = () => {
             <button onClick={() => setShowRechargeModal(true)}>
               <div className="flex items-center justify-end rounded-full bg-[#37354F] pr-2 pl-4 mr-2 self-center text-white">
                 {isRechargeLoading ? (
-                  <span
-                    className={`spinner h-3 w-3 animate-spin rounded-full border-[2px] border-r-transparent dark:border-navy-300 dark:border-r-transparent border-white`}
-                  />
+                  <>
+                    <span
+                      className={`spinner h-3 w-3 animate-spin rounded-full border-[2px] border-r-transparent dark:border-navy-300 dark:border-r-transparent border-white`}
+                    />
+                    <span className="h-5 pl-2 text-xs italic"> đ</span>
+                  </>
                 ) : (
-                  <p className="text-lg font-semibold">{balance}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-lg font-semibold">
+                      {(balance ?? 0)
+                        .toLocaleString('en-US', {
+                          currency: 'VND',
+                        })
+                        .toString()}
+                    </p>
+                    <span className="text-xs italic"> đ</span>
+                  </div>
                 )}
-
-                <Image src={coin} width={30} height={30} alt="coin" />
               </div>
             </button>
           )}

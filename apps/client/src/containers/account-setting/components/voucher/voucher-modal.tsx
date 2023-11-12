@@ -1,6 +1,5 @@
 import { CloseSmall, Plus } from '@icon-park/react'
 import { Button, FormInput, Modal, TextArea } from '@ume/ui'
-import coin from 'public/coin-icon.png'
 import { uploadImageBooking } from '~/apis/upload-media'
 import { useAuth } from '~/contexts/auth'
 import { ActionEnum } from '~/enumVariable/enumVariable'
@@ -52,7 +51,7 @@ const moneyType: IEnumType[] = [
   },
   {
     key: CreateVoucherRequestDiscountUnitEnum.Cash,
-    label: <Image src={coin} width={25} height={25} alt="coin" />,
+    label: <span className="text-xs italic"> đ</span>,
   },
 ]
 
@@ -958,7 +957,7 @@ export default function VourcherModal(
                         max={100}
                       />
                     </div>
-                    <Image src={coin} width={35} height={35} alt="coin" />
+                    <span className="text-xs italic"> đ</span>
                     {!!form.errors.minimize && form.touched.minimize && (
                       <p className="absolute bottom-[-10px] left-20 text-red-500 text-xs">{form.errors.minimize}</p>
                     )}
@@ -1003,7 +1002,7 @@ export default function VourcherModal(
                       max={100000}
                     />
                   </div>
-                  <Image src={coin} width={35} height={35} alt="coin" />
+                  <span className="text-xs italic"> đ</span>
                   {!!form.errors.minimumBookingTotalPriceForUsage && form.touched.minimumBookingTotalPriceForUsage && (
                     <p className="absolute bottom-[-10px] left-0 text-red-500 text-xs">
                       {form.errors.minimumBookingTotalPriceForUsage}
