@@ -109,6 +109,28 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
       setIsModalLoginVisible(true)
     }
   }
+  const isSpecialTime = (startTimeOfDay: string | undefined, endTimeOfDay: string | undefined) => {
+    if (startTimeOfDay && endTimeOfDay) {
+      const currentTime = new Date()
+      const currentHours = currentTime.getHours()
+      const currentMinutes = currentTime.getMinutes()
+
+      const [startHours, startMinutes] = startTimeOfDay.split(':').map(Number)
+      const [endHours, endMinutes] = endTimeOfDay.split(':').map(Number)
+
+      return (
+        (startHours > endHours &&
+          (currentHours > startHours ||
+            (currentHours === startHours && currentMinutes >= startMinutes) ||
+            currentHours < endHours ||
+            (currentHours === endHours && currentMinutes <= endMinutes))) ||
+        (startHours < endHours &&
+          (currentHours > startHours || (currentHours === startHours && currentMinutes >= startMinutes)) &&
+          (currentHours < endHours || (currentHours === endHours && currentMinutes <= endMinutes)))
+      )
+    }
+    return false
+  }
 
   return (
     <>
@@ -169,17 +191,24 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                             onKeyDown={() => {}}
                           >
                             <Image
+                              className="min-w-[60px] min-h-[80px]"
                               src={item?.service?.imageUrl ?? ImgForEmpty}
                               alt="Game Image"
                               width={60}
                               height={80}
                             />
-                            <div className="max-w-[150px] min-w-[150px]">
-                              <p className="lg:font-semibold font-normal xl:text-md lg:text-sm text-xs text-white z-[4] truncate group-hover:w-fit">
+                            <div className="w-full">
+                              <p className="lg:font-semibold font-normal xl:text-md lg:text-sm text-xs text-white z-[4] group-hover:w-fit">
                                 {item?.service?.name}
                               </p>
                               <span className="flex items-center gap-1 lg:font-semibold font-normal xl:text-sm lg:text-xs text-white opacity-30 z-[4] truncate group-hover:w-fit">
-                                {item.defaultCost?.toLocaleString('en-US', {
+                                {(
+                                  item.bookingCosts?.find((spectialTime) => {
+                                    if (isSpecialTime(spectialTime?.startTimeOfDay, spectialTime?.endTimeOfDay)) {
+                                      return spectialTime
+                                    }
+                                  })?.amount ?? item.defaultCost
+                                )?.toLocaleString('en-US', {
                                   currency: 'VND',
                                 })}
                                 <p className="text-xs italic"> đ</p> / 1h

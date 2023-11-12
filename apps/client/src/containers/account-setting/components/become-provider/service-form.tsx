@@ -455,23 +455,44 @@ const AddSkillForm = () => {
   }
 
   const isTimePeriodIncluded = (period1: string[], period2: string[]) => {
-    const [start1, end1] = period1.map((time) => time.split(':').map(Number))
-    const [start2, end2] = period2.map((time) => time.split(':').map(Number))
+    const [startInputTime, endInputTime] = period1
+    const [startInputHours, startInputMinutes] = startInputTime.split(':').map(Number)
+    const [endInputHours, endInputMinutes] = endInputTime.split(':').map(Number)
 
-    const startMinutes1 = (end2[0] < start2[0] ? 24 - start1[0] : start1[0]) * 60 + start1[1]
-    const endMinutes1 = end1[0] * 60 + end1[1]
-    const startMinutes2 = (end2[0] < start2[0] ? 24 - start2[0] : start2[0]) * 60 + start2[1]
-    const endMinutes2 = end2[0] * 60 + end2[1]
+    const [startTime, endTime] = period2
+    const [startHours, startMinutes] = startTime.split(':').map(Number)
+    const [endHours, endMinutes] = endTime.split(':').map(Number)
+    console.log(period1)
+    console.log(period2)
+    console.log(endInputHours < startInputHours)
 
-    const isEntirelyIncluded =
-      (end2[0] < start2[0] && startMinutes1 >= startMinutes2 && startMinutes1 <= endMinutes2) ||
-      (startMinutes1 >= startMinutes2 && startMinutes1 <= endMinutes2) ||
-      (end2[0] < start2[0] && endMinutes1 <= startMinutes2 && endMinutes1 >= endMinutes2) ||
-      (end2[0] < start2[0] && endMinutes1 >= start2[0] * 60 + start2[1]) ||
-      (end2[0] > start2[0] && endMinutes1 >= startMinutes2 && endMinutes1 <= endMinutes2) ||
-      (end2[0] > start2[0] && endMinutes1 <= start2[0] * 60 + start2[1])
-
-    return isEntirelyIncluded
+    if (endHours > startHours) {
+      console.log('b')
+      return (
+        (startInputHours > startHours &&
+          startInputHours < endHours &&
+          endInputHours > startHours &&
+          endInputHours < endHours) ||
+        (startInputHours == startHours && startInputMinutes > startMinutes) ||
+        (endInputHours == endHours && endInputMinutes < endMinutes) ||
+        (startInputHours == endHours && startInputMinutes < endMinutes) ||
+        (endInputHours == startHours && endInputMinutes > startMinutes) ||
+        (endInputHours && endInputHours < startInputHours) ||
+        (endInputHours == startInputHours && endInputMinutes < startInputMinutes)
+      )
+    } else if (endHours < startHours) {
+      console.log('c')
+      return (
+        (startInputHours < startHours &&
+          startInputHours > endHours &&
+          endInputHours < startHours &&
+          endInputHours > endHours) ||
+        (startInputHours == startHours && startInputMinutes < startMinutes) ||
+        (endInputHours == endHours && endInputMinutes > endMinutes) ||
+        (endInputHours && endInputHours > startInputHours) ||
+        (endInputHours == startInputHours && endInputMinutes > startInputMinutes)
+      )
+    }
   }
 
   const handleSpecialTimeChange = (index: number, value: string, type: string, time_slotIndex: number) => {
