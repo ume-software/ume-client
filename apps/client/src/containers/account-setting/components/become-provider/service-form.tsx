@@ -462,12 +462,8 @@ const AddSkillForm = () => {
     const [startTime, endTime] = period2
     const [startHours, startMinutes] = startTime.split(':').map(Number)
     const [endHours, endMinutes] = endTime.split(':').map(Number)
-    console.log(period1)
-    console.log(period2)
-    console.log(endInputHours < startInputHours)
 
     if (endHours > startHours) {
-      console.log('b')
       return (
         (startInputHours > startHours &&
           startInputHours < endHours &&
@@ -481,7 +477,6 @@ const AddSkillForm = () => {
         (endInputHours == startInputHours && endInputMinutes < startInputMinutes)
       )
     } else if (endHours < startHours) {
-      console.log('c')
       return (
         (startInputHours < startHours &&
           startInputHours > endHours &&
