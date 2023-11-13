@@ -84,7 +84,7 @@ const RechargeForm = ({ handleClose, qrContent, setQRContent }: ReachargeFromPro
                   if (Number(values.balance.replace(/,/g, '')) >= 10000) {
                     requestRecharge.mutate(
                       {
-                        total: values.balance.replace(/,/g, ''),
+                        total: Number(values.balance.replace(/,/g, '')),
                         platform: platform.paymentPlatform,
                       },
                       {

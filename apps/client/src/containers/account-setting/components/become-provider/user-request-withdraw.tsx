@@ -56,7 +56,7 @@ const UserRequestWithdraw = (props: {
     if (Number(form.values.withdrawMoney.replace(/,/g, '')) <= (accountBalance.data?.data.totalBalanceAvailable ?? 0)) {
       createWithdrawRequest.mutate(
         {
-          userPaymentSystemId: form.values.platformAccount.split('-')[0],
+          userPaymentSystemId: form.values.platformAccountId,
           unitCurrency: 'VND',
           amountBalance: Number(form.values.withdrawMoney.replace(/,/g, '')),
         },
@@ -111,17 +111,15 @@ const UserRequestWithdraw = (props: {
     backgroundColor: '#15151b',
     closeWhenClickOutSide: true,
     closeButtonOnConner: (
-      <>
-        <CloseSmall
-          onClick={handleClose}
-          onKeyDown={(e) => e.key === 'Enter' && handleClose()}
-          tabIndex={1}
-          className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
-          theme="outline"
-          size="24"
-          fill="#FFFFFF"
-        />
-      </>
+      <CloseSmall
+        onClick={handleClose}
+        onKeyDown={(e) => e.key === 'Enter' && handleClose()}
+        tabIndex={1}
+        className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
+        theme="outline"
+        size="24"
+        fill="#FFFFFF"
+      />
     ),
   })
 
