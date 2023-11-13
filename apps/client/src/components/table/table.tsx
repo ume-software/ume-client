@@ -70,8 +70,9 @@ const Table = ({
       </div>
       <table className="w-full rounded-xl bg-[#292734] overflow-hidden">
         {totalItem <= 0 ? (
-          <div className="w-full h-full text-center">
+          <div className="w-full h-full text-center p-5">
             <Image layout="intrinsic" src={ImgForEmpty} alt="Personal Image" width={800} height={500} />
+            <p className="text-xl font-semibold">Chưa có {contentItem}</p>
           </div>
         ) : (
           <>

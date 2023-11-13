@@ -2,13 +2,11 @@
 import { Menu, Transition } from '@headlessui/react'
 import { Check, CloseSmall, Down } from '@icon-park/react'
 import { Button, FormInputWithAffix, Modal } from '@ume/ui'
-import coin from 'public/coin-icon.png'
 
 import { Fragment, useEffect, useState } from 'react'
 
 import { notification } from 'antd'
 import { useFormik } from 'formik'
-import Image from 'next/legacy/image'
 import { UserPaymentSystemPagingResponse } from 'ume-service-openapi'
 import * as Yup from 'yup'
 
@@ -33,14 +31,12 @@ const UserRequestWithdraw = (props: {
     initialValues: {
       platformAccountId: '',
       platformAccount: '',
-      withdrawMoney: 1,
+      withdrawMoney: '1,000',
     },
     validationSchema: Yup.object({
       platformAccountId: Yup.string().required('Số tài khoản là yêu cầu'),
       platformAccount: Yup.string().required('Số tài khoản là yêu cầu'),
-      withdrawMoney: Yup.number()
-        .lessThan(10001, `Số coin rút phải ít hơn 10.000`)
-        .moreThan(0, 'Số coin rút phải lớn hơn 0'),
+      withdrawMoney: Yup.string().required('Xin hãy nhập số tiền').min(1).max(9, 'Chỉ được nhập nhiều nhất 9 chữ số'),
     }),
     onSubmit() {},
   })
@@ -57,12 +53,12 @@ const UserRequestWithdraw = (props: {
   }, [form.values.platformAccountId, form.values.platformAccount])
 
   const handleWithdraw = () => {
-    if (form.values.withdrawMoney <= (accountBalance.data?.data.totalBalanceAvailable ?? 0)) {
+    if (Number(form.values.withdrawMoney.replace(/,/g, '')) <= (accountBalance.data?.data.totalBalanceAvailable ?? 0)) {
       createWithdrawRequest.mutate(
         {
           userPaymentSystemId: form.values.platformAccount.split('-')[0],
           unitCurrency: 'VND',
-          amountBalance: form.values.withdrawMoney,
+          amountBalance: Number(form.values.withdrawMoney.replace(/,/g, '')),
         },
         {
           onSuccess() {
@@ -235,17 +231,23 @@ const UserRequestWithdraw = (props: {
           <label>Số tiền rút</label>
           <FormInputWithAffix
             name="withdrawMoney"
-            type="number"
+            type="text"
             className={`bg-zinc-800 rounded border border-white border-opacity-30`}
             styleInput={`bg-zinc-800 border-none focus:border-none outline-none`}
             value={form.values.withdrawMoney}
-            onChange={(e) => form.handleChange(e)}
+            onChange={(e) => {
+              const inputValue = e.target.value.replace(/,/g, '')
+              const numericValue = parseFloat(inputValue)
+              const formattedValue = isNaN(numericValue) ? '0' : numericValue.toLocaleString()
+
+              form.setFieldValue('withdrawMoney', formattedValue)
+            }}
             onBlur={form.handleBlur}
             error={!!form.errors.withdrawMoney && form.touched.withdrawMoney}
             errorMessage={''}
             autoComplete="off"
             position={'right'}
-            component={<Image src={coin} width={30} height={30} alt="coin" />}
+            component={<span className="h-5 text-xs italic"> đ</span>}
           />
           {!!form.errors.withdrawMoney && form.touched.withdrawMoney && (
             <p className="text-xs text-red-500">{form.errors.withdrawMoney}</p>
@@ -254,7 +256,10 @@ const UserRequestWithdraw = (props: {
         <div className="flex justify-between items-center text-2xl font-bold space-y-2">
           <p>Tổng: </p>
           <span className="flex justify-start items-center gap-2">
-            {((form.values.withdrawMoney - form.values.withdrawMoney * 0.1) * 1000).toLocaleString('en-US', {
+            {(
+              Number(form.values.withdrawMoney.replace(/,/g, '')) -
+              Number(form.values.withdrawMoney.replace(/,/g, '')) * 0.1
+            ).toLocaleString('en-US', {
               currency: 'VND',
             })}
             <p className="text-xs italic"> VND</p>

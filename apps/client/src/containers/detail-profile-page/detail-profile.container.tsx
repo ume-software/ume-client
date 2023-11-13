@@ -1,7 +1,6 @@
 import { Menu, Transition } from '@headlessui/react'
 import { CloseSmall, CopyOne, Dot, Female, Lock, Male, More, PaperMoneyTwo, ShareTwo } from '@icon-park/react'
 import { Button, InputWithAffix, Modal, TextArea } from '@ume/ui'
-import coin from 'public/coin-icon.png'
 import detailBackground from 'public/detail-cover-background.png'
 import ImgForEmpty from 'public/img-for-empty.png'
 import lgbtIcon from 'public/rainbow-flag-11151.svg'
@@ -38,7 +37,7 @@ interface TabDataProps {
 }
 
 interface DonateProps {
-  donateValue: number
+  donateValue: string
   donateContent?: string
 }
 
@@ -106,10 +105,14 @@ const DetailProfileContainer = () => {
 
   const [messageApi, contextHolder] = message.useMessage()
   const [providerDetail, setProviderDetail] = useState<UserInformationResponse | undefined>(undefined)
-  const [donationValues, setDonationValues] = useState<DonateProps>({ donateValue: 1 })
+  const [donationValues, setDonationValues] = useState<DonateProps>({ donateValue: '1,000' })
   const [isModalDonationVisible, setIsModalDonationVisible] = useState<boolean>(false)
   const [isModalConfirmationVisible, setIsModalConfirmationVisible] = useState<boolean>(false)
   const { isLoading: isProviderDetailLoading } = trpc.useQuery(['booking.getUserBySlug', slug.profileId!.toString()], {
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: 'always',
+    cacheTime: 0,
+    refetchOnMount: true,
     onSuccess(data) {
       if (data.data.id) {
         setProviderDetail(data.data)
@@ -120,6 +123,15 @@ const DetailProfileContainer = () => {
     onError() {
       router.replace('/404')
     },
+    enabled: !!slug.profileId!.toString(),
+  })
+
+  const balance = trpc.useQuery(['identity.account-balance'], {
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: 'always',
+    cacheTime: 0,
+    refetchOnMount: true,
+    enabled: isAuthenticated,
   })
 
   const donationForRecipient = trpc.useMutation(['booking.donationForRecipient'])
@@ -209,7 +221,7 @@ const DetailProfileContainer = () => {
             donationForRecipient.mutate(
               {
                 recipientId: providerDetail?.id ?? '',
-                amount: donationValues.donateValue,
+                amount: Number(donationValues.donateValue.replace(/,/g, '')),
                 message: donationValues.donateContent,
               },
               {
@@ -254,11 +266,7 @@ const DetailProfileContainer = () => {
   })
 
   const validationSchema = Yup.object().shape({
-    donateValue: Yup.string()
-      .required('Xin hãy nhập số tiền')
-      .matches(/^\d+$/)
-      .min(1)
-      .max(7, 'Chỉ được nhập nhiều nhất 7 chữ số'),
+    donateValue: Yup.string().required('Xin hãy nhập số tiền').min(1).max(7, 'Chỉ được nhập nhiều nhất 7 chữ số'),
   })
 
   const donateModal = Modal.useEditableForm({
@@ -270,15 +278,15 @@ const DetailProfileContainer = () => {
       <>
         <Formik
           initialValues={{
-            donateValue: '1',
+            donateValue: '1,000',
             donateContent: undefined,
           }}
           onSubmit={(values) => {
-            setDonationValues({ donateValue: Number(values.donateValue), donateContent: values.donateContent })
+            setDonationValues({ donateValue: values.donateValue, donateContent: values.donateContent })
           }}
           validationSchema={validationSchema}
         >
-          {({ handleSubmit, handleChange, handleBlur, values, errors }) => (
+          {({ handleSubmit, handleChange, handleBlur, values, errors, setFieldValue }) => (
             <div className="flex flex-col gap-5 p-10 text-white">
               <div className="space-y-2">
                 <label>Tiền quà: </label>
@@ -286,14 +294,19 @@ const DetailProfileContainer = () => {
                   placeholder="Tiền donate"
                   value={values.donateValue}
                   name="donateValue"
-                  type="number"
-                  min={1}
-                  onChange={handleChange}
+                  type="text"
+                  onChange={(e) => {
+                    const inputValue = e.target.value.replace(/,/g, '')
+                    const numericValue = parseFloat(inputValue)
+                    const formattedValue = isNaN(numericValue) ? '0' : numericValue.toLocaleString()
+
+                    setFieldValue('donateValue', formattedValue)
+                  }}
                   className="w-full max-h-[50px] bg-zinc-800 border border-white border-opacity-30 rounded-xl my-2"
                   styleInput={`bg-zinc-800 rounded-xl border-none focus:outline-none`}
                   iconStyle="border-none"
                   position="right"
-                  component={<Image src={coin} width={50} height={50} alt="coin" />}
+                  component={<span className="text-xs italic"> đ</span>}
                   autoComplete="off"
                   onBlur={handleBlur}
                 />
@@ -318,8 +331,18 @@ const DetailProfileContainer = () => {
                   isActive={!errors.donateValue}
                   isOutlinedButton={true}
                   onClick={() => {
-                    handleSubmit()
-                    setIsModalConfirmationVisible(true)
+                    if (
+                      (balance.data?.data.totalBalanceAvailable ?? 0) > Number(values.donateValue.replace(/,/g, ''))
+                    ) {
+                      handleSubmit()
+                      setIsModalConfirmationVisible(true)
+                    } else {
+                      notification.warning({
+                        message: 'Tài khoản không đủ',
+                        description: 'Bạn không có đủ tiền. Vui lòng nạp thêm!',
+                        placement: 'bottomLeft',
+                      })
+                    }
                   }}
                 >
                   Chấp nhận

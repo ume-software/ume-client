@@ -17,9 +17,8 @@ export const AuthForm = ({ setShowModal }: AuthFormProps) => {
         { token: response.access_token, type: 'GOOGLE' },
         {
           onSuccess: (data) => {
-            setShowModal(false)
-            localStorage.setItem('accessToken', data.data.accessToken)
             login({ ...data.data.user })
+            setShowModal(false)
           },
           onError: (error) => console.log(error),
         },

@@ -1,7 +1,6 @@
 import { Menu, Transition } from '@headlessui/react'
 import { Check } from '@icon-park/react'
 import { Input } from '@ume/ui'
-import coin from 'public/coin-icon.png'
 import CategoryDrawer from '~/containers/home-page/components/category-drawer'
 import PromoteCard from '~/containers/home-page/components/promoteCard'
 import { GenderEnum } from '~/enumVariable/enumVariable'
@@ -10,7 +9,6 @@ import useDebounce from '~/hooks/useDebounce'
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react'
 
 import { Slider, Tooltip } from 'antd'
-import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FilterProviderPagingResponse } from 'ume-service-openapi'
@@ -38,7 +36,7 @@ const orderBy: OrderByProps[] = [
     name: 'Đánh giá',
   },
 ]
-const max: number = 100
+const max: number = 100000
 const min: number = 0
 
 const genderData: GenderProps[] = [
@@ -113,7 +111,7 @@ const FilterContainer = () => {
       range
       min={min}
       max={max}
-      marks={{ 0: <p className="text-white">{min}</p>, 100: <p className="text-white">{max}</p> }}
+      step={1000}
       defaultValue={priceRange}
       onAfterChange={handlePriceChange}
     />
@@ -199,15 +197,19 @@ const FilterContainer = () => {
               trigger="click"
             >
               {priceRange[0] != min || priceRange[1] != max ? (
-                <div className="flex gap-3 text-xl font-bold border border-light-50">
+                <div className="flex items-center gap-3 text-xl font-bold border border-light-50">
                   <div className="flex items-center gap-1">
-                    {priceRange[0]}
-                    <Image src={coin} width={25} height={25} alt="coin" />
+                    {priceRange[0].toLocaleString('en-US', {
+                      currency: 'VND',
+                    })}
+                    <span className="text-xs italic"> đ</span>
                   </div>
-                  -
+                  <p>-</p>
                   <div className="flex items-center gap-1">
-                    {priceRange[1]}
-                    <Image src={coin} width={25} height={25} alt="coin" />
+                    {priceRange[1].toLocaleString('en-US', {
+                      currency: 'VND',
+                    })}
+                    <span className="text-xs italic"> đ</span>
                   </div>
                 </div>
               ) : (

@@ -1,6 +1,5 @@
 import { Down, Gamepad, People, Right } from '@icon-park/react'
 import { CustomDrawer } from '@ume/ui'
-import coin from 'public/coin-icon.png'
 import ImgForEmpty from 'public/img-for-empty.png'
 import 'swiper/swiper-bundle.css'
 import Chat from '~/containers/chat/chat.container'
@@ -110,6 +109,28 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
       setIsModalLoginVisible(true)
     }
   }
+  const isSpecialTime = (startTimeOfDay: string | undefined, endTimeOfDay: string | undefined) => {
+    if (startTimeOfDay && endTimeOfDay) {
+      const currentTime = new Date()
+      const currentHours = currentTime.getHours()
+      const currentMinutes = currentTime.getMinutes()
+
+      const [startHours, startMinutes] = startTimeOfDay.split(':').map(Number)
+      const [endHours, endMinutes] = endTimeOfDay.split(':').map(Number)
+
+      return (
+        (startHours > endHours &&
+          (currentHours > startHours ||
+            (currentHours === startHours && currentMinutes >= startMinutes) ||
+            currentHours < endHours ||
+            (currentHours === endHours && currentMinutes <= endMinutes))) ||
+        (startHours < endHours &&
+          (currentHours > startHours || (currentHours === startHours && currentMinutes >= startMinutes)) &&
+          (currentHours < endHours || (currentHours === endHours && currentMinutes <= endMinutes)))
+      )
+    }
+    return false
+  }
 
   return (
     <>
@@ -170,21 +191,28 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                             onKeyDown={() => {}}
                           >
                             <Image
+                              className="min-w-[60px] min-h-[80px]"
                               src={item?.service?.imageUrl ?? ImgForEmpty}
                               alt="Game Image"
                               width={60}
                               height={80}
                             />
-                            <div className="max-w-[150px] min-w-[150px]">
-                              <p className="lg:font-semibold font-normal xl:text-md lg:text-sm text-xs text-white z-[4] truncate group-hover:w-fit">
+                            <div className="w-full">
+                              <p className="lg:font-semibold font-normal xl:text-md lg:text-sm text-xs text-white z-[4] group-hover:w-fit">
                                 {item?.service?.name}
                               </p>
-                              <div className="flex items-center">
-                                <Image src={coin} width={20} height={20} alt="coin" />
-                                <p className="lg:font-semibold font-normal xl:text-sm lg:text-xs text-white opacity-30 z-[4] truncate group-hover:w-fit">
-                                  {item.defaultCost} / 1h
-                                </p>
-                              </div>
+                              <span className="flex items-center gap-1 lg:font-semibold font-normal xl:text-sm lg:text-xs text-white opacity-30 z-[4] truncate group-hover:w-fit">
+                                {(
+                                  item.bookingCosts?.find((spectialTime) => {
+                                    if (isSpecialTime(spectialTime?.startTimeOfDay, spectialTime?.endTimeOfDay)) {
+                                      return spectialTime
+                                    }
+                                  })?.amount ?? item.defaultCost
+                                )?.toLocaleString('en-US', {
+                                  currency: 'VND',
+                                })}
+                                <p className="text-xs italic"> đ</p> / 1h
+                              </span>
                             </div>
                           </div>
                         ))}
@@ -230,7 +258,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                             <div className="">
                               <p className="font-normal text-sm text-white">{item?.service?.name}</p>
                               <div className="flex items-center">
-                                <Image src={coin} width={20} height={20} alt="coin" />
+                                <span className="text-xs italic"> đ</span>
                                 <p className="font-normal text-xs text-white opacity-30">{item.defaultCost} / 1h</p>
                               </div>
                             </div>

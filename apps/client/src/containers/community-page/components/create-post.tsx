@@ -81,7 +81,7 @@ const CreatePost = (props: any) => {
 
     const fileUpload = await handleUploadFiles(e.currentTarget)
 
-    if (!(content == '' && (await fileUpload).thumbnails.length == 0)) {
+    if (!(content == '' && fileUpload.thumbnails.length == 0)) {
       try {
         createNewPost.mutate(
           {
@@ -129,7 +129,11 @@ const CreatePost = (props: any) => {
                   Chọn ảnh
                 </label>
               ) : (
-                <div className="p-2 rounded-full hover:bg-gray-700" onClick={() => setRemoveMedia(true)}>
+                <div
+                  className="p-2 rounded-full hover:bg-gray-700"
+                  onClick={() => setRemoveMedia(true)}
+                  onKeyDown={() => {}}
+                >
                   <DeleteFive theme="filled" size="20" fill="#FFFFFF" strokeLinejoin="bevel" />
                 </div>
               )}
@@ -163,9 +167,9 @@ const CreatePost = (props: any) => {
           </div>
         </div>
       </div>
-      <div className="p-5 mt-3">
+      <div className="p-5 mt-3 text-center">
         <Button
-          customCSS={`!rounded-2xl w-full !text-white py-1 font-semibold text-lg text-center ${
+          customCSS={`!rounded-2xl w-full !text-white py-2 px-5 font-semibold text-lg text-center ${
             !(content === '' && !mediaFiles) && 'hover:scale-105'
           }`}
           type="submit"

@@ -20,13 +20,12 @@ export const AuthProvider = ({ children }: AuthProviderType) => {
 
   const authContextValue = useMemo(() => {
     const login = async (user: UserInformationResponse): Promise<void> => {
-      localStorage.setItem('user', JSON.stringify(user))
+      sessionStorage.setItem('user', JSON.stringify(user))
       setUser(user)
     }
 
     const logout = async (): Promise<void> => {
-      localStorage.removeItem('user')
-      localStorage.removeItem('accessToken')
+      sessionStorage.removeItem('user')
       router.push('/logout')
       setUser(null)
     }

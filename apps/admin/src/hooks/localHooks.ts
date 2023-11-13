@@ -1,16 +1,16 @@
 const setItem = (key: string, value: any) => {
-  return localStorage.setItem(key, JSON.stringify(value))
+  return sessionStorage.setItem(key, JSON.stringify(value))
 }
 const clearStorage = () => {
-  return localStorage.clear()
+  return sessionStorage.clear()
 }
 
 const removeItem = (key: string) => {
-  return localStorage.removeItem(key)
+  return sessionStorage.removeItem(key)
 }
 const getItem = (key: string) => {
   if (typeof window !== 'undefined') {
-    return localStorage.getItem(key) ? JSON.parse(localStorage.getItem(key) || '') : undefined
+    return sessionStorage.getItem(key) ? JSON.parse(sessionStorage.getItem(key) || '') : undefined
   }
 }
 

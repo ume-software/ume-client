@@ -151,7 +151,7 @@ const BecomeProvider = () => {
                 </Button>
               </div>
               {!isUserPaymentPlatformLoading ? (
-                <div className="relative">
+                <div className="relative pr-40">
                   <Swiper spaceBetween={20} slidesPerView="auto" mousewheel={true} direction="horizontal">
                     {userPaymentPlatformData?.data?.row?.map((paymentPlatform) => (
                       <SwiperSlide
