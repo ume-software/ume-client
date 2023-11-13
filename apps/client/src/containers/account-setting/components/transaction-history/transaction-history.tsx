@@ -1,8 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import { CloseSmall } from '@icon-park/react'
+import { Modal } from '@ume/ui'
 import { useAuth } from '~/contexts/auth'
 
 import { useEffect, useId, useState } from 'react'
 
+import { notification } from 'antd'
 import {
   BalanceHistoryPagingResponse,
   BalanceHistoryResponseBalanceTypeEnum,
@@ -11,6 +14,7 @@ import {
 
 import ColumnChart from './column-chart'
 
+import ConfirmForm from '~/components/confirm-form/confirm-form'
 import { TableSkeletonLoader } from '~/components/skeleton-load'
 import Table from '~/components/table/table'
 
@@ -49,6 +53,9 @@ const TransactionHistory = () => {
 
   const { user } = useAuth()
 
+  const [isModalConfirmationVisible, setIsModalConfirmationVisible] = useState(false)
+  const [idWithdrawReq, setIdWithdrawReq] = useState<string>('')
+
   const [transactionHistory, setTransactionHistory] = useState<BalanceHistoryPagingResponse | undefined>(undefined)
   const [windrawRequest, setWindrawRequest] = useState<any>(undefined)
   const [transactionHistoryArray, setTransactionHistoryArray] = useState<any[] | undefined>(undefined)
@@ -72,6 +79,10 @@ const TransactionHistory = () => {
       },
     },
   )
+  const cancelWithdrawRequests = trpc.useMutation(['identity.cancelWithdrawRequests'])
+  const utils = trpc.useContext()
+
+  console.log(windrawRequest)
 
   useEffect(() => {
     const monthYearAmountMap = {}
@@ -124,7 +135,12 @@ const TransactionHistory = () => {
       const newWithdrawArray = [
         (withdrawReqArray[14] as any).platform,
         (withdrawReqArray[14] as any).platformAccount,
-        withdrawReqArray[5],
+        <span key={index_id} className="flex justify-center items-center gap-2">
+          {((withdrawReqArray[5] ?? 0) as any).toLocaleString('en-US', {
+            currency: 'VND',
+          })}
+          <p className="text-xs italic"> đ</p>
+        </span>,
         <span key={index_id} className="flex justify-center items-center gap-2">
           {(withdrawReqArray[4] as any).toLocaleString('en-US', {
             currency: 'VND',
@@ -154,76 +170,133 @@ const TransactionHistory = () => {
   }
   const handleCancelWithdrawDetail = (id: string) => {
     console.log(id)
+    setIdWithdrawReq(id)
+    setIsModalConfirmationVisible(true)
   }
 
+  const handleClose = () => {
+    setIsModalConfirmationVisible(false)
+  }
+
+  const confirmModal = Modal.useEditableForm({
+    onOK: () => {},
+    onClose: handleClose,
+    show: isModalConfirmationVisible,
+    form: (
+      <>
+        <ConfirmForm
+          title="Thay đổi thông tin cá nhân"
+          description="Bạn có chấp nhận thay đổi thông tin cá nhân hay không?"
+          onClose={handleClose}
+          onOk={() => {
+            cancelWithdrawRequests.mutate(idWithdrawReq, {
+              onSuccess() {
+                handleClose()
+                utils.invalidateQueries(['identity.getWithdrawRequests'])
+                notification.success({
+                  message: 'Hủy yêu cầu rút tiền thành công',
+                  description: 'Yêu cầu rút tiền của bạn đã được hủy',
+                  placement: 'bottomLeft',
+                })
+              },
+              onError() {
+                notification.error({
+                  message: 'Hủy yêu cầu rút tiền thất bại',
+                  description: 'Hủy yêu cầu rút tiền thất bại. Vui lòng thử lại sau!',
+                  placement: 'bottomLeft',
+                })
+              },
+            })
+          }}
+        />
+      </>
+    ),
+    backgroundColor: '#15151b',
+    closeWhenClickOutSide: true,
+    closeButtonOnConner: (
+      <CloseSmall
+        onClick={handleClose}
+        onKeyDown={(e) => e.key === 'Enter' && handleClose()}
+        tabIndex={1}
+        className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
+        theme="outline"
+        size="24"
+        fill="#FFFFFF"
+      />
+    ),
+  })
+
   return (
-    <div className="w-full px-10">
-      <p className="text-4xl font-bold">Lịch sử giao dịch</p>
+    <>
+      {isModalConfirmationVisible && confirmModal}
+      <div className="w-full px-10">
+        <p className="text-4xl font-bold">Lịch sử giao dịch</p>
 
-      <div className="flex flex-col gap-5 mt-10 space-y-10">
-        {!isTransactionHistoryLoading && seriesCharts ? (
-          <ColumnChart seriesCharts={seriesCharts} />
-        ) : (
-          <div className="w-full h-[350px] flex justify-center gap-10 mt-20 mb-10">
-            <div className="w-full h-[350px] bg-gray-300 rounded-lg animate-pulse">
-              <span className="w-full h-full" />
-            </div>
-          </div>
-        )}
-
-        {!isWithdrawRequestLoading && withdrawRequestArray ? (
-          <>
-            {user?.isVerified && (
-              <div className="flex flex-col gap-3">
-                <p className="text-xl font-bold">Yêu cầu rút tiền</p>
-                <Table
-                  dataHeader={['Nền tảng', 'Số tài khoản', 'Số lượng coin', 'Số tiền', 'Trạng thái', 'Ngày tạo']}
-                  dataBody={withdrawRequestArray as any}
-                  page={withdrawRequestPage}
-                  setPage={setWithdrawRequestPage}
-                  limit={limit}
-                  totalItem={Number(windrawRequest?.count ?? 0)}
-                  contentItem={'yêu cầu'}
-                  watchAction={true}
-                  onWatch={(index) => handleViewWithdrawDetail(withdrawRequestIds[index ?? 0] ?? '')}
-                  editAction={false}
-                  onEdit={() => {}}
-                  deleteAction={true}
-                  onDelete={(index) => {
-                    handleCancelWithdrawDetail(withdrawRequestIds[index ?? 0] ?? '')
-                  }}
-                />
+        <div className="flex flex-col gap-5 mt-10 space-y-10">
+          {!isTransactionHistoryLoading && seriesCharts ? (
+            <ColumnChart seriesCharts={seriesCharts} />
+          ) : (
+            <div className="w-full h-[350px] flex justify-center gap-10 mt-20 mb-10">
+              <div className="w-full h-[350px] bg-gray-300 rounded-lg animate-pulse">
+                <span className="w-full h-full" />
               </div>
-            )}
-          </>
-        ) : (
-          <TableSkeletonLoader />
-        )}
+            </div>
+          )}
 
-        {!isTransactionHistoryLoading && transactionHistoryArray ? (
-          <div className="flex flex-col gap-3">
-            <p className="text-xl font-bold">Chi tiết giao dịch</p>
-            <Table
-              dataHeader={['Loại', 'Số lượng coin', 'Người nhận', 'Ngày tạo giao dịch', 'Ngày hoàn thành']}
-              dataBody={transactionHistoryArray}
-              page={transactionPage}
-              setPage={setTransactionPage}
-              limit={limit}
-              totalItem={Number(transactionHistory?.count ?? 0)}
-              contentItem={'giao dịch'}
-              watchAction={false}
-              onWatch={() => {}}
-              editAction={false}
-              onEdit={() => {}}
-              deleteAction={false}
-              onDelete={() => {}}
-            />
-          </div>
-        ) : (
-          <TableSkeletonLoader />
-        )}
+          {!isWithdrawRequestLoading && withdrawRequestArray ? (
+            <>
+              {user?.isVerified && (
+                <div className="flex flex-col gap-3">
+                  <p className="text-xl font-bold">Yêu cầu rút tiền</p>
+                  <Table
+                    dataHeader={['Nền tảng', 'Số tài khoản', 'Số tiền rút', 'Số tiền nhận', 'Trạng thái', 'Ngày tạo']}
+                    dataBody={withdrawRequestArray as any}
+                    page={withdrawRequestPage}
+                    setPage={setWithdrawRequestPage}
+                    limit={limit}
+                    totalItem={Number(windrawRequest?.count ?? 0)}
+                    contentItem={'yêu cầu'}
+                    watchAction={true}
+                    onWatch={(index) => handleViewWithdrawDetail(withdrawRequestIds[index ?? 0] ?? '')}
+                    editAction={false}
+                    onEdit={() => {}}
+                    deleteAction={true}
+                    onDelete={(index) => {
+                      handleCancelWithdrawDetail(withdrawRequestIds[index ?? 0] ?? '')
+                    }}
+                  />
+                </div>
+              )}
+            </>
+          ) : (
+            <TableSkeletonLoader />
+          )}
+
+          {!isTransactionHistoryLoading && transactionHistoryArray ? (
+            <div className="flex flex-col gap-3">
+              <p className="text-xl font-bold">Chi tiết giao dịch</p>
+              <Table
+                dataHeader={['Loại', 'Số tiền', 'Người nhận', 'Ngày tạo giao dịch', 'Ngày hoàn thành']}
+                dataBody={transactionHistoryArray}
+                page={transactionPage}
+                setPage={setTransactionPage}
+                limit={limit}
+                totalItem={Number(transactionHistory?.count ?? 0)}
+                contentItem={'giao dịch'}
+                watchAction={false}
+                onWatch={() => {}}
+                editAction={false}
+                onEdit={() => {}}
+                deleteAction={false}
+                onDelete={() => {}}
+              />
+            </div>
+          ) : (
+            <TableSkeletonLoader />
+          )}
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 export default TransactionHistory

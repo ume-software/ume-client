@@ -51,7 +51,7 @@ export const identityRouter = createRouter()
   .mutation('request-recharge', {
     input: z.object({
       platform: z.string(),
-      total: z.string(),
+      total: z.number(),
     }),
     resolve: async ({ input, ctx }) => {
       return await requestRecharge(input, ctx)
