@@ -2,7 +2,6 @@
 import { Menu, Transition } from '@headlessui/react'
 import { Down, Minus, Plus, Right, Time } from '@icon-park/react'
 import { InputWithAffix } from '@ume/ui'
-import coin from 'public/coin-icon.png'
 import ImgForEmpty from 'public/img-for-empty.png'
 
 import { Fragment, useEffect, useState } from 'react'
@@ -34,8 +33,6 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
       setMyVoucher(data.data)
     },
   })
-
-  console.log(myVoucher)
 
   const [menuShow, setMenuShow] = useState<string>('')
   const accountBalance = trpc.useQuery(['identity.account-balance'])
@@ -235,12 +232,15 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
                       <Minus theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
                     </div>
                     <div
-                      className="p-2 bg-zinc-800 rounded-lg cursor-pointer"
+                      className={`p-2 bg-zinc-800 rounded-lg ${
+                        booking.bookingPeriod == 12 ? 'opacity-30 cursor-not-allowed' : 'cursor-pointer'
+                      }`}
                       onClick={() => {
-                        setBooking((prevData) => ({
-                          ...prevData,
-                          bookingPeriod: booking.bookingPeriod + 1,
-                        }))
+                        booking.bookingPeriod < 12 &&
+                          setBooking((prevData) => ({
+                            ...prevData,
+                            bookingPeriod: booking.bookingPeriod + 1,
+                          }))
                       }}
                       onKeyDown={() => {}}
                     >
@@ -273,35 +273,53 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
             </div>
             <div className="max-w-[200px]">
               <Drawer
-                title={<p className="text-white">Khuyến mãi</p>}
+                title={<p className="text-white text-xl font-bold">Khuyến mãi</p>}
                 width={320}
                 closable={false}
                 onClose={() => setIsModalVoucherOpen(false)}
                 open={isModalVoucherOpen}
               >
-                <VoucherApply setIsModalVoucherOpen={setIsModalVoucherOpen} />
+                <VoucherApply
+                  setIsModalVoucherOpen={setIsModalVoucherOpen}
+                  voucherSelected={booking.voucherIds}
+                  setVoucherSelected={setBooking}
+                  data={myVoucher}
+                />
               </Drawer>
             </div>
           </div>
+
           <div className="flex justify-between border-b-2 border-[#B9B8CC] pb-5">
             <p className="text-3xl font-bold ">Thành tiền:</p>
-            <div className="flex items-end gap-2">
-              {total != totalAfterDiscount && (
-                <span className="flex items-center text-xl font-bold line-through opacity-30">
-                  {booking.bookingPeriod}h giá {total} <span className="text-xs italic"> đ</span>
-                </span>
-              )}
-              <p className="flex items-center text-3xl font-bold ">
-                {booking.bookingPeriod}h giá {totalAfterDiscount} <Image src={coin} width={50} height={50} alt="coin" />
-              </p>
-            </div>
+            {booking.providerServiceId && (
+              <div className="flex items-end gap-2">
+                {total != totalAfterDiscount && (
+                  <span className="flex items-center text-xl font-bold line-through opacity-30">
+                    {booking.bookingPeriod}h giá{' '}
+                    {total.toLocaleString('en-US', {
+                      currency: 'VND',
+                    })}{' '}
+                    <span className="text-xs italic"> đ</span>
+                  </span>
+                )}
+                <p className="flex items-center text-3xl font-bold ">
+                  {booking.bookingPeriod}h giá{' '}
+                  {totalAfterDiscount.toLocaleString('en-US', {
+                    currency: 'VND',
+                  })}
+                  đ
+                </p>
+              </div>
+            )}
           </div>
           <button
             type="button"
             className={`py-2 mt-2 text-2xl font-bold text-center text-white ${
               !booking.providerServiceId ? 'border bg-zinc-800 cursor-not-allowed' : 'bg-purple-700 hover:scale-105'
             }  rounded-full `}
-            onClick={() => handleCreateBooking(booking)}
+            onClick={() => {
+              if (booking.providerServiceId) handleCreateBooking(booking)
+            }}
           >
             Đặt
           </button>

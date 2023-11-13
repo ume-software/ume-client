@@ -1,5 +1,4 @@
 import { PlayOne, Star, VoiceOne } from '@icon-park/react'
-import coin from 'public/coin-icon.png'
 
 import React, { useEffect, useRef } from 'react'
 
@@ -84,11 +83,15 @@ const PromoteCard = (props: { data: FilterProviderResponse }) => {
         <p className="text-lg truncate">{props?.data?.description}</p>
 
         <div className="flex items-end mt-10 gap-1">
-          <div className="flex items-end">
-            <Image src={coin} width={25} height={25} alt="coin" />
-            <p className="text-2xl font-semibold">{props?.data?.cost?.toFixed(0)}</p>
+          <div className="flex items-center gap-2">
+            <p className="text-2xl font-semibold">
+              {props?.data?.cost?.toLocaleString('en-US', {
+                currency: 'VND',
+              })}
+            </p>
+            <span className="text-xs italic"> đ</span>
           </div>
-          <p className="text-lg font-semibold opacity-30">.00/ Giờ</p>
+          <p className="text-lg font-semibold opacity-30">/ Giờ</p>
         </div>
       </div>
     </div>

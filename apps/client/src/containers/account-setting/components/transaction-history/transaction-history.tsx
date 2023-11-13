@@ -1,10 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import coin from 'public/coin-icon.png'
 import { useAuth } from '~/contexts/auth'
 
 import { useEffect, useId, useState } from 'react'
 
-import Image from 'next/legacy/image'
 import {
   BalanceHistoryPagingResponse,
   BalanceHistoryResponseBalanceTypeEnum,
@@ -103,7 +101,7 @@ const TransactionHistory = () => {
       const newTransactionArray = [
         TransactionContent.find((transContent) => transContent.key == transactionArray[5])?.label,
         <div className="flex items-center justify-center gap-2" key={transactionHistory[0]}>
-          {transactionArray[6]} <Image src={coin} width={30} height={30} alt="coin" />
+          {transactionArray[6]} <span className="text-xs italic"> đ</span>
         </div>,
         transactionArray[12]?.recipient?.name ?? user?.name,
         new Date(transactionArray[1]).toLocaleDateString('en-GB'),

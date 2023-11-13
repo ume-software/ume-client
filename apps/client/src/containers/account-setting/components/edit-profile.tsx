@@ -235,48 +235,53 @@ const EditProfile = () => {
     if (editAccountInforFormRef.current) {
       if (selectedImage.avatarURL) {
         const formData = new FormData(editAccountInforFormRef.current)
-        const responseData = await uploadImageBooking(formData)
+        const file = formData.get('files')
+        const image = new FormData()
+        if (file instanceof File) {
+          image.append('file', file, file.name)
+          const responseData = await uploadImageBooking(image)
 
-        if (responseData?.data?.data?.results) {
-          try {
-            updateInformation.mutate(
-              {
-                avatarUrl: String(responseData.data.data.results),
-                dob: form.values.dob,
-                gender: form.values.gender.key,
-                name: form.values.name?.trim(),
-                slug: form.values.slug?.trim(),
-                phone: form.values.phone,
-              },
-              {
-                onSuccess() {
-                  setSelectedImage((image) => ({
-                    ...image,
-                    avatarURL: undefined,
-                  }))
-                  setIsModalConfirmationVisible(false)
-                  utils.invalidateQueries('identity.identityInfo')
-                  notification.success({
-                    message: 'Cập nhật thông tin thành công',
-                    description: 'Thông tin vừa được cập nhật',
-                    placement: 'bottomLeft',
-                  })
+          if (responseData?.data?.data?.results) {
+            try {
+              updateInformation.mutate(
+                {
+                  avatarUrl: String(responseData.data.data.results),
+                  dob: form.values.dob,
+                  gender: form.values.gender.key,
+                  name: form.values.name?.trim(),
+                  slug: form.values.slug?.trim(),
+                  phone: form.values.phone,
                 },
-              },
-            )
-          } catch (error) {
+                {
+                  onSuccess() {
+                    setSelectedImage((image) => ({
+                      ...image,
+                      avatarURL: undefined,
+                    }))
+                    setIsModalConfirmationVisible(false)
+                    utils.invalidateQueries('identity.identityInfo')
+                    notification.success({
+                      message: 'Cập nhật thông tin thành công',
+                      description: 'Thông tin vừa được cập nhật',
+                      placement: 'bottomLeft',
+                    })
+                  },
+                },
+              )
+            } catch (error) {
+              notification.error({
+                message: 'Cập nhật thông tin thất bại',
+                description: 'Có lỗi trong quá tring cập nhật thông tin. Vui lòng thử lại sau!',
+                placement: 'bottomLeft',
+              })
+            }
+          } else {
             notification.error({
               message: 'Cập nhật thông tin thất bại',
               description: 'Có lỗi trong quá tring cập nhật thông tin. Vui lòng thử lại sau!',
               placement: 'bottomLeft',
             })
           }
-        } else {
-          notification.error({
-            message: 'Cập nhật thông tin thất bại',
-            description: 'Có lỗi trong quá tring cập nhật thông tin. Vui lòng thử lại sau!',
-            placement: 'bottomLeft',
-          })
         }
       } else {
         try {
@@ -618,6 +623,7 @@ const EditProfile = () => {
                               className={`min-w-[110px] text-xl font-semibold px-8 py-2 ${
                                 form.values.gender.key == userSettingData.data?.gender ? 'bg-zinc-800' : 'bg-gray-700'
                               } hover:bg-gray-700 rounded-xl`}
+                              type="button"
                             >
                               {form.values.gender.name}
                             </button>
@@ -701,13 +707,13 @@ const EditProfile = () => {
                     isActive={false}
                     isOutlinedButton={true}
                     type="button"
-                    customCSS="w-[100px] text-xl p-2 rounded-xl hover:scale-105"
+                    customCSS="w-[130px] text-xl p-2 rounded-xl hover:scale-105"
                     onClick={() => handleResetForm()}
                   >
                     Hủy
                   </Button>
                   <Button
-                    customCSS="w-[100px] text-xl p-2 rounded-xl hover:scale-105"
+                    customCSS="w-[130px] text-xl p-2 rounded-xl hover:scale-105"
                     type="button"
                     isActive={true}
                     isOutlinedButton={true}
