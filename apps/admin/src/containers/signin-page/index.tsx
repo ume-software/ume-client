@@ -1,9 +1,10 @@
-import { Button, FieldLabel, FormInput } from '@ume/ui'
+import { FieldLabel, FormInput } from '@ume/ui'
 import { useAuth } from '~/contexts/auth'
 import { getItem, setItem } from '~/hooks/localHooks'
 
 import { useEffect, useState } from 'react'
 
+import { Button } from 'antd'
 import { FormikErrors, useFormik } from 'formik'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
@@ -98,13 +99,13 @@ const SigninPage = () => {
               <div className="flex justify-center max-w-full">
                 <Button
                   name="submit"
-                  type="submit"
-                  customCSS="w-96 bg-blue-500 hover:opacoty-90 px-2 py-1
-            hover:bg-ume-primary focus:bg-ume-primary active:bg-ume-primary/90"
-                  isActive={!(form.values.username || form.values.password) || isSubmiting}
-                  isLoading={isSubmiting}
+                  type="primary"
+                  className="w-full bg-blue-300"
+                  loading={isSubmiting}
+                  disabled={!(form.values.username || form.values.password)}
+                  onClick={() => form.handleSubmit()}
                 >
-                  Đăng nhập
+                  <span className={`${form.values.username || form.values.password} ?? text-white `}>Đăng nhập</span>
                 </Button>
               </div>
             </form>
