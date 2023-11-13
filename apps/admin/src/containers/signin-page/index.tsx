@@ -38,7 +38,7 @@ const SigninPage = () => {
       setSubmiting(true)
       signin.mutate(values, {
         onSuccess: (response) => {
-          login(response.data.admin as any)
+          login(response.data.admin)
           setItem('user', response.data.admin)
           setSubmiting(false)
           router.push('/dashboard')

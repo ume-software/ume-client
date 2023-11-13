@@ -1004,9 +1004,9 @@
     rc-util "^5.24.4"
 
 "@rc-component/trigger@^1.17.0", "@rc-component/trigger@^1.18.0", "@rc-component/trigger@^1.18.1", "@rc-component/trigger@^1.3.6", "@rc-component/trigger@^1.5.0", "@rc-component/trigger@^1.7.0":
-  version "1.18.1"
-  resolved "https://registry.yarnpkg.com/@rc-component/trigger/-/trigger-1.18.1.tgz#149881ace55943f0b74ae0470dc9f05b8f0b5d51"
-  integrity sha512-bAcxJJ1Y+EJVgn8BRik7d8JjjAPND5zKkHQ3159zeR0gVoG4Z0RgEDAiXFFoie3/WpoJ9dRJyjrIpnH4Ef7PEg==
+  version "1.18.2"
+  resolved "https://registry.yarnpkg.com/@rc-component/trigger/-/trigger-1.18.2.tgz#dc52c4c66fa8aaccaf0710498f2429fc05454e3b"
+  integrity sha512-jRLYgFgjLEPq3MvS87fIhcfuywFSRDaDrYw1FLku7Cm4esszvzTbA0JBsyacAyLrK9rF3TiHFcvoEDMzoD3CTA==
   dependencies:
     "@babel/runtime" "^7.23.2"
     "@rc-component/portal" "^1.1.0"
@@ -2579,15 +2579,9 @@ ee-first@1.1.1:
   integrity sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==
 
 electron-to-chromium@^1.4.535:
-<<<<<<< HEAD
   version "1.4.581"
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.581.tgz#23b684c67bf56d4284e95598c05a5d266653b6d8"
   integrity sha512-6uhqWBIapTJUxgPTCHH9sqdbxIMPt7oXl0VcAL1kOtlU6aECdcMncCrX5Z7sHQ/invtrC9jUQUef7+HhO8vVFw==
-=======
-  version "1.4.579"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.579.tgz#40ddec29bb5549908e82ccd652cf5da2e5900c23"
-  integrity sha512-bJKvA+awBIzYR0xRced7PrQuRIwGQPpo6ZLP62GAShahU9fWpsNN2IP6BSP1BLDDSbxvBVRGAMWlvVVq3npmLA==
->>>>>>> origin/main
 
 emittery@^0.13.1:
   version "0.13.1"
@@ -3328,9 +3322,9 @@ find-up@^5.0.0:
     path-exists "^4.0.0"
 
 flat-cache@^3.0.4:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/flat-cache/-/flat-cache-3.1.1.tgz#a02a15fdec25a8f844ff7cc658f03dd99eb4609b"
-  integrity sha512-/qM2b3LUIaIgviBQovTLvijfyOQXPtSRnRK26ksj2J7rzPIecePUIpJsZ4T02Qg+xiAEKIs5K8dsHEd+VaKa/Q==
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/flat-cache/-/flat-cache-3.2.0.tgz#2c0c2d5040c99b1632771a9d105725c0115363ee"
+  integrity sha512-CYcENa+FtcUKLmhhqyctpclsq7QF38pKjZHsGNiSQF5r4FtoKDWabFDl3hzaEQMvT1LHEysw5twgLvpYYb4vbw==
   dependencies:
     flatted "^3.2.9"
     keyv "^4.5.3"
@@ -6552,15 +6546,9 @@ supports-preserve-symlinks-flag@^1.0.0:
   integrity sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==
 
 swagger-ui-dist@>=5.0.0:
-<<<<<<< HEAD
-  version "5.9.3"
-  resolved "https://registry.yarnpkg.com/swagger-ui-dist/-/swagger-ui-dist-5.9.3.tgz#3d91ee02c3ba998053c746cd807dba088e700f04"
-  integrity sha512-/OgHfO96RWXF+p/EOjEnvKNEh94qAG/VHukgmVKh5e6foX9kas1WbjvQnDDj0sSTAMr9MHRBqAWytDcQi0VOrg==
-=======
-  version "5.9.2"
-  resolved "https://registry.yarnpkg.com/swagger-ui-dist/-/swagger-ui-dist-5.9.2.tgz#8aaf96092988416119c8cff9b434d454be7c968d"
-  integrity sha512-4c61b+3rlKhgfJL+mU9v9XI9qwDylW9IW8LBQkn7g1j8w+V9b+TWlcTLRZflOWGCzpqmRsMtsAkm9spJnf5JmA==
->>>>>>> origin/main
+  version "5.9.4"
+  resolved "https://registry.yarnpkg.com/swagger-ui-dist/-/swagger-ui-dist-5.9.4.tgz#668256c12892519201406ae74777a60ebdfbfb92"
+  integrity sha512-Ppghvj6Q8XxH5xiSrUjEeCUitrasGtz7v9FCUIBR/4t89fACQ4FnUT9D0yfodUYhB+PrCmYmxwe/2jTDLslHDw==
 
 swagger-ui-express@^5.0.0:
   version "5.0.0"
@@ -6974,15 +6962,9 @@ ume-identity-service-openapi@latest:
     axios "^0.27.2"
 
 ume-service-openapi@latest:
-<<<<<<< HEAD
-  version "1.3.12"
-  resolved "https://registry.yarnpkg.com/ume-service-openapi/-/ume-service-openapi-1.3.12.tgz#285619a782f04d167203cc31db1c90043842610f"
-  integrity sha512-Z/dLDEOP44/JkhbuJGUzl3aGtVJzvAputiH5wkPZ35nCLIkyzYxbi0IRVYDEI3BmRIGe0t6y6f6pUi2kfarGzA==
-=======
-  version "1.3.9"
-  resolved "https://registry.yarnpkg.com/ume-service-openapi/-/ume-service-openapi-1.3.9.tgz#aa378fe37b1b81f90936a0069cddb19517fe4e8f"
-  integrity sha512-V40nJiuzUClC07Snh+LoGpFoVNIqjJsR9G7kLMPDYius3uQ2ItKQHHE2sPDl7MlyUOE3IpNm0K/NBuNWr9oXhQ==
->>>>>>> origin/main
+  version "1.3.15"
+  resolved "https://registry.yarnpkg.com/ume-service-openapi/-/ume-service-openapi-1.3.15.tgz#beb76cdd3c2a5cf94d237dd6c8eb0fb4ea16613a"
+  integrity sha512-P7CgrDgaaz7wBMXacD5tSPGWM+yrIzML9iyAQ/mtaJWxKSXifJZ4VjAk8vhExA+HEdQW+dzKR30lqiQFcYlw4A==
   dependencies:
     axios "^0.27.2"
 
