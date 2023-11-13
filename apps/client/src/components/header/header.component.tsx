@@ -8,6 +8,7 @@ import { useAuth } from '~/contexts/auth'
 
 import React, { Fragment, ReactElement, useCallback, useContext, useEffect, useId, useState } from 'react'
 
+import { parse } from 'cookie'
 import { isNil } from 'lodash'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
@@ -33,8 +34,7 @@ export const Header: React.FC = () => {
   const { socketContext } = useContext(SocketContext)
   const [isModalLoginVisible, setIsModalLoginVisible] = React.useState(false)
 
-  const accessToken = localStorage.getItem('accessToken')
-  const userInfo = JSON.parse(localStorage.getItem('user') ?? 'null')
+  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
 
   const { isAuthenticated, logout, login } = useAuth()
 
@@ -43,10 +43,10 @@ export const Header: React.FC = () => {
       login({ ...data.data })
     },
     onError() {
-      localStorage.removeItem('accessToken')
-      localStorage.removeItem('refeshToken')
+      sessionStorage.removeItem('accessToken')
+      sessionStorage.removeItem('refeshToken')
     },
-    enabled: !isNil(accessToken) && !isNil(userInfo),
+    enabled: isNil(userInfo),
   })
 
   const { isLoading: isRechargeLoading } = trpc.useQuery(['identity.account-balance'], {
@@ -90,7 +90,7 @@ export const Header: React.FC = () => {
     <div className="fixed !z-50 flex items-center justify-between w-full h-16 bg-umeHeader ">
       <LoginModal isModalLoginVisible={isModalLoginVisible} setIsModalLoginVisible={setIsModalLoginVisible} />
       <RechargeModal showRechargeModal={showRechargeModal} setShowRechargeModal={setShowRechargeModal} />
-      <div className="flex items-center z-50">
+      <div className="z-50 flex items-center">
         <span className="pl-2">
           <Link href={'/home'}>
             <Image width={160} height={40} alt="logo-ume" src={logo} layout="fixed" />
@@ -108,14 +108,14 @@ export const Header: React.FC = () => {
       </div>
       <div className="flex items-center">
         <div className="flex flex-1 pr-2 duration-500 hover:ease-in-out">
-          {accessToken && userInfo && (
+          {userInfo && (
             <span className="self-center my-auto mr-4 rounded-ful hover:scale-110 hover:ease-in-out">
               <button className="pt-2">
                 <Gift size={22} strokeWidth={4} fill="#FFFFFF" />
               </button>
             </span>
           )}
-          {accessToken && userInfo && (
+          {userInfo && (
             <button onClick={() => setShowRechargeModal(true)}>
               <div className="flex items-center justify-end rounded-full bg-[#37354F] pr-2 pl-4 mr-2 self-center text-white">
                 {isRechargeLoading ? (
@@ -141,7 +141,7 @@ export const Header: React.FC = () => {
             </button>
           )}
 
-          {accessToken && userInfo && (
+          {userInfo && (
             <span className="my-auto mr-5 duration-300 rounded-full">
               <div className="relative pt-2">
                 <Menu>
@@ -176,7 +176,7 @@ export const Header: React.FC = () => {
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95"
                   >
-                    <Menu.Items className="absolute right-0 p-5 origin-top-right text-white divide-y divide-gray-200 rounded-md shadow-lg bg-umeHeader w-96 ring-1 ring-black ring-opacity-30 focus:outline-none">
+                    <Menu.Items className="absolute right-0 p-5 text-white origin-top-right divide-y divide-gray-200 rounded-md shadow-lg bg-umeHeader w-96 ring-1 ring-black ring-opacity-30 focus:outline-none">
                       <div className="flex flex-row gap-10" style={{ zIndex: 2 }}>
                         {tabDatas.map((item) => (
                           <a
@@ -208,7 +208,7 @@ export const Header: React.FC = () => {
             </span>
           )}
           <span className="my-auto mr-5">
-            {isNil(accessToken) && isNil(userInfo) ? (
+            {isNil(userInfo) ? (
               <Button
                 name="register"
                 customCSS="bg-[#37354F] py-2 hover:bg-slate-500 duration-300 !rounded-3xl max-h-10 w-[120px] text-[15px] "
