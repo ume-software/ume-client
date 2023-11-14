@@ -182,7 +182,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                         {props.data?.providerServices?.map((item) => (
                           <div
                             key={item.id}
-                            className={`flex items-center min-w-fit group gap-3 hover:bg-gray-700 p-1 rounded-xl ${
+                            className={`flex items-center w-full group gap-3 hover:bg-gray-700 p-1 rounded-xl ${
                               gameSelected && (gameSelected == item.service?.slug || gameSelected == item.serviceId)
                                 ? 'bg-gray-700'
                                 : ''

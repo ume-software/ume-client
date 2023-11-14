@@ -64,12 +64,6 @@ const settingType: SettingTypeProps[] = [
     icon: <Transaction theme="outline" size="20" fill="#FFFFFF" strokeLinejoin="bevel" />,
     children: <TransactionHistory />,
   },
-  {
-    key: 'reportTicket',
-    label: 'Tố cáo',
-    icon: <MessagePrivacy theme="filled" size="20" fill="#fff" strokeLinejoin="bevel" />,
-    children: <ReportTicket />,
-  },
 ]
 
 const AccountSettingContainer = () => {
