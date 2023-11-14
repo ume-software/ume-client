@@ -1,5 +1,4 @@
 import { PlayOne, Star, VoiceOne } from '@icon-park/react'
-import coin from 'public/coin-icon.png'
 
 import React, { useEffect, useRef } from 'react'
 
@@ -44,7 +43,7 @@ const PromoteCard = (props: { data: FilterProviderResponse }) => {
         <div className="w-[140px] h-[140px] relative -translate-y-6 group-hover:scale-110 duration-500">
           <Image
             className="absolute ease-in-out rounded-2xl object-cover"
-            src={props?.data?.avatarUrl || ''}
+            src={props?.data?.avatarUrl ?? ''}
             alt="image_provider"
             layout="fill"
             loading="lazy"
@@ -65,10 +64,16 @@ const PromoteCard = (props: { data: FilterProviderResponse }) => {
       <div className="flex flex-col gap-3 pr-5">
         <div className="w-fit flex items-center gap-3 bg-purple-600 p-2 mb-2 rounded-md text-white">
           <p className="text-md font-semibold">{props?.data?.serviceName}</p>
-          <div className="flex items-center gap-1 text-lg font-bold">
-            <Star theme="filled" size="15" fill="#FFBB00" strokeLinejoin="bevel" />{' '}
-            {(Number(props?.data?.star) || 0).toFixed(1)}
-          </div>
+          {props?.data?.star ? (
+            <div className="flex items-center gap-1 text-lg font-bold">
+              <>
+                <Star theme="filled" size="15" fill="#FFBB00" strokeLinejoin="bevel" />
+                {Number(props?.data?.star ?? 0).toFixed(1)}
+              </>
+            </div>
+          ) : (
+            ''
+          )}
         </div>
         <p className="text-xl font-bold">{props?.data?.name}</p>
         {/* <div className="">
@@ -78,11 +83,15 @@ const PromoteCard = (props: { data: FilterProviderResponse }) => {
         <p className="text-lg truncate">{props?.data?.description}</p>
 
         <div className="flex items-end mt-10 gap-1">
-          <div className="flex items-end">
-            <Image src={coin} width={25} height={25} alt="coin" />
-            <p className="text-2xl font-semibold">{props?.data?.cost?.toFixed(0)}</p>
+          <div className="flex items-center gap-2">
+            <p className="text-2xl font-semibold">
+              {props?.data?.cost?.toLocaleString('en-US', {
+                currency: 'VND',
+              })}
+            </p>
+            <span className="text-xs italic"> đ</span>
           </div>
-          <p className="text-lg font-semibold opacity-30">.00/ Giờ</p>
+          <p className="text-lg font-semibold opacity-30">/ Giờ</p>
         </div>
       </div>
     </div>

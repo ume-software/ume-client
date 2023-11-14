@@ -1,1 +1,1 @@
-export * from './notificate.container'
+export * from './order-notificate.container'

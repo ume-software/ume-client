@@ -1,4 +1,4 @@
-import { GrinningFaceWithOpenMouth, MoreOne, PhoneTelephone, Picture, Videocamera } from '@icon-park/react'
+import { GrinningFaceWithOpenMouth, MoreOne, PhoneTelephone, Videocamera } from '@icon-park/react'
 import { useAuth } from '~/contexts/auth'
 import useChatScroll from '~/hooks/useChatScroll'
 
@@ -87,7 +87,7 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
         <div className="relative max-h-screen overflow-hidden">
           <div className="flex items-center justify-between w-full">
             <Link
-              href={`/profile/${images[0].providerInformation.slug || images[0].providerInformation.id}`}
+              href={`/profile/${images[0].userInformation.slug ?? images[0].userId}`}
               className="w-3/4 p-2 rounded-lg hover:bg-gray-700"
             >
               {images && (
@@ -118,10 +118,9 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
           </div>
           <div className="flex flex-col h-full gap-2 overflow-y-auto">
             <div className="flex gap-2 pb-5 overflow-auto border-b-2 border-[#B9B8CC] custom-scrollbar"></div>
-            <div className="bg-[#413F4D] p-2 rounded-3xl"></div>
           </div>
           <div className="relative">
-            <div className="h-[75vh] flex flex-col justify-end">
+            <div className="h-[78vh] flex flex-col justify-end">
               {/* <!-- message --> */}
               <div
                 ref={divRef}
@@ -132,7 +131,10 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
                     const sender = mappingMember[item.senderId]
                     const isSeftMessage = sender.userId.toString() == user?.id.toString()
                     return (
-                      <div key={index} className={`flex justify-end  ${!isSeftMessage ? 'flex-row-reverse' : ''} mb-4`}>
+                      <div
+                        key={index}
+                        className={`flex justify-end items-end ${!isSeftMessage ? 'flex-row-reverse' : ''} mb-4`}
+                      >
                         <div
                           className={`max-w-xs mx-2 py-3 px-4 text-white text-lg
                         ${
@@ -165,9 +167,9 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
               {/* <!-- end message --> */}
             </div>
             <div className="absolute bottom-2 left-5 right-5  bg-[#15151b] flex items-center gap-3">
-              <div className="p-2 content-center bg-[#413F4D] rounded-full cursor-pointer hover:bg-gray-500 active:bg-gray-400">
+              {/* <div className="p-2 content-center bg-[#413F4D] rounded-full cursor-pointer hover:bg-gray-500 active:bg-gray-400">
                 <Picture theme="outline" size="24" fill="#FFFFFF" strokeLinejoin="bevel" />
-              </div>
+              </div> */}
 
               <div className="w-[100%] h-[40px] relative">
                 <input

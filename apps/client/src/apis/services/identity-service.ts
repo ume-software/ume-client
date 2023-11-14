@@ -6,6 +6,7 @@ import {
   AuthApi,
   BalanceApi,
   CreateVoucherRequest,
+  CreateWithdrawRequestUnitCurrencyEnum,
   DepositRequestApi,
   ProviderServiceApi,
   ServiceApi,
@@ -136,6 +137,7 @@ export const updateUserProfile = async (
     slug?: string
     gender?: UpdateUserProfileRequestGenderEnum
     dob?: string
+    phone?: string
     avatarUrl?: string
   },
   ctx,
@@ -151,6 +153,7 @@ export const updateUserProfile = async (
       avatarUrl: query.avatarUrl,
       dob: query.dob,
       gender: query.gender,
+      phone: query.phone,
       slug: query.slug,
     })
     return {
@@ -491,7 +494,7 @@ export const getHistoryTransaction = async (
   } catch (error) {
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
-      message: error.message || 'Fail to get coin history',
+      message: error.message || 'Fail to get balance history',
     })
   }
 }
@@ -537,6 +540,72 @@ export const createUserPaymentSystem = async (
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
       message: error.message || 'Fail to get payment system',
+    })
+  }
+}
+
+export const getWithdrawRequests = async (query: { limit: string; page: string }, ctx) => {
+  const cookies = parse(ctx.req.headers.cookie ?? '')
+  try {
+    const reponse = await new BalanceApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).getWithdrawRequests(query.limit, query.page, '["$all",{"userPaymentSystem":["$all"]}]')
+    return {
+      data: reponse.data,
+      success: true,
+      message: '',
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to get withdraw request',
+    })
+  }
+}
+
+export const createWithdrawRequests = async (
+  query: { amountBalance: number; unitCurrency: CreateWithdrawRequestUnitCurrencyEnum; userPaymentSystemId: string },
+  ctx,
+) => {
+  const cookies = parse(ctx.req.headers.cookie ?? '')
+  try {
+    const reponse = await new BalanceApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).createWithdrawRequest(query)
+    return {
+      data: reponse.data,
+      success: true,
+      message: '',
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to create withdraw request',
+    })
+  }
+}
+
+export const cancelWithdrawRequests = async (withdrawalRequestId: string, ctx) => {
+  const cookies = parse(ctx.req.headers.cookie ?? '')
+  try {
+    const reponse = await new BalanceApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).userCancelWithdrawRequest(withdrawalRequestId)
+    return {
+      data: reponse.data,
+      success: true,
+      message: '',
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to cancel withdraw request',
     })
   }
 }

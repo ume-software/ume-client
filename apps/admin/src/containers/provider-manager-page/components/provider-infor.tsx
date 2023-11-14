@@ -155,6 +155,11 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
       setPageTrans(nextPage)
     }
   }
+  function formatNumberWithCommas(number) {
+    return parseFloat(number)
+      .toString()
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  }
 
   return (
     <div className="flex-col w-auto bg-[#15151B] mt-5 px-4">
@@ -200,12 +205,8 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
         <div className="h-6 text-white ">
           Doanh Thu:
           <span className="inline-block ml-1 font-bold">
-            {balance}
-            {balance ? (
-              <Image className="inline-block" alt="Xu" src={coinIcon} width={25} height={25} />
-            ) : (
-              'Chưa có doanh thu'
-            )}
+            {balance && formatNumberWithCommas(balance)}
+            {balance ? <span className="text-xs italic"> đ</span> : 'Chưa có doanh thu'}
           </span>
         </div>
       </div>

@@ -117,7 +117,7 @@ const AlbumTab = (props: { data: UserInformationResponse }) => {
             ))}
           </div>
         ) : (
-          <div className="w-full h-screen mt-3 text-center">
+          <div className="w-full h-screen 2xl:mt-3 mt-0 text-center">
             {isLoadingAlbum ?? isAlbumFetching ? (
               <div className="grid w-full grid-cols-8 gap-10">
                 {[...Array(8)].map((_, index) => (
@@ -127,7 +127,12 @@ const AlbumTab = (props: { data: UserInformationResponse }) => {
                 ))}
               </div>
             ) : (
-              <Image src={ImgForEmpty} alt="EmptyImage" />
+              <div className="flex justify-center">
+                <div className="w-[70%]">
+                  <Image src={ImgForEmpty} alt="EmptyImage" />
+                  <p className="text-xl font-semibold text-center">Chưa có hình ảnh</p>
+                </div>
+              </div>
             )}
           </div>
         )}

@@ -1,13 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Menu, Transition } from '@headlessui/react'
-import { Down, Time } from '@icon-park/react'
+import { Down, Minus, Plus, Right, Time } from '@icon-park/react'
 import { InputWithAffix } from '@ume/ui'
-import coin from 'public/coin-icon.png'
 import ImgForEmpty from 'public/img-for-empty.png'
 
 import { Fragment, useEffect, useState } from 'react'
 
-import { notification } from 'antd'
+import { Drawer, notification } from 'antd'
 import Image from 'next/legacy/image'
 import { useRouter } from 'next/router'
 import {
@@ -17,12 +16,15 @@ import {
   VoucherResponseDiscountUnitEnum,
 } from 'ume-service-openapi'
 
+import VoucherApply from './voucher-apply'
+
 import { trpc } from '~/utils/trpc'
 
 const BookingProvider = (props: { data: UserInformationResponse }) => {
   const router = useRouter()
   const slug = router.query
 
+  const [isModalVoucherOpen, setIsModalVoucherOpen] = useState<boolean>(false)
   const voucherLimit = '10'
   const voucherPage = '1'
   const [myVoucher, setMyVoucher] = useState<VoucherPagingResponse | undefined>(undefined)
@@ -31,6 +33,7 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
       setMyVoucher(data.data)
     },
   })
+
   const [menuShow, setMenuShow] = useState<string>('')
   const accountBalance = trpc.useQuery(['identity.account-balance'])
   const createBooking = trpc.useMutation(['booking.createBooking'])
@@ -55,7 +58,7 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
         ? (voucher?.discountValue ?? 0) / 100
         : 0
 
-    setTotal(selectedItem?.defaultCost ?? 0)
+    setTotal((selectedItem?.defaultCost ?? 0) * booking.bookingPeriod)
 
     setTotalAfterDiscount(
       voucher?.discountUnit == VoucherResponseDiscountUnitEnum.Cash
@@ -113,201 +116,216 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
   }
 
   return (
-    <div className="h-[85vh] p-10 pb-0 overflow-auto custom-scrollbar">
-      <div className="flex flex-col justify-between h-full">
-        <div className="grid grid-cols-10 border-b-2 border-[#B9B8CC] pb-5">
-          <div className="col-span-4">
-            <div className="relative w-[300px] h-[350px]">
-              <Image
-                className="absolute rounded-xl"
-                layout="fill"
-                objectFit="cover"
-                src={props.data?.avatarUrl ?? ImgForEmpty}
-                alt="Game Image"
-              />
-            </div>
-          </div>
-          <div className="col-span-6">
-            <div className="flex flex-col gap-10">
-              <p className="text-4xl font-bold ">{props.data?.name}</p>
-              <div className={`flex flex-col gap-3`}>
-                <label htmlFor="providerServiceId" className="text-xl font-medium ">
-                  Chọn dịch vụ:
-                </label>
-                <div className="relative w-full">
-                  <Menu>
-                    <Menu.Button className={'w-full'}>
-                      <button
-                        className={`flex justify-between items-center gap-3 min-w-full text-lg font-semibold px-3 py-2 border border-white border-opacity-30 bg-zinc-800 hover:bg-gray-700 rounded-xl`}
-                        type="button"
-                        onClick={() => setMenuShow('Service')}
-                      >
-                        {props.data?.providerServices?.find((dataChoose) => dataChoose.id == booking.providerServiceId)
-                          ?.service?.name ?? 'Chọn dịch vụ'}
-                        <Down theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />
-                      </button>
-                    </Menu.Button>
-                    <Transition
-                      as={Fragment}
-                      enter="transition ease-out duration-400"
-                      enterFrom="transform opacity-0 scale-95"
-                      enterTo="transform opacity-100 scale-100"
-                      leave="transition ease-in duration-400"
-                      leaveFrom="transform opacity-100 scale-100"
-                      leaveTo="transform opacity-0 scale-95"
-                      show={menuShow == 'Service'}
-                    >
-                      <Menu.Items
-                        className="absolute right-0 left-0 p-2 origin-top-right bg-[#292734] divide-y divide-gray-100 rounded-xl shadow-lg w-full max-h-[300px] overflow-y-auto ring-1 ring-black ring-opacity-5 focus:outline-none hide-scrollbar"
-                        style={{ zIndex: 5 }}
-                      >
-                        <div
-                          className="flex flex-col gap-2"
-                          style={{ zIndex: 10 }}
-                          onMouseLeave={() => setMenuShow('')}
-                        >
-                          {props.data?.providerServices?.map((data, index) => (
-                            <div
-                              className={`flex gap-5 items-center ${
-                                data.id == booking.providerServiceId && 'bg-gray-500'
-                              } hover:bg-gray-700 cursor-pointer p-3 rounded-lg`}
-                              key={index}
-                              onClick={() => {
-                                setBooking((prevData) => ({ ...prevData, providerServiceId: data.id ?? '' }))
-                                setMenuShow('')
-                              }}
-                            >
-                              <p className="col-span-1 font-semibold text-md">{data.service?.name}</p>
-                            </div>
-                          ))}
-                        </div>
-                      </Menu.Items>
-                    </Transition>
-                  </Menu>
-                </div>
-                <div
-                  className={`${booking.providerServiceId == '' && 'block'} hidden font-normal text-sm text-red-500`}
-                >
-                  *Chưa chọn dịch vụ
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-3">
-                <label htmlFor="bookingPeriod" className="text-xl font-medium ">
-                  Chọn thời gian:
-                </label>
-                <InputWithAffix
-                  type="number"
-                  position="left"
-                  placeholder="Chọn thời gian"
-                  className="!bg-zinc-800 w-fit rounded-xl border border-white border-opacity-30"
-                  styleInput="bg-transparent border-transparent border-l-white border-opacity-30 hover:border-transparent hover:border-l-white hover:border-opacity-30 focus:outline-none"
-                  min={1}
-                  defaultValue={1}
-                  value={booking.bookingPeriod}
-                  onChange={(e) => {
-                    setBooking((prevData) => ({
-                      ...prevData,
-                      bookingPeriod: Number(Number(e.target.value) > 0 ? e.target.value : 0),
-                    }))
-                  }}
-                  component={<Time className="pr-2" theme="outline" size="15" fill="#FFF" strokeLinejoin="bevel" />}
+    <>
+      <div className="h-[85vh] p-10 pb-1 overflow-auto custom-scrollbar">
+        <div className="h-full flex flex-col justify-between">
+          <div className="grid grid-cols-10 border-b-2 border-[#B9B8CC] pb-5">
+            <div className="col-span-4">
+              <div className="relative w-[300px] h-[350px]">
+                <Image
+                  className="absolute rounded-xl"
+                  layout="fill"
+                  objectFit="cover"
+                  src={props.data?.avatarUrl ?? ImgForEmpty}
+                  alt="Game Image"
                 />
               </div>
             </div>
-          </div>
-        </div>
-        <div className="grid grid-cols-10 pt-5 pb-5 place-items-start">
-          <div className="col-span-2">
-            <label htmlFor="bookingPeriod" className="text-2xl font-medium text-white opacity-40">
-              Mã giảm giá:
-            </label>
-          </div>
-          <div className="col-span-8">
-            <div className="relative">
-              <Menu>
-                <Menu.Button>
-                  <button
-                    className={`flex justify-between items-center gap-3 min-w-[250px] text-lg font-semibold px-3 py-2 border border-white border-opacity-30 bg-zinc-800 hover:bg-gray-700 rounded-xl`}
-                    type="button"
-                    onClick={() => setMenuShow('Voucher')}
-                  >
-                    {myVoucher?.row && myVoucher?.row?.length > 0 ? myVoucher.row[0]?.code : <>Khuyến mãi</>}
-                    <Down theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />
-                  </button>
-                </Menu.Button>
-                <Transition
-                  as={Fragment}
-                  enter="transition ease-out duration-400"
-                  enterFrom="transform opacity-0 scale-95"
-                  enterTo="transform opacity-100 scale-100"
-                  leave="transition ease-in duration-400"
-                  leaveFrom="transform opacity-100 scale-100"
-                  leaveTo="transform opacity-0 scale-95"
-                  show={menuShow == 'Voucher'}
-                >
-                  <Menu.Items
-                    className="absolute right-0 left-0 p-2 origin-top-right bg-[#292734] divide-y divide-gray-100 rounded-xl shadow-lg w-full max-h-[200px] overflow-y-auto ring-1 ring-black ring-opacity-5 focus:outline-none hide-scrollbar"
-                    style={{ zIndex: 5 }}
-                  >
-                    <div className="flex flex-col gap-2" style={{ zIndex: 10 }} onMouseLeave={() => setMenuShow('')}>
-                      {myVoucher?.row && myVoucher?.row?.length > 0 ? (
-                        myVoucher?.row?.map((data, index) => (
+            <div className="col-span-6">
+              <div className="flex flex-col gap-10">
+                <p className="text-4xl font-bold ">{props.data?.name}</p>
+                <div className={`flex flex-col gap-3`}>
+                  <label htmlFor="providerServiceId" className="text-xl font-medium ">
+                    Chọn dịch vụ:
+                  </label>
+                  <div className="relative w-full">
+                    <Menu>
+                      <Menu.Button className={'w-full'}>
+                        <button
+                          className={`flex justify-between items-center gap-3 min-w-full text-lg font-semibold px-3 py-2 border border-white border-opacity-30 bg-zinc-800 hover:bg-gray-700 rounded-xl`}
+                          type="button"
+                          onClick={() => setMenuShow('Service')}
+                        >
+                          {props.data?.providerServices?.find(
+                            (dataChoose) => dataChoose.id == booking.providerServiceId,
+                          )?.service?.name ?? 'Chọn dịch vụ'}
+                          <Down theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />
+                        </button>
+                      </Menu.Button>
+                      <Transition
+                        as={Fragment}
+                        enter="transition ease-out duration-400"
+                        enterFrom="transform opacity-0 scale-95"
+                        enterTo="transform opacity-100 scale-100"
+                        leave="transition ease-in duration-400"
+                        leaveFrom="transform opacity-100 scale-100"
+                        leaveTo="transform opacity-0 scale-95"
+                        show={menuShow == 'Service'}
+                      >
+                        <Menu.Items
+                          className="absolute right-0 left-0 p-2 origin-top-right bg-[#292734] divide-y divide-gray-100 rounded-xl shadow-lg w-full max-h-[300px] overflow-y-auto ring-1 ring-black ring-opacity-5 focus:outline-none hide-scrollbar"
+                          style={{ zIndex: 5 }}
+                        >
                           <div
-                            className={`flex gap-5 items-center ${
-                              booking.voucherIds?.[0] == data.code && 'bg-gray-500'
-                            } hover:bg-gray-700 cursor-pointer p-3 rounded-lg`}
-                            key={index}
-                            onClick={() => {
-                              setBooking((prevData) => ({
-                                ...prevData,
-                                voucherIds: Array.isArray(data.code) ? data.code : prevData.voucherIds,
-                              }))
-                              setMenuShow('Voucher')
-                            }}
+                            className="flex flex-col gap-2"
+                            style={{ zIndex: 10 }}
+                            onMouseLeave={() => setMenuShow('')}
                           >
-                            <div className="min-w-[500px] grid grid-cols-5 gap-5">
-                              <p className="col-span-1 font-semibold text-md">{data.code}</p>
-                              <p className="col-span-1 font-semibold text-md">
-                                {data.discountValue} {data.discountUnit}
-                              </p>
-                            </div>
+                            {props.data?.providerServices?.map((data, index) => (
+                              <div
+                                className={`flex gap-5 items-center ${
+                                  data.id == booking.providerServiceId && 'bg-gray-500'
+                                } hover:bg-gray-700 cursor-pointer p-3 rounded-lg`}
+                                key={index}
+                                onClick={() => {
+                                  setBooking((prevData) => ({ ...prevData, providerServiceId: data.id ?? '' }))
+                                  setMenuShow('')
+                                }}
+                                onKeyDown={() => {}}
+                              >
+                                <p className="col-span-1 text-md font-semibold">{data.service?.name}</p>
+                              </div>
+                            ))}
                           </div>
-                        ))
-                      ) : (
-                        <>Không có khuyến mãi dành cho bạn!</>
-                      )}
+                        </Menu.Items>
+                      </Transition>
+                    </Menu>
+                  </div>
+                  <div
+                    className={`${booking.providerServiceId == '' && 'block'} hidden font-normal text-sm text-red-500`}
+                  >
+                    *Chưa chọn dịch vụ
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-3">
+                  <label htmlFor="bookingPeriod" className="text-xl font-medium ">
+                    Chọn thời gian:
+                  </label>
+                  <div className="flex items-center gap-3">
+                    <InputWithAffix
+                      type="number"
+                      position="left"
+                      placeholder="Chọn thời gian"
+                      className="!bg-zinc-800 w-fit rounded-xl border border-white border-opacity-30"
+                      styleInput="bg-transparent border-transparent border-l-white border-opacity-30 hover:border-transparent hover:border-l-white hover:border-opacity-30 focus:outline-none"
+                      min={1}
+                      defaultValue={1}
+                      value={booking.bookingPeriod}
+                      readOnly
+                      component={<Time className="pr-2" theme="outline" size="15" fill="#FFF" strokeLinejoin="bevel" />}
+                    />
+
+                    <div
+                      className={`p-2 bg-zinc-800 rounded-lg ${
+                        booking.bookingPeriod == 1 ? 'opacity-30 cursor-not-allowed' : 'cursor-pointer'
+                      }`}
+                      onClick={() => {
+                        booking.bookingPeriod > 1 &&
+                          setBooking((prevData) => ({
+                            ...prevData,
+                            bookingPeriod: booking.bookingPeriod - 1,
+                          }))
+                      }}
+                      onKeyDown={() => {}}
+                    >
+                      <Minus theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
                     </div>
-                  </Menu.Items>
-                </Transition>
-              </Menu>
+                    <div
+                      className={`p-2 bg-zinc-800 rounded-lg ${
+                        booking.bookingPeriod == 12 ? 'opacity-30 cursor-not-allowed' : 'cursor-pointer'
+                      }`}
+                      onClick={() => {
+                        booking.bookingPeriod < 12 &&
+                          setBooking((prevData) => ({
+                            ...prevData,
+                            bookingPeriod: booking.bookingPeriod + 1,
+                          }))
+                      }}
+                      onKeyDown={() => {}}
+                    >
+                      <Plus theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="flex justify-between border-b-2 border-[#B9B8CC] pb-5">
-          <p className="text-3xl font-bold ">Thành tiền:</p>
-          <div className="flex items-end gap-2">
-            {total != totalAfterDiscount && (
-              <span className="flex items-center text-xl font-bold line-through opacity-30">
-                {booking.bookingPeriod}h giá {total} <Image src={coin} width={30} height={30} alt="coin" />
-              </span>
-            )}
-            <p className="flex items-center text-3xl font-bold ">
-              {booking.bookingPeriod}h giá {totalAfterDiscount} <Image src={coin} width={50} height={50} alt="coin" />
-            </p>
+          <div className="grid grid-cols-10 place-items-start pt-5 pb-5">
+            <div className="col-span-2">
+              <label htmlFor="bookingPeriod" className="text-2xl font-medium text-white">
+                Mã giảm giá:
+              </label>
+            </div>
+            <div className="col-span-8">
+              <div className="cursor-pointer" onClick={() => setIsModalVoucherOpen(true)} onKeyDown={() => {}}>
+                <InputWithAffix
+                  type="text"
+                  position="right"
+                  placeholder="Chọn khuyến mãi"
+                  className="!bg-zinc-800 w-fit rounded-xl border border-white border-opacity-30"
+                  styleInput="bg-transparent border-transparent border-l-white border-opacity-30 hover:border-transparent hover:border-l-white hover:border-opacity-30 focus:outline-none"
+                  value={booking.voucherIds}
+                  readOnly
+                  component={<Right theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />}
+                />
+              </div>
+            </div>
+            <div className="max-w-[200px]">
+              <Drawer
+                title={<p className="text-white text-xl font-bold">Khuyến mãi</p>}
+                width={320}
+                closable={false}
+                onClose={() => setIsModalVoucherOpen(false)}
+                open={isModalVoucherOpen}
+              >
+                <VoucherApply
+                  setIsModalVoucherOpen={setIsModalVoucherOpen}
+                  voucherSelected={booking.voucherIds}
+                  setVoucherSelected={setBooking}
+                  data={myVoucher}
+                />
+              </Drawer>
+            </div>
           </div>
+
+          <div className="flex justify-between border-b-2 border-[#B9B8CC] pb-5">
+            <p className="text-3xl font-bold ">Thành tiền:</p>
+            {booking.providerServiceId && (
+              <div className="flex items-end gap-2">
+                {total != totalAfterDiscount && (
+                  <span className="flex items-center text-xl font-bold line-through opacity-30">
+                    {booking.bookingPeriod}h giá{' '}
+                    {total.toLocaleString('en-US', {
+                      currency: 'VND',
+                    })}{' '}
+                    <span className="text-xs italic"> đ</span>
+                  </span>
+                )}
+                <p className="flex items-center text-3xl font-bold ">
+                  {booking.bookingPeriod}h giá{' '}
+                  {totalAfterDiscount.toLocaleString('en-US', {
+                    currency: 'VND',
+                  })}
+                  đ
+                </p>
+              </div>
+            )}
+          </div>
+          <button
+            type="button"
+            className={`py-2 mt-2 text-2xl font-bold text-center text-white ${
+              !booking.providerServiceId ? 'border bg-zinc-800 cursor-not-allowed' : 'bg-purple-700 hover:scale-105'
+            }  rounded-full `}
+            onClick={() => {
+              if (booking.providerServiceId) handleCreateBooking(booking)
+            }}
+          >
+            Đặt
+          </button>
         </div>
-        <button
-          type="button"
-          className={`py-2 mt-2 text-2xl font-bold text-center text-white ${
-            !booking.providerServiceId ? 'border bg-zinc-800 cursor-not-allowed' : 'bg-purple-700 hover:scale-105'
-          }  rounded-full `}
-          onClick={() => handleCreateBooking(booking)}
-        >
-          Đặt
-        </button>
       </div>
-    </div>
+    </>
   )
 }
 export default BookingProvider

@@ -60,7 +60,7 @@ const LikePost = (props: { postID: string }) => {
       ) : (
         <>
           {likePostData.map((data) => (
-            <Link key={data?.id} href={`#${data?.user?.slug}`}>
+            <Link key={data?.id} href={`profile/${data?.user?.slug ?? data?.userId}`}>
               <div className="flex items-center justify-between p-2 m-5 rounded-xl hover:bg-gray-700">
                 <div className="flex items-center gap-2">
                   <div className="relative w-[50px] h-[50px]">
@@ -75,7 +75,7 @@ const LikePost = (props: { postID: string }) => {
                   <p className="text-lg font-semibold">{data?.user?.name}</p>
                 </div>
                 <div>
-                  <Like theme="filled" size="20" fill="#FFFFFF" strokeLinejoin="bevel" />
+                  <Like theme="filled" size="20" fill="#9333EA" strokeLinejoin="bevel" />
                 </div>
               </div>
             </Link>

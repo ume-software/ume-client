@@ -14,6 +14,12 @@ export interface IProviderServiceTableProps {
 
 export default function ProviderServiceTable(props: IProviderServiceTableProps) {
   const { data } = props
+  function formatNumberWithCommas(number) {
+    return parseFloat(number)
+      .toString()
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  }
+
   const columnsService = [
     {
       title: 'Hình ảnh',
@@ -57,7 +63,7 @@ export default function ProviderServiceTable(props: IProviderServiceTableProps) 
       render: (text) => (
         <div>
           {' '}
-          {text ? text : 0} <Image className="inline-block" alt="Xu" src={coinIcon} width={25} height={25} />
+          {text ? formatNumberWithCommas(text) : 0} <span className="text-xs italic"> đ</span>
         </div>
       ),
     },

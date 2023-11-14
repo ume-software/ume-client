@@ -10,8 +10,7 @@ import { NotificateSkeletonLoader } from '~/components/skeleton-load'
 
 import { trpc } from '~/utils/trpc'
 
-let result: string
-const Notificate = (props: { type: string }) => {
+const OrderNotificate = () => {
   const { isAuthenticated } = useAuth()
   const [page, setPage] = useState<number>(1)
   const limit = '10'
@@ -25,25 +24,15 @@ const Notificate = (props: { type: string }) => {
     isLoading: loadingNotificated,
     isFetching: fetchingNotificated,
     refetch: refetchNotificated,
-  } = props.type === 'order'
-    ? trpc.useQuery(['booking.getCurrentBookingForProvider'], {
-        refetchOnWindowFocus: false,
-        refetchOnReconnect: 'always',
-        cacheTime: 0,
-        refetchOnMount: true,
-        onSuccess(data) {
-          setListNotificated(data?.data?.row)
-        },
-      })
-    : trpc.useQuery(['booking.getAllNotice', { page: String(page), limit: limit }], {
-        refetchOnWindowFocus: false,
-        refetchOnReconnect: 'always',
-        cacheTime: 0,
-        refetchOnMount: true,
-        onSuccess(data) {
-          setListNotificated(data?.data?.row)
-        },
-      })
+  } = trpc.useQuery(['booking.getCurrentBookingForProvider'], {
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: 'always',
+    cacheTime: 0,
+    refetchOnMount: true,
+    onSuccess(data) {
+      setListNotificated(data?.data?.row)
+    },
+  })
 
   const responeBooking = trpc.useMutation(['booking.putProviderResponeBooking'])
 
@@ -54,7 +43,6 @@ const Notificate = (props: { type: string }) => {
         {
           onSuccess: (data) => {
             if (data.success) {
-              result = bookingHistoryId
               notification.success({
                 message: 'Yêu cầu đã được chấp nhận!',
                 description: `Bạn đã chấp nhận yêu cầu từ ${bookerName}`,
@@ -85,7 +73,6 @@ const Notificate = (props: { type: string }) => {
         {
           onSuccess: (data) => {
             if (data.success) {
-              result = bookingHistoryId
               notification.success({
                 message: 'Yêu cầu đã được xóa!',
                 description: `Bạn đã từ chối yêu cầu từ ${bookerName}`,
@@ -130,7 +117,7 @@ const Notificate = (props: { type: string }) => {
       if (isAtEnd && Number(notificatedData?.data.count) > Number(limit) * Number(page)) {
         setPage(page + 1)
         refetchNotificated().then((data) => {
-          setListNotificated((prevData) => [...(prevData || []), ...(data?.data?.data?.row || [])])
+          setListNotificated((prevData) => [...(prevData ?? []), ...(data?.data?.data?.row ?? [])])
         })
       }
     }
@@ -147,7 +134,10 @@ const Notificate = (props: { type: string }) => {
             <>
               {listNotificated && listNotificated?.length != 0 ? (
                 listNotificated.map((item) => (
-                  <div key={item.id} className="p-2 border-b-2 border-gray-200 rounded-lg hover:bg-violet-100">
+                  <div
+                    key={item.id}
+                    className="p-2 border-b-2 border-gray-200 rounded-lg hover:bg-violet-100 custom-scrollbar"
+                  >
                     <div className="grid grid-cols-10">
                       <div className="col-span-3">
                         <div className="w-[90%] h-full relative rounded-lg">
@@ -174,24 +164,22 @@ const Notificate = (props: { type: string }) => {
                         </div>
                       </div>
                     </div>
-                    {item?.id === result && props.type === 'order' ? (
-                      <div>Bạn đã xử lý yêu cầu này!</div>
-                    ) : (
-                      <div className="flex justify-around gap-5 px-3 pt-3">
-                        <div
-                          className="w-full py-1 font-normal text-center text-white bg-purple-700 rounded-lg cursor-pointer text-md hover:scale-105"
-                          onClick={() => handleAcceptBooking(item?.id, item?.booker?.name)}
-                        >
-                          Chấp nhận
-                        </div>
-                        <div
-                          className="w-full py-1 font-normal text-center text-purple-700 border-2 border-purple-700 rounded-lg cursor-pointer text-md hover:scale-105"
-                          onClick={() => handleUnacceptBooking(item?.id, item?.booker?.name)}
-                        >
-                          Từ chối
-                        </div>
+                    <div className="flex justify-around gap-5 px-3 pt-3">
+                      <div
+                        className="w-full py-1 font-normal text-center text-white bg-purple-700 rounded-lg cursor-pointer text-md hover:scale-105"
+                        onClick={() => handleAcceptBooking(item?.id, item?.booker?.name)}
+                        onKeyDown={() => {}}
+                      >
+                        Chấp nhận
                       </div>
-                    )}
+                      <div
+                        className="w-full py-1 font-normal text-center text-purple-700 border-2 border-purple-700 rounded-lg cursor-pointer text-md hover:scale-105"
+                        onClick={() => handleUnacceptBooking(item?.id, item?.booker?.name)}
+                        onKeyDown={() => {}}
+                      >
+                        Từ chối
+                      </div>
+                    </div>
                   </div>
                 ))
               ) : (
@@ -207,4 +195,4 @@ const Notificate = (props: { type: string }) => {
     </>
   )
 }
-export default Notificate
+export default OrderNotificate

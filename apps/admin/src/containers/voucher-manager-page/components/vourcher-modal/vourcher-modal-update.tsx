@@ -52,7 +52,7 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
 
   const updateVoucherAdmin = trpc.useMutation(['voucher.updateVoucherAdmin'])
   const MAX_NUMBER = '100000'
-  const MAX_NUMBER_DISCOUNT = '100'
+  const MAX_NUMBER_DISCOUNT = '100000000'
   const ImageInit = voucherDetails?.image ?? empty_img
   const nameInit = voucherDetails?.name ?? ''
   const vourcherCodeInit = voucherDetails?.code ?? ''
@@ -257,6 +257,7 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
     return (option?.label ?? '').toUpperCase().includes(input.toUpperCase())
   }
   function handleDisCountUnit(value) {
+    form.setFieldValue('minimize', '0')
     form.setFieldValue('discountUnit', value)
   }
 
@@ -307,7 +308,7 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
         dailyNumberIssued: [form.values.numVoucherInDay, numVoucherInDayInit],
         numberUsablePerBooker: [form.values.numUserCanUse, numUserCanUseInit],
         dailyUsageLimitPerBooker: [form.values.numUserCanUseInDay, numUserCanUseInDayInit],
-        discountValue: [form.values.minimize, minimizeInit],
+        discountValue: [parseFloat(form.values.minimize.toString().replace(/,/g, '')), minimizeInit],
         endDate: [convertToIsoDate(form.values.endDate), convertToIsoDate(endDateInit)],
         startDate: [convertToIsoDate(form.values.startDate), convertToIsoDate(startDateInit)],
         applyISODayOfWeek: [form.values.applyTime, applyTimeInit],
@@ -320,11 +321,14 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
           minimumBookingDurationForUsageInit,
         ],
         minimumBookingTotalPriceForUsage: [
-          form.values.minimumBookingTotalPriceForUsage,
+          parseFloat(form.values.minimumBookingTotalPriceForUsage.toString().replace(/,/g, '')),
           minimumBookingTotalPriceForUsageInit,
         ],
 
-        maximumDiscountValue: [form.values.maximumDiscountValue, maximumDiscountValueInit],
+        maximumDiscountValue: [
+          parseFloat(form.values.maximumDiscountValue.toString().replace(/,/g, '')),
+          maximumDiscountValueInit,
+        ],
       }
       let reqWithValuesNotNull = {}
       for (let key in req) {
@@ -395,6 +399,12 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
       (adminCheckVoucherCodeExisted?.isExisted ? debouncedValue !== vourcherCodeInit : false)
     )
   }
+  function formatNumberWithCommas(number) {
+    return number.toLocaleString('en-US', {
+      currency: 'VND',
+    })
+  }
+
   return (
     <div>
       <form onSubmit={form.handleSubmit} className="flex flex-col mb-4 gap-y-4">
@@ -680,36 +690,35 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                   ></Select>
                 </div>
                 <div className="h-12 text-white">
-                  Khuyến mãi dùng cho hóa đơn có xu tối thiểu:
-                  <div className="inline-block w-1/5 ">
+                  Khuyến mãi dùng cho hóa đơn tối thiểu:
+                  <div className="inline-block w-1/5 ml-4 ">
                     <FormInput
                       name="minimumBookingTotalPriceForUsage"
-                      className="bg-[#413F4D] border-2 border-[#FFFFFF] h-8 ml-4 border-opacity-30"
+                      className="bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30"
                       placeholder="Số Lượng"
-                      value={form.values.minimumBookingTotalPriceForUsage}
+                      value={formatNumberWithCommas(form.values.minimumBookingTotalPriceForUsage)}
                       onBlur={form.handleBlur}
                       error={
                         !!form.errors.minimumBookingTotalPriceForUsage && form.touched.minimumBookingTotalPriceForUsage
                       }
                       errorMessage={form.errors.minimumBookingTotalPriceForUsage}
                       onChange={(e) => {
-                        const newValue = parseInt(e.target.value)
+                        const rawValue = e.target.value
+                        const newValue = parseFloat(rawValue.replace(/,/g, ''))
                         if (!isNaN(newValue) && newValue >= 0) {
-                          if (newValue > parseInt(MAX_NUMBER)) {
-                            e.target.value = MAX_NUMBER
+                          if (newValue > parseFloat(MAX_NUMBER_DISCOUNT)) {
+                            e.target.value = formatNumberWithCommas(parseFloat(MAX_NUMBER_DISCOUNT))
                           } else {
-                            e.target.value = newValue.toString()
+                            e.target.value = formatNumberWithCommas(newValue)
                           }
                         } else {
                           e.target.value = '0'
                         }
                         form.handleChange(e)
                       }}
-                      type="number"
-                      min={0}
-                      max={100000}
                     />
                   </div>
+                  <span className="text-xs italic"> đ</span>
                 </div>
               </div>
               <div className="flex flex-col justify-end w-2/5 ">
@@ -778,31 +787,52 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                 </div>
                 <div className="flex items-baseline h-12 text-white">
                   <span className="h-8">Giảm :</span>
-                  <div className="inline-block w-2/12 ml-1 ">
+                  <div
+                    className={`inline-block  ml-1 ${
+                      form.values.discountUnit === CreateVoucherRequestDiscountUnitEnum.Cash ? 'w-3/12' : 'w-2/12'
+                    }`}
+                  >
                     <FormInput
                       name="minimize"
-                      className="bg-[#413F4D]  border-2 border-[#FFFFFF] h-8 border-opacity-30"
+                      className="bg-[#413F4D]  border-2 border-[rgb(255,255,255)] h-8 border-opacity-30"
                       placeholder="Số Lượng"
-                      value={form.values.minimize}
+                      value={
+                        form.values.discountUnit === CreateVoucherRequestDiscountUnitEnum.Cash
+                          ? formatNumberWithCommas(form.values.minimize)
+                          : form.values.minimize
+                      }
                       onBlur={form.handleBlur}
                       error={!!form.errors.minimize && form.touched.minimize}
                       errorMessage={form.errors.minimize}
                       onChange={(e) => {
-                        const newValue = parseInt(e.target.value)
-                        if (!isNaN(newValue) && newValue >= 1) {
-                          if (newValue > parseInt(MAX_NUMBER_DISCOUNT)) {
-                            e.target.value = MAX_NUMBER_DISCOUNT
+                        if (form.values.discountUnit == CreateVoucherRequestDiscountUnitEnum.Percent) {
+                          const newValue = parseInt(e.target.value)
+                          if (!isNaN(newValue) && newValue >= 1) {
+                            if (newValue > parseInt('100')) {
+                              e.target.value = '100'
+                            } else {
+                              e.target.value = newValue.toString()
+                            }
                           } else {
-                            e.target.value = newValue.toString()
+                            e.target.value = '1'
                           }
+                          form.handleChange(e)
                         } else {
-                          e.target.value = '1'
+                          console.log(form.values.discountUnit)
+                          const rawValue = e.target.value
+                          const newValue = parseFloat(rawValue.replace(/,/g, ''))
+                          if (!isNaN(newValue) && newValue >= 0) {
+                            if (newValue > parseFloat(MAX_NUMBER_DISCOUNT)) {
+                              e.target.value = formatNumberWithCommas(parseFloat(MAX_NUMBER_DISCOUNT))
+                            } else {
+                              e.target.value = formatNumberWithCommas(newValue)
+                            }
+                          } else {
+                            e.target.value = '0'
+                          }
+                          form.handleChange(e)
                         }
-                        form.handleChange(e)
                       }}
-                      type="number"
-                      min={0}
-                      max={100}
                     />
                   </div>
                   <div className="inline-block w-2/12 ml-1 ">
@@ -823,7 +853,7 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                         },
                         {
                           value: CreateVoucherRequestDiscountUnitEnum.Cash,
-                          label: 'xu',
+                          label: 'VND',
                         },
                       ]}
                     />
@@ -831,34 +861,33 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                   {form.values.discountUnit == CreateVoucherRequestDiscountUnitEnum.Percent && (
                     <div className="flex items-center justify-end w-6/12">
                       <span className="">Giảm Tối Đa:</span>
-                      <div className="inline-block w-3/12 ml-1 mr-1">
+                      <div className="inline-block w-6/12 ml-1 mr-1">
                         <FormInput
                           name="maximumDiscountValue"
                           className="bg-[#413F4D]  border-2 border-[#FFFFFF] h-8 border-opacity-30"
                           placeholder=""
-                          value={form.values.maximumDiscountValue}
+                          value={formatNumberWithCommas(form.values.maximumDiscountValue)}
                           onBlur={form.handleBlur}
                           error={!!form.errors.maximumDiscountValue && form.touched.maximumDiscountValue}
                           errorMessage={form.errors.maximumDiscountValue}
                           onChange={(e) => {
-                            const newValue = parseInt(e.target.value)
+                            const rawValue = e.target.value
+                            const newValue = parseFloat(rawValue.replace(/,/g, ''))
                             if (!isNaN(newValue) && newValue >= 0) {
-                              if (newValue > parseInt(MAX_NUMBER_DISCOUNT)) {
-                                e.target.value = MAX_NUMBER_DISCOUNT
+                              if (newValue > parseFloat(MAX_NUMBER_DISCOUNT)) {
+                                e.target.value = formatNumberWithCommas(parseFloat(MAX_NUMBER_DISCOUNT))
                               } else {
-                                e.target.value = newValue.toString()
+                                e.target.value = formatNumberWithCommas(newValue)
                               }
                             } else {
                               e.target.value = '0'
                             }
                             form.handleChange(e)
                           }}
-                          type="number"
-                          min={0}
-                          max={100}
+                          type="text"
                         />
                       </div>
-                      {' Xu'}
+                      <span className="text-xs italic"> đ</span>
                     </div>
                   )}
                 </div>

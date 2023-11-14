@@ -1,13 +1,12 @@
 import { Menu, Transition } from '@headlessui/react'
 import { CloseSmall, CopyOne, Dot, Female, Lock, Male, More, PaperMoneyTwo, ShareTwo } from '@icon-park/react'
 import { Button, InputWithAffix, Modal, TextArea } from '@ume/ui'
-import coin from 'public/coin-icon.png'
 import detailBackground from 'public/detail-cover-background.png'
 import ImgForEmpty from 'public/img-for-empty.png'
 import lgbtIcon from 'public/rainbow-flag-11151.svg'
 import { useAuth } from '~/contexts/auth'
 
-import { Fragment, ReactElement, useState } from 'react'
+import { Fragment, ReactElement, useEffect, useState } from 'react'
 
 import { ConfigProvider, Tooltip, message, notification, theme } from 'antd'
 import { Formik } from 'formik'
@@ -38,7 +37,7 @@ interface TabDataProps {
 }
 
 interface DonateProps {
-  donateValue: number
+  donateValue: string
   donateContent?: string
 }
 
@@ -106,10 +105,14 @@ const DetailProfileContainer = () => {
 
   const [messageApi, contextHolder] = message.useMessage()
   const [providerDetail, setProviderDetail] = useState<UserInformationResponse | undefined>(undefined)
-  const [donationValues, setDonationValues] = useState<DonateProps>({ donateValue: 1 })
+  const [donationValues, setDonationValues] = useState<DonateProps>({ donateValue: '1,000' })
   const [isModalDonationVisible, setIsModalDonationVisible] = useState<boolean>(false)
   const [isModalConfirmationVisible, setIsModalConfirmationVisible] = useState<boolean>(false)
   const { isLoading: isProviderDetailLoading } = trpc.useQuery(['booking.getUserBySlug', slug.profileId!.toString()], {
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: 'always',
+    cacheTime: 0,
+    refetchOnMount: true,
     onSuccess(data) {
       if (data.data.id) {
         setProviderDetail(data.data)
@@ -120,7 +123,17 @@ const DetailProfileContainer = () => {
     onError() {
       router.replace('/404')
     },
+    enabled: !!slug.profileId!.toString(),
   })
+
+  const balance = trpc.useQuery(['identity.account-balance'], {
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: 'always',
+    cacheTime: 0,
+    refetchOnMount: true,
+    enabled: isAuthenticated,
+  })
+
   const donationForRecipient = trpc.useMutation(['booking.donationForRecipient'])
   const utils = trpc.useContext()
 
@@ -129,6 +142,14 @@ const DetailProfileContainer = () => {
       return tab.key.toString() == slug.tab?.toString()
     }) ?? tabDatas[0],
   )
+
+  useEffect(() => {
+    if (!providerDetail?.isProvider) {
+      setSelectedTab(tabDatas[1])
+    } else {
+      setSelectedTab(tabDatas[0])
+    }
+  }, [providerDetail])
 
   const handleChangeTab = (item: TabDataProps) => {
     router.replace(
@@ -200,7 +221,7 @@ const DetailProfileContainer = () => {
             donationForRecipient.mutate(
               {
                 recipientId: providerDetail?.id ?? '',
-                amount: donationValues.donateValue,
+                amount: Number(donationValues.donateValue.replace(/,/g, '')),
                 message: donationValues.donateContent,
               },
               {
@@ -245,11 +266,7 @@ const DetailProfileContainer = () => {
   })
 
   const validationSchema = Yup.object().shape({
-    donateValue: Yup.string()
-      .required('Xin hãy nhập số tiền')
-      .matches(/^\d+$/)
-      .min(1)
-      .max(7, 'Chỉ được nhập nhiều nhất 7 chữ số'),
+    donateValue: Yup.string().required('Xin hãy nhập số tiền').min(1).max(7, 'Chỉ được nhập nhiều nhất 7 chữ số'),
   })
 
   const donateModal = Modal.useEditableForm({
@@ -261,15 +278,15 @@ const DetailProfileContainer = () => {
       <>
         <Formik
           initialValues={{
-            donateValue: '1',
+            donateValue: '1,000',
             donateContent: undefined,
           }}
           onSubmit={(values) => {
-            setDonationValues({ donateValue: Number(values.donateValue), donateContent: values.donateContent })
+            setDonationValues({ donateValue: values.donateValue, donateContent: values.donateContent })
           }}
           validationSchema={validationSchema}
         >
-          {({ handleSubmit, handleChange, handleBlur, values, errors }) => (
+          {({ handleSubmit, handleChange, handleBlur, values, errors, setFieldValue }) => (
             <div className="flex flex-col gap-5 p-10 text-white">
               <div className="space-y-2">
                 <label>Tiền quà: </label>
@@ -277,14 +294,19 @@ const DetailProfileContainer = () => {
                   placeholder="Tiền donate"
                   value={values.donateValue}
                   name="donateValue"
-                  type="number"
-                  min={1}
-                  onChange={handleChange}
+                  type="text"
+                  onChange={(e) => {
+                    const inputValue = e.target.value.replace(/,/g, '')
+                    const numericValue = parseFloat(inputValue)
+                    const formattedValue = isNaN(numericValue) ? '0' : numericValue.toLocaleString()
+
+                    setFieldValue('donateValue', formattedValue)
+                  }}
                   className="w-full max-h-[50px] bg-zinc-800 border border-white border-opacity-30 rounded-xl my-2"
                   styleInput={`bg-zinc-800 rounded-xl border-none focus:outline-none`}
                   iconStyle="border-none"
                   position="right"
-                  component={<Image src={coin} width={50} height={50} alt="coin" />}
+                  component={<span className="text-xs italic"> đ</span>}
                   autoComplete="off"
                   onBlur={handleBlur}
                 />
@@ -309,8 +331,18 @@ const DetailProfileContainer = () => {
                   isActive={!errors.donateValue}
                   isOutlinedButton={true}
                   onClick={() => {
-                    handleSubmit()
-                    setIsModalConfirmationVisible(true)
+                    if (
+                      (balance.data?.data.totalBalanceAvailable ?? 0) > Number(values.donateValue.replace(/,/g, ''))
+                    ) {
+                      handleSubmit()
+                      setIsModalConfirmationVisible(true)
+                    } else {
+                      notification.warning({
+                        message: 'Tài khoản không đủ',
+                        description: 'Bạn không có đủ tiền. Vui lòng nạp thêm!',
+                        placement: 'bottomLeft',
+                      })
+                    }
                   }}
                 >
                   Chấp nhận
@@ -397,17 +429,24 @@ const DetailProfileContainer = () => {
                       <Tooltip placement="bottomLeft" title={`${providerDetail?.isOnline ? 'Online' : 'Offline'}`}>
                         <div className="flex items-center gap-1 p-2 bg-gray-700 rounded-full">
                           <Dot theme="multi-color" size="24" fill={providerDetail?.isOnline ? '#008000' : '#FF0000'} />
-                          <p>
-                            {providerDetail?.providerConfig?.status == ProviderConfigResponseStatusEnum.Activated &&
-                              'Sẵn sàng'}
-                          </p>
-                          <p>
-                            {providerDetail?.providerConfig?.status == ProviderConfigResponseStatusEnum.Busy && 'Bận'}
-                          </p>
-                          <p>
-                            {providerDetail?.providerConfig?.status ==
-                              ProviderConfigResponseStatusEnum.StoppedAcceptingBooking && 'Ngừng nhận đơn'}
-                          </p>
+                          {providerDetail?.isOnline ? (
+                            <>
+                              <p>
+                                {providerDetail?.providerConfig?.status == ProviderConfigResponseStatusEnum.Activated &&
+                                  'Sẵn sàng'}
+                              </p>
+                              <p>
+                                {providerDetail?.providerConfig?.status == ProviderConfigResponseStatusEnum.Busy &&
+                                  'Bận'}
+                              </p>
+                              <p>
+                                {providerDetail?.providerConfig?.status ==
+                                  ProviderConfigResponseStatusEnum.StoppedAcceptingBooking && 'Ngừng nhận đơn'}
+                              </p>
+                            </>
+                          ) : (
+                            'Offline'
+                          )}
                         </div>
                       </Tooltip>
                     </div>
@@ -438,15 +477,32 @@ const DetailProfileContainer = () => {
                     >
                       <Menu.Items className="absolute right-0 py-3 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg w-fit top-7 ring-1 ring-black ring-opacity-5 focus:outline-none">
                         <div className="flex flex-col gap-2 w-max">
-                          {moreButtonDatas.map((item, index) => (
+                          {moreButtonDatas.map((item) => (
                             <>
-                              {user?.id == providerDetail?.id && item.key != 'Donate' && (
+                              {user?.id == providerDetail?.id ? (
+                                item.key != 'Donate' && (
+                                  <div
+                                    key={item.key}
+                                    className="px-2 py-1 rounded-md cursor-pointer hover:bg-purple-600 hover:text-white group"
+                                    onClick={() => {
+                                      handleMenuButtonAction(item)
+                                    }}
+                                    onKeyDown={() => {}}
+                                  >
+                                    <div className="flex items-center justify-between gap-2 duration-300 scale-x-100 group-hover:scale-x-95 group-hover:-translate-x-2">
+                                      <div>{item.label}</div>
+                                      {item.icon}
+                                    </div>
+                                  </div>
+                                )
+                              ) : (
                                 <div
-                                  key={index}
+                                  key={item.key}
                                   className="px-2 py-1 rounded-md cursor-pointer hover:bg-purple-600 hover:text-white group"
                                   onClick={() => {
                                     handleMenuButtonAction(item)
                                   }}
+                                  onKeyDown={() => {}}
                                 >
                                   <div className="flex items-center justify-between gap-2 duration-300 scale-x-100 group-hover:scale-x-95 group-hover:-translate-x-2">
                                     <div>{item.label}</div>
@@ -474,6 +530,7 @@ const DetailProfileContainer = () => {
                         key={item.key}
                         onClick={() => handleChangeTab(item)}
                         data-tab={item.label}
+                        onKeyDown={() => {}}
                       >
                         {item.label}
                       </span>
@@ -486,6 +543,7 @@ const DetailProfileContainer = () => {
                           key={item.key}
                           onClick={() => handleChangeTab(item)}
                           data-tab={item.label}
+                          onKeyDown={() => {}}
                         >
                           {item.label}
                         </span>

@@ -144,7 +144,10 @@ const CommunityPost = (props: CommunityPostProps) => {
         {isPostModal ? PostModal : InforPostModal}
         <div className="flex items-center justify-between">
           <div className="flex gap-3">
-            <Link href={`player/${props.data.user.slug}`} className="relative w-[70px] h-[70px] cursor-pointer">
+            <Link
+              href={`profile/${props.data.user.slug ?? props.data.userId}`}
+              className="relative w-[70px] h-[70px] cursor-pointer"
+            >
               <Image
                 className="absolute rounded-full"
                 layout="fill"
@@ -155,7 +158,7 @@ const CommunityPost = (props: CommunityPostProps) => {
             </Link>
             <div className="flex flex-col">
               <Link
-                href={`player/${props.data.user.slug}`}
+                href={`profile/${props.data.user.slug ?? props.data.userId}`}
                 className="text-xl font-semibold cursor-pointer hover:underline"
               >
                 {props.data?.user.name}
@@ -214,7 +217,7 @@ const CommunityPost = (props: CommunityPostProps) => {
         <div className="flex mt-2">
           <div className="flex flex-col w-full gap-2">
             <p className="text-lg font-normal">{props.data?.content}</p>
-            <div className="cursor-pointer" onClick={handleOpenImageModal}>
+            <div className="cursor-pointer" onClick={handleOpenImageModal} onKeyDown={() => {}}>
               <PostImageLayout data={props.data?.thumbnails} />
             </div>
           </div>
@@ -224,6 +227,7 @@ const CommunityPost = (props: CommunityPostProps) => {
             <div
               className="font-medium truncate cursor-pointer text-md opacity-30 hover:opacity-100"
               onClick={handleLikeOpen}
+              onKeyDown={() => {}}
             >
               {isLikePost ? (
                 <>Bạn{props.data?.likeCount === 0 ? ' đã thích' : ` và ${props.data?.likeCount} người khác đã thích`}</>
@@ -234,6 +238,7 @@ const CommunityPost = (props: CommunityPostProps) => {
             <div
               className="font-medium truncate cursor-pointer text-md opacity-30 hover:opacity-100"
               onClick={handleCommentOpen}
+              onKeyDown={() => {}}
             >
               {props.data?.commentCount + postComment} bình luận
             </div>
@@ -245,6 +250,7 @@ const CommunityPost = (props: CommunityPostProps) => {
                   isLikePost ? 'text-purple-600' : ''
                 }`}
                 onClick={handleLikePost}
+                onKeyDown={() => {}}
               >
                 {isLikePost ? (
                   <Like theme="filled" size="20" fill="#7e22ce" strokeLinejoin="bevel" />
@@ -258,6 +264,7 @@ const CommunityPost = (props: CommunityPostProps) => {
               <div
                 className="flex items-center justify-center gap-2 p-1 rounded-lg cursor-pointer hover:bg-gray-700"
                 onClick={handleCommentOpen}
+                onKeyDown={() => {}}
               >
                 <Comment theme="outline" size="20" fill="#FFFFFF" strokeLinejoin="bevel" />
                 Bình luận

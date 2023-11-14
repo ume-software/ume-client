@@ -18,24 +18,24 @@ info  - Finalizing page optimization...
 
 Route (pages)                              Size     First Load JS
 ┌ λ /                                      257 B           193 kB
-├   /_app                                  0 B             192 kB
+├   /_app                                  0 B             193 kB
 ├ λ /404                                   334 B           193 kB
-├ λ /api/status                            0 B             192 kB
-├ λ /api/trpc/[trpc]                       0 B             192 kB
+├ λ /api/status                            0 B             193 kB
+├ λ /api/trpc/[trpc]                       0 B             193 kB
 ├ ○ /dashboard                             1.8 kB          194 kB
 ├ ○ /kyc-manager/[task]                    1.88 kB         194 kB
 ├ ○ /provider-manager                      1.84 kB         194 kB
 ├ ○ /services-manager                      1.84 kB         194 kB
 ├ ○ /signin                                1.81 kB         194 kB
-├ ○ /transaction-manager/[task]            1.86 kB         194 kB
+├ ○ /transaction-manager/[task]            1.88 kB         194 kB
 ├ ○ /user-manager                          1.84 kB         194 kB
 └ ○ /voucher-manager/[task]                1.9 kB          194 kB
 + First Load JS shared by all              198 kB
   ├ chunks/framework-22108eb722d84e59.js   45.4 kB
   ├ chunks/main-1549b305685c3af3.js        26.7 kB
-  ├ chunks/pages/_app-bba878bf4dee0c38.js  118 kB
-  ├ chunks/webpack-99c442de4e130d65.js     2.14 kB
-  └ css/23ca0c312ee5a57a.css               5.84 kB
+  ├ chunks/pages/_app-cfc35512ec74db0d.js  118 kB
+  ├ chunks/webpack-7ca199be0b8d49ad.js     2.17 kB
+  └ css/27be9b5a95724d21.css               5.85 kB
 
 λ  (Server)  server-side renders at runtime (uses getInitialProps or getServerSideProps)
 ○  (Static)  automatically rendered as static HTML (uses no initial props)

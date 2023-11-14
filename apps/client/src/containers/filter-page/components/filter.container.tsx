@@ -1,7 +1,6 @@
 import { Menu, Transition } from '@headlessui/react'
 import { Check } from '@icon-park/react'
 import { Input } from '@ume/ui'
-import coin from 'public/coin-icon.png'
 import CategoryDrawer from '~/containers/home-page/components/category-drawer'
 import PromoteCard from '~/containers/home-page/components/promoteCard'
 import { GenderEnum } from '~/enumVariable/enumVariable'
@@ -10,7 +9,6 @@ import useDebounce from '~/hooks/useDebounce'
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react'
 
 import { Slider, Tooltip } from 'antd'
-import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FilterProviderPagingResponse } from 'ume-service-openapi'
@@ -38,7 +36,7 @@ const orderBy: OrderByProps[] = [
     name: 'Đánh giá',
   },
 ]
-const max: number = 100
+const max: number = 100000
 const min: number = 0
 
 const genderData: GenderProps[] = [
@@ -49,7 +47,7 @@ const genderData: GenderProps[] = [
   { key: GenderEnum.PRIVATE, name: 'Ẩn' },
 ]
 
-const FilterContainer = (props) => {
+const FilterContainer = () => {
   const router = useRouter()
   const basePath = router.asPath.split('?')[0]
   const serviceName = router.asPath.split('/')[2].split('?')[0].replace(/%20/g, ' ')
@@ -113,7 +111,7 @@ const FilterContainer = (props) => {
       range
       min={min}
       max={max}
-      marks={{ 0: <p className="text-white">{min}</p>, 100: <p className="text-white">{max}</p> }}
+      step={1000}
       defaultValue={priceRange}
       onAfterChange={handlePriceChange}
     />
@@ -199,15 +197,19 @@ const FilterContainer = (props) => {
               trigger="click"
             >
               {priceRange[0] != min || priceRange[1] != max ? (
-                <div className="flex gap-3 text-xl font-bold border border-light-50">
+                <div className="flex items-center gap-3 text-xl font-bold border border-light-50">
                   <div className="flex items-center gap-1">
-                    {priceRange[0]}
-                    <Image src={coin} width={25} height={25} alt="coin" />
+                    {priceRange[0].toLocaleString('en-US', {
+                      currency: 'VND',
+                    })}
+                    <span className="text-xs italic"> đ</span>
                   </div>
-                  -
+                  <p>-</p>
                   <div className="flex items-center gap-1">
-                    {priceRange[1]}
-                    <Image src={coin} width={25} height={25} alt="coin" />
+                    {priceRange[1].toLocaleString('en-US', {
+                      currency: 'VND',
+                    })}
+                    <span className="text-xs italic"> đ</span>
                   </div>
                 </div>
               ) : (
@@ -243,6 +245,7 @@ const FilterContainer = (props) => {
                         } hover:bg-gray-700 cursor-pointer p-3 rounded-lg`}
                         key={index}
                         onClick={() => setGender(genData)}
+                        onKeyDown={() => {}}
                       >
                         <p className="font-semibold text-mg">{genData.name}</p>
                         <div>
@@ -289,6 +292,7 @@ const FilterContainer = (props) => {
                         } hover:bg-gray-700 cursor-pointer p-3 rounded-lg`}
                         key={item.key}
                         onClick={() => setOrder(item)}
+                        onKeyDown={() => {}}
                       >
                         <p className="font-semibold text-mg">{item.name}</p>
                         <div>
@@ -311,7 +315,10 @@ const FilterContainer = (props) => {
         {loadingProviderFilter && !isFetchingProviderFilter ? (
           <PlayerSkeletonLoader />
         ) : (
-          <div ref={containerRef} className="grid gap-6 mt-2 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1">
+          <div
+            ref={containerRef}
+            className="grid gap-6 mt-2 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1"
+          >
             {listProviderFilter?.length != 0 ? (
               listProviderFilter?.map((provider) => (
                 <Link
