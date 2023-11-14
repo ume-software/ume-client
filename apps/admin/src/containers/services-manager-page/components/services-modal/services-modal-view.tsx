@@ -67,8 +67,8 @@ export const ServicesModalView = ({ idService, closeFunction, openValue }: IServ
       selectedImage: null,
     },
     validationSchema: Yup.object({
-      name: Yup.string().required('Tên là bắt buộc'),
-      viName: Yup.string().required('Tên là bắt buộc'),
+      name: Yup.string(),
+      viName: Yup.string(),
       serviceAttributes: Yup.array()
         .of(
           Yup.object({
@@ -156,13 +156,13 @@ export const ServicesModalView = ({ idService, closeFunction, openValue }: IServ
               </div>
               <div className="flex flex-col justify-center w-2/5 ">
                 <div className="w-64 h-24 text-white">
-                  <div className="inline-block w-full h-8">Tên tiếng việt:</div>
+                  <div className="inline-block w-full h-8">Tên dịch vụ:</div>
                   <div className="inline-block w-full ">
                     <FormInput
                       className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 `}
                       placeholder={'Tên trống'}
                       disabled={false}
-                      value={viNameInit}
+                      value={nameInit}
                       error={undefined}
                       errorMessage={undefined}
                       readOnly
@@ -170,13 +170,13 @@ export const ServicesModalView = ({ idService, closeFunction, openValue }: IServ
                   </div>
                 </div>
                 <div className="w-64 h-12 text-white">
-                  <div className="inline-block w-full h-8">Tên tiếng anh:</div>
+                  <div className="inline-block w-full h-8">Tên tiếng việt:</div>
                   <div className="inline-block w-full ">
                     <FormInput
                       className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 `}
                       placeholder={'Tên trống'}
                       disabled={false}
-                      value={nameInit}
+                      value={viNameInit}
                       error={undefined}
                       errorMessage={undefined}
                       readOnly

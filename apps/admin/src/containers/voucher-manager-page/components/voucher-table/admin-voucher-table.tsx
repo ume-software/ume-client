@@ -103,6 +103,9 @@ const AdminVoucherTable = ({ data, isLoading }) => {
     }
     setOpenConfirm(false)
   }
+  function formatNumberWithCommas(number) {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  }
   const columns = [
     {
       title: 'Tên',
@@ -132,7 +135,12 @@ const AdminVoucherTable = ({ data, isLoading }) => {
         if (record.discountUnit == 'PERCENT')
           return <div className="flex justify-center w-full">{record.discountValue + '%'}</div>
         else if (record.discountUnit == 'CASH')
-          return <div className="flex justify-center w-full">{record.discountValue + ' xu'}</div>
+          return (
+            <div className="flex items-baseline justify-center w-full">
+              {formatNumberWithCommas(parseInt(record.discountValue))}
+              <span className="text-xs italic"> đ</span>
+            </div>
+          )
       },
     },
     {

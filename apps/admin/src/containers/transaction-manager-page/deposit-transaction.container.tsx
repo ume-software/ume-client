@@ -183,19 +183,10 @@ const DepositTransactionContainer = () => {
       width: '10%',
       align: 'center',
       render(amountMoney) {
-        return <div className="flex flex-col items-center">{`${amountMoney} VND`}</div>
-      },
-    },
-    {
-      title: 'Thành xu',
-      dataIndex: 'amountCoin',
-      width: '10%',
-      align: 'center',
-      render(amountCoin) {
         return (
-          <div className="flex items-center justify-center">
-            {amountCoin} <Image alt="Xu" src={coinIcon} width={30} height={30} />
-          </div>
+          <div className="flex flex-col items-center">{`${amountMoney
+            .toString()
+            .replace(/\B(?=(\d{3})+(?!\d))/g, ',')} đ`}</div>
         )
       },
     },
