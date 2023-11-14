@@ -47,7 +47,7 @@ export default function ViewDepositDetail({ requestId, openValue, closeFunction 
   const platform = depositDetail?.platform
   const amountMoney = depositDetail?.amountMoney
   const unitCurrency = depositDetail?.unitCurrency
-  const amountCoin = depositDetail?.amountCoin
+  const amountBalance = depositDetail?.amountBalance
   const createdAt = new Date(depositDetail?.createdAt).toLocaleDateString('en-GB') || ''
   const status = depositDetail?.status
   const mappingDepositStatus = {
@@ -55,6 +55,12 @@ export default function ViewDepositDetail({ requestId, openValue, closeFunction 
     APPROVED: 'Thành công',
     REJECTED: 'Thất bại',
   }
+  function formatNumberWithCommas(number) {
+    return parseFloat(number)
+      .toString()
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  }
+
   return (
     <ModalBase
       titleValue="Chi tiết giao dịch"
@@ -110,11 +116,15 @@ export default function ViewDepositDetail({ requestId, openValue, closeFunction 
             </div>
             <div className="flex flex-col justify-end w-2/6 ">
               <div className="h-12 text-white">
-                Số tiền nạp:<span className="ml-2 font-bold">{amountMoney + ' ' + unitCurrency}</span>
+                Số tiền nạp:
+                <span className="ml-2 font-bold">
+                  {formatNumberWithCommas(amountMoney)}
+                  <span className="text-xs italic"> đ</span>
+                </span>
               </div>
               <div className="flex items-center h-12 text-white">
-                Số Coin nhận:<span className="ml-2 font-bold">{amountCoin}</span>
-                <Image className="" alt="Xu" src={coinIcon} width={24} height={24} />
+                Số tiền nhận:<span className="ml-2 font-bold">{formatNumberWithCommas(amountBalance)}</span>
+                <span className="text-xs italic"> đ</span>
               </div>
             </div>
             <div className="flex flex-col justify-end w-1/6 ">

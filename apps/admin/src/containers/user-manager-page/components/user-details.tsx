@@ -79,7 +79,7 @@ export default function UserDetails({ details, openValue, closeFunction }: IUser
       key: 'amount',
       render: (amount) => (
         <div className="flex items-center justify-center">
-          {amount} <Image alt="Xu" src={coinIcon} width={30} height={30} />
+          {formatNumberWithCommas(amount)} <span className="text-xs italic"> đ</span>
         </div>
       ),
     },
@@ -92,6 +92,11 @@ export default function UserDetails({ details, openValue, closeFunction }: IUser
         Không có data
       </div>
     ),
+  }
+  function formatNumberWithCommas(number) {
+    return parseFloat(number)
+      .toString()
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
   }
 
   return (
@@ -107,7 +112,7 @@ export default function UserDetails({ details, openValue, closeFunction }: IUser
         <div className="border-b-2 border-[#7463F0] mx-4 mr-6"></div>
 
         <div className=" flex items-center text-white w-[6rem]">
-          Số dư: {total?.totalBalance} <Image alt="Xu" src={coinIcon} width={30} height={30} />
+          Số dư: {formatNumberWithCommas(total?.totalBalance) || 0} <span className="text-xs italic"> đ</span>
         </div>
       </div>
       <div className="px-4 my-4">
