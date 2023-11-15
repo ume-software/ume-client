@@ -1,5 +1,4 @@
 import BidvLogo from 'public/bidv-logo.png'
-import ImgForEmpty from 'public/img-for-empty.png'
 import MomoLogo from 'public/momo-logo.png'
 import TpbankLogo from 'public/tpbank-logo.png'
 import VnPayLogo from 'public/vnpay-logo.png'

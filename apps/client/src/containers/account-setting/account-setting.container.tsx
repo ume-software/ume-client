@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Coupon, EditName, Lock, MessagePrivacy, Remind, Setting, Transaction } from '@icon-park/react'
+import { Coupon, EditName, Lock, Remind, Setting, Transaction } from '@icon-park/react'
 import logo from 'public/logo.png'
 import 'swiper/swiper-bundle.css'
 import { useAuth } from '~/contexts/auth'
@@ -16,7 +16,6 @@ import BecomeProvider from './components/become-provider/become-provider'
 import EditNotificated from './components/edit-notificated'
 import EditProfile from './components/edit-profile'
 import Privacy from './components/privacy'
-import ReportTicket from './components/report-ticket/report-ticket'
 import TransactionHistory from './components/transaction-history/transaction-history'
 import Voucher from './components/voucher/voucher'
 
@@ -63,12 +62,6 @@ const settingType: SettingTypeProps[] = [
     label: 'Lịch sử giao dịch',
     icon: <Transaction theme="outline" size="20" fill="#FFFFFF" strokeLinejoin="bevel" />,
     children: <TransactionHistory />,
-  },
-  {
-    key: 'reportTicket',
-    label: 'Tố cáo',
-    icon: <MessagePrivacy theme="filled" size="20" fill="#fff" strokeLinejoin="bevel" />,
-    children: <ReportTicket />,
   },
 ]
 

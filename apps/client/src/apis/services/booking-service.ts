@@ -5,6 +5,7 @@ import { parse } from 'cookie'
 import {
   BookingApi,
   BookingProviderRequest,
+  CreateReportUserRequestReasonTypeEnum,
   DonationApi,
   NoticeApi,
   ProviderApi,
@@ -303,6 +304,28 @@ export const getPostByUserSlug = async (query: { userSlug: string; page: string 
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
       message: error.message || 'Fail to get post by user slug',
+    })
+  }
+}
+export const postReportUser = async (
+  query: { slug: string; reasonType: CreateReportUserRequestReasonTypeEnum; content: string },
+  ctx,
+) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie)
+    const respone = await new UserApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).reportUserBySlug(query.slug, { reasonType: query.reasonType, content: query.content })
+    return {
+      data: respone.data,
+      success: true,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to get post report user',
     })
   }
 }

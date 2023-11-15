@@ -8,7 +8,6 @@ import { useAuth } from '~/contexts/auth'
 
 import React, { Fragment, ReactElement, useCallback, useContext, useEffect, useId, useState } from 'react'
 
-import { parse } from 'cookie'
 import { isNil } from 'lodash'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
