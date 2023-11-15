@@ -1,21 +1,17 @@
 import { CheckSmall, CloseSmall, Plus } from '@icon-park/react'
 import { Button, Modal } from '@ume/ui'
-import BidvLogo from 'public/bidv-logo.png'
 import ImgForEmpty from 'public/img-for-empty.png'
-import MomoLogo from 'public/momo-logo.png'
-import TpbankLogo from 'public/tpbank-logo.png'
-import VnPayLogo from 'public/vnpay-logo.png'
-import ZaloPayLogo from 'public/zalopay-logo.png'
 import 'swiper/swiper-bundle.css'
 import { useAuth } from '~/contexts/auth'
 import { ActionEnum } from '~/enumVariable/enumVariable'
+import { paymentPlat } from '~/enumVariable/platform'
 
 import { useEffect, useState } from 'react'
 
 import { Switch } from 'antd'
-import Image, { StaticImageData } from 'next/legacy/image'
+import Image from 'next/legacy/image'
 import { Swiper, SwiperSlide } from 'swiper/react'
-import { UserPaymentSystemRequestPlatformEnum, UserPaymentSystemResponse } from 'ume-service-openapi'
+import { UserPaymentSystemResponse } from 'ume-service-openapi'
 
 import ServiceForm from './service-form'
 import UserPaymentPlatform from './user-payment-platform'
@@ -24,19 +20,6 @@ import UserRequestWithdraw from './user-request-withdraw'
 import { SliderSkeletonLoader } from '~/components/skeleton-load'
 
 import { trpc } from '~/utils/trpc'
-
-interface PaymentPlatform {
-  key: string
-  imgSrc: StaticImageData
-}
-
-const paymentPlat: PaymentPlatform[] = [
-  { key: UserPaymentSystemRequestPlatformEnum.Momo, imgSrc: MomoLogo },
-  { key: UserPaymentSystemRequestPlatformEnum.Bidv, imgSrc: BidvLogo },
-  { key: UserPaymentSystemRequestPlatformEnum.Tpb, imgSrc: TpbankLogo },
-  { key: UserPaymentSystemRequestPlatformEnum.Vnpay, imgSrc: VnPayLogo },
-  { key: UserPaymentSystemRequestPlatformEnum.Zalopay, imgSrc: ZaloPayLogo },
-]
 
 const BecomeProvider = () => {
   const { user } = useAuth()

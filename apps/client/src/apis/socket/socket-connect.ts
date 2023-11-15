@@ -4,8 +4,6 @@ import { getEnv } from '~/env'
 export const socket = (token: string | null) => {
   if (token != null) {
     const socketInstanceBooking = socketio.connect(getEnv().baseSocketBookingURL, {
-      reconnection: true,
-      reconnectionDelay: 500,
       reconnectionAttempts: Infinity,
       secure: true,
       rejectUnauthorized: false,
@@ -16,8 +14,6 @@ export const socket = (token: string | null) => {
     })
 
     const socketInstanceChatting = socketio.connect(getEnv().baseSocketChattingURL, {
-      reconnection: true,
-      reconnectionDelay: 500,
       reconnectionAttempts: Infinity,
       secure: true,
       rejectUnauthorized: false,

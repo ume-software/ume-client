@@ -1,3 +1,4 @@
+import { CreateReportUserRequestReasonTypeEnum } from 'ume-service-openapi'
 import { z } from 'zod'
 
 import { createRouter } from './configurations'
@@ -15,6 +16,7 @@ import {
   getProviders,
   getUserBySlug,
   postFeedback,
+  postReportUser,
   putProviderResponeBooking,
 } from './services/booking-service'
 
@@ -128,5 +130,15 @@ export const bookingRouter = createRouter()
     input: z.object({ userSlug: z.string(), page: z.string() }),
     resolve: async ({ ctx, input }) => {
       return await getPostByUserSlug(input, ctx)
+    },
+  })
+  .mutation('postReportUser', {
+    input: z.object({
+      slug: z.string(),
+      reasonType: z.nativeEnum(CreateReportUserRequestReasonTypeEnum),
+      content: z.string(),
+    }),
+    resolve: async ({ ctx, input }) => {
+      return await postReportUser(input, ctx)
     },
   })

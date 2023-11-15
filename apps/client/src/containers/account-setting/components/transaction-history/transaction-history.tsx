@@ -1,11 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { CloseSmall } from '@icon-park/react'
-import { Modal } from '@ume/ui'
+import { Button, Modal } from '@ume/ui'
+import ImgForEmpty from 'public/img-for-empty.png'
 import { useAuth } from '~/contexts/auth'
+import { paymentPlat } from '~/enumVariable/platform'
 
 import { useEffect, useId, useState } from 'react'
 
 import { notification } from 'antd'
+import Image from 'next/legacy/image'
 import {
   BalanceHistoryPagingResponse,
   BalanceHistoryResponseBalanceTypeEnum,
@@ -54,6 +57,8 @@ const TransactionHistory = () => {
   const { user } = useAuth()
 
   const [isModalConfirmationVisible, setIsModalConfirmationVisible] = useState(false)
+  const [isModalWithdrawReqDetailVisible, setIsModalWithdrawReqDetailVisible] = useState(false)
+  const [withdrawDetail, setWithdrawDetail] = useState<any>(undefined)
   const [idWithdrawReq, setIdWithdrawReq] = useState<string>('')
 
   const [transactionHistory, setTransactionHistory] = useState<BalanceHistoryPagingResponse | undefined>(undefined)
@@ -77,12 +82,11 @@ const TransactionHistory = () => {
       onSuccess(data) {
         setWindrawRequest(data.data)
       },
+      enabled: user?.isVerified,
     },
   )
   const cancelWithdrawRequests = trpc.useMutation(['identity.cancelWithdrawRequests'])
   const utils = trpc.useContext()
-
-  console.log(windrawRequest)
 
   useEffect(() => {
     const monthYearAmountMap = {}
@@ -135,13 +139,13 @@ const TransactionHistory = () => {
       const newWithdrawArray = [
         (withdrawReqArray[14] as any).platform,
         (withdrawReqArray[14] as any).platformAccount,
-        <span key={index_id} className="flex justify-center items-center gap-2">
+        <span key={index_id} className="flex justify-center items-center gap-1">
           {((withdrawReqArray[5] ?? 0) as any).toLocaleString('en-US', {
             currency: 'VND',
           })}
           <p className="text-xs italic"> đ</p>
         </span>,
-        <span key={index_id} className="flex justify-center items-center gap-2">
+        <span key={index_id} className="flex justify-center items-center gap-1">
           {(withdrawReqArray[4] as any).toLocaleString('en-US', {
             currency: 'VND',
           })}
@@ -166,10 +170,10 @@ const TransactionHistory = () => {
   }, [windrawRequest])
 
   const handleViewWithdrawDetail = (id: string) => {
-    console.log(id)
+    setWithdrawDetail(windrawRequest?.row && windrawRequest?.row?.find((wdReq) => wdReq.id == id))
+    setIsModalWithdrawReqDetailVisible(true)
   }
   const handleCancelWithdrawDetail = (id: string) => {
-    console.log(id)
     setIdWithdrawReq(id)
     setIsModalConfirmationVisible(true)
   }
@@ -183,33 +187,32 @@ const TransactionHistory = () => {
     onClose: handleClose,
     show: isModalConfirmationVisible,
     form: (
-      <>
-        <ConfirmForm
-          title="Thay đổi thông tin cá nhân"
-          description="Bạn có chấp nhận thay đổi thông tin cá nhân hay không?"
-          onClose={handleClose}
-          onOk={() => {
-            cancelWithdrawRequests.mutate(idWithdrawReq, {
-              onSuccess() {
-                handleClose()
-                utils.invalidateQueries(['identity.getWithdrawRequests'])
-                notification.success({
-                  message: 'Hủy yêu cầu rút tiền thành công',
-                  description: 'Yêu cầu rút tiền của bạn đã được hủy',
-                  placement: 'bottomLeft',
-                })
-              },
-              onError() {
-                notification.error({
-                  message: 'Hủy yêu cầu rút tiền thất bại',
-                  description: 'Hủy yêu cầu rút tiền thất bại. Vui lòng thử lại sau!',
-                  placement: 'bottomLeft',
-                })
-              },
-            })
-          }}
-        />
-      </>
+      <ConfirmForm
+        title="Hủy yêu cầu rút tiền"
+        description="Bạn có chấp nhận hủy yêu cầu rút tiền này hay không?"
+        onClose={handleClose}
+        onOk={() => {
+          cancelWithdrawRequests.mutate(idWithdrawReq, {
+            onSuccess() {
+              handleClose()
+              setIsModalWithdrawReqDetailVisible(false)
+              utils.invalidateQueries(['identity.getWithdrawRequests'])
+              notification.success({
+                message: 'Hủy yêu cầu rút tiền thành công',
+                description: 'Yêu cầu rút tiền của bạn đã được hủy',
+                placement: 'bottomLeft',
+              })
+            },
+            onError() {
+              notification.error({
+                message: 'Hủy yêu cầu rút tiền thất bại',
+                description: 'Hủy yêu cầu rút tiền thất bại. Vui lòng thử lại sau!',
+                placement: 'bottomLeft',
+              })
+            },
+          })
+        }}
+      />
     ),
     backgroundColor: '#15151b',
     closeWhenClickOutSide: true,
@@ -226,9 +229,128 @@ const TransactionHistory = () => {
     ),
   })
 
+  const withdrawRequestDetail = Modal.useEditableForm({
+    onOK: () => {},
+    onClose: () => setIsModalWithdrawReqDetailVisible(false),
+    show: isModalWithdrawReqDetailVisible,
+    title: <p className="text-white">Chi tiết yêu cầu</p>,
+    form: (
+      <div className="mt-3 p-6">
+        {withdrawDetail && (
+          <>
+            <div className="flex justify-between items-start pb-5 border-b-2 border-white border-opacity-30">
+              <div className="flex items-center gap-2">
+                <div className="relative w-[130px] h-[130px]">
+                  <Image
+                    className="absolute rounded-xl pointer-events-none object-cover"
+                    layout="fill"
+                    src={
+                      paymentPlat.find((paymentPlat) => paymentPlat.key == withdrawDetail.userPaymentSystem.platform)
+                        ?.imgSrc ?? ImgForEmpty
+                    }
+                    alt={withdrawDetail.userPaymentSystem.platform}
+                  />
+                </div>
+                <div className="text-white space-y-3">
+                  <span className="flex gap-3">
+                    <p className="text-white opacity-30">Nền tảng:</p> {withdrawDetail.userPaymentSystem.platform}
+                  </span>
+                  <span className="flex gap-3">
+                    <p className="text-white opacity-30">Số tài khoản:</p>{' '}
+                    {withdrawDetail.userPaymentSystem.platformAccount}
+                  </span>
+                  <span className="flex gap-3">
+                    <p className="text-white opacity-30">Người nhận:</p> {withdrawDetail.userPaymentSystem.beneficiary}
+                  </span>
+                </div>
+              </div>
+              <div className="flex justify-center" key={index_id}>
+                <p
+                  className={`w-fit px-2 py-1 text-lg font-semibold rounded-xl`}
+                  style={{
+                    background: `${mappingStatus.find((statusType) => statusType.key == withdrawDetail.status)?.color}`,
+                    color: `${mappingStatus.find((statusType) => statusType.key == withdrawDetail.status)?.textColor}`,
+                  }}
+                >
+                  {mappingStatus.find((statusType) => statusType.key == withdrawDetail.status)?.label}
+                </p>
+              </div>
+            </div>
+            <div className="mt-5 text-white space-y-5">
+              <div className="flex justify-between py-1">
+                <span className="flex items-center gap-1">
+                  <p className="text-white opacity-30">Số tiền rút: </p>{' '}
+                  {((withdrawDetail.amountBalance ?? 0) as any).toLocaleString('en-US', {
+                    currency: 'VND',
+                  })}
+                  <p className="text-xs italic"> đ</p>
+                </span>
+                <span className="flex items-center gap-1">
+                  <p className="text-white opacity-30">Số tiền nhận được: </p>{' '}
+                  {((withdrawDetail.amountMoney ?? 0) as any).toLocaleString('en-US', {
+                    currency: 'VND',
+                  })}
+                  <p className="text-xs italic"> VND</p>
+                </span>
+              </div>
+              <div className="flex justify-between items-center py-1">
+                <span>
+                  <p className="text-white opacity-30 pb-1">Ngày tạo:</p>
+                  {new Date(withdrawDetail.createdAt as any).toLocaleString('en-US')}
+                </span>
+                <span>
+                  <p className="text-white opacity-30 pb-1">Ngày cập nhật:</p>
+                  {new Date(withdrawDetail.updatedAt as any).toLocaleString('en-US')}
+                </span>
+              </div>
+            </div>
+            <div className="flex justify-center mt-10 py-3 gap-5">
+              <Button
+                customCSS={`text-md p-3 hover:scale-105 rounded-xl`}
+                type="button"
+                isActive={false}
+                isOutlinedButton={true}
+                onClick={() => {
+                  setIsModalWithdrawReqDetailVisible(false)
+                }}
+              >
+                Đóng
+              </Button>
+              <Button
+                customCSS={`text-md p-3 hover:scale-105 rounded-xl`}
+                type="button"
+                isActive={true}
+                isOutlinedButton={true}
+                onClick={() => {
+                  handleCancelWithdrawDetail(withdrawDetail.id)
+                }}
+              >
+                Hủy yêu cầu
+              </Button>
+            </div>
+          </>
+        )}
+      </div>
+    ),
+    backgroundColor: '#15151b',
+    closeWhenClickOutSide: false,
+    closeButtonOnConner: (
+      <CloseSmall
+        onClick={() => setIsModalWithdrawReqDetailVisible(false)}
+        onKeyDown={(e) => e.key === 'Enter' && setIsModalWithdrawReqDetailVisible(false)}
+        tabIndex={1}
+        className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
+        theme="outline"
+        size="24"
+        fill="#FFFFFF"
+      />
+    ),
+  })
+
   return (
     <>
       {isModalConfirmationVisible && confirmModal}
+      {isModalWithdrawReqDetailVisible && withdrawRequestDetail}
       <div className="w-full px-10">
         <p className="text-4xl font-bold">Lịch sử giao dịch</p>
 
