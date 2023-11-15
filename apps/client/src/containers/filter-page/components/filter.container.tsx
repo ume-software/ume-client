@@ -1,6 +1,6 @@
 import { Menu, Transition } from '@headlessui/react'
-import { Check } from '@icon-park/react'
-import { Input } from '@ume/ui'
+import { Check, Plus, Search } from '@icon-park/react'
+import { Button, InputWithAffix } from '@ume/ui'
 import CategoryDrawer from '~/containers/home-page/components/category-drawer'
 import PromoteCard from '~/containers/home-page/components/promoteCard'
 import { GenderEnum } from '~/enumVariable/enumVariable'
@@ -26,6 +26,12 @@ interface GenderProps {
   name: string
 }
 
+interface AttrbuteProps {
+  id: string
+  name: string
+  subAttr: string[]
+}
+
 const orderBy: OrderByProps[] = [
   {
     key: 'cost',
@@ -45,6 +51,12 @@ const genderData: GenderProps[] = [
   { key: GenderEnum.FEMALE, name: 'Nữ' },
   { key: GenderEnum.OTHER, name: 'Khác' },
   { key: GenderEnum.PRIVATE, name: 'Ẩn' },
+]
+
+const AttrbuteData: AttrbuteProps[] = [
+  { id: '1', name: 'Rank', subAttr: ['vàng', 'sắt', 'đồng'] },
+  { id: '2', name: 'Lane', subAttr: ['Top', 'Mid', 'Bot'] },
+  { id: '3', name: 'Position', subAttr: ['AD', 'SP', 'Tank'] },
 ]
 
 const FilterContainer = () => {
@@ -86,6 +98,7 @@ const FilterContainer = () => {
         serviceId: String(service),
         name: debouncedValue,
         gender: gender.key,
+        status: 'ACTIVATED',
         limit: limit,
         page: page,
         order: `[{"${order.key}":"asc"}]`,
@@ -182,11 +195,14 @@ const FilterContainer = () => {
       <div className="flex items-center justify-between mx-5">
         <div className="flex items-center gap-5 my-8">
           <div className="max-w-96">
-            <Input
+            <InputWithAffix
               className="w-full outline-none border-none bg-[#292734] focus:outline-[#6d3fe0] max-h-10 rounded-xl"
+              styleInput="bg-transparent outline-none border-none hover:border-none"
               placeholder="Nhập tên player..."
               onChange={(e) => setSearchText(e.target.value)}
               onKeyDown={(e) => handleKeyPress(e)}
+              position={'right'}
+              component={<Search theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />}
             />
           </div>
           <div className="flex items-center gap-2">
@@ -264,6 +280,17 @@ const FilterContainer = () => {
           </div>
         </div>
         <div className="flex items-center gap-2">
+          <div className="mr-10">
+            <Button
+              isActive={false}
+              isOutlinedButton={true}
+              customCSS="w-fit text-xl p-2 rounded-xl hover:scale-105"
+              onClick={() => {}}
+            >
+              <Plus theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
+              Thêm thuộc tính
+            </Button>
+          </div>
           <div>
             <p className="text-xl font-semibold">Sắp xếp theo:</p>
           </div>
