@@ -2,7 +2,7 @@ import { TRPCError } from '@trpc/server'
 import { getEnv } from '~/env'
 
 import { parse } from 'cookie'
-import { AdminManageDepositRequestApi, AdminManageWithdrawRequestApi } from 'ume-service-openapi'
+import { AdminManageDepositRequestApi, AdminManageWithdrawalRequestApi } from 'ume-service-openapi'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
@@ -29,6 +29,7 @@ export const getDepositTransactions = async (
     })
   }
 }
+
 export const getDepositDetail = async (
   ctx,
   query?: {
@@ -67,20 +68,42 @@ export const getWaitingTransactions = async (
 ) => {
   const cookies = parse(ctx.req.headers.cookie ?? '')
   try {
-    const response = await new AdminManageWithdrawRequestApi({
+    const response = await new AdminManageWithdrawalRequestApi({
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).adminGetListWithdrawRequest(query?.limit, query?.page, query?.select, query?.where, query?.order)
+    }).adminGetListWithdrawalRequest(query?.limit, query?.page, query?.select, query?.where, query?.order)
 
     return {
       data: response.data.row,
       success: true,
+      count: response.data.count,
     }
   } catch (error) {
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
       message: error.message || 'Get waiting transactions failed',
+    })
+  }
+}
+
+export const approveWithdrawal = async (id: string, action: 'COMPLETED' | 'REJECTED', ctx) => {
+  const cookies = parse(ctx.req.headers.cookie ?? '')
+  try {
+    const response = await new AdminManageWithdrawalRequestApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).adminHandleWithdrawalRequest(id, { status: action })
+
+    return {
+      data: response.data,
+      success: true,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.message || 'Approve withdrawal failed',
     })
   }
 }

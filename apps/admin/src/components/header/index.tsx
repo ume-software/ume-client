@@ -1,4 +1,4 @@
-import { HamburgerButton, Remind } from '@icon-park/react'
+import { HamburgerButton } from '@icon-park/react'
 import emptyPic from 'public/empty_error.png'
 import WhiteTextLogo from 'public/ume-logo-2.png'
 import { useAuth } from '~/contexts/auth'
@@ -7,7 +7,7 @@ import useWindowDimensions from '~/hooks/windownDimensions'
 
 import { useCallback, useEffect } from 'react'
 
-import { Badge, Dropdown } from 'antd'
+import { Dropdown } from 'antd'
 import Cookies from 'js-cookie'
 import Image from 'next/legacy/image'
 import { useRouter } from 'next/router'
@@ -84,13 +84,6 @@ export const Header = ({ handleOpen, openSideBar, setOpenPopupSideBar, openPopup
           </div>
         )}
         <div className="min-w-[6.5rem] flex justify-between items-center">
-          <div className="pt-2 mr-10">
-            <Badge size="small" count={20}>
-              <div className="rounded-full p-[0.25rem] bg-gray-500">
-                <Remind theme="outline" size={width <= 900 ? '20' : '24'} fill="#fff" />
-              </div>
-            </Badge>
-          </div>
           <Dropdown
             menu={{
               items,

@@ -102,7 +102,7 @@ const SigninPage = () => {
                   type="primary"
                   className="w-full bg-blue-300"
                   loading={isSubmiting}
-                  disabled={!(form.values.username || form.values.password)}
+                  disabled={!form.values.username || !form.values.password}
                   onClick={() => form.handleSubmit()}
                 >
                   <span className={`${form.values.username || form.values.password} ?? text-white `}>Đăng nhập</span>

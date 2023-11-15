@@ -64,7 +64,7 @@ const ServicesManagerPage = () => {
       contains: filter.search,
       mode: 'insensitive',
     },
-    isActivated: filter.isActivated !== 'all' ? (filter.isActivated == 'true' ? true : false) : undefined,
+    isActivated: filter.isActivated !== 'all' ? filter.isActivated === 'true' : undefined,
   })
 
   const { isLoading } = trpc.useQuery(
