@@ -45,12 +45,12 @@ type KYCTableProps = {
 export const PendingKYCTable = () => {
   const [kycListPending, setKYCListPending] = useState<any>([])
   const [pagePendingKYC, setPagePendingKYC] = useState(1)
-  const [totalPendingKYC, setTotalPedingKYC] = useState(0)
-  const [kcyModal, setKYCModal] = useState(false)
+  const [totalPendingKYC, setTotalPendingKYC] = useState(0)
+  const [kycModal, setKycModal] = useState(false)
   const [record, setRecord] = useState<any>(null)
 
   const handleClose = useCallback(() => {
-    setKYCModal(false)
+    setKycModal(false)
     setRecord(null)
   }, [])
 
@@ -70,7 +70,7 @@ export const PendingKYCTable = () => {
       refetchOnReconnect: 'always',
       onSuccess(data) {
         setKYCListPending(data.data)
-        setTotalPedingKYC(Number(data.count))
+        setTotalPendingKYC(Number(data.count))
       },
       onError(error: any) {
         notification.error({
@@ -87,7 +87,7 @@ export const PendingKYCTable = () => {
       dataIndex: 'avatarUrl',
       width: '15%',
       align: 'center',
-      render(value, record, index) {
+      render(value) {
         return (
           <div className="flex flex-col items-center ">
             <AntdImage className="rounded-full" height={50} width={50} src={value} alt="avatar" />
@@ -140,7 +140,7 @@ export const PendingKYCTable = () => {
                 type="button"
                 onClick={() => {
                   setRecord(record)
-                  setKYCModal(true)
+                  setKycModal(true)
                 }}
               >
                 Xem đơn
@@ -187,7 +187,7 @@ export const PendingKYCTable = () => {
           pageSize={Number(LIMIT_PAGE_SIZE)}
           total={totalPendingKYC}
         />
-        <KYCModal visible={kcyModal} handleClose={handleClose} data={record} />
+        <KYCModal visible={kycModal} handleClose={handleClose} data={record} />
       </div>
     </>
   )
