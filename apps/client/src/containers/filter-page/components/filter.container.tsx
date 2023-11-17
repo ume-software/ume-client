@@ -1,6 +1,6 @@
 import { Menu, Transition } from '@headlessui/react'
-import { Check, Plus, Search } from '@icon-park/react'
-import { Button, InputWithAffix } from '@ume/ui'
+import { Check, CloseSmall, Plus, Search } from '@icon-park/react'
+import { Button, InputWithAffix, Modal } from '@ume/ui'
 import CategoryDrawer from '~/containers/home-page/components/category-drawer'
 import PromoteCard from '~/containers/home-page/components/promoteCard'
 import { GenderEnum } from '~/enumVariable/enumVariable'
@@ -13,24 +13,12 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FilterProviderPagingResponse } from 'ume-service-openapi'
 
+import AddAttributeModal from './add-attribute-modal'
+import { AttrbuteProps, GenderProps, OrderByProps } from './iFilter'
+
 import { PlayerSkeletonLoader } from '~/components/skeleton-load'
 
 import { trpc } from '~/utils/trpc'
-
-interface OrderByProps {
-  key: string
-  name: string
-}
-interface GenderProps {
-  key: string | undefined
-  name: string
-}
-
-interface AttrbuteProps {
-  id: string
-  name: string
-  subAttr: string[]
-}
 
 const orderBy: OrderByProps[] = [
   {
@@ -75,6 +63,8 @@ const FilterContainer = () => {
   const debouncedValue = useDebounce<string>(searchText, 500)
   const [gender, setGender] = useState<GenderProps>(genderData[0])
   const [order, setOrder] = useState<OrderByProps>(orderBy[0])
+  const [attributeFilter, setAttributeFilter] = useState<AttrbuteProps[]>([])
+  const [isModalFilterVisible, setIsModalFilterVisible] = useState<boolean>(false)
   const [listSkils, setListSkils] = useState<any>([])
   const [priceRange, setPriceRange] = useState<[number, number]>([min, max])
 
@@ -186,157 +176,213 @@ const FilterContainer = () => {
     }
   }
 
+  const advanceModal = Modal.useEditableForm({
+    onOK: () => {},
+    onClose: () => setIsModalFilterVisible(false),
+    show: isModalFilterVisible,
+    title: <p className="text-white">Thuộc tính</p>,
+    form: (
+      <AddAttributeModal
+        attributeData={AttrbuteData}
+        attributeFilter={attributeFilter}
+        setAttributeFilter={setAttributeFilter}
+      />
+    ),
+    backgroundColor: '#15151b',
+    closeWhenClickOutSide: true,
+    closeButtonOnConner: (
+      <CloseSmall
+        onClick={() => setIsModalFilterVisible(false)}
+        onKeyDown={() => {}}
+        tabIndex={1}
+        className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
+        theme="outline"
+        size="24"
+        fill="#FFFFFF"
+      />
+    ),
+  })
+
   return (
     <div className="min-h-screen mx-10 text-white">
+      {isModalFilterVisible && advanceModal}
       <div className="flex items-center justify-between mx-5 my-5">
         <p className="text-5xl font-bold">{serviceName}</p>
         <CategoryDrawer data={listSkils} loadingService={loadingService} />
       </div>
-      <div className="flex items-center justify-between mx-5">
-        <div className="flex items-center gap-5 my-8">
-          <div className="max-w-96">
-            <InputWithAffix
-              className="w-full outline-none border-none bg-[#292734] focus:outline-[#6d3fe0] max-h-10 rounded-xl"
-              styleInput="bg-transparent outline-none border-none hover:border-none"
-              placeholder="Nhập tên player..."
-              onChange={(e) => setSearchText(e.target.value)}
-              onKeyDown={(e) => handleKeyPress(e)}
-              position={'right'}
-              component={<Search theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />}
-            />
-          </div>
-          <div className="flex items-center gap-2">
-            <Tooltip
-              className="bg-[#292734] text-white px-8 py-2 rounded-xl hover:bg-gray-500 cursor-pointer"
-              title={tooltipContent}
-              placement="bottom"
-              trigger="click"
-            >
-              {priceRange[0] != min || priceRange[1] != max ? (
-                <div className="flex items-center gap-3 text-xl font-bold border border-light-50">
-                  <div className="flex items-center gap-1">
-                    {priceRange[0].toLocaleString('en-US', {
-                      currency: 'VND',
-                    })}
-                    <span className="text-xs italic"> đ</span>
-                  </div>
-                  <p>-</p>
-                  <div className="flex items-center gap-1">
-                    {priceRange[1].toLocaleString('en-US', {
-                      currency: 'VND',
-                    })}
-                    <span className="text-xs italic"> đ</span>
-                  </div>
-                </div>
-              ) : (
-                <div className="text-xl font-semibold">Khoảng giá</div>
-              )}
-            </Tooltip>
-          </div>
-          <div className="relative">
-            <Menu>
-              <Menu.Button>
-                <button className="min-w-[130px] text-xl font-semibold px-8 py-2 bg-[#292734] hover:bg-gray-700 rounded-xl">
-                  {gender.name}
-                </button>
-              </Menu.Button>
-              <Transition
-                as={Fragment}
-                enter="transition ease-out duration-400"
-                enterFrom="transform opacity-0 scale-95"
-                enterTo="transform opacity-100 scale-100"
-                leave="transition ease-in duration-400"
-                leaveFrom="transform opacity-100 scale-100"
-                leaveTo="transform opacity-0 scale-95"
+      <div className="grid grid-cols-5 items-center mx-3">
+        <div className="xl:col-span-3 col-span-5 xl:justify-self-start">
+          <div className="flex items-center gap-5 my-8">
+            <div className="max-w-96">
+              <InputWithAffix
+                className="w-full outline-none border-none bg-[#292734] focus:outline-[#6d3fe0] max-h-10 rounded-xl"
+                styleInput="bg-transparent outline-none border-none hover:border-none"
+                placeholder="Nhập tên player..."
+                onChange={(e) => setSearchText(e.target.value)}
+                onKeyDown={(e) => handleKeyPress(e)}
+                position={'right'}
+                component={<Search theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />}
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <Tooltip
+                className="bg-[#292734] text-white px-8 py-2 rounded-xl hover:bg-gray-500 cursor-pointer"
+                title={tooltipContent}
+                placement="bottom"
+                trigger="click"
               >
-                <Menu.Items
-                  className="absolute right-0 p-2 mt-2 origin-top-right bg-[#292734] divide-y divide-gray-100 rounded-xl shadow-lg w-fit ring-1 ring-black ring-opacity-5 focus:outline-none"
-                  style={{ zIndex: 5 }}
+                {priceRange[0] != min || priceRange[1] != max ? (
+                  <div className="flex items-center gap-3 text-xl font-bold border border-light-50">
+                    <div className="flex items-center gap-1">
+                      {priceRange[0].toLocaleString('en-US', {
+                        currency: 'VND',
+                      })}
+                      <span className="text-xs italic"> đ</span>
+                    </div>
+                    <p>-</p>
+                    <div className="flex items-center gap-1">
+                      {priceRange[1].toLocaleString('en-US', {
+                        currency: 'VND',
+                      })}
+                      <span className="text-xs italic"> đ</span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-xl font-semibold">Khoảng giá</div>
+                )}
+              </Tooltip>
+            </div>
+            <div className="relative">
+              <Menu>
+                <Menu.Button>
+                  <button className="min-w-[130px] text-xl font-semibold px-8 py-2 bg-[#292734] hover:bg-gray-700 rounded-xl">
+                    {gender.name}
+                  </button>
+                </Menu.Button>
+                <Transition
+                  as={Fragment}
+                  enter="transition ease-out duration-400"
+                  enterFrom="transform opacity-0 scale-95"
+                  enterTo="transform opacity-100 scale-100"
+                  leave="transition ease-in duration-400"
+                  leaveFrom="transform opacity-100 scale-100"
+                  leaveTo="transform opacity-0 scale-95"
                 >
-                  <div className="flex flex-col gap-2" style={{ zIndex: 10 }}>
-                    {genderData.map((genData, index) => (
-                      <div
-                        className={`flex gap-5 items-center ${
-                          genData.key === gender.key ? 'bg-gray-700' : ''
-                        } hover:bg-gray-700 cursor-pointer p-3 rounded-lg`}
-                        key={index}
-                        onClick={() => setGender(genData)}
-                        onKeyDown={() => {}}
-                      >
-                        <p className="font-semibold text-mg">{genData.name}</p>
-                        <div>
-                          {genData.key === gender.key ? (
-                            <Check theme="filled" size="10" fill="#FFFFFF" strokeLinejoin="bevel" />
-                          ) : (
-                            ''
-                          )}
+                  <Menu.Items
+                    className="absolute right-0 p-2 mt-2 origin-top-right bg-[#292734] divide-y divide-gray-100 rounded-xl shadow-lg w-full ring-1 ring-black ring-opacity-5 focus:outline-none"
+                    style={{ zIndex: 5 }}
+                  >
+                    <div className="flex flex-col gap-2" style={{ zIndex: 10 }}>
+                      {genderData.map((genData, index) => (
+                        <div
+                          className={`flex gap-5 items-center ${
+                            genData.key === gender.key ? 'bg-gray-700' : ''
+                          } hover:bg-gray-700 cursor-pointer p-3 rounded-lg`}
+                          key={index}
+                          onClick={() => setGender(genData)}
+                          onKeyDown={() => {}}
+                        >
+                          <p className="font-semibold text-mg">{genData.name}</p>
+                          <div>
+                            {genData.key === gender.key ? (
+                              <Check theme="filled" size="10" fill="#FFFFFF" strokeLinejoin="bevel" />
+                            ) : (
+                              ''
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                </Menu.Items>
-              </Transition>
-            </Menu>
+                      ))}
+                    </div>
+                  </Menu.Items>
+                </Transition>
+              </Menu>
+            </div>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="mr-10">
-            <Button
-              isActive={false}
-              isOutlinedButton={true}
-              customCSS="w-fit text-xl p-2 rounded-xl hover:scale-105"
-              onClick={() => {}}
-            >
-              <Plus theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
-              Thêm thuộc tính
-            </Button>
-          </div>
-          <div>
-            <p className="text-xl font-semibold">Sắp xếp theo:</p>
-          </div>
-          <div className="relative pt-2">
-            <Menu>
-              <Menu.Button>
-                <button className="text-lg font-semibold px-8 py-2 bg-[#292734] hover:bg-gray-700 rounded-xl">
-                  {order.name}
-                </button>
-              </Menu.Button>
-              <Transition
-                as={Fragment}
-                enter="transition ease-out duration-400"
-                enterFrom="transform opacity-0 scale-95"
-                enterTo="transform opacity-100 scale-100"
-                leave="transition ease-in duration-400"
-                leaveFrom="transform opacity-100 scale-100"
-                leaveTo="transform opacity-0 scale-95"
+        <div className="xl:col-span-2 col-span-5 xl:justify-self-end">
+          <div className="flex items-center gap-2">
+            <div className="mr-10 mt-2">
+              <Button
+                isActive={false}
+                isOutlinedButton={true}
+                customCSS="w-fit text-md p-2 rounded-xl hover:scale-105"
+                onClick={() => {
+                  setIsModalFilterVisible(true)
+                }}
               >
-                <Menu.Items className="absolute right-0 p-2 mt-2 origin-top-right bg-[#292734] divide-y divide-gray-100 rounded-xl shadow-lg w-fit ring-1 ring-black ring-opacity-5 focus:outline-none">
-                  <div className="flex flex-col gap-2" style={{ zIndex: 10 }}>
-                    {orderBy.map((item) => (
-                      <div
-                        className={`flex gap-5 items-center ${
-                          order.key === item.key ? 'bg-gray-700' : ''
-                        } hover:bg-gray-700 cursor-pointer p-3 rounded-lg`}
-                        key={item.key}
-                        onClick={() => setOrder(item)}
-                        onKeyDown={() => {}}
-                      >
-                        <p className="font-semibold text-mg">{item.name}</p>
-                        <div>
-                          {order.key === item.key ? (
-                            <Check theme="filled" size="10" fill="#FFFFFF" strokeLinejoin="bevel" />
-                          ) : (
-                            ''
-                          )}
-                        </div>
+                <Plus theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
+                Thêm thuộc tính
+              </Button>
+            </div>
+            <div className="flex items-center gap-2">
+              <div>
+                <p className="text-xl font-semibold">Sắp xếp theo:</p>
+              </div>
+              <div className="relative pt-2">
+                <Menu>
+                  <Menu.Button>
+                    <button className="text-lg font-semibold px-8 py-2 bg-[#292734] hover:bg-gray-700 rounded-xl">
+                      {order.name}
+                    </button>
+                  </Menu.Button>
+                  <Transition
+                    as={Fragment}
+                    enter="transition ease-out duration-400"
+                    enterFrom="transform opacity-0 scale-95"
+                    enterTo="transform opacity-100 scale-100"
+                    leave="transition ease-in duration-400"
+                    leaveFrom="transform opacity-100 scale-100"
+                    leaveTo="transform opacity-0 scale-95"
+                  >
+                    <Menu.Items className="absolute right-0 p-2 mt-2 origin-top-right bg-[#292734] divide-y divide-gray-100 rounded-xl shadow-lg w-full ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+                      <div className="flex flex-col gap-2" style={{ zIndex: 10 }}>
+                        {orderBy.map((item) => (
+                          <div
+                            className={`flex gap-5 items-center ${
+                              order.key === item.key ? 'bg-gray-700' : ''
+                            } hover:bg-gray-700 cursor-pointer p-3 rounded-lg`}
+                            key={item.key}
+                            onClick={() => setOrder(item)}
+                            onKeyDown={() => {}}
+                          >
+                            <p className="font-semibold text-mg">{item.name}</p>
+                            <div>
+                              {order.key === item.key ? (
+                                <Check theme="filled" size="10" fill="#FFFFFF" strokeLinejoin="bevel" />
+                              ) : (
+                                ''
+                              )}
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                </Menu.Items>
-              </Transition>
-            </Menu>
+                    </Menu.Items>
+                  </Transition>
+                </Menu>
+              </div>
+            </div>
           </div>
         </div>
+      </div>
+      <div>
+        {attributeFilter.length > 0 && (
+          <>
+            {attributeFilter.map((attrFilter) => (
+              <div key={attrFilter.id}>
+                {attrFilter.subAttr.length > 0 && (
+                  <>
+                    <span className="mx-20 mb-3 flex items-center gap-5 text-xl font-bold">
+                      {attrFilter.name}:
+                      <p className="text-lg font-semibold px-8 py-2 bg-[#292734] hover:bg-gray-700 rounded-xl cursor-pointer">
+                        {attrFilter.subAttr.join(', ')}
+                      </p>
+                    </span>
+                  </>
+                )}
+              </div>
+            ))}
+          </>
+        )}
       </div>
       <div className="container mx-auto my-10">
         {loadingProviderFilter && !isFetchingProviderFilter ? (
