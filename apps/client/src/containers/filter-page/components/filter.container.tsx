@@ -42,7 +42,7 @@ const genderData: GenderProps[] = [
 ]
 
 const AttrbuteData: AttrbuteProps[] = [
-  { id: '1', name: 'Rank', subAttr: ['vàng', 'sắt', 'đồng'] },
+  { id: '1', name: 'Rank', subAttr: ['vàng', 'sắt', 'đồng', 'vàng1', 'sắt1', 'đồng1', 'vàng2', 'sắt2', 'đồng2'] },
   { id: '2', name: 'Lane', subAttr: ['Top', 'Mid', 'Bot'] },
   { id: '3', name: 'Position', subAttr: ['AD', 'SP', 'Tank'] },
 ]
@@ -364,14 +364,14 @@ const FilterContainer = () => {
           </div>
         </div>
       </div>
-      <div>
+      <div className="grid grid-cols-3">
         {attributeFilter.length > 0 && (
           <>
             {attributeFilter.map((attrFilter) => (
-              <div key={attrFilter.id}>
+              <div className="col-span-1" key={attrFilter.id}>
                 {attrFilter.subAttr.length > 0 && (
                   <>
-                    <span className="mx-20 mb-3 flex items-center gap-5 text-xl font-bold">
+                    <span className="mx-20 my-3 flex items-center gap-5 text-xl font-bold">
                       {attrFilter.name}:
                       <p className="text-lg font-semibold px-8 py-2 bg-[#292734] hover:bg-gray-700 rounded-xl cursor-pointer">
                         {attrFilter.subAttr.join(', ')}
