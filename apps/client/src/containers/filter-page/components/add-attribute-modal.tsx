@@ -1,20 +1,23 @@
 import { CheckSmall } from '@icon-park/react'
 import { Button } from '@ume/ui'
 
-import { Dispatch, SetStateAction } from 'react'
+import { Dispatch, SetStateAction, useState } from 'react'
 
 import { AttrbuteProps } from './iFilter'
 
 const AddAttributeModal = (props: {
+  setIsModalFilterVisible: Dispatch<SetStateAction<boolean>>
   attributeData: AttrbuteProps[]
   attributeFilter: AttrbuteProps[]
   setAttributeFilter: Dispatch<SetStateAction<AttrbuteProps[]>>
 }) => {
+  const [displayAttrFilter, setDisplayAttrFilter] = useState<AttrbuteProps[]>(props.attributeFilter)
+
   const addSubAttrToFilter = (attrData: AttrbuteProps, newSubAttr: string) => {
-    const isIdExist = props.attributeFilter.find((attrFilter) => attrFilter.id == attrData.id)
+    const isIdExist = displayAttrFilter.find((attrFilter) => attrFilter.id == attrData.id)
 
     if (isIdExist) {
-      props.setAttributeFilter((prevData) =>
+      setDisplayAttrFilter((prevData) =>
         prevData.map((attr) =>
           attr.id === attrData.id
             ? {
@@ -27,16 +30,13 @@ const AddAttributeModal = (props: {
         ),
       )
     } else {
-      props.setAttributeFilter((prevData) => [
-        ...prevData,
-        { id: attrData.id, name: attrData.name, subAttr: [newSubAttr] },
-      ])
+      setDisplayAttrFilter((prevData) => [...prevData, { id: attrData.id, name: attrData.name, subAttr: [newSubAttr] }])
     }
   }
 
   return (
     <>
-      <div className="p-5 text-white">
+      <div className="max-h-[55vh] p-5 text-white overflow-y-auto custom-scrollbar">
         {props.attributeData.map((attrData) => (
           <div className="py-2" key={attrData.id}>
             <p className="text-lg font-bold">{attrData.name}: </p>
@@ -54,15 +54,19 @@ const AddAttributeModal = (props: {
                     <input
                       type="checkbox"
                       checked={
-                        !!props.attributeFilter.find((attrFilter) =>
-                          attrFilter.subAttr.find((subAttrFilter) => subAttrFilter == subAttr),
+                        !!displayAttrFilter.find(
+                          (attrFilter) =>
+                            attrFilter.id == attrData.id &&
+                            attrFilter.subAttr.find((subAttrFilter) => subAttrFilter == subAttr),
                         )
                       }
                       className="appearance-none w-[13px] h-[13px] border bg-[#292734] rounded-sm checked:bg-purple-600 checked:border-transparent focus:outline-none focus:border-purple-300 focus:ring"
                       onChange={() => {}}
                     />
-                    {!!props.attributeFilter.find((attrFilter) =>
-                      attrFilter.subAttr.find((subAttrFilter) => subAttrFilter == subAttr),
+                    {!!displayAttrFilter.find(
+                      (attrFilter) =>
+                        attrFilter.id == attrData.id &&
+                        attrFilter.subAttr.find((subAttrFilter) => subAttrFilter == subAttr),
                     ) && (
                       <CheckSmall
                         theme="outline"
@@ -86,9 +90,12 @@ const AddAttributeModal = (props: {
           isOutlinedButton={true}
           customCSS="py-2 px-7 rounded-xl hover:scale-105"
           type="button"
-          onClick={() => {}}
+          onClick={() => {
+            props.setAttributeFilter(displayAttrFilter)
+            props.setIsModalFilterVisible(false)
+          }}
         >
-          Lọc
+          Áp dụng
         </Button>
       </div>
     </>

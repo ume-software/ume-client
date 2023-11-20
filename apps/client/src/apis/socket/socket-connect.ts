@@ -5,7 +5,7 @@ export const socket = (token: string | null) => {
   if (token != null) {
     const socketInstanceBooking = socketio.connect(getEnv().baseSocketBookingURL, {
       reconnection: false,
-      secure: false,
+      secure: true,
       rejectUnauthorized: false,
       auth: {
         authorization: `Bearer ${token}`,
@@ -15,7 +15,7 @@ export const socket = (token: string | null) => {
 
     const socketInstanceChatting = socketio.connect(getEnv().baseSocketChattingURL, {
       reconnection: false,
-      secure: false,
+      secure: true,
       rejectUnauthorized: false,
       auth: {
         authorization: `Bearer ${token}`,
