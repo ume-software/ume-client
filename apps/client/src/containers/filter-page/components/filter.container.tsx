@@ -1,6 +1,6 @@
 import { Menu, Transition } from '@headlessui/react'
-import { Check, CloseSmall, Plus, Search } from '@icon-park/react'
-import { Button, InputWithAffix, Modal } from '@ume/ui'
+import { Check, DownOne, Plus, Search } from '@icon-park/react'
+import { Button, InputWithAffix } from '@ume/ui'
 import CategoryDrawer from '~/containers/home-page/components/category-drawer'
 import PromoteCard from '~/containers/home-page/components/promoteCard'
 import { GenderEnum } from '~/enumVariable/enumVariable'
@@ -13,7 +13,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FilterProviderPagingResponse } from 'ume-service-openapi'
 
-import AddAttributeModal from './add-attribute-modal'
+import { AdvanceFilterModal } from './advance-filter-modal'
 import { AttrbuteProps, GenderProps, OrderByProps } from './iFilter'
 
 import { PlayerSkeletonLoader } from '~/components/skeleton-load'
@@ -41,10 +41,12 @@ const genderData: GenderProps[] = [
   { key: GenderEnum.PRIVATE, name: 'Ẩn' },
 ]
 
-const AttrbuteData: AttrbuteProps[] = [
+const attrbuteData: AttrbuteProps[] = [
   { id: '1', name: 'Rank', subAttr: ['vàng', 'sắt', 'đồng', 'vàng1', 'sắt1', 'đồng1', 'vàng2', 'sắt2', 'đồng2'] },
   { id: '2', name: 'Lane', subAttr: ['Top', 'Mid', 'Bot'] },
   { id: '3', name: 'Position', subAttr: ['AD', 'SP', 'Tank'] },
+  { id: '4', name: 'Rank1', subAttr: ['vàng', 'sắt', 'đồng', 'vàng1', 'sắt1', 'đồng1', 'vàng2', 'sắt2', 'đồng2'] },
+  { id: '5', name: 'Rank2', subAttr: ['vàng', 'sắt', 'đồng', 'vàng1', 'sắt1', 'đồng1', 'vàng2', 'sắt2', 'đồng2'] },
 ]
 
 const FilterContainer = () => {
@@ -58,15 +60,19 @@ const FilterContainer = () => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [scrollPosition, setScrollPosition] = useState(0)
   const [listProviderFilter, setListProviderFilter] = useState<FilterProviderPagingResponse['row']>([])
-  const [page, setPage] = useState<string>(String(slug.page) || '1')
-  const [searchText, setSearchText] = useState<string>('')
+  const [page, setPage] = useState<string>(String(slug.page ?? 1))
+  const [searchText, setSearchText] = useState<string>(String(slug.name ?? ''))
   const debouncedValue = useDebounce<string>(searchText, 500)
-  const [gender, setGender] = useState<GenderProps>(genderData[0])
+  const [gender, setGender] = useState<GenderProps>(
+    genderData.find((item) => item.name == String(slug.gender)) ?? genderData[0],
+  )
   const [order, setOrder] = useState<OrderByProps>(orderBy[0])
   const [attributeFilter, setAttributeFilter] = useState<AttrbuteProps[]>([])
   const [isModalFilterVisible, setIsModalFilterVisible] = useState<boolean>(false)
   const [listSkils, setListSkils] = useState<any>([])
-  const [priceRange, setPriceRange] = useState<[number, number]>([min, max])
+  const [priceRange, setPriceRange] = useState<[number, number]>(
+    [Number(slug.minPrice ?? min), Number(slug.maxPrice ?? max)] ?? [min, max],
+  )
 
   const { isLoading: loadingService } = trpc.useQuery(['booking.getListService'], {
     onSuccess(data) {
@@ -176,36 +182,15 @@ const FilterContainer = () => {
     }
   }
 
-  const advanceModal = Modal.useEditableForm({
-    onOK: () => {},
-    onClose: () => setIsModalFilterVisible(false),
-    show: isModalFilterVisible,
-    title: <p className="text-white">Thuộc tính</p>,
-    form: (
-      <AddAttributeModal
-        attributeData={AttrbuteData}
+  return (
+    <div className="min-h-screen mx-10 text-white">
+      <AdvanceFilterModal
+        isModalFilterVisible={isModalFilterVisible}
+        setIsModalFilterVisible={setIsModalFilterVisible}
+        attrbuteData={attrbuteData}
         attributeFilter={attributeFilter}
         setAttributeFilter={setAttributeFilter}
       />
-    ),
-    backgroundColor: '#15151b',
-    closeWhenClickOutSide: true,
-    closeButtonOnConner: (
-      <CloseSmall
-        onClick={() => setIsModalFilterVisible(false)}
-        onKeyDown={() => {}}
-        tabIndex={1}
-        className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
-        theme="outline"
-        size="24"
-        fill="#FFFFFF"
-      />
-    ),
-  })
-
-  return (
-    <div className="min-h-screen mx-10 text-white">
-      {isModalFilterVisible && advanceModal}
       <div className="flex items-center justify-between mx-5 my-5">
         <p className="text-5xl font-bold">{serviceName}</p>
         <CategoryDrawer data={listSkils} loadingService={loadingService} />
@@ -269,7 +254,7 @@ const FilterContainer = () => {
                   leaveTo="transform opacity-0 scale-95"
                 >
                   <Menu.Items
-                    className="absolute right-0 p-2 mt-2 origin-top-right bg-[#292734] divide-y divide-gray-100 rounded-xl shadow-lg w-full ring-1 ring-black ring-opacity-5 focus:outline-none"
+                    className="absolute right-0 p-2 mt-1 origin-top-right bg-[#292734] divide-y divide-gray-100 rounded-xl shadow-lg w-full ring-1 ring-black ring-opacity-5 focus:outline-none"
                     style={{ zIndex: 5 }}
                   >
                     <div className="flex flex-col gap-2" style={{ zIndex: 10 }}>
@@ -299,7 +284,7 @@ const FilterContainer = () => {
             </div>
           </div>
         </div>
-        <div className="xl:col-span-2 col-span-5 xl:justify-self-end">
+        <div className="xl:col-span-2 col-span-5 justify-self-end">
           <div className="flex items-center gap-2">
             <div className="mr-10 mt-2">
               <Button
@@ -334,7 +319,7 @@ const FilterContainer = () => {
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95"
                   >
-                    <Menu.Items className="absolute right-0 p-2 mt-2 origin-top-right bg-[#292734] divide-y divide-gray-100 rounded-xl shadow-lg w-full ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+                    <Menu.Items className="absolute right-0 p-2 mt-1 origin-top-right bg-[#292734] divide-y divide-gray-100 rounded-xl shadow-lg w-full ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
                       <div className="flex flex-col gap-2" style={{ zIndex: 10 }}>
                         {orderBy.map((item) => (
                           <div
@@ -364,18 +349,82 @@ const FilterContainer = () => {
           </div>
         </div>
       </div>
-      <div className="grid grid-cols-3">
+      <div className="grid grid-cols-6">
         {attributeFilter.length > 0 && (
           <>
             {attributeFilter.map((attrFilter) => (
-              <div className="col-span-1" key={attrFilter.id}>
+              <div className="xl:col-span-2 lg:col-span-3 col-span-6 my-3 w-fit" key={attrFilter.id}>
                 {attrFilter.subAttr.length > 0 && (
                   <>
-                    <span className="mx-20 my-3 flex items-center gap-5 text-xl font-bold">
-                      {attrFilter.name}:
-                      <p className="text-lg font-semibold px-8 py-2 bg-[#292734] hover:bg-gray-700 rounded-xl cursor-pointer">
-                        {attrFilter.subAttr.join(', ')}
-                      </p>
+                    <span className="mx-20 flex items-center gap-5">
+                      <p className="text-xl font-bold">{attrFilter.name}: </p>
+                      <div className="relative">
+                        <Menu>
+                          <Menu.Button>
+                            <button className="flex justify-between items-center text-lg font-semibold p-2 bg-[#292734] hover:bg-gray-700 rounded-xl">
+                              <p className="text-lg font-semibold px-5">
+                                {attrFilter.subAttr.slice().sort().join(', ')}
+                              </p>
+                              <DownOne theme="filled" size="20" fill="#fff" strokeLinejoin="bevel" />
+                            </button>
+                          </Menu.Button>
+                          <Transition
+                            as={Fragment}
+                            enter="transition ease-out duration-400"
+                            enterFrom="transform opacity-0 scale-95"
+                            enterTo="transform opacity-100 scale-100"
+                            leave="transition ease-in"
+                            leaveFrom="transform opacity-100 scale-100"
+                            leaveTo="transform opacity-0 scale-95"
+                          >
+                            <Menu.Items
+                              className="absolute left-0 p-2 mt-1 origin-top-left bg-[#292734] divide-y divide-gray-100 rounded-xl shadow-lg min-w-[250px] w-full max-h-[300px] overflow-y-auto ring-1 ring-black ring-opacity-5 focus:outline-none hide-scrollbar"
+                              style={{ zIndex: 5 }}
+                            >
+                              <div className="flex flex-col gap-2" style={{ zIndex: 10 }}>
+                                {attrbuteData
+                                  .find((item) => item.id == attrFilter.id)
+                                  ?.subAttr?.map((subAttrFilter, index) => (
+                                    <div
+                                      className={`flex justify-between items-center ${
+                                        attributeFilter.find((item) => item.subAttr.includes(subAttrFilter))
+                                          ? 'bg-gray-700'
+                                          : ''
+                                      } hover:bg-gray-700 cursor-pointer p-3 rounded-lg`}
+                                      key={index}
+                                      onClick={() => {
+                                        setAttributeFilter((prevData) =>
+                                          prevData.map((attr) =>
+                                            attr.id === attrFilter.id
+                                              ? {
+                                                  ...attr,
+                                                  subAttr: attr.subAttr.find(
+                                                    (subAttrFind) => subAttrFind == subAttrFilter,
+                                                  )
+                                                    ? attr.subAttr.filter((subAttrFind) => subAttrFind != subAttrFilter)
+                                                    : [...attr.subAttr, subAttrFilter],
+                                                }
+                                              : attr,
+                                          ),
+                                        )
+                                      }}
+                                      onKeyDown={() => {}}
+                                    >
+                                      <p className="font-semibold text-mg">{subAttrFilter}</p>
+                                      <div>
+                                        {attributeFilter.find((item) => item.subAttr.includes(subAttrFilter)) ? (
+                                          <Check theme="filled" size="10" fill="#FFFFFF" strokeLinejoin="bevel" />
+                                        ) : (
+                                          ''
+                                        )}
+                                      </div>
+                                    </div>
+                                  ))}
+                              </div>
+                            </Menu.Items>
+                          </Transition>
+                        </Menu>
+                      </div>
                     </span>
                   </>
                 )}
