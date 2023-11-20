@@ -1,7 +1,17 @@
 import { z } from 'zod'
 
 import { createRouter } from './configurations'
-import { banUser, getUserCoinHistories, getUserList, getUserTotalCoin, unBanUser } from './services/user-service'
+import {
+  banUser,
+  getUserCoinHistories,
+  getUserList,
+  getUserTotalCoin,
+  statisticNewMember,
+  statisticTotalMember,
+  unBanUser,
+} from './services/user-service'
+
+import { StatisticNewUserType, StatisticTotalUserType, UnitQueryTime } from '~/utils/constant'
 
 export const userRouter = createRouter()
   .query('getUserList', {
@@ -43,5 +53,24 @@ export const userRouter = createRouter()
     }),
     resolve: async ({ ctx, input }) => {
       return await unBanUser(ctx, input)
+    },
+  })
+  .query('statisticNewMember', {
+    input: z.object({
+      time: z.number(),
+      unit: z.enum([UnitQueryTime.MONTH, UnitQueryTime.YEAR]),
+      type: z.enum([StatisticNewUserType.NEW_USER, StatisticNewUserType.NEW_PROVIDER]),
+    }),
+    resolve: async ({ ctx, input }) => {
+      return await statisticNewMember(ctx, input.type, { time: input.time, unit: input.unit })
+    },
+  })
+  .query('statisticTotalMember', {
+    input: z.object({
+      time: z.number(),
+      type: z.enum([StatisticTotalUserType.TOTAL_PROVIDER, StatisticTotalUserType.TOTAL_USER]),
+    }),
+    resolve: async ({ ctx, input }) => {
+      return await statisticTotalMember(ctx, input.type)
     },
   })

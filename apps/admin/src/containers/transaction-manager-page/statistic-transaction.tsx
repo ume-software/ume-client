@@ -1,5 +1,4 @@
-type StatisticTransactionProps = {}
-const StatisticTransactionPage = ({}: StatisticTransactionProps) => {
+const StatisticTransactionPage = () => {
   return (
     <div>
       <h1>hhi</h1>

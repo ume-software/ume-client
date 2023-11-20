@@ -6,7 +6,10 @@ import {
   getDepositDetail,
   getDepositTransactions,
   getWaitingTransactions,
+  statisticTransasction,
 } from './services/transactions-service'
+
+import { TransactionType, UnitQueryTime } from '~/utils/constant'
 
 export const transactionRouter = createRouter()
   .query('getDepositTransactions', {
@@ -48,5 +51,15 @@ export const transactionRouter = createRouter()
     }),
     resolve: async ({ ctx, input }) => {
       return await approveWithdrawal(input.id, input.action, ctx)
+    },
+  })
+  .query('statisticTransasction', {
+    input: z.object({
+      time: z.number(),
+      type: z.enum([TransactionType.DEPOSIT, TransactionType.WITHDRAW]),
+      unit: z.enum([UnitQueryTime.MONTH, UnitQueryTime.YEAR]),
+    }),
+    resolve: async ({ ctx, input }) => {
+      return await statisticTransasction(ctx, input.type, { time: input.time, unit: input.unit })
     },
   })

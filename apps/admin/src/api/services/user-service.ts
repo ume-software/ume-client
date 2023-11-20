@@ -2,8 +2,9 @@ import { TRPCError } from '@trpc/server'
 import { getEnv } from '~/env'
 
 import { parse } from 'cookie'
-import { AdminManageUserApi } from 'ume-service-openapi'
+import { AdminManageStatisticApi, AdminManageUserApi } from 'ume-service-openapi'
 
+import { StatisticNewUserType, StatisticTotalUserType, UnitQueryTime } from '~/utils/constant'
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
 export const getUserList = async (ctx, query: { page: string; where?: string; order?: string }) => {
@@ -109,6 +110,70 @@ export const unBanUser = async (ctx, { slug }) => {
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
       message: error.message || 'Authentication failed',
+    })
+  }
+}
+
+export const statisticNewMember = async (
+  ctx,
+  type: StatisticNewUserType,
+  query: { time: number; unit: UnitQueryTime },
+) => {
+  try {
+    let response
+    const cookies = parse(ctx.req.headers.cookie ?? '')
+    if (type === StatisticNewUserType.NEW_PROVIDER) {
+      response = await new AdminManageStatisticApi({
+        basePath: getEnv().baseUmeServiceURL,
+        isJsonMime: () => true,
+        accessToken: cookies['accessToken'],
+      }).adminGetNewProviderStatistic(query.time, query.unit, UnitQueryTime.MONTH)
+    } else if (type === StatisticNewUserType.NEW_USER) {
+      response = await new AdminManageStatisticApi({
+        basePath: getEnv().baseUmeServiceURL,
+        isJsonMime: () => true,
+        accessToken: cookies['accessToken'],
+      }).adminGetNewUserStatistic(query.time, query.unit, UnitQueryTime.MONTH)
+    }
+
+    return {
+      data: response.data || null,
+      success: true,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.message || 'Statistic transaction failed',
+    })
+  }
+}
+
+export const statisticTotalMember = async (ctx, type: StatisticTotalUserType) => {
+  try {
+    let response
+    const cookies = parse(ctx.req.headers.cookie ?? '')
+    if (type === StatisticTotalUserType.TOTAL_PROVIDER) {
+      response = await new AdminManageStatisticApi({
+        basePath: getEnv().baseUmeServiceURL,
+        isJsonMime: () => true,
+        accessToken: cookies['accessToken'],
+      }).adminGetTotalProvider()
+    } else if (type === StatisticTotalUserType.TOTAL_USER) {
+      response = await new AdminManageStatisticApi({
+        basePath: getEnv().baseUmeServiceURL,
+        isJsonMime: () => true,
+        accessToken: cookies['accessToken'],
+      }).adminGetTotalUser()
+    }
+
+    return {
+      data: response.data || null,
+      success: true,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.message || 'Statistic transaction failed',
     })
   }
 }
