@@ -362,7 +362,9 @@ const FilterContainer = () => {
                         <Menu>
                           <Menu.Button>
                             <button className="flex justify-between items-center text-lg font-semibold p-2 bg-[#292734] hover:bg-gray-700 rounded-xl">
-                              <p className="text-lg font-semibold px-5">{attrFilter.subAttr.toSorted().join(', ')}</p>
+                              <p className="text-lg font-semibold px-5">
+                                {attrFilter.subAttr.slice().sort().join(', ')}
+                              </p>
                               <DownOne theme="filled" size="20" fill="#fff" strokeLinejoin="bevel" />
                             </button>
                           </Menu.Button>
