@@ -3,7 +3,6 @@ import {
   EveryUser,
   Expenses,
   GameEmoji,
-  History,
   Income,
   RightUser,
   Setting,
@@ -100,11 +99,7 @@ export const SidebarNavigation: SidebarNavigationItem[] = [
         icon: <RightUser theme="outline" size="22" fill="#fff" />,
       },
       {
-        label: (
-          <Link href="/approve-provider" rel="noopener noreferrer">
-            Quản lý KYC
-          </Link>
-        ),
+        label: <div>Quản lý KYC</div>,
         key: 'approve-provider',
         icon: <UserToUserTransmission theme="outline" size="22" fill="#fff" />,
         children: [
@@ -151,7 +146,7 @@ export const SidebarNavigation: SidebarNavigationItem[] = [
     children: [
       {
         label: (
-          <Link href="/dashboard" rel="noopener noreferrer">
+          <Link href="/transaction-manager/statistic" rel="noopener noreferrer">
             Thống kê
           </Link>
         ),
@@ -176,15 +171,6 @@ export const SidebarNavigation: SidebarNavigationItem[] = [
         key: 'withdraw',
         icon: <Expenses theme="outline" size="22" fill="#fff" />,
       },
-      // {
-      //   label: (
-      //     <Link href="/#" rel="noopener noreferrer">
-      //       Lịch sử giao dịch
-      //     </Link>
-      //   ),
-      //   key: 'deposit-history',
-      //   icon: <History theme="outline" size="22" fill="#fff" />,
-      // },
     ],
   },
   {

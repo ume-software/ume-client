@@ -7,14 +7,14 @@ ESM Build start
 CJS Build start
 ESM dist/index.css 73.00 B
 ESM dist/index.mjs 12.84 KB
-ESM ⚡️ Build success in 166ms
+ESM ⚡️ Build success in 136ms
 CJS dist/index.css 73.00 B
 CJS dist/index.js  14.04 KB
-CJS ⚡️ Build success in 166ms
+CJS ⚡️ Build success in 136ms
 DTS Build start
-DTS ⚡️ Build success in 2306ms
+DTS ⚡️ Build success in 2564ms
 DTS dist/index.d.ts 5.29 KB
 
 Rebuilding...
 
-Done in 116ms.
+Done in 122ms.
