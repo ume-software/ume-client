@@ -280,14 +280,14 @@ const TransactionHistory = () => {
               <div className="flex justify-between py-1">
                 <span className="flex items-center gap-1">
                   <p className="text-white opacity-30">Số tiền rút: </p>{' '}
-                  {((withdrawDetail.amountBalance ?? 0) as any).toLocaleString('en-US', {
+                  {(withdrawDetail.amountBalance ?? 0).toLocaleString('en-US', {
                     currency: 'VND',
                   })}
                   <p className="text-xs italic"> đ</p>
                 </span>
                 <span className="flex items-center gap-1">
                   <p className="text-white opacity-30">Số tiền nhận được: </p>{' '}
-                  {((withdrawDetail.amountMoney ?? 0) as any).toLocaleString('en-US', {
+                  {(withdrawDetail.amountMoney ?? 0).toLocaleString('en-US', {
                     currency: 'VND',
                   })}
                   <p className="text-xs italic"> VND</p>
@@ -296,11 +296,11 @@ const TransactionHistory = () => {
               <div className="flex justify-between items-center py-1">
                 <span>
                   <p className="text-white opacity-30 pb-1">Ngày tạo:</p>
-                  {new Date(withdrawDetail.createdAt as any).toLocaleString('en-US')}
+                  {new Date(withdrawDetail.createdAt).toLocaleString('en-US')}
                 </span>
                 <span>
                   <p className="text-white opacity-30 pb-1">Ngày cập nhật:</p>
-                  {new Date(withdrawDetail.updatedAt as any).toLocaleString('en-US')}
+                  {new Date(withdrawDetail.updatedAt).toLocaleString('en-US')}
                 </span>
               </div>
             </div>

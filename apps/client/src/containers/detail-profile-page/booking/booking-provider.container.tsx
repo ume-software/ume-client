@@ -312,9 +312,14 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
               </div>
             )}
           </div>
+          {createBooking.isLoading && (
+            <span
+              className={`spinner h-3 w-3 animate-spin rounded-full border-[3px] border-r-transparent border-white`}
+            />
+          )}
           <button
             type="button"
-            className={`py-2 mt-2 text-2xl font-bold text-center text-white ${
+            className={`w-full h-fit py-2 mt-2 text-2xl font-bold text-white ${
               !booking.providerServiceId ? 'border bg-zinc-800 cursor-not-allowed' : 'bg-purple-700 hover:scale-105'
             }  rounded-full `}
             onClick={() => {

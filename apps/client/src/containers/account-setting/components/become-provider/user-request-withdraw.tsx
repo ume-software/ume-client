@@ -31,7 +31,7 @@ const UserRequestWithdraw = (props: {
     initialValues: {
       platformAccountId: '',
       platformAccount: '',
-      withdrawMoney: '1,000',
+      withdrawMoney: '10,000',
     },
     validationSchema: Yup.object({
       platformAccountId: Yup.string().required('Số tài khoản là yêu cầu'),
@@ -251,17 +251,25 @@ const UserRequestWithdraw = (props: {
             <p className="text-xs text-red-500">{form.errors.withdrawMoney}</p>
           )}
         </div>
-        <div className="flex justify-between items-center text-2xl font-bold space-y-2">
-          <p>Tổng: </p>
-          <span className="flex justify-start items-center gap-2">
-            {(
-              Number(form.values.withdrawMoney.replace(/,/g, '')) -
-              Number(form.values.withdrawMoney.replace(/,/g, '')) * 0.1
-            ).toLocaleString('en-US', {
-              currency: 'VND',
-            })}
-            <p className="text-xs italic"> VND</p>
-          </span>
+        <div className="space-y-2">
+          <p className="text-end text-xs font-semibold text-red-500">Phí rút là 1% + 2,000đ</p>
+          <div className="flex justify-between items-center text-2xl font-bold">
+            <p>Tổng: </p>
+            <span className="flex justify-start items-center gap-2">
+              {Number(form.values.withdrawMoney.replace(/,/g, '')) -
+                Number(form.values.withdrawMoney.replace(/,/g, '')) * 0.001 -
+                1000 >
+                0 &&
+                (
+                  Number(form.values.withdrawMoney.replace(/,/g, '')) -
+                  Number(form.values.withdrawMoney.replace(/,/g, '')) * 0.001 -
+                  1000
+                ).toLocaleString('en-US', {
+                  currency: 'VND',
+                })}
+              <p className="text-xs italic"> VND</p>
+            </span>
+          </div>
         </div>
 
         <div className="flex justify-center gap-5 mt-5">
@@ -287,7 +295,9 @@ const UserRequestWithdraw = (props: {
                   form.values.platformAccount.split('-')[1] == platform.platform &&
                   form.values.platformAccount.split('-')[2] == platform.beneficiary,
               )
-              if (platformAcc) {
+              if (Number(form.values.withdrawMoney.replace(/,/g, '')) < 10000) {
+                form.setFieldError('withdrawMoney', 'Số tiền rút phải lớn hơn 10,000')
+              } else if (platformAcc) {
                 form.setFieldValue('platformAccountId', platformAcc.id)
                 setIsModalConfirmationVisible(true)
               } else {
