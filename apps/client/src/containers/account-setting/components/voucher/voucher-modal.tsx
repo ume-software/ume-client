@@ -123,7 +123,7 @@ export default function VourcherModal(
     },
     validationSchema: Yup.object({
       name: Yup.string().required('Tên là bắt buộc'),
-      vourcherCode: Yup.string().required('Mã là bắt buộc'),
+      vourcherCode: Yup.string().required('Mã là bắt buộc').min(3, 'Mã ít nhất có 3 ký tự'),
       endDate: Yup.date()
         .required('Ngày kết thúc là bắt buộc')
         .when(
@@ -174,7 +174,7 @@ export default function VourcherModal(
       discountUnit: Yup.string().required('Đơn vị là bắt buộc'),
       audience: Yup.string().required('Đối tượng là bắt buộc'),
       discountValue: Yup.string().required('Giá trị là bắt buộc'),
-      minimize: Yup.string().min(4, 'Số tiền phải lớn hơn 1,000').max(6, 'Số tiền không vượt quá 6 chữ số'),
+      minimize: Yup.string().max(6, 'Số tiền không vượt quá 6 chữ số'),
       minimumBookingTotalPriceForUsage: Yup.string().max(6, 'Số tiền không vượt quá 6 chữ số'),
       minimumBookingDurationForUsage: Yup.number().lessThan(12, 'Số giờ không vượt quá 12h'),
     }),
@@ -204,8 +204,8 @@ export default function VourcherModal(
         form.values.name &&
         form.values.typeVoucher &&
         form.values.numVoucher &&
+        form.values.discountValue &&
         form.values.numVoucherInDay &&
-        form.values.minimize &&
         form.values.typeVoucher &&
         form.values.discountUnit &&
         form.values.audience &&
@@ -227,6 +227,7 @@ export default function VourcherModal(
           form.values.numVoucherInDay == props.voucherSelected?.dailyNumberIssued &&
           Number(form.values.minimize?.replace(/,/g, '')) == props.voucherSelected?.maximumDiscountValue &&
           form.values.typeVoucher == props.voucherSelected?.type &&
+          Number(form.values.discountValue?.replace(/,/g, '')) == props.voucherSelected?.discountValue &&
           form.values.discountUnit == props.voucherSelected?.discountUnit &&
           form.values.audience == props.voucherSelected?.recipientType &&
           form.values.applyTime == props.voucherSelected?.applyISODayOfWeek &&
@@ -241,6 +242,7 @@ export default function VourcherModal(
     form.values.audience,
     form.values.description,
     form.values.discountUnit,
+    form.values.discountValue,
     form.values.endDate,
     form.values.imageSource,
     form.values.minimize,
@@ -307,7 +309,24 @@ export default function VourcherModal(
   }
 
   function openConfirmModal() {
-    setIsModalConfirmationVisible(true)
+    if (
+      form.values.discountUnit === CreateVoucherRequestDiscountUnitEnum.Percent &&
+      (Number((form.values.discountValue ?? '0').replace(/,/g, '')) <= 0 ||
+        Number((form.values.discountValue ?? '0').replace(/,/g, '')) >= 100)
+    ) {
+      form.setFieldError('discountValue', 'Giá trị phải lớn hơn 0 và nhỏ hơn 100')
+    } else if (
+      form.values.discountUnit === CreateVoucherRequestDiscountUnitEnum.Cash &&
+      Number((form.values.discountValue ?? '0').replace(/,/g, '')) < 1000
+    ) {
+      form.setFieldError('discountValue', 'Giá trị phải lớn hơn 1,000')
+    } else if (
+      props.actionModal == ActionEnum.CREATE
+        ? checkFieldRequire && !checkVoucherCode?.data.isExisted
+        : !checkFieldChange
+    ) {
+      setIsModalConfirmationVisible(true)
+    }
   }
 
   const handleClose = () => {
@@ -361,6 +380,7 @@ export default function VourcherModal(
                 image: String(responseData.data.data.results),
                 name: form.values.name,
                 type: form.values.typeVoucher as CreateVoucherRequestTypeEnum,
+                discountValue: Number(form.values.discountValue?.replace(/,/g, '')),
                 discountUnit: form.values.discountUnit as CreateVoucherRequestDiscountUnitEnum,
                 recipientType: form.values.audience as CreateVoucherRequestRecipientTypeEnum,
                 isHided: true,
@@ -441,6 +461,7 @@ export default function VourcherModal(
                   image: String(responseData.data.data.results),
                   name: form.values.name,
                   type: form.values.typeVoucher as CreateVoucherRequestTypeEnum,
+                  discountValue: Number(form.values.discountValue?.replace(/,/g, '')),
                   discountUnit: form.values.discountUnit as CreateVoucherRequestDiscountUnitEnum,
                   recipientType: form.values.audience as CreateVoucherRequestRecipientTypeEnum,
                   isHided: true,
@@ -499,6 +520,7 @@ export default function VourcherModal(
                 image: form.values.imageSource,
                 name: form.values.name,
                 type: form.values.typeVoucher as CreateVoucherRequestTypeEnum,
+                discountValue: Number(form.values.discountValue?.replace(/,/g, '')),
                 discountUnit: form.values.discountUnit as CreateVoucherRequestDiscountUnitEnum,
                 recipientType: form.values.audience as CreateVoucherRequestRecipientTypeEnum,
                 isHided: true,
@@ -912,12 +934,7 @@ export default function VourcherModal(
                       placeholder=""
                       value={form.values.discountValue}
                       onBlur={form.handleBlur}
-                      error={
-                        (!!form.errors.discountValue && form.touched.discountValue) ||
-                        Number((form.values.discountValue ?? '0').replace(/,/g, '')) <= 0 ||
-                        (form.values.discountUnit === CreateVoucherRequestDiscountUnitEnum.Cash &&
-                          Number((form.values.discountValue ?? '0').replace(/,/g, '')) < 1000)
-                      }
+                      error={!!form.errors.discountValue && form.touched.discountValue}
                       errorMessage={''}
                       onChange={(e) => {
                         const inputValue = e.target.value.replace(/,/g, '')
@@ -946,13 +963,6 @@ export default function VourcherModal(
                   {!!form.errors.discountValue && form.touched.discountValue && (
                     <p className="absolute bottom-[-10px] left-14 text-red-500 text-xs">{form.errors.discountValue}</p>
                   )}
-                  {Number((form.values.discountValue ?? '0').replace(/,/g, '')) <= 0 && (
-                    <p className="absolute bottom-[-10px] left-14 text-red-500 text-xs">Giá trị phải lớn hơn 0</p>
-                  )}
-                  {form.values.discountUnit === CreateVoucherRequestDiscountUnitEnum.Cash &&
-                    Number((form.values.discountValue ?? '0').replace(/,/g, '')) < 1000 && (
-                      <p className="absolute bottom-[-10px] left-14 text-red-500 text-xs">Giá trị phải lớn hơn 1,000</p>
-                    )}
                 </div>
                 {form.values.discountUnit == CreateVoucherRequestDiscountUnitEnum.Percent && (
                   <div className="relative flex items-center w-fit h-12">
@@ -1103,18 +1113,7 @@ export default function VourcherModal(
                 }
                 isOutlinedButton={true}
                 onClick={() => {
-                  if (
-                    (props.actionModal == ActionEnum.CREATE
-                      ? checkFieldRequire && !checkVoucherCode?.data.isExisted
-                      : !checkFieldChange) &&
-                    Number((form.values.discountValue ?? '0').replace(/,/g, '')) > 0 &&
-                    !(
-                      form.values.discountUnit === CreateVoucherRequestDiscountUnitEnum.Cash &&
-                      Number((form.values.discountValue ?? '0').replace(/,/g, '')) < 1000
-                    )
-                  ) {
-                    openConfirmModal()
-                  }
+                  openConfirmModal()
                 }}
                 isDisable={(!form.isValid || !checkFieldRequire) && !checkVoucherCode?.data.isExisted}
                 isLoading={providerCreateVoucher.isLoading ?? providerUpdateVoucher.isLoading}
