@@ -1,9 +1,9 @@
 import {
+  Abnormal,
   ChartHistogramTwo,
   EveryUser,
   Expenses,
   GameEmoji,
-  History,
   Income,
   RightUser,
   Setting,
@@ -22,6 +22,7 @@ import Link from 'next/link'
 export interface SidebarNavigationItem {
   label?: ReactNode
   key?: string
+  path?: string
   children?: SidebarNavigationItem[]
   icon?: React.ReactNode
 }
@@ -33,12 +34,9 @@ export const SidebarNavigation: SidebarNavigationItem[] = [
     icon: <SettingTwo theme="outline" size="24" fill="#fff" />,
     children: [
       {
-        label: (
-          <Link href="/#" rel="noopener noreferrer">
-            Tài khoản quản trị viên
-          </Link>
-        ),
-        key: 'admin-member',
+        label: 'Tài khoản quản trị viên',
+        path: '/admin-account-manager',
+        key: 'admin-account-manager',
         icon: <UserBusiness theme="outline" size="22" fill="#fff" />,
       },
       {
@@ -47,20 +45,14 @@ export const SidebarNavigation: SidebarNavigationItem[] = [
         icon: <Setting theme="outline" size="22" fill="#fff" />,
         children: [
           {
-            label: (
-              <Link href="/#" rel="noopener noreferrer">
-                Nền tảng giao dịch
-              </Link>
-            ),
+            label: 'Nền tảng giao dịch',
             key: 'deposit-ratio',
+            path: '/dashboard',
           },
           {
-            label: (
-              <Link href="/#" rel="noopener noreferrer">
-                Banner
-              </Link>
-            ),
+            label: 'Banner',
             key: 'banner-manager',
+            path: '/dashboard',
           },
         ],
       },
@@ -72,57 +64,37 @@ export const SidebarNavigation: SidebarNavigationItem[] = [
     icon: <EveryUser theme="outline" size="24" fill="#fff" />,
     children: [
       {
-        label: (
-          <Link href="/dashboard" rel="noopener noreferrer">
-            Thống kê
-          </Link>
-        ),
+        label: 'Thống kê',
         key: 'user-statistic',
+        path: '/dashboard',
         icon: <ChartHistogramTwo theme="outline" size="22" fill="#fff" />,
       },
       {
-        label: (
-          <Link href="/user-manager" rel="noopener noreferrer">
-            Quản lý người dùng
-          </Link>
-        ),
+        label: 'Quản lý người dùng',
         key: 'user-manager',
+        path: '/user-manager',
         icon: <User theme="outline" size="22" fill="#fff" />,
       },
       {
-        label: (
-          <Link href="/provider-manager" rel="noopener noreferrer">
-            Quản lý nhà cung cấp
-          </Link>
-        ),
+        label: 'Quản lý nhà cung cấp',
         key: 'provider-manager',
-
+        path: '/provider-manager',
         icon: <RightUser theme="outline" size="22" fill="#fff" />,
       },
       {
-        label: (
-          <Link href="/approve-provider" rel="noopener noreferrer">
-            Quản lý KYC
-          </Link>
-        ),
+        label: 'Quản lý KYC',
         key: 'approve-provider',
         icon: <UserToUserTransmission theme="outline" size="22" fill="#fff" />,
         children: [
           {
-            label: (
-              <Link href="/kyc-manager/kyc-pending" rel="noopener noreferrer">
-                KYC chờ duyệt
-              </Link>
-            ),
+            label: 'KYC chờ duyệt',
             key: 'kyc-pending',
+            path: '/kyc-manager/kyc-pending',
           },
           {
-            label: (
-              <Link href="/kyc-manager/kyc-all" rel="noopener noreferrer">
-                Danh sách KYC
-              </Link>
-            ),
+            label: 'Danh sách KYC',
             key: 'kyc-all',
+            path: '/kyc-manager/kyc-all',
           },
         ],
       },
@@ -134,12 +106,9 @@ export const SidebarNavigation: SidebarNavigationItem[] = [
     icon: <GameEmoji theme="outline" size="24" fill="#fff" />,
     children: [
       {
-        label: (
-          <Link href="/services-manager" rel="noopener noreferrer">
-            Dịch vụ
-          </Link>
-        ),
+        label: 'Dịch vụ',
         key: 'service-manager',
+        path: '/services-manager',
         icon: <GameEmoji theme="outline" size="22" fill="#fff" />,
       },
     ],
@@ -150,30 +119,21 @@ export const SidebarNavigation: SidebarNavigationItem[] = [
     icon: <TransactionOrder theme="outline" size="24" fill="#fff" />,
     children: [
       {
-        label: (
-          <Link href="/dashboard" rel="noopener noreferrer">
-            Thống kê
-          </Link>
-        ),
+        label: 'Thống kê',
         key: 'transaction-statistic',
+        path: '/dashboard',
         icon: <ChartHistogramTwo theme="outline" size="22" fill="#fff" />,
       },
       {
-        label: (
-          <Link href="/transaction-manager/deposit" rel="noopener noreferrer">
-            Giao dịch nạp tiền
-          </Link>
-        ),
+        label: 'Giao dịch nạp tiền',
         key: 'deposit',
+        path: '/transaction-manager/deposit',
         icon: <Income theme="outline" size="22" fill="#fff" />,
       },
       {
-        label: (
-          <Link href="/transaction-manager/withdraw" rel="noopener noreferrer">
-            Giao dịch rút tiền
-          </Link>
-        ),
+        label: 'Giao dịch rút tiền',
         key: 'withdraw',
+        path: '/transaction-manager/withdraw',
         icon: <Expenses theme="outline" size="22" fill="#fff" />,
       },
       // {
@@ -183,6 +143,7 @@ export const SidebarNavigation: SidebarNavigationItem[] = [
       //     </Link>
       //   ),
       //   key: 'deposit-history',
+      //   path: '/admin-account-manager',
       //   icon: <History theme="outline" size="22" fill="#fff" />,
       // },
     ],
@@ -193,21 +154,15 @@ export const SidebarNavigation: SidebarNavigationItem[] = [
     icon: <Ticket theme="outline" size="24" fill="#fff" />,
     children: [
       {
-        label: (
-          <Link href="/dashboard" rel="noopener noreferrer">
-            Thống kê
-          </Link>
-        ),
+        label: 'Thống kê',
         key: 'voucher-statistic',
+        path: '/dashboard',
         icon: <ChartHistogramTwo theme="outline" size="22" fill="#fff" />,
       },
       {
-        label: (
-          <Link href="/voucher-manager/voucher-by-admin" rel="noopener noreferrer">
-            Khuyến mãi từ quản trị viên
-          </Link>
-        ),
+        label: 'Khuyến mãi từ quản trị viên',
         key: 'voucher-by-admin',
+        path: '/voucher-manager/voucher-by-admin',
         icon: <RightUser theme="outline" size="22" fill="#fff" />,
       },
       {
@@ -216,22 +171,29 @@ export const SidebarNavigation: SidebarNavigationItem[] = [
         icon: <UserBusiness theme="outline" size="22" fill="#fff" />,
         children: [
           {
-            label: (
-              <Link href="/voucher-manager/voucher-by-provider" rel="noopener noreferrer">
-                Tất cả khuyến mãi
-              </Link>
-            ),
+            label: 'Tất cả khuyến mãi',
             key: 'voucher-by-provider',
+            path: '/voucher-manager/voucher-by-provider',
           },
           {
-            label: (
-              <Link href="/voucher-manager/approve-provider-voucher" rel="noopener noreferrer">
-                Khuyến mãi chờ duyệt
-              </Link>
-            ),
+            label: 'Khuyến mãi chờ duyệt',
             key: 'approve-provider-voucher',
+            path: '/voucher-manager/approve-provider-voucher',
           },
         ],
+      },
+    ],
+  },
+  {
+    label: 'Quản lý báo cáo',
+    key: 'report',
+    icon: <Abnormal theme="outline" size="24" fill="#fff" />,
+    children: [
+      {
+        label: 'Báo cáo',
+        key: 'report-manager',
+        path: '/report-manager',
+        icon: <Abnormal theme="outline" size="22" fill="#fff" />,
       },
     ],
   },

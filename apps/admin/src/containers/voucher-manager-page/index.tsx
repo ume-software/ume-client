@@ -21,7 +21,7 @@ const VoucherManager = ({ task }) => {
   return (
     <div>
       <Head>
-        <title>Admin | Voucher Manager</title>
+        <title>UME | Voucher Manager</title>
       </Head>
       <div className="h-full pb-10">
         <SwitchVoucherManager selectedTask={task} />
