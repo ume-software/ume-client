@@ -36,7 +36,7 @@ export const Header = ({ handleOpen, openSideBar, setOpenPopupSideBar, openPopup
   const items = [
     {
       key: 'logOut',
-      label: <div className="p-2 text-white active:bg-gray-500">Đăng xuất</div>,
+      label: <div className="w-full p-2 text-white rounded-lg hover:bg-gray-600 active:bg-gray-500">Đăng xuất</div>,
     },
   ]
 
@@ -71,7 +71,7 @@ export const Header = ({ handleOpen, openSideBar, setOpenPopupSideBar, openPopup
   return (
     <div
       className={`fixed top-0 w-full h-16 z-40 bg-umeHeader pr-7 ${
-        width <= 900 ? 'pl-7%' : !openSideBar || width <= 1200 ? 'pl-[9%]' : 'pl-[23%]'
+        width <= 900 ? 'pl-7%' : !openSideBar || width <= 1200 ? 'pl-[9%]' : 'pl-[21%]'
       } shadow-md`}
     >
       <div className="flex items-center justify-between flex-1 h-full align-middle">

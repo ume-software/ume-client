@@ -18,7 +18,7 @@ const TransactionManagerPage = ({ task }) => {
   return (
     <div>
       <Head>
-        <title>Admin | Transaction Manager</title>
+        <title>UME | Transaction Manager</title>
       </Head>
       <div className="h-full pb-10">
         <SwitchTransactionManager selectedTask={task} />

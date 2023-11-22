@@ -2,6 +2,7 @@ import { Down, Up } from '@icon-park/react'
 
 import React, { useEffect, useState } from 'react'
 
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 
 import { SidebarNavigation } from './SidebarNavigation'
@@ -18,8 +19,8 @@ const SideBarDropdown = () => {
   }
   useEffect(() => {
     setSelectNavigation(router.pathname?.replace(/^\//, ''))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
   function handleSelectNavigation(key) {
     setSelectNavigation(key)
   }
@@ -54,7 +55,8 @@ const SideBarDropdown = () => {
                       subItem.children.map((subItem2) => {
                         return (
                           <div key={subItem2.key} className="my-2 ml-12 mr-4">
-                            <div
+                            <Link
+                              href={subItem2?.path!}
                               onClick={() => {
                                 handleSelectNavigation(subItem2.key)
                               }}
@@ -63,13 +65,14 @@ const SideBarDropdown = () => {
                               }`}
                             >
                               {subItem2.icon} <div className="ml-2 text-sm font-bold">{subItem2.label}</div>
-                            </div>
+                            </Link>
                           </div>
                         )
                       })}
                   </div>
                 ) : (
-                  <div
+                  <Link
+                    href={subItem?.path!}
                     className={`ml-3 my-2 px-4 mr-4 py-2 w-[16rem] rounded-xl text-white flex justify-between items-center ${
                       selectNavigation === subItem.key ? 'bg-[#7463f0]' : ''
                     }`}
@@ -81,7 +84,7 @@ const SideBarDropdown = () => {
                     <div className="flex">
                       {subItem.icon} <div className="ml-2 text-sm font-bold">{subItem.label}</div>
                     </div>
-                  </div>
+                  </Link>
                 )}
               </div>
             ))}
