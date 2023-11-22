@@ -13,6 +13,7 @@ import {
   BalanceHistoryPagingResponse,
   BalanceHistoryResponseBalanceTypeEnum,
   VoucherResponseStatusEnum,
+  WithdrawalRequestResponseStatusEnum,
 } from 'ume-service-openapi'
 
 import ColumnChart from './column-chart'
@@ -39,13 +40,26 @@ const TransactionContent: IEnumType[] = [
   { key: BalanceHistoryResponseBalanceTypeEnum.SpendBooking, label: 'Đặt đơn' },
   { key: BalanceHistoryResponseBalanceTypeEnum.SpendDonate, label: 'Tặng quà' },
   { key: BalanceHistoryResponseBalanceTypeEnum.SpendGift, label: 'Tặng quà' },
-  { key: BalanceHistoryResponseBalanceTypeEnum.Withdraw, label: 'Rút tiền' },
+  { key: BalanceHistoryResponseBalanceTypeEnum.Withdrawal, label: 'Rút tiền' },
 ]
 
 const mappingStatus: IEnumType[] = [
   { key: VoucherResponseStatusEnum.Approved, label: 'Chấp nhận', color: '#008000', textColor: '#FFF' },
   { key: VoucherResponseStatusEnum.Rejected, label: 'Từ chối', color: '#FF0000', textColor: '#FFF' },
   { key: VoucherResponseStatusEnum.Pending, label: 'Chờ duyệt', color: '#FFFF00', textColor: '#000' },
+]
+
+const mappingStatusWithdraw: IEnumType[] = [
+  { key: WithdrawalRequestResponseStatusEnum.Approved, label: 'Thành công', color: '#008000', textColor: '#FFF' },
+  { key: WithdrawalRequestResponseStatusEnum.Rejected, label: 'Từ chối', color: '#FF0000', textColor: '#FFF' },
+  { key: WithdrawalRequestResponseStatusEnum.Pending, label: 'Chờ duyệt', color: '#FFFF00', textColor: '#000' },
+  { key: WithdrawalRequestResponseStatusEnum.Init, label: 'Mới tạo', color: '#FFFF00', textColor: '#000' },
+  {
+    key: WithdrawalRequestResponseStatusEnum.UserNoticesPaid,
+    label: 'Đã trả tiền',
+    color: '#008000',
+    textColor: '#FFF',
+  },
 ]
 
 const TransactionHistory = () => {
@@ -85,6 +99,7 @@ const TransactionHistory = () => {
       enabled: user?.isVerified,
     },
   )
+
   const cancelWithdrawRequests = trpc.useMutation(['identity.cancelWithdrawRequests'])
   const utils = trpc.useContext()
 
@@ -155,11 +170,11 @@ const TransactionHistory = () => {
           <p
             className={`w-fit px-2 py-1 text-lg font-semibold rounded-xl`}
             style={{
-              background: `${mappingStatus.find((statusType) => statusType.key == withdrawReqArray[9])?.color}`,
-              color: `${mappingStatus.find((statusType) => statusType.key == withdrawReqArray[9])?.textColor}`,
+              background: `${mappingStatusWithdraw.find((statusType) => statusType.key == withdrawReqArray[9])?.color}`,
+              color: `${mappingStatusWithdraw.find((statusType) => statusType.key == withdrawReqArray[9])?.textColor}`,
             }}
           >
-            {mappingStatus.find((statusType) => statusType.key == withdrawReqArray[9])?.label}
+            {mappingStatusWithdraw.find((statusType) => statusType.key == withdrawReqArray[9])?.label}
           </p>
         </div>,
         new Date(withdrawReqArray[1] as any).toLocaleDateString('en-GB'),
