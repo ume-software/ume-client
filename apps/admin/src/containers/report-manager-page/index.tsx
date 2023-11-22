@@ -146,6 +146,24 @@ const ReportManagerContainer = () => {
   }
 
   const listQuerry: PrismaWhereConditionType<ReportUserPagingResponse> = Object.assign({
+    OR: [
+      {
+        reportingUser: {
+          name: {
+            contains: filter.search,
+            mode: 'insensitive',
+          },
+        },
+      },
+      {
+        reportedUser: {
+          name: {
+            contains: filter.search,
+            mode: 'insensitive',
+          },
+        },
+      },
+    ],
     reasonType: filter.reasonType !== 'all' ? filter.reasonType : undefined,
   })
   const ORDER = [{ createdAt: 'asc' }]

@@ -52,7 +52,7 @@ const userStatusFilterItems = [
     ),
   },
   {
-    key: 'false',
+    key: 'true',
     label: (
       <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
         Hoạt động
@@ -60,7 +60,7 @@ const userStatusFilterItems = [
     ),
   },
   {
-    key: 'true',
+    key: 'false',
     label: (
       <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
         Tạm dừng
@@ -71,8 +71,8 @@ const userStatusFilterItems = [
 
 const mappingUserStatus = {
   all: 'Tất cả',
-  false: 'Hoạt động',
-  true: 'Tạm dừng',
+  true: 'Hoạt động',
+  false: 'Tạm dừng',
 }
 const UserManager = () => {
   const updateAdmin = trpc.useMutation(['admin.updateAdminAccount'])
@@ -82,7 +82,7 @@ const UserManager = () => {
   const [count, setCount] = useState(0)
   const [filter, setFilter] = useState({
     gender: 'ALL',
-    isBanned: 'all',
+    isActivated: 'all',
     search: '',
   })
   const [searchChange, setSearchChange] = useState('')
@@ -118,9 +118,8 @@ const UserManager = () => {
       contains: filter.search,
       mode: 'insensitive',
     },
-
     gender: filter.gender !== 'ALL' ? filter.gender : undefined,
-    isBanned: filter.isBanned !== 'all' ? (filter.isBanned == 'true' ? true : false) : undefined,
+    isActivated: filter.isActivated !== 'all' ? (filter.isActivated == 'true' ? true : false) : undefined,
   })
   const ORDER = [{ createdAt: 'desc' }]
   const SELECT = ['$all', { adminRoles: ['$all'] }]
@@ -152,7 +151,7 @@ const UserManager = () => {
     } else if (title == 'status') {
       setFilter({
         ...filter,
-        isBanned: key,
+        isActivated: key,
       })
     }
   }
@@ -374,7 +373,7 @@ const UserManager = () => {
               <FilterDropdown
                 id={'status'}
                 CustomCss="w-[12rem]"
-                title={`Trạng thái: ${mappingUserStatus[filter.isBanned]}`}
+                title={`Trạng thái: ${mappingUserStatus[filter.isActivated]}`}
                 items={userStatusFilterItems}
                 handleFilter={handleFilter}
               />
@@ -382,7 +381,7 @@ const UserManager = () => {
             <div className="flex items-center rounded-lg bg-umeHeader border-2 border-white">
               <Search className=" active:bg-gray-700 p-2 rounded-full" theme="outline" size="24" fill="#fff" />
               <Input
-                placeholder="Tìm kiếm tên người dùng"
+                placeholder="Tìm kiếm tên quản trị viên"
                 onKeyUp={handleKeyPress}
                 value={searchChange}
                 onChange={handleSearchChange}
