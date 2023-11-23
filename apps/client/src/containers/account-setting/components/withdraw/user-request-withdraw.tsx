@@ -64,6 +64,7 @@ const UserRequestWithdraw = (props: {
           onSuccess() {
             props.handleCloseUserPaymentPlatform()
             utils.invalidateQueries(['identity.account-balance'])
+            utils.invalidateQueries(['identity.getWithdrawRequests'])
             notification.success({
               message: 'Gửi yêu cầu rút tiền thành công',
               description: 'Yêu cầu rút tiền của bạn đã được gửi đi',

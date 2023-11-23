@@ -1,35 +1,19 @@
-import { CheckSmall, CloseSmall, Plus } from '@icon-park/react'
-import { Button, Modal } from '@ume/ui'
-import ImgForEmpty from 'public/img-for-empty.png'
+import { CheckSmall, CloseSmall } from '@icon-park/react'
 import 'swiper/swiper-bundle.css'
 import { useAuth } from '~/contexts/auth'
-import { ActionEnum } from '~/enumVariable/enumVariable'
-import { paymentPlat } from '~/enumVariable/platform'
 
 import { useEffect, useState } from 'react'
 
 import { Switch } from 'antd'
-import Image from 'next/legacy/image'
-import { Swiper, SwiperSlide } from 'swiper/react'
-import { UserPaymentSystemResponse } from 'ume-service-openapi'
 
 import ServiceForm from './service-form'
-import UserPaymentPlatform from './user-payment-platform'
-import UserRequestWithdraw from './user-request-withdraw'
-
-import { SliderSkeletonLoader } from '~/components/skeleton-load'
 
 import { trpc } from '~/utils/trpc'
 
 const BecomeProvider = () => {
   const { user } = useAuth()
   const [checked, setChecked] = useState<boolean>(false)
-  const [actionModal, setActionModal] = useState(ActionEnum.CREATE)
-  const [isModalVisible, setIsModalVisible] = useState(false)
-  const [paymentAccount, setPaymentAccount] = useState<UserPaymentSystemResponse | undefined>(undefined)
-  const { data: userPaymentPlatformData, isLoading: isUserPaymentPlatformLoading } = trpc.useQuery([
-    'identity.getUserPaymentSystems',
-  ])
+
   const registerBecomeProvider = trpc.useMutation(['identity.registerBecomeProvider'])
 
   useEffect(() => {
@@ -50,52 +34,8 @@ const BecomeProvider = () => {
         })
   }
 
-  const handleClose = () => {
-    setIsModalVisible(false)
-  }
-
-  const UserPaymentPlatformModal = Modal.useEditableForm({
-    onOK: () => {},
-    onClose: handleClose,
-    title: <p className="text-white">Tài khoản rút tiền</p>,
-    show: isModalVisible,
-    form: (
-      <>
-        {actionModal == ActionEnum.CREATE ? (
-          <UserPaymentPlatform handleCloseUserPaymentPlatform={handleClose} paymentAccount={paymentAccount} />
-        ) : (
-          <UserRequestWithdraw
-            handleCloseUserPaymentPlatform={handleClose}
-            userPaymentPlatformData={userPaymentPlatformData?.data.row}
-          />
-        )}
-      </>
-    ),
-    backgroundColor: '#15151b',
-    closeWhenClickOutSide: false,
-    closeButtonOnConner: (
-      <>
-        <CloseSmall
-          onClick={handleClose}
-          onKeyDown={(e) => e.key === 'Enter' && handleClose()}
-          tabIndex={1}
-          className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
-          theme="outline"
-          size="24"
-          fill="#FFFFFF"
-        />
-      </>
-    ),
-  })
-
-  const handleViewPaymentAccount = (paymentAcc: UserPaymentSystemResponse) => {
-    setPaymentAccount(paymentAcc)
-    setIsModalVisible(true)
-  }
-
   return (
     <>
-      {isModalVisible && UserPaymentPlatformModal}
       <div className="w-full px-10">
         <p className="text-4xl font-bold">Trở thành nhà cung cấp</p>
 
@@ -116,90 +56,12 @@ const BecomeProvider = () => {
               onChange={handleBecomeProvider}
             />
           </div>
-          <div className="flex flex-col gap-10">
-            <div className="space-y-5">
-              <div className="w-full flex justify-between items-end">
-                <p className="text-md font-semibold">Tài khoản rút tiền</p>
-                <Button
-                  customCSS="text-md py-2 px-5 rounded-xl hover:scale-105"
-                  isActive={true}
-                  isOutlinedButton={true}
-                  onClick={() => {
-                    setActionModal(ActionEnum.WITHDRAW)
-                    setPaymentAccount(undefined)
-                    setIsModalVisible(true)
-                  }}
-                >
-                  Yêu cầu rút tiền
-                </Button>
-              </div>
-              {!isUserPaymentPlatformLoading ? (
-                <div className="relative pr-40">
-                  <Swiper spaceBetween={20} slidesPerView="auto" mousewheel={true} direction="horizontal">
-                    {userPaymentPlatformData?.data?.row?.map((paymentPlatform) => (
-                      <SwiperSlide
-                        className="max-w-fit duration-500 ease-in-out cursor-pointer hover:scale-105"
-                        key={paymentPlatform.id}
-                        onClick={() => handleViewPaymentAccount(paymentPlatform)}
-                      >
-                        <div
-                          className={`flex items-center gap-5 border-2 border-white border-opacity-30 rounded-2xl p-3`}
-                        >
-                          <div className="relative w-[130px] h-[130px]">
-                            <Image
-                              key={paymentPlatform.id}
-                              className="absolute rounded-xl pointer-events-none object-cover"
-                              layout="fill"
-                              src={
-                                paymentPlat.find((paymentPlat) => paymentPlat.key == paymentPlatform.platform)
-                                  ?.imgSrc ?? ImgForEmpty
-                              }
-                              alt={paymentPlatform.platform}
-                            />
-                          </div>
-                          <div className="">
-                            <span className="flex gap-3">
-                              <p className="text-white opacity-30">Nền tảng:</p> {paymentPlatform.platform}
-                            </span>
-                            <span className="flex gap-3">
-                              <p className="text-white opacity-30">Số tài khoản:</p> {paymentPlatform.platformAccount}
-                            </span>
-                            <span className="flex gap-3">
-                              <p className="text-white opacity-30">Người nhận:</p> {paymentPlatform.beneficiary}
-                            </span>
-                          </div>
-                        </div>
-                      </SwiperSlide>
-                    ))}
-                  </Swiper>
-                  <div className="absolute h-full flex items-center pl-3 top-0 right-0 bg-umeBackground z-10">
-                    <Button
-                      customCSS={`text-sm p-2 hover:scale-105 rounded-xl`}
-                      type="button"
-                      isActive={true}
-                      isOutlinedButton={true}
-                      onClick={() => {
-                        setActionModal(ActionEnum.CREATE)
-                        setPaymentAccount(undefined)
-                        setIsModalVisible(true)
-                      }}
-                    >
-                      <Plus theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />
-                      <p>Thêm tài khoản</p>
-                    </Button>
-                  </div>
-                </div>
-              ) : (
-                <SliderSkeletonLoader />
-              )}
+          {checked && (
+            <div className="space-y-3">
+              <p className="text-md font-semibold">Dịch vụ</p>
+              <ServiceForm />
             </div>
-            {checked && (
-              <div className="space-y-3">
-                <p className="text-md font-semibold">Dịch vụ</p>
-                <ServiceForm />
-              </div>
-            )}
-          </div>
+          )}
         </div>
       </div>
     </>
