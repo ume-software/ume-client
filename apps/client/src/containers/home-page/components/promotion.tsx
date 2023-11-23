@@ -35,7 +35,7 @@ export const Promotion = () => {
     data: providers,
     isLoading: loadingProvider,
     isFetching: isFetchingProviders,
-  } = trpc.useQuery(['booking.getProviders', { limit: '20', page: page, order: '[]' }], {
+  } = trpc.useQuery(['booking.getProviders', { serviceAttributeValueIds: [], limit: '20', page: page, order: '[]' }], {
     refetchOnWindowFocus: false,
     refetchOnReconnect: 'always',
     cacheTime: 0,
