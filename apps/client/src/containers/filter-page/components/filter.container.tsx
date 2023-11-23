@@ -295,19 +295,21 @@ const FilterContainer = ({ service, listSubAttributeService }) => {
         </div>
         <div className="xl:col-span-2 col-span-5 justify-self-end">
           <div className="flex items-center gap-2">
-            <div className="mr-10 mt-2">
-              <Button
-                isActive={false}
-                isOutlinedButton={true}
-                customCSS="w-fit text-md p-2 rounded-xl hover:scale-105"
-                onClick={() => {
-                  setIsModalFilterVisible(true)
-                }}
-              >
-                <Plus theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
-                Thêm thuộc tính
-              </Button>
-            </div>
+            {(listSubAttributeService.length ?? 0) > 0 && (
+              <div className="mr-10 mt-2">
+                <Button
+                  isActive={false}
+                  isOutlinedButton={true}
+                  customCSS="w-fit text-md p-2 rounded-xl hover:scale-105"
+                  onClick={() => {
+                    setIsModalFilterVisible(true)
+                  }}
+                >
+                  <Plus theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
+                  Thêm thuộc tính
+                </Button>
+              </div>
+            )}
             <div className="flex items-center gap-2">
               <div>
                 <p className="text-xl font-semibold">Sắp xếp theo:</p>
