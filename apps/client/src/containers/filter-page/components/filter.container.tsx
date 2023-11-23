@@ -41,26 +41,18 @@ const genderData: GenderProps[] = [
   { key: GenderEnum.PRIVATE, name: 'Ẩn' },
 ]
 
-const attrbuteData: AttrbuteProps[] = [
-  { id: '1', name: 'Rank', subAttr: ['vàng', 'sắt', 'đồng', 'vàng1', 'sắt1', 'đồng1', 'vàng2', 'sắt2', 'đồng2'] },
-  { id: '2', name: 'Lane', subAttr: ['Top', 'Mid', 'Bot'] },
-  { id: '3', name: 'Position', subAttr: ['AD', 'SP', 'Tank'] },
-  { id: '4', name: 'Rank1', subAttr: ['vàng', 'sắt', 'đồng', 'vàng1', 'sắt1', 'đồng1', 'vàng2', 'sắt2', 'đồng2'] },
-  { id: '5', name: 'Rank2', subAttr: ['vàng', 'sắt', 'đồng', 'vàng1', 'sắt1', 'đồng1', 'vàng2', 'sắt2', 'đồng2'] },
-]
-
-const FilterContainer = () => {
+const FilterContainer = ({ service, listSubAttributeService }) => {
   const router = useRouter()
   const basePath = router.asPath.split('?')[0]
   const serviceName = router.asPath.split('/')[2].split('?')[0].replace(/%20/g, ' ')
-  const service = router.query.service
   const slug = router.query
 
   const limit = '20'
   const containerRef = useRef<HTMLDivElement>(null)
   const [scrollPosition, setScrollPosition] = useState(0)
   const [listProviderFilter, setListProviderFilter] = useState<FilterProviderPagingResponse['row']>([])
-  const [page, setPage] = useState<string>(String(slug.page ?? 1))
+
+  const [page, setPage] = useState<string>('1')
   const [searchText, setSearchText] = useState<string>(String(slug.name ?? ''))
   const debouncedValue = useDebounce<string>(searchText, 500)
   const [gender, setGender] = useState<GenderProps>(
@@ -74,7 +66,16 @@ const FilterContainer = () => {
     [Number(slug.minPrice ?? min), Number(slug.maxPrice ?? max)] ?? [min, max],
   )
 
+  useEffect(() => {
+    setAttributeFilter([])
+    setPage('1')
+  }, [service, listSubAttributeService])
+
   const { isLoading: loadingService } = trpc.useQuery(['booking.getListService'], {
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: 'always',
+    cacheTime: 0,
+    refetchOnMount: true,
     onSuccess(data) {
       setListSkils(data?.data?.row)
     },
@@ -91,7 +92,10 @@ const FilterContainer = () => {
       {
         startCost: priceRange[0],
         endCost: priceRange[1],
-        serviceId: String(service),
+        serviceId: String(service ?? ''),
+        serviceAttributeValueIds: attributeFilter.flatMap(
+          (listSubAttr) => listSubAttr.subAttr?.map((itemSubAttr) => itemSubAttr.subAttrId) ?? [],
+        ),
         name: debouncedValue,
         gender: gender.key,
         status: 'ACTIVATED',
@@ -106,7 +110,12 @@ const FilterContainer = () => {
       cacheTime: 0,
       refetchOnMount: true,
       onSuccess(data) {
-        setListProviderFilter((prevData) => [...(prevData ?? []), ...(data?.data?.row ?? [])])
+        setListProviderFilter((prevData) => [
+          ...(prevData?.filter((newProviderFilter) =>
+            prevData?.find((itemPrevData) => itemPrevData.id != newProviderFilter.id),
+          ) ?? []),
+          ...(data?.data?.row ?? []),
+        ])
       },
     },
   )
@@ -187,7 +196,7 @@ const FilterContainer = () => {
       <AdvanceFilterModal
         isModalFilterVisible={isModalFilterVisible}
         setIsModalFilterVisible={setIsModalFilterVisible}
-        attrbuteData={attrbuteData}
+        attrbuteData={listSubAttributeService}
         attributeFilter={attributeFilter}
         setAttributeFilter={setAttributeFilter}
       />
@@ -354,7 +363,7 @@ const FilterContainer = () => {
           <>
             {attributeFilter.map((attrFilter) => (
               <div className="xl:col-span-2 lg:col-span-3 col-span-6 my-3 w-fit" key={attrFilter.id}>
-                {attrFilter.subAttr.length > 0 && (
+                {(attrFilter?.subAttr ?? []).length > 0 && (
                   <>
                     <span className="mx-20 flex items-center gap-5">
                       <p className="text-xl font-bold">{attrFilter.name}: </p>
@@ -363,7 +372,10 @@ const FilterContainer = () => {
                           <Menu.Button>
                             <button className="flex justify-between items-center text-lg font-semibold p-2 bg-[#292734] hover:bg-gray-700 rounded-xl">
                               <p className="text-lg font-semibold px-5">
-                                {attrFilter.subAttr.slice().sort().join(', ')}
+                                {(attrFilter?.subAttr?.map((itemAttrFilter) => itemAttrFilter.subAttrValue) ?? [])
+                                  ?.slice()
+                                  .sort()
+                                  .join(', ')}
                               </p>
                               <DownOne theme="filled" size="20" fill="#fff" strokeLinejoin="bevel" />
                             </button>
@@ -382,27 +394,34 @@ const FilterContainer = () => {
                               style={{ zIndex: 5 }}
                             >
                               <div className="flex flex-col gap-2" style={{ zIndex: 10 }}>
-                                {attrbuteData
+                                {listSubAttributeService
                                   .find((item) => item.id == attrFilter.id)
-                                  ?.subAttr?.map((subAttrFilter, index) => (
+                                  ?.subAttr?.map((subAttrFilter) => (
                                     <div
                                       className={`flex justify-between items-center ${
-                                        attributeFilter.find((item) => item.subAttr.includes(subAttrFilter))
+                                        attributeFilter.find((item) =>
+                                          item?.subAttr?.find(
+                                            (itemSubAttr) => itemSubAttr.subAttrId == subAttrFilter.subAttrId,
+                                          ),
+                                        )
                                           ? 'bg-gray-700'
                                           : ''
                                       } hover:bg-gray-700 cursor-pointer p-3 rounded-lg`}
-                                      key={index}
+                                      key={subAttrFilter.subAttrId}
                                       onClick={() => {
                                         setAttributeFilter((prevData) =>
                                           prevData.map((attr) =>
                                             attr.id === attrFilter.id
                                               ? {
                                                   ...attr,
-                                                  subAttr: attr.subAttr.find(
-                                                    (subAttrFind) => subAttrFind == subAttrFilter,
+                                                  subAttr: attr?.subAttr?.find(
+                                                    (subAttrFind) => subAttrFind.subAttrId == subAttrFilter.subAttrId,
                                                   )
-                                                    ? attr.subAttr.filter((subAttrFind) => subAttrFind != subAttrFilter)
-                                                    : [...attr.subAttr, subAttrFilter],
+                                                    ? attr?.subAttr?.filter(
+                                                        (subAttrFind) =>
+                                                          subAttrFind.subAttrId != subAttrFilter.subAttrId,
+                                                      )
+                                                    : [...(attr.subAttr as any), subAttrFilter],
                                                 }
                                               : attr,
                                           ),
@@ -410,9 +429,13 @@ const FilterContainer = () => {
                                       }}
                                       onKeyDown={() => {}}
                                     >
-                                      <p className="font-semibold text-mg">{subAttrFilter}</p>
+                                      <p className="font-semibold text-mg">{subAttrFilter.subAttrValue}</p>
                                       <div>
-                                        {attributeFilter.find((item) => item.subAttr.includes(subAttrFilter)) ? (
+                                        {attributeFilter.find((item) =>
+                                          item?.subAttr?.find(
+                                            (itemSubAttr) => itemSubAttr.subAttrId == subAttrFilter.subAttrId,
+                                          ),
+                                        ) ? (
                                           <Check theme="filled" size="10" fill="#FFFFFF" strokeLinejoin="bevel" />
                                         ) : (
                                           ''
