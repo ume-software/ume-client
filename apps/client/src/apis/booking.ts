@@ -14,6 +14,7 @@ import {
   getNoticeAmount,
   getPostByUserSlug,
   getProviders,
+  getServiceBySlug,
   getUserBySlug,
   postFeedback,
   postReportUser,
@@ -37,6 +38,7 @@ export const bookingRouter = createRouter()
         startCost: z.optional(z.number()),
         endCost: z.optional(z.number()),
         serviceId: z.optional(z.string()),
+        serviceAttributeValueIds: z.array(z.string()),
         name: z.optional(z.string()),
         gender: z.optional(z.string()),
         status: z.optional(z.string()),
@@ -140,5 +142,11 @@ export const bookingRouter = createRouter()
     }),
     resolve: async ({ ctx, input }) => {
       return await postReportUser(input, ctx)
+    },
+  })
+  .query('getServiceBySlug', {
+    input: z.object({ slug: z.string() }),
+    resolve: async ({ ctx, input }) => {
+      return await getServiceBySlug(input, ctx)
     },
   })

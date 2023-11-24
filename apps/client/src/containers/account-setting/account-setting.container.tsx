@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Coupon, EditName, Lock, Remind, Setting, Transaction } from '@icon-park/react'
+import { Coupon, EditName, Expenses, Lock, Remind, Setting, Transaction } from '@icon-park/react'
 import logo from 'public/logo.png'
 import 'swiper/swiper-bundle.css'
 import { useAuth } from '~/contexts/auth'
@@ -18,6 +18,7 @@ import EditProfile from './components/edit-profile'
 import Privacy from './components/privacy'
 import TransactionHistory from './components/transaction-history/transaction-history'
 import Voucher from './components/voucher/voucher'
+import Withdraw from './components/withdraw/withdraw'
 
 interface SettingTypeProps {
   key: string
@@ -56,6 +57,12 @@ const settingType: SettingTypeProps[] = [
     label: 'Khuyến mãi',
     icon: <Coupon theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />,
     children: <Voucher />,
+  },
+  {
+    key: 'withdraw',
+    label: 'Rút tiền',
+    icon: <Expenses theme="filled" size="20" fill="#fff" strokeLinejoin="bevel" />,
+    children: <Withdraw />,
   },
   {
     key: 'transactionHistory',
@@ -187,6 +194,39 @@ const AccountSettingContainer = () => {
                           </span>
                         )}
                       </>
+                    ) : item.key == 'withdraw' ? (
+                      <>
+                        <div className={`${!user?.isProvider && 'opacity-30'}`}>{item.icon}</div>{' '}
+                        {!user?.isProvider ? (
+                          <Tooltip
+                            placement="right"
+                            title={'Trở thành nhà cung cấp để mở khóa tính năng này'}
+                            arrow={true}
+                          >
+                            <span
+                              className={`w-full flex justify-between items-center 2xl:text-lg xl:text-sm text-xs font-semibold truncate ${
+                                !user?.isProvider && 'opacity-30'
+                              }`}
+                            >
+                              {item.label}
+
+                              <Lock
+                                className="pl-3 opacity-30"
+                                theme="outline"
+                                size="20"
+                                fill="#FFF"
+                                strokeLinejoin="bevel"
+                              />
+                            </span>
+                          </Tooltip>
+                        ) : (
+                          <span
+                            className={`w-full flex justify-between items-center 2xl:text-lg xl:text-sm lg:text-md md:text-xs font-semibold truncate`}
+                          >
+                            {item.label}
+                          </span>
+                        )}
+                      </>
                     ) : (
                       <>
                         <div>{item.icon}</div>
@@ -217,7 +257,8 @@ const AccountSettingContainer = () => {
                       if (
                         !(
                           (item.key == 'becomeProvider' && !user?.slug) ||
-                          (item.key == 'vouchers' && !user?.isProvider)
+                          (item.key == 'vouchers' && !user?.isProvider) ||
+                          (item.key == 'withdraw' && !user?.isProvider)
                         )
                       ) {
                         handleChangeTab(item.key)
@@ -258,6 +299,39 @@ const AccountSettingContainer = () => {
                           )}
                         </>
                       ) : item.key == 'vouchers' ? (
+                        <>
+                          <div className={`${!user?.isProvider && 'opacity-30'}`}>{item.icon}</div>{' '}
+                          {!user?.isProvider ? (
+                            <Tooltip
+                              placement="right"
+                              title={'Trở thành nhà cung cấp để mở khóa tính năng này'}
+                              arrow={true}
+                            >
+                              <span
+                                className={`w-full flex justify-between items-center text-lg lg:text-md font-semibold truncate ${
+                                  !user?.isProvider && 'opacity-30'
+                                }`}
+                              >
+                                {item.label}
+
+                                <Lock
+                                  className="pl-3 opacity-30"
+                                  theme="outline"
+                                  size="20"
+                                  fill="#FFF"
+                                  strokeLinejoin="bevel"
+                                />
+                              </span>
+                            </Tooltip>
+                          ) : (
+                            <span
+                              className={`w-full flex justify-between items-center xl:text-lg lg:text-md font-semibold truncate`}
+                            >
+                              {item.label}
+                            </span>
+                          )}
+                        </>
+                      ) : item.key == 'withdraw' ? (
                         <>
                           <div className={`${!user?.isProvider && 'opacity-30'}`}>{item.icon}</div>{' '}
                           {!user?.isProvider ? (

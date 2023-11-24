@@ -38,6 +38,7 @@ export const getProviders = async (query?: {
   startCost?: number
   endCost?: number
   serviceId?: string
+  serviceAttributeValueIds: string[]
   name?: string
   gender?: string
   status?: string
@@ -53,7 +54,7 @@ export const getProviders = async (query?: {
       query?.startCost,
       query?.endCost,
       query?.serviceId,
-      [],
+      query?.serviceAttributeValueIds,
       query?.name,
       query?.gender as 'MALE' | 'FEMALE' | 'OTHER' | 'PRIVATE',
       query?.status as 'ACTIVATED' | 'UN_ACTIVATED' | 'STOPPED_ACCEPTING_BOOKING' | 'BUSY',
@@ -326,6 +327,24 @@ export const postReportUser = async (
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
       message: error.message || 'Fail to get post report user',
+    })
+  }
+}
+
+export const getServiceBySlug = async (query: { slug: string }, ctx) => {
+  try {
+    const respone = await new ServiceApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+    }).getServiceBySlug(query.slug, 'unlimited', '1', '["$all"]')
+    return {
+      data: respone.data,
+      success: true,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to get service attribute',
     })
   }
 }

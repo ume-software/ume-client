@@ -3,7 +3,7 @@ import { Button } from '@ume/ui'
 
 import { Dispatch, SetStateAction, useState } from 'react'
 
-import { AttrbuteProps } from './iFilter'
+import { AttrbuteProps, SubAttributeProps } from './iFilter'
 
 const AddAttributeModal = (props: {
   setIsModalFilterVisible: Dispatch<SetStateAction<boolean>>
@@ -13,7 +13,7 @@ const AddAttributeModal = (props: {
 }) => {
   const [displayAttrFilter, setDisplayAttrFilter] = useState<AttrbuteProps[]>(props.attributeFilter)
 
-  const addSubAttrToFilter = (attrData: AttrbuteProps, newSubAttr: string) => {
+  const addSubAttrToFilter = (attrData: AttrbuteProps, newSubAttr: SubAttributeProps) => {
     const isIdExist = displayAttrFilter.find((attrFilter) => attrFilter.id == attrData.id)
 
     if (isIdExist) {
@@ -22,9 +22,9 @@ const AddAttributeModal = (props: {
           attr.id === attrData.id
             ? {
                 ...attr,
-                subAttr: attr.subAttr.find((subAttrFind) => subAttrFind == newSubAttr)
-                  ? attr.subAttr.filter((subAttrFind) => subAttrFind != newSubAttr)
-                  : [...attr.subAttr, newSubAttr],
+                subAttr: attr?.subAttr?.find((subAttrFind) => subAttrFind.subAttrId == newSubAttr.subAttrId)
+                  ? attr.subAttr.filter((subAttrFind) => subAttrFind.subAttrId != newSubAttr.subAttrId)
+                  : [...(attr.subAttr as any), newSubAttr],
               }
             : attr,
         ),
@@ -41,7 +41,7 @@ const AddAttributeModal = (props: {
           <div className="py-2" key={attrData.id}>
             <p className="text-lg font-bold">{attrData.name}: </p>
             <div className="grid grid-cols-3 justify-items-center py-5">
-              {attrData.subAttr.map((subAttr, index) => (
+              {attrData?.subAttr?.map((subAttr, index) => (
                 <div
                   className="col-span-1 cursor-pointer"
                   key={index}
@@ -57,7 +57,7 @@ const AddAttributeModal = (props: {
                         !!displayAttrFilter.find(
                           (attrFilter) =>
                             attrFilter.id == attrData.id &&
-                            attrFilter.subAttr.find((subAttrFilter) => subAttrFilter == subAttr),
+                            attrFilter?.subAttr?.find((subAttrFilter) => subAttrFilter.subAttrId == subAttr.subAttrId),
                         )
                       }
                       className="appearance-none w-[13px] h-[13px] border bg-[#292734] rounded-sm checked:bg-purple-600 checked:border-transparent focus:outline-none focus:border-purple-300 focus:ring"
@@ -66,7 +66,7 @@ const AddAttributeModal = (props: {
                     {!!displayAttrFilter.find(
                       (attrFilter) =>
                         attrFilter.id == attrData.id &&
-                        attrFilter.subAttr.find((subAttrFilter) => subAttrFilter == subAttr),
+                        attrFilter?.subAttr?.find((subAttrFilter) => subAttrFilter.subAttrId == subAttr.subAttrId),
                     ) && (
                       <CheckSmall
                         theme="outline"
@@ -77,7 +77,7 @@ const AddAttributeModal = (props: {
                       />
                     )}
                   </div>
-                  <p className="text-md font-normal px-2 inline-block">{subAttr}</p>
+                  <p className="text-md font-normal px-2 inline-block">{subAttr.subAttrValue}</p>
                 </div>
               ))}
             </div>

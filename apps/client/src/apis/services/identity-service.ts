@@ -6,7 +6,7 @@ import {
   AuthApi,
   BalanceApi,
   CreateVoucherRequest,
-  CreateWithdrawRequestUnitCurrencyEnum,
+  CreateWithdrawalRequestUnitCurrencyEnum,
   DepositRequestApi,
   ProviderServiceApi,
   ServiceApi,
@@ -551,7 +551,7 @@ export const getWithdrawRequests = async (query: { limit: string; page: string }
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).getWithdrawRequests(query.limit, query.page, '["$all",{"userPaymentSystem":["$all"]}]')
+    }).getWithdrawalRequests(query.limit, query.page, '["$all",{"userPaymentSystem":["$all"]}]')
     return {
       data: reponse.data,
       success: true,
@@ -566,7 +566,7 @@ export const getWithdrawRequests = async (query: { limit: string; page: string }
 }
 
 export const createWithdrawRequests = async (
-  query: { amountBalance: number; unitCurrency: CreateWithdrawRequestUnitCurrencyEnum; userPaymentSystemId: string },
+  query: { amountBalance: number; unitCurrency: CreateWithdrawalRequestUnitCurrencyEnum; userPaymentSystemId: string },
   ctx,
 ) => {
   const cookies = parse(ctx.req.headers.cookie ?? '')
@@ -575,7 +575,7 @@ export const createWithdrawRequests = async (
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).createWithdrawRequest(query)
+    }).createWithdrawalRequest(query)
     return {
       data: reponse.data,
       success: true,
@@ -596,7 +596,7 @@ export const cancelWithdrawRequests = async (withdrawalRequestId: string, ctx) =
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).userCancelWithdrawRequest(withdrawalRequestId)
+    }).userCancelWithdrawalRequest(withdrawalRequestId)
     return {
       data: reponse.data,
       success: true,
