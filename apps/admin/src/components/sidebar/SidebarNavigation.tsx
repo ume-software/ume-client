@@ -5,8 +5,8 @@ import {
   GameEmoji,
   Income,
   RightUser,
-  Setting,
   SettingTwo,
+  System,
   Ticket,
   TransactionOrder,
   User,
@@ -33,35 +33,44 @@ export const SidebarNavigation: SidebarNavigationItem[] = [
     children: [
       {
         label: (
+          <Link href="/dashboard" rel="noopener noreferrer">
+            Thống kê hệ thống
+          </Link>
+        ),
+        key: 'dashboard',
+        icon: <System theme="outline" size="22" fill="#fff" />,
+      },
+      // {
+      //   label: 'Cấu hình',
+      //   key: 'setting',
+      //   icon: <Setting theme="outline" size="22" fill="#fff" />,
+      //   children: [
+      //     {
+      //       label: (
+      //         <Link href="/#" rel="noopener noreferrer">
+      //           Nền tảng giao dịch
+      //         </Link>
+      //       ),
+      //       key: 'deposit-ratio',
+      //     },
+      //     {
+      //       label: (
+      //         <Link href="/#" rel="noopener noreferrer">
+      //           Banner
+      //         </Link>
+      //       ),
+      //       key: 'banner-manager',
+      //     },
+      //   ],
+      // },
+      {
+        label: (
           <Link href="/#" rel="noopener noreferrer">
             Tài khoản quản trị viên
           </Link>
         ),
         key: 'admin-member',
         icon: <UserBusiness theme="outline" size="22" fill="#fff" />,
-      },
-      {
-        label: 'Cấu hình',
-        key: 'setting',
-        icon: <Setting theme="outline" size="22" fill="#fff" />,
-        children: [
-          {
-            label: (
-              <Link href="/#" rel="noopener noreferrer">
-                Nền tảng giao dịch
-              </Link>
-            ),
-            key: 'deposit-ratio',
-          },
-          {
-            label: (
-              <Link href="/#" rel="noopener noreferrer">
-                Banner
-              </Link>
-            ),
-            key: 'banner-manager',
-          },
-        ],
       },
     ],
   },
@@ -70,15 +79,6 @@ export const SidebarNavigation: SidebarNavigationItem[] = [
     key: 'account',
     icon: <EveryUser theme="outline" size="24" fill="#fff" />,
     children: [
-      {
-        label: (
-          <Link href="/dashboard" rel="noopener noreferrer">
-            Thống kê
-          </Link>
-        ),
-        key: 'user-statistic',
-        icon: <ChartHistogramTwo theme="outline" size="22" fill="#fff" />,
-      },
       {
         label: (
           <Link href="/user-manager" rel="noopener noreferrer">
@@ -146,15 +146,6 @@ export const SidebarNavigation: SidebarNavigationItem[] = [
     children: [
       {
         label: (
-          <Link href="/transaction-manager/statistic" rel="noopener noreferrer">
-            Thống kê
-          </Link>
-        ),
-        key: 'transaction-statistic',
-        icon: <ChartHistogramTwo theme="outline" size="22" fill="#fff" />,
-      },
-      {
-        label: (
           <Link href="/transaction-manager/deposit" rel="noopener noreferrer">
             Giao dịch nạp tiền
           </Link>
@@ -178,15 +169,6 @@ export const SidebarNavigation: SidebarNavigationItem[] = [
     key: 'voucher',
     icon: <Ticket theme="outline" size="24" fill="#fff" />,
     children: [
-      {
-        label: (
-          <Link href="/dashboard" rel="noopener noreferrer">
-            Thống kê
-          </Link>
-        ),
-        key: 'voucher-statistic',
-        icon: <ChartHistogramTwo theme="outline" size="22" fill="#fff" />,
-      },
       {
         label: (
           <Link href="/voucher-manager/voucher-by-admin" rel="noopener noreferrer">

@@ -15,8 +15,3 @@ export enum StatisticNewUserType {
   NEW_PROVIDER = 'new_provider',
   NEW_USER = 'new_user',
 }
-
-export enum StatisticTotalUserType {
-  TOTAL_PROVIDER = 'total_provider',
-  TOTAL_USER = 'total_user',
-}

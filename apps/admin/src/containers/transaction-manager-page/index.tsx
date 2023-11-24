@@ -3,14 +3,11 @@ import { useId } from 'react'
 import Head from 'next/head'
 
 import DepositTransactionPage from './deposit-transaction'
-import StatisticTransactionPage from './statistic-transaction'
 import WithdrawTransactionPage from './withdraw-transaction'
 
 const SwitchTransactionManager = ({ selectedTask }) => {
   const id = useId()
   switch (selectedTask) {
-    case 'statistic':
-      return <StatisticTransactionPage key={id} />
     case 'withdraw':
       return <WithdrawTransactionPage key={id} />
     case 'deposit':

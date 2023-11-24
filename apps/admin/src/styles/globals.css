@@ -182,6 +182,17 @@ color: white !important;
   border: 2px solid rgba(255, 255, 255) !important;
 }
 
+.ant-tabs-tab {
+  color: white !important;
+  border: none !important;
+}
+
+.ant-tabs-nav-wrap {
+  padding: 0 1rem;
+  border: none;
+}
+
+
 
 
 /* --------------------------------------------------------------- */
@@ -196,3 +207,4 @@ input[type="number"]::-webkit-outer-spin-button {
   appearance: none;
   margin: 0;
 }
+

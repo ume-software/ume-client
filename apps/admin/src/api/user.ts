@@ -7,11 +7,12 @@ import {
   getUserList,
   getUserTotalCoin,
   statisticNewMember,
-  statisticTotalMember,
+  statisticTotalProvider,
+  statisticTotalUser,
   unBanUser,
 } from './services/user-service'
 
-import { StatisticNewUserType, StatisticTotalUserType, UnitQueryTime } from '~/utils/constant'
+import { StatisticNewUserType, UnitQueryTime } from '~/utils/constant'
 
 export const userRouter = createRouter()
   .query('getUserList', {
@@ -65,12 +66,13 @@ export const userRouter = createRouter()
       return await statisticNewMember(ctx, input.type, { time: input.time, unit: input.unit })
     },
   })
-  .query('statisticTotalMember', {
-    input: z.object({
-      time: z.number(),
-      type: z.enum([StatisticTotalUserType.TOTAL_PROVIDER, StatisticTotalUserType.TOTAL_USER]),
-    }),
-    resolve: async ({ ctx, input }) => {
-      return await statisticTotalMember(ctx, input.type)
+  .query('statisticTotalUser', {
+    resolve: async ({ ctx }) => {
+      return await statisticTotalUser(ctx)
+    },
+  })
+  .query('statisticTotalProvider', {
+    resolve: async ({ ctx }) => {
+      return await statisticTotalProvider(ctx)
     },
   })
