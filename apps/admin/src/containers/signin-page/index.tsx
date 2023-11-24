@@ -61,7 +61,7 @@ const SigninPage = () => {
   return (
     <>
       <Head>
-        <title>Admin | LOGIN</title>
+        <title>UME | Admin Login</title>
       </Head>
       <div className="flex flex-col justify-center w-full h-screen">
         <div className="mx-auto mb-48 w-96">

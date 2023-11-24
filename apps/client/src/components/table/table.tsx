@@ -160,8 +160,15 @@ const Table = ({
           id="slider"
           className="max-w-[230px] overflow-hidden flex justify-start items-center gap-3 mt-5 overflow-x-scroll scroll scroll-smooth hide-scrollbar"
         >
-          {Number((Number(totalItem) / Number(limit)).toFixed(0)) > 1 ? (
-            [...Array(Number((Number(totalItem) / Number(limit)).toFixed(0)))].map((_, index) => (
+          {Number((Number(totalItem) / Number(limit) + (Number(totalItem) % Number(limit) > 0 ? 1 : 0)).toFixed(0)) >
+          1 ? (
+            [
+              ...Array(
+                Number(
+                  (Number(totalItem) / Number(limit) + (Number(totalItem) % Number(limit) > 0 ? 1 : 0)).toFixed(0),
+                ),
+              ),
+            ].map((_, index) => (
               <div key={`row-${index}`}>
                 <div
                   className={`w-[36px] h-[36px] flex justify-center items-center rounded-full border-2 border-white cursor-pointer hover:bg-white hover:bg-opacity-50 ${

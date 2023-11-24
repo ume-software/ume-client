@@ -30,7 +30,7 @@ const DasboardPage = () => {
   return (
     <div>
       <Head>
-        <title>Admin | DASHBOARD</title>
+        <title>UME | DASHBOARD</title>
       </Head>
       <div className="h-full pb-10">
         <Tabs defaultActiveKey="1" type="card" size="middle" animated items={tabs} />

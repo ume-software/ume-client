@@ -32,7 +32,7 @@ const MenuForVoucher = ({
             } text-lg font-semibold px-3 py-2 hover:bg-gray-700 rounded-xl`}
             type="button"
           >
-            {buttonTitle}
+            {buttonTitle + ' '}
             {isDisplayDownButton && <Down theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />}
           </button>
         </Menu.Button>
@@ -57,6 +57,7 @@ const MenuForVoucher = ({
                   } hover:bg-gray-700 cursor-pointer p-3 rounded-lg`}
                   key={index}
                   onClick={() => onChange(data)}
+                  onKeyDown={() => {}}
                 >
                   <p className="text-md font-semibold">{data.label}</p>
                 </div>

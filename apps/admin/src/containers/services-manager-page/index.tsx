@@ -131,7 +131,7 @@ const ServicesManagerPage = () => {
   return (
     <div>
       <Head>
-        <title>Admin | Services Manager</title>
+        <title>UME | Services Manager</title>
       </Head>
       <div className="pb-10">
         <div className="flex justify-between">

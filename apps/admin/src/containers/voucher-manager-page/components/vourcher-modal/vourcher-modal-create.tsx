@@ -194,7 +194,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
     setOpenConfirm(true)
   }
 
-  function checkFieldRequỉed() {
+  function checkFieldRequired() {
     if (form.values.name && form.values.typeVoucher && form.values.discountUnit && form.values.audience) {
       return true
     } else {
@@ -225,7 +225,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
   async function submitHandle() {
     setOpenConfirm(false)
     setIsCreate(false)
-    if (await checkFieldRequỉed()) {
+    if (await checkFieldRequired()) {
       const imgURL = await uploadImage()
       try {
         const req = {
@@ -753,7 +753,6 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                           }
                           form.handleChange(e)
                         } else {
-                          console.log(form.values.discountUnit)
                           const rawValue = e.target.value
                           const newValue = parseFloat(rawValue.replace(/,/g, ''))
                           if (!isNaN(newValue) && newValue >= 0) {
