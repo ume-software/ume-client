@@ -6,9 +6,15 @@ export interface GenderProps {
   key: string | undefined
   name: string
 }
+
+export interface SubAttributeProps {
+  subAttrId: string
+  subAttrValue: string
+  subAttrViValue?: string
+}
 export interface AttrbuteProps {
   id: string
   name: string
-  subAttr: string[]
+  subAttr?: SubAttributeProps[]
   [key: string]: any
 }

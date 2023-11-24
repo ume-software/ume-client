@@ -2,7 +2,7 @@ import {
   CreateVoucherRequestDiscountUnitEnum,
   CreateVoucherRequestRecipientTypeEnum,
   CreateVoucherRequestTypeEnum,
-  CreateWithdrawRequestUnitCurrencyEnum,
+  CreateWithdrawalRequestUnitCurrencyEnum,
   UpdateUserProfileRequestGenderEnum,
   UserPaymentSystemRequestPlatformEnum,
 } from 'ume-service-openapi'
@@ -286,7 +286,7 @@ export const identityRouter = createRouter()
   .mutation('createWithdrawRequests', {
     input: z.object({
       amountBalance: z.number(),
-      unitCurrency: z.nativeEnum(CreateWithdrawRequestUnitCurrencyEnum),
+      unitCurrency: z.nativeEnum(CreateWithdrawalRequestUnitCurrencyEnum),
       userPaymentSystemId: z.string(),
     }),
     resolve: async ({ input, ctx }) => {
