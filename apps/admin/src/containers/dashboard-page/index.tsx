@@ -4,7 +4,7 @@ const DasboardPage = () => {
   return (
     <div>
       <Head>
-        <title>Admin | DASHBOARD</title>
+        <title>UME | DASHBOARD</title>
       </Head>
       <div className="h-[1000px]">hi</div>
     </div>

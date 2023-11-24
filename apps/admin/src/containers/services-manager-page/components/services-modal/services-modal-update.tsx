@@ -46,16 +46,13 @@ export const ServicesModalUpdate = ({ idService, closeFunction, openValue }: ISe
       ],
     },
   ]
-  const { isLoading, isFetching } = trpc.useQuery(
-    ['services.getServiceDetails', { id: idService, select: JSON.stringify(SELECT) }],
-    {
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: 'always',
-      onSuccess(data) {
-        setServicesDetails(data.data)
-      },
+  trpc.useQuery(['services.getServiceDetails', { id: idService, select: JSON.stringify(SELECT) }], {
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: 'always',
+    onSuccess(data) {
+      setServicesDetails(data.data)
     },
-  )
+  })
   const titleValue = 'Chỉnh sửa dịch vụ'
   const [openConfirm, setOpenConfirm] = useState(false)
   const [isCreate, setIsCreate] = useState<boolean>(false)
@@ -324,6 +321,8 @@ export const ServicesModalUpdate = ({ idService, closeFunction, openValue }: ISe
     }
   }
   function isDisableButton() {
+    console.log('form.isValid: ', form.isValid, '\nform.dirty: ', form.dirty)
+
     return !form.isValid || !form.dirty
   }
   return (

@@ -118,11 +118,6 @@ const AdminVoucherTable = ({ data, isLoading }) => {
       ),
     },
     {
-      title: 'Mô tả',
-      dataIndex: 'description',
-      key: 'description',
-    },
-    {
       title: <div className="flex justify-center w-full">Loại</div>,
       dataIndex: 'type',
       key: 'type',
@@ -166,46 +161,44 @@ const AdminVoucherTable = ({ data, isLoading }) => {
       key: 'action',
       render: (record) => {
         return (
-          <>
-            <div className="flex max-w-[6rem]">
+          <div className="flex max-w-[6rem]">
+            <Button isActive={false}>
+              <Eyes
+                onClick={() => {
+                  openModalHandle('view', record.key)
+                }}
+                className="p-2 mr-2 rounded-full hover:bg-gray-500"
+                theme="outline"
+                size="18"
+                fill="#fff"
+              />
+            </Button>
+            {record.isPublished ? (
+              <Button isActive={false} className="pointer-events-none ">
+                <Write className="p-2 rounded-full opacity-40" theme="outline" size="18" fill="#fff" />
+              </Button>
+            ) : (
               <Button isActive={false}>
-                <Eyes
+                <Write
                   onClick={() => {
-                    openModalHandle('view', record.key)
+                    openModalHandle('update', record.key)
                   }}
-                  className="p-2 mr-2 rounded-full hover:bg-gray-500"
+                  className="p-2 rounded-full hover:bg-gray-500"
                   theme="outline"
                   size="18"
-                  fill="#fff"
+                  fill="#1677ff"
                 />
               </Button>
-              {record.isPublished ? (
-                <Button isActive={false} className="pointer-events-none ">
-                  <Write className="p-2 rounded-full opacity-40" theme="outline" size="18" fill="#fff" />
-                </Button>
-              ) : (
-                <Button isActive={false}>
-                  <Write
-                    onClick={() => {
-                      openModalHandle('update', record.key)
-                    }}
-                    className="p-2 rounded-full hover:bg-gray-500"
-                    theme="outline"
-                    size="18"
-                    fill="#1677ff"
-                  />
-                </Button>
-              )}
+            )}
 
-              <Button isActive={false} onClick={() => handleOpenConfirm(record)}>
-                {record.isActivated ? (
-                  <CloseOne className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="20" fill="#ff0000" />
-                ) : (
-                  <CheckOne className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="20" fill="#85ea2d" />
-                )}
-              </Button>
-            </div>
-          </>
+            <Button isActive={false} onClick={() => handleOpenConfirm(record)}>
+              {record.isActivated ? (
+                <CloseOne className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="20" fill="#ff0000" />
+              ) : (
+                <CheckOne className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="20" fill="#85ea2d" />
+              )}
+            </Button>
+          </div>
         )
       },
     },
