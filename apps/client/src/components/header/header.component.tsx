@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Menu, Transition } from '@headlessui/react'
-import { Dot, Gift, Remind } from '@icon-park/react'
+import { Dot, Remind } from '@icon-park/react'
 import { Button } from '@ume/ui'
 import logo from 'public/ume-logo-2.svg'
 import Notificate from '~/containers/notificate/order-notificate.container'
@@ -107,13 +107,6 @@ export const Header: React.FC = () => {
       </div>
       <div className="flex items-center">
         <div className="flex flex-1 pr-2 duration-500 hover:ease-in-out">
-          {userInfo && (
-            <span className="self-center my-auto mr-4 rounded-ful hover:scale-110 hover:ease-in-out">
-              <button className="pt-2">
-                <Gift size={22} strokeWidth={4} fill="#FFFFFF" />
-              </button>
-            </span>
-          )}
           {userInfo && (
             <button onClick={() => setShowRechargeModal(true)}>
               <div className="flex items-center justify-end rounded-full bg-[#37354F] pr-2 pl-4 mr-2 self-center text-white">
