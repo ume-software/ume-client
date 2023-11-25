@@ -131,7 +131,7 @@ const UserManager = () => {
   return (
     <div>
       <Head>
-        <title>Admin | User Manager</title>
+        <title>UME | User Manager</title>
       </Head>
       <div className="pb-10">
         <span className="content-title">Quản Lý người dùng</span>

@@ -1615,9 +1615,9 @@ ansi-styles@^5.0.0:
   integrity sha512-Cxwpt2SfTzTtXcfOlzGEee8O+c+MmUgGrNiBcXnuWxuFJHe6a5Hz7qwhwe5OgaSYI0IJvkLqWX1ASG+cJOkEiA==
 
 antd@*, antd@^5.5.1, antd@^5.9.0:
-  version "5.11.3"
-  resolved "https://registry.yarnpkg.com/antd/-/antd-5.11.3.tgz#fe00b4609ab4a491e39407901e451ac5ebc391c5"
-  integrity sha512-+aXlytJCsp8Thag+MAMCDsDciwTl7w3bexHiojGgFOaSJPuIktN5yrLb9GCLar3fkTyGVAaxnkJm4JLGbAz3Xg==
+  version "5.11.4"
+  resolved "https://registry.yarnpkg.com/antd/-/antd-5.11.4.tgz#7c4c7254a0424573c095d20d997d2e34763e67f2"
+  integrity sha512-FuaV/viyZiMlCL1JzdQpSlzPcWcBlGYDAbtj3FM4BgwAso+ge3d4tXkZZG4yZkktUoLvWrcaJObs3Nk32Oiwuw==
   dependencies:
     "@ant-design/colors" "^7.0.0"
     "@ant-design/cssinjs" "^1.17.5"
@@ -1640,7 +1640,7 @@ antd@*, antd@^5.5.1, antd@^5.9.0:
     rc-drawer "~6.5.2"
     rc-dropdown "~4.1.0"
     rc-field-form "~1.40.0"
-    rc-image "~7.5.0"
+    rc-image "~7.5.1"
     rc-input "~1.3.6"
     rc-input-number "~8.4.0"
     rc-mentions "~2.9.1"
@@ -2588,9 +2588,9 @@ ee-first@1.1.1:
   integrity sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==
 
 electron-to-chromium@^1.4.535:
-  version "1.4.593"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.593.tgz#f71b157f7382f3d3a164f73ff2da772d4b3fd984"
-  integrity sha512-c7+Hhj87zWmdpmjDONbvNKNo24tvmD4mjal1+qqTYTrlF0/sNpAcDlU0Ki84ftA/5yj3BF2QhSGEC0Rky6larg==
+  version "1.4.594"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.594.tgz#f69f207fba80735a44a988df42f3f439115d0515"
+  integrity sha512-xT1HVAu5xFn7bDfkjGQi9dNpMqGchUkebwf1GL7cZN32NSwwlHRPMSDJ1KN6HkS0bWUtndbSQZqvpQftKG2uFQ==
 
 emittery@^0.13.1:
   version "0.13.1"
@@ -3656,7 +3656,7 @@ highcharts-react-official@^3.2.1:
   resolved "https://registry.yarnpkg.com/highcharts-react-official/-/highcharts-react-official-3.2.1.tgz#4b62a7af2969bdebde6b338d36f6b9bf1f1029bc"
   integrity sha512-hyQTX7ezCxl7JqumaWiGsroGWalzh24GedQIgO3vJbkGOZ6ySRAltIYjfxhrq4HszJOySZegotEF7v+haQ75UA==
 
-highcharts@^11.1.0:
+highcharts@^11.1.0, highcharts@^11.2.0:
   version "11.2.0"
   resolved "https://registry.yarnpkg.com/highcharts/-/highcharts-11.2.0.tgz#32ddc885b1c7a7d438df30c6d751c28991b16616"
   integrity sha512-9i650YK7ZBA1Mgtr3avMkLVCAI45RQvYnwi+eHsdFSaBGuQN6BHoa4j4lMkSJLv0V4LISTK1z7J7G82Lzd7zwg==
@@ -5539,7 +5539,7 @@ rc-field-form@~1.40.0:
     async-validator "^4.1.0"
     rc-util "^5.32.2"
 
-rc-image@~7.5.0:
+rc-image@~7.5.1:
   version "7.5.1"
   resolved "https://registry.yarnpkg.com/rc-image/-/rc-image-7.5.1.tgz#39a93354e14fe3e5eaafd9c9464e8fe3c6c171a0"
   integrity sha512-Z9loECh92SQp0nSipc0MBuf5+yVC05H/pzC+Nf8xw1BKDFUJzUeehYBjaWlxly8VGBZJcTHYri61Fz9ng1G3Ag==
@@ -7005,13 +7005,6 @@ ume-service-openapi@latest:
   version "1.3.30"
   resolved "https://registry.yarnpkg.com/ume-service-openapi/-/ume-service-openapi-1.3.30.tgz#63c797583978f7daa40269b961c988600ac1028f"
   integrity sha512-255Km6Zsi0O8bOKWS8DEp5t6Y7r0GlrFVazBwJwOLrVNQFf9pZv3lNs3LISX5gW3tVWDt5rqmWF1o1jJ5eKVDw==
-  dependencies:
-    axios "^0.27.2"
-
-ume-upload-service-openapi@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/ume-upload-service-openapi/-/ume-upload-service-openapi-1.1.0.tgz#eaf8bc6f1f81e4c826799b2e47232d82260e66ea"
-  integrity sha512-em61LPGM/J6btGvvtcBU4CY27piPd19lFh8b1pZ2QIUpk2JjoUKrymzILpsNuGplUTM7SGWRq0gf1aYvpgkItg==
   dependencies:
     axios "^0.27.2"
 

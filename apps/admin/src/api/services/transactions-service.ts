@@ -2,8 +2,13 @@ import { TRPCError } from '@trpc/server'
 import { getEnv } from '~/env'
 
 import { parse } from 'cookie'
-import { AdminManageDepositRequestApi, AdminManageWithdrawalRequestApi } from 'ume-service-openapi'
+import {
+  AdminManageDepositRequestApi,
+  AdminManageStatisticApi,
+  AdminManageWithdrawalRequestApi,
+} from 'ume-service-openapi'
 
+import { TransactionType, UnitQueryTime } from '~/utils/constant'
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
 export const getDepositTransactions = async (
@@ -104,6 +109,39 @@ export const approveWithdrawal = async (id: string, action: 'COMPLETED' | 'REJEC
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
       message: error.message || 'Approve withdrawal failed',
+    })
+  }
+}
+
+export const statisticTransasction = async (
+  ctx,
+  type: TransactionType,
+  query: { time: number; unit: UnitQueryTime },
+) => {
+  try {
+    let res
+    const cookies = parse(ctx.req.headers.cookie ?? '')
+    if (type === TransactionType.DEPOSIT) {
+      res = await new AdminManageStatisticApi({
+        basePath: getEnv().baseUmeServiceURL,
+        isJsonMime: () => true,
+        accessToken: cookies['accessToken'],
+      }).adminGetAmountMoneyDepositStatistics(query.time, query.unit, UnitQueryTime.MONTH)
+    } else if (type === TransactionType.WITHDRAW) {
+      res = await new AdminManageStatisticApi({
+        basePath: getEnv().baseUmeServiceURL,
+        isJsonMime: () => true,
+        accessToken: cookies['accessToken'],
+      }).adminGetAmountMoneyWithdrawalStatistics(query.time, query.unit, UnitQueryTime.MONTH)
+    }
+    return {
+      data: res.data || null,
+      success: true,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.message || 'Statistic transaction failed',
     })
   }
 }

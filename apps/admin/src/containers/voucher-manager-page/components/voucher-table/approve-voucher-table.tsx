@@ -121,11 +121,6 @@ const ApproveProviderVoucherTable = ({ data, isLoading }) => {
       ),
     },
     {
-      title: 'Mô tả',
-      dataIndex: 'description',
-      key: 'description',
-    },
-    {
       title: 'Loại',
       dataIndex: 'type',
       key: 'type',
