@@ -1,16 +1,17 @@
-import React from 'react'
+import { useId } from 'react'
 
 import Head from 'next/head'
 
-import DepositTransactionContainer from './deposit-transaction.container'
-import WithdrawTransactionContainer from './withdraw-transaction.container'
+import DepositTransactionPage from './deposit-transaction'
+import WithdrawTransactionPage from './withdraw-transaction'
 
 const SwitchTransactionManager = ({ selectedTask }) => {
+  const id = useId()
   switch (selectedTask) {
     case 'withdraw':
-      return <WithdrawTransactionContainer />
+      return <WithdrawTransactionPage key={id} />
     case 'deposit':
-      return <DepositTransactionContainer />
+      return <DepositTransactionPage key={id} />
   }
 }
 

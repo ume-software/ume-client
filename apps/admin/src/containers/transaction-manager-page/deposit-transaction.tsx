@@ -59,7 +59,7 @@ type DepositTableProps = {
   action: string
 }
 
-const DepositTransactionContainer = () => {
+const DepositTransactionPage = () => {
   const [transactions, setTransactions] = useState<any>()
   const [count, setCount] = useState(0)
   const [page, setPage] = useState(1)
@@ -247,4 +247,4 @@ const DepositTransactionContainer = () => {
   )
 }
 
-export default DepositTransactionContainer
+export default DepositTransactionPage
