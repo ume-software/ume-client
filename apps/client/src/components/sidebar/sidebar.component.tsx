@@ -15,23 +15,24 @@ import { trpc } from '~/utils/trpc'
 export const Sidebar = () => {
   const { childrenDrawer, setChildrenDrawer } = useContext(DrawerContext)
 
-  const { isAuthenticated, user } = useAuth()
+  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
+  const { user } = useAuth()
   const { socketContext, setSocketContext } = useContext(SocketContext)
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
   const [showMessage, setShowMessage] = useState(false)
   const utils = trpc.useContext()
   const { data: chattingChannels } = trpc.useQuery(['chatting.getListChattingChannels', { limit: '5', page: '1' }], {
-    enabled: isAuthenticated,
+    enabled: !!userInfo,
   })
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (userInfo) {
       setIsModalLoginVisible(false)
     }
-  }, [isAuthenticated])
+  }, [userInfo])
 
   const handleChatOpen = (channelId?: string) => {
-    if (isAuthenticated) {
+    if (userInfo) {
       setChildrenDrawer(<Chat providerId={channelId} />)
       if (channelId) {
         setSocketContext((prevState) => ({
@@ -57,7 +58,7 @@ export const Sidebar = () => {
       return () => clearTimeout(timeout)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socketContext?.socketChattingContext, socketContext?.socketChattingContext[0]?.channelId, isAuthenticated])
+  }, [socketContext?.socketChattingContext, socketContext?.socketChattingContext[0]?.channelId, userInfo])
 
   return (
     <>
@@ -79,12 +80,12 @@ export const Sidebar = () => {
               <ArrowLeft theme="outline" size="30" fill="#fff" />
             </div>
           }
-          token={isAuthenticated}
+          token={userInfo}
         >
           {childrenDrawer}
         </CustomDrawer>
         <div className="flex flex-col gap-3">
-          {isAuthenticated &&
+          {userInfo &&
             chattingChannels?.data.row.map((item) => {
               const images = item.members.filter((member) => {
                 return member.userId.toString() != user?.id.toString()
