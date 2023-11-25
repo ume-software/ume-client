@@ -1,5 +1,6 @@
 import { Menu, Transition } from '@headlessui/react'
 import { Help, Logout, Setting, User, WalletOne } from '@icon-park/react'
+import { useAuth } from '~/contexts/auth'
 
 import { Fragment } from 'react'
 
@@ -8,12 +9,10 @@ import Link from 'next/link'
 
 interface MenuProps {
   user: any
-  handleLogout: () => void
 }
 
-//TODO: map link for dropdown menu
-
-export const DropDownMenu = ({ user, handleLogout }: MenuProps) => {
+export const DropDownMenu = ({ user }: MenuProps) => {
+  const { logout } = useAuth()
   return (
     <Menu>
       <div>
@@ -94,7 +93,7 @@ export const DropDownMenu = ({ user, handleLogout }: MenuProps) => {
           <Menu.Item as="div">
             {({ active }) => (
               <button
-                onClick={handleLogout}
+                onClick={logout}
                 className={`${
                   active ? 'bg-slate-700 ' : 'text-gray-900'
                 } group flex w-full items-center rounded-md text-white px-2 py-2 text-sm`}

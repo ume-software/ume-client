@@ -6,7 +6,7 @@ import logo from 'public/ume-logo-2.svg'
 import Notificate from '~/containers/notificate/order-notificate.container'
 import { useAuth } from '~/contexts/auth'
 
-import React, { Fragment, ReactElement, useCallback, useContext, useEffect, useId, useState } from 'react'
+import React, { Fragment, ReactElement, useContext, useEffect, useId, useState } from 'react'
 
 import { isNil } from 'lodash'
 import Image from 'next/legacy/image'
@@ -35,7 +35,7 @@ export const Header: React.FC = () => {
 
   const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
 
-  const { isAuthenticated, logout, login } = useAuth()
+  const { isAuthenticated, login } = useAuth()
 
   trpc.useQuery(['identity.identityInfo'], {
     onSuccess(data) {
@@ -74,10 +74,6 @@ export const Header: React.FC = () => {
     }
     setSelectedTab(target)
   }
-
-  const handleLogout = useCallback(() => {
-    logout()
-  }, [logout])
 
   useEffect(() => {
     if (socketContext.socketNotificateContext[0]) {
@@ -220,7 +216,7 @@ export const Header: React.FC = () => {
               </Button>
             ) : (
               <div className="mt-1 bg-[#292734]">
-                <DropDownMenu user={userInfo} handleLogout={handleLogout} />
+                <DropDownMenu user={userInfo} />
               </div>
             )}
           </span>
