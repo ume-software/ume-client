@@ -101,7 +101,7 @@ export const statisticProviderService = async (ctx) => {
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).adminGetMostProviderServicesStatistics()
+    }).adminGetMostProviderServicesStatistics(10, {})
 
     return {
       data: response.data,
