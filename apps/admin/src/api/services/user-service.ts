@@ -162,7 +162,7 @@ export const statisticTotalUser = async (ctx) => {
       .filter((key) => key !== 'totalUser')
       .map((key) => {
         const formattedKey = key.charAt(0).toUpperCase() + key.slice(1)
-        return { name: formattedKey, y: response.data[key] }
+        return { name: formattedKey.replace('Total', ''), y: response.data[key] }
       })
 
     const calculateNormalUsers = (data) => {
@@ -197,11 +197,11 @@ export const statisticTotalProvider = async (ctx) => {
       .filter((key) => key !== 'totalProvider')
       .map((key) => {
         const formattedKey = key.charAt(0).toUpperCase() + key.slice(1)
-        return { name: formattedKey, y: response.data[key] }
+        return { name: formattedKey.replace('Total', ''), y: response.data[key] }
       })
 
     const calculateNormalProviders = (data) => {
-      return data.totalProvider - data.totalProviderIsBanned - data.totalProviderIsVerified
+      return data.totalProvider - data.totalProviderIsBanned
     }
     const normalProvidersCount = calculateNormalProviders(response.data)
     mappedData.push({ name: 'NormalProviders', y: normalProvidersCount })

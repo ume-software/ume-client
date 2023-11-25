@@ -18,9 +18,18 @@ export const UserChart = () => {
   const userOptions = {
     chart: {
       type: 'pie',
+      backgroundColor: '#292734',
+      borderRadius: 20,
     },
     title: {
       text: 'Người dùng',
+      style: {
+        color: '#FFFFFF',
+        fontWeight: 500,
+        fontFamily: 'Roboto',
+        fontSize: '14px',
+        lineHeight: '20px',
+      },
     },
     plotOptions: {
       pie: {
@@ -28,6 +37,9 @@ export const UserChart = () => {
           enabled: true,
           format: '{point.name}: {point.y}',
         },
+        allowPointSelect: true,
+        cursor: 'pointer',
+        showInLegend: true,
       },
     },
     series: [
@@ -36,6 +48,18 @@ export const UserChart = () => {
         data: totalUser,
       },
     ],
+    legend: {
+      itemStyle: {
+        color: '#FFFFFF',
+        fontWeight: 500,
+        fontFamily: 'Roboto',
+        fontSize: '14px',
+        lineHeight: '20px',
+      },
+      itemHoverStyle: {
+        color: '#628ee6',
+      },
+    },
   }
   return <HighchartsReact highcharts={Highcharts} options={userOptions} />
 }

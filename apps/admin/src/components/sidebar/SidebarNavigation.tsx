@@ -1,11 +1,13 @@
 import {
   Abnormal,
   ChartHistogramTwo,
+  DataFile,
   EveryUser,
   Expenses,
   GameEmoji,
   Income,
   RightUser,
+  Setting,
   SettingTwo,
   System,
   Ticket,
@@ -34,28 +36,34 @@ export const SidebarNavigation: SidebarNavigationItem[] = [
     icon: <SettingTwo theme="outline" size="24" fill="#fff" />,
     children: [
       {
+        label: 'Thống kê',
+        path: '/dashboard',
+        key: 'dashboard',
+        icon: <DataFile theme="outline" size="22" fill="#fff" />,
+      },
+      {
         label: 'Tài khoản quản trị viên',
         path: '/admin-account-manager',
         key: 'admin-account-manager',
         icon: <UserBusiness theme="outline" size="22" fill="#fff" />,
       },
-      {
-        label: 'Cấu hình',
-        key: 'setting',
-        icon: <Setting theme="outline" size="22" fill="#fff" />,
-        children: [
-          {
-            label: 'Nền tảng giao dịch',
-            key: 'deposit-ratio',
-            path: '/dashboard',
-          },
-          {
-            label: 'Banner',
-            key: 'banner-manager',
-            path: '/dashboard',
-          },
-        ],
-      },
+      // {
+      //   label: 'Cấu hình',
+      //   key: 'setting',
+      //   icon: <Setting theme="outline" size="22" fill="#fff" />,
+      //   children: [
+      //     {
+      //       label: 'Nền tảng giao dịch',
+      //       key: 'deposit-ratio',
+      //       path: '/dashboard',
+      //     },
+      //     {
+      //       label: 'Banner',
+      //       key: 'banner-manager',
+      //       path: '/dashboard',
+      //     },
+      //   ],
+      // },
     ],
   },
   {
@@ -63,12 +71,6 @@ export const SidebarNavigation: SidebarNavigationItem[] = [
     key: 'account',
     icon: <EveryUser theme="outline" size="24" fill="#fff" />,
     children: [
-      {
-        label: 'Thống kê',
-        key: 'user-statistic',
-        path: '/dashboard',
-        icon: <ChartHistogramTwo theme="outline" size="22" fill="#fff" />,
-      },
       {
         label: 'Quản lý người dùng',
         key: 'user-manager',
@@ -119,12 +121,6 @@ export const SidebarNavigation: SidebarNavigationItem[] = [
     icon: <TransactionOrder theme="outline" size="24" fill="#fff" />,
     children: [
       {
-        label: 'Thống kê',
-        key: 'transaction-statistic',
-        path: '/dashboard',
-        icon: <ChartHistogramTwo theme="outline" size="22" fill="#fff" />,
-      },
-      {
         label: 'Giao dịch nạp tiền',
         key: 'deposit',
         path: '/transaction-manager/deposit',
@@ -136,16 +132,6 @@ export const SidebarNavigation: SidebarNavigationItem[] = [
         path: '/transaction-manager/withdraw',
         icon: <Expenses theme="outline" size="22" fill="#fff" />,
       },
-      // {
-      //   label: (
-      //     <Link href="/#" rel="noopener noreferrer">
-      //       Lịch sử giao dịch
-      //     </Link>
-      //   ),
-      //   key: 'deposit-history',
-      //   path: '/admin-account-manager',
-      //   icon: <History theme="outline" size="22" fill="#fff" />,
-      // },
     ],
   },
   {
@@ -153,12 +139,6 @@ export const SidebarNavigation: SidebarNavigationItem[] = [
     key: 'voucher',
     icon: <Ticket theme="outline" size="24" fill="#fff" />,
     children: [
-      {
-        label: 'Thống kê',
-        key: 'voucher-statistic',
-        path: '/dashboard',
-        icon: <ChartHistogramTwo theme="outline" size="22" fill="#fff" />,
-      },
       {
         label: 'Khuyến mãi từ quản trị viên',
         key: 'voucher-by-admin',
