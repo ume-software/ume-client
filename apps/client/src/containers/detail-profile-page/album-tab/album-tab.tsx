@@ -105,6 +105,7 @@ const AlbumTab = (props: { data: UserInformationResponse }) => {
                 className="w-[100%] h-[350px] place-content-center relative col-span-2 rounded-xl overflow-hidden border-2 border-white border-opacity-30 cursor-pointer"
                 key={index}
                 onClick={() => handleOpenImageModal(item.postId)}
+                onKeyDown={() => {}}
               >
                 <Image
                   className="absolute top-0 left-0 right-0"

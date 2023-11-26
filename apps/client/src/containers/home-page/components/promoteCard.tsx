@@ -1,4 +1,5 @@
 import { PlayOne, Star, VoiceOne } from '@icon-park/react'
+import DefaultSound from 'public/sounds/default-sound.mp3'
 
 import React, { useEffect, useRef } from 'react'
 
@@ -58,7 +59,11 @@ const PromoteCard = (props: { data: FilterProviderResponse }) => {
           ) : (
             <PlayOne theme="outline" size="30" fill="#FFFFFF" className="inline-block m-auto" />
           )}
-          <audio ref={audioRef} src={props?.data?.voiceUrl} />
+          {props?.data?.voiceUrl ? (
+            <audio ref={audioRef} src={props?.data?.voiceUrl} />
+          ) : (
+            <audio ref={audioRef} src={DefaultSound} />
+          )}
         </button>
       </div>
       <div className="flex flex-col gap-3 pr-5">

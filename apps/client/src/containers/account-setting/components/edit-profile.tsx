@@ -2,7 +2,7 @@ import { Menu, Transition } from '@headlessui/react'
 import { Check, CheckOne, CloseSmall, Pencil } from '@icon-park/react'
 import { Button, FormInput, Input, Modal } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
-import { uploadImageBooking } from '~/apis/upload-media'
+import { uploadImage } from '~/apis/upload-media'
 import { GenderEnum } from '~/enumVariable/enumVariable'
 import useDebounce from '~/hooks/useDebounce'
 
@@ -40,7 +40,12 @@ const genderData: GenderProps[] = [
 const EditProfile = () => {
   const today = new Date().toISOString().split('T')[0]
 
-  const { data: userSettingData, isLoading: isLoadingUserSettingData } = trpc.useQuery(['identity.identityInfo'])
+  const { data: userSettingData, isLoading: isLoadingUserSettingData } = trpc.useQuery(['identity.identityInfo'], {
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: 'always',
+    cacheTime: 0,
+    refetchOnMount: true,
+  })
   const utils = trpc.useContext()
 
   const updateInformation = trpc.useMutation(['identity.updateUserProfile'])
@@ -175,7 +180,7 @@ const EditProfile = () => {
 
     if (selectedImage.frontVertificationImage && selectedImage.backVertificationImage && selectedImage.faceImage) {
       try {
-        const responseData = await uploadImageBooking(formData)
+        const responseData = await uploadImage(formData)
         if (responseData?.data?.data?.results) {
           userKYC.mutate(
             {
@@ -239,7 +244,7 @@ const EditProfile = () => {
         const image = new FormData()
         if (file instanceof File) {
           image.append('file', file, file.name)
-          const responseData = await uploadImageBooking(image)
+          const responseData = await uploadImage(image)
 
           if (responseData?.data?.data?.results) {
             try {

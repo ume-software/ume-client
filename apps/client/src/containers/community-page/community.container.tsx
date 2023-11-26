@@ -1,6 +1,5 @@
 import { CloseSmall, Earth, EveryUser, Plus } from '@icon-park/react'
 import { Modal } from '@ume/ui'
-import { useAuth } from '~/contexts/auth'
 
 import { ReactNode, useId, useState } from 'react'
 
@@ -32,7 +31,7 @@ const postTypeData: CommunityProps[] = [
 
 const CommunityContainer = () => {
   const index = useId()
-  const { isAuthenticated } = useAuth()
+  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [socialSelected, setSocialSelected] = useState<CommunityProps>({
@@ -67,8 +66,8 @@ const CommunityContainer = () => {
   })
 
   const handleCreatePost = () => {
-    setIsModalVisible(isAuthenticated)
-    setIsModalLoginVisible(!isAuthenticated)
+    setIsModalVisible(userInfo)
+    setIsModalLoginVisible(!userInfo)
   }
 
   return (

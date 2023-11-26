@@ -3,6 +3,7 @@ import {
   CreateVoucherRequestRecipientTypeEnum,
   CreateVoucherRequestTypeEnum,
   CreateWithdrawalRequestUnitCurrencyEnum,
+  UpdateProviderProfileRequestStatusEnum,
   UpdateUserProfileRequestGenderEnum,
   UserPaymentSystemRequestPlatformEnum,
 } from 'ume-service-openapi'
@@ -35,6 +36,7 @@ import {
   updateServiceProvider,
   updateUserProfile,
   userKYC,
+  userUpdateProviderProfile,
 } from './services/identity-service'
 
 export const identityRouter = createRouter()
@@ -297,5 +299,15 @@ export const identityRouter = createRouter()
     input: z.string(),
     resolve: async ({ input, ctx }) => {
       return await cancelWithdrawRequests(input, ctx)
+    },
+  })
+  .mutation('userUpdateProviderProfile', {
+    input: z.object({
+      voiceUrl: z.optional(z.string()),
+      status: z.optional(z.nativeEnum(UpdateProviderProfileRequestStatusEnum)),
+      description: z.optional(z.string()),
+    }),
+    resolve: async ({ input, ctx }) => {
+      return await userUpdateProviderProfile(input, ctx)
     },
   })

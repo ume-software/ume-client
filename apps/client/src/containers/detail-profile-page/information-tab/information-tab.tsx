@@ -31,7 +31,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
   const basePath = router.asPath.split('?')[0]
   const slug = router.query
 
-  const { isAuthenticated } = useAuth()
+  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
   const { user } = useAuth()
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
   const { childrenDrawer, setChildrenDrawer } = useContext(DrawerContext)
@@ -70,7 +70,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
   }, [props.data, setChannelId])
 
   const handleChatOpen = async () => {
-    if (isAuthenticated) {
+    if (userInfo) {
       setChildrenDrawer(<ChatSkeleton />)
       try {
         createNewChatChannel.mutate(
@@ -103,7 +103,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
     }
   }
   const handleOrderOpen = () => {
-    if (isAuthenticated) {
+    if (userInfo) {
       setChildrenDrawer(<BookingProvider data={props.data} />)
     } else {
       setIsModalLoginVisible(true)
@@ -309,7 +309,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                         Chat
                       </button>
                     }
-                    token={isAuthenticated}
+                    token={userInfo}
                   >
                     {childrenDrawer}
                   </CustomDrawer>
@@ -327,7 +327,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                           Thuê
                         </button>
                       }
-                      token={isAuthenticated}
+                      token={userInfo}
                     >
                       {childrenDrawer}
                     </CustomDrawer>

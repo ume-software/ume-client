@@ -428,6 +428,7 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                 }
                 `}
                   onClick={handleImageClick}
+                  onKeyDown={() => {}}
                 >
                   {form.values.imageSource && (
                     <Image
