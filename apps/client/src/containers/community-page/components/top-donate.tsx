@@ -25,6 +25,10 @@ const TopDonation = () => {
   const { isLoading: loadingUserDonation, refetch: refetchUserDonation } = trpc.useQuery(
     ['community.donateUserTop', duration],
     {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: 'always',
+      cacheTime: 0,
+      refetchOnMount: true,
       onSuccess(data) {
         setUserDonation(data?.data?.row)
       },
@@ -32,6 +36,10 @@ const TopDonation = () => {
   )
 
   const { refetch: refetchProviderDonation } = trpc.useQuery(['community.donateProviderTop', duration], {
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: 'always',
+    cacheTime: 0,
+    refetchOnMount: true,
     onSuccess(data) {
       setProviderDonation(data?.data?.row)
     },
@@ -43,6 +51,9 @@ const TopDonation = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [duration])
 
+  console.log(userDonation)
+  console.log(providerDonation)
+
   return (
     <>
       <div className="flex gap-3">
@@ -53,6 +64,7 @@ const TopDonation = () => {
               item.key == duration ? ' bg-purple-600' : 'bg-zinc-800'
             }`}
             onClick={() => setDuration(item.key)}
+            onKeyDown={() => {}}
           >
             {item.nameVi}
           </div>
