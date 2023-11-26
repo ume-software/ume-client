@@ -5,7 +5,7 @@ import { uploadImageAdminAccount } from '~/api/upload-media'
 
 import React, { useEffect, useRef, useState } from 'react'
 
-import { Select, Space, notification } from 'antd'
+import { Select, notification } from 'antd'
 import { useFormik } from 'formik'
 import Image from 'next/legacy/image'
 import { AdminInformationResponse } from 'ume-service-openapi'
@@ -91,7 +91,7 @@ const UpdateAccountModal = ({ id, openValue, closeFunction }: IUpdateAdminProps)
     setIsCreate(true)
     setOpenConfirm(true)
   }
-  //   console.log(adminDetails)
+
   function arraysAreEqual(arr1, arr2) {
     if (arr1.length !== arr2.length) {
       return false
@@ -249,7 +249,7 @@ const UpdateAccountModal = ({ id, openValue, closeFunction }: IUpdateAdminProps)
       className="w-auto bg-black"
     >
       <div className="m-7">
-        <form autoComplete="off" onSubmit={form.handleSubmit} className="text-white grid grid-cols-5">
+        <form autoComplete="off" onSubmit={form.handleSubmit} className="grid grid-cols-5 text-white">
           <div className="col-span-2">
             <div
               className={`
@@ -293,7 +293,7 @@ const UpdateAccountModal = ({ id, openValue, closeFunction }: IUpdateAdminProps)
           </div>
           <div className="col-span-3">
             <div className="grid grid-cols-6 mb-3">
-              <label className="col-span-2 flex items-center" htmlFor="name">
+              <label className="flex items-center col-span-2" htmlFor="name">
                 *Họ và tên
               </label>
               <FormInput
@@ -311,7 +311,7 @@ const UpdateAccountModal = ({ id, openValue, closeFunction }: IUpdateAdminProps)
               />
             </div>
             <div className="grid grid-cols-6 mb-3">
-              <label className="col-span-2 flex items-center" htmlFor="userName">
+              <label className="flex items-center col-span-2" htmlFor="userName">
                 *Tên đăng nhập
               </label>
               <FormInput
@@ -329,7 +329,7 @@ const UpdateAccountModal = ({ id, openValue, closeFunction }: IUpdateAdminProps)
               />
             </div>
             <div className="grid grid-cols-6 mb-3">
-              <label className="col-span-2 flex items-center" htmlFor="gender">
+              <label className="flex items-center col-span-2" htmlFor="gender">
                 *Giới tính
               </label>
               <Select
@@ -363,7 +363,7 @@ const UpdateAccountModal = ({ id, openValue, closeFunction }: IUpdateAdminProps)
               ></Select>
             </div>
             <div className="grid grid-cols-6 mb-3">
-              <label className="col-span-2 flex items-center" htmlFor="roles">
+              <label className="flex items-center col-span-2" htmlFor="roles">
                 *Role
               </label>
               <Select
@@ -390,7 +390,7 @@ const UpdateAccountModal = ({ id, openValue, closeFunction }: IUpdateAdminProps)
               ></Select>
             </div>
             <div className="grid grid-cols-6 mb-3">
-              <label className="col-span-2 flex items-center" htmlFor="dob">
+              <label className="flex items-center col-span-2" htmlFor="dob">
                 Ngày sinh
               </label>
               <Input
@@ -406,7 +406,7 @@ const UpdateAccountModal = ({ id, openValue, closeFunction }: IUpdateAdminProps)
               />
             </div>
             <div className="grid grid-cols-6 mb-3">
-              <label className="col-span-2 flex items-center" htmlFor="email">
+              <label className="flex items-center col-span-2" htmlFor="email">
                 Email
               </label>
               <Input
@@ -421,7 +421,7 @@ const UpdateAccountModal = ({ id, openValue, closeFunction }: IUpdateAdminProps)
               />
             </div>
             <div className="grid grid-cols-6 mb-3">
-              <label className="col-span-2 flex items-center" htmlFor="phone">
+              <label className="flex items-center col-span-2" htmlFor="phone">
                 Số điện thoại
               </label>
               <FormInput
@@ -439,7 +439,7 @@ const UpdateAccountModal = ({ id, openValue, closeFunction }: IUpdateAdminProps)
               />
             </div>
           </div>
-          <div className="col-span-5 flex justify-center pb-4 mt-10">
+          <div className="flex justify-center col-span-5 pb-4 mt-10">
             <Button
               customCSS={`mx-6 px-4 py-1 border-2  ${
                 !isDisableButton() && 'hover:scale-110 bg-[#7463F0] border-[#7463F0]'
