@@ -13,7 +13,7 @@ const Table = (props: {
   loadingUserDonation?: boolean
 }) => {
   return (
-    <div className="w-[90%] bg-zinc-800 rounded-xl p-3 animate-running-border">
+    <div className="w-fit bg-zinc-800 rounded-xl p-3 animate-running-border">
       {!props.loadingUserDonation ? (
         <div>
           <span className="space-y-5">
@@ -35,12 +35,14 @@ const Table = (props: {
                 {props?.data?.map((data, index) => (
                   <tr key={data.providerId || data.userId} className="">
                     <td className="py-2">
-                      {index == 0 && <Image src={medalTop1} width={30} height={40} alt="coin" />}
-                      {index == 1 && <Image src={medalTop2} width={30} height={40} alt="coin" />}
-                      {index == 2 && <Image src={medalTop3} width={30} height={40} alt="coin" />}
+                      <div className="min-w-[30px]">
+                        {index == 0 && <Image src={medalTop1} width={25} height={35} alt="coin" />}
+                        {index == 1 && <Image src={medalTop2} width={25} height={35} alt="coin" />}
+                        {index == 2 && <Image src={medalTop3} width={25} height={35} alt="coin" />}
+                      </div>
                     </td>
                     <td className="py-2">
-                      <div className="min-w-[150px] flex justify-center items-center gap-2">
+                      <div className="min-w-[120px] flex justify-center items-center flex-col lg:flex-row gap-2">
                         <div className="relative w-8 h-8">
                           <Image
                             className="absolute rounded-full"
@@ -54,17 +56,19 @@ const Table = (props: {
                       </div>
                     </td>
                     <td className="py-2">
-                      {Math.floor(data?.totalCoinDonation) ||
-                        data?.totalReceivedAmount.toLocaleString('en-US', {
-                          currency: 'VND',
-                        })}
-                      <span className="text-xs italic"> đ</span>
-                      <p
-                        className="opacity-30
+                      <div className="min-w-[80px]">
+                        {Math.floor(data?.totalCoinDonation) ||
+                          data?.totalReceivedAmount?.toLocaleString('en-US', {
+                            currency: 'VND',
+                          })}
+                        <span className="text-xs italic"> đ</span>
+                        <p
+                          className="opacity-30
                         "
-                      >
-                        ({data?.numberDonationsReceived} lượt)
-                      </p>
+                        >
+                          ({data?.numberDonationsReceived} lượt)
+                        </p>
+                      </div>
                     </td>
                   </tr>
                 ))}

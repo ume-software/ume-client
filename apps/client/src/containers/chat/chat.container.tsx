@@ -1,6 +1,5 @@
 import { Search } from '@icon-park/react'
 import { InputWithAffix } from '@ume/ui'
-import { useAuth } from '~/contexts/auth'
 
 import { useEffect, useState } from 'react'
 
@@ -15,7 +14,7 @@ import { trpc } from '~/utils/trpc'
 
 const Chat = (props: { providerId?: string }) => {
   const [searchText, setSearchText] = useState<string>('')
-  const { user } = useAuth()
+  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
   const { data: chattingChannels, isLoading: loadingChattingChannels } = trpc.useQuery([
     'chatting.getListChattingChannels',
     { limit: 'unlimited', page: '1' },
@@ -71,7 +70,7 @@ const Chat = (props: { providerId?: string }) => {
                     let seftMemberInfo: MemberChatChannelResponse | null = null
 
                     for (const member of item.members) {
-                      if (member.userId.toString() != user?.id.toString()) {
+                      if (member.userId.toString() != userInfo?.id.toString()) {
                         otherMemberInfo.push(member)
                       } else {
                         seftMemberInfo = member
@@ -79,7 +78,7 @@ const Chat = (props: { providerId?: string }) => {
                     }
 
                     const isMe = item.messages[0]?.senderId
-                      ? item.messages[0]?.senderId.toString() == user?.id.toString()
+                      ? item.messages[0]?.senderId.toString() == userInfo?.id.toString()
                       : false
 
                     const isReadedLatestMessage = latestMeassge && latestMeassge.sentAt < seftMemberInfo?.lastReadAt!

@@ -78,7 +78,7 @@ export const Promotion = () => {
         <div ref={containerRef} className="container mx-auto my-10">
           <div className="flex flex-col gap-5">
             <p className="text-3xl font-bold text-white">Hot Player</p>
-            <div className="grid gap-6 mt-2 2xl:grid-cols-4 xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-1">
+            <div className="grid gap-6 mt-2 2xl:grid-cols-4 xl:grid-cols-3 md:grid-cols-2 sm:grid-cols-1">
               {listHotProvider?.map((provider) => (
                 <Link
                   key={provider?.id}

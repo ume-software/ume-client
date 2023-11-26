@@ -7,11 +7,15 @@ import {
   donationForRecipient,
   getAlbumByUserSlug,
   getAllNotice,
+  getCanFeedbackProvider,
   getCurrentBookingForProvider,
+  getCurrentBookingForUser,
   getFeedbackServiceById,
   getHotProviders,
   getListService,
   getNoticeAmount,
+  getPendingBookingForProvider,
+  getPendingBookingForUser,
   getPostByUserSlug,
   getProviders,
   getServiceBySlug,
@@ -67,6 +71,11 @@ export const bookingRouter = createRouter()
       return await getCurrentBookingForProvider(ctx)
     },
   })
+  .query('getCurrentBookingForUser', {
+    resolve: async ({ ctx }) => {
+      return await getCurrentBookingForUser(ctx)
+    },
+  })
   .mutation('createBooking', {
     input: z.object({
       providerServiceId: z.string(),
@@ -90,6 +99,12 @@ export const bookingRouter = createRouter()
     input: z.string(),
     resolve: async ({ input }) => {
       return await getFeedbackServiceById(input)
+    },
+  })
+  .query('getCanFeedbackProvider', {
+    input: z.string(),
+    resolve: async ({ ctx, input }) => {
+      return await getCanFeedbackProvider(input, ctx)
     },
   })
   .mutation('postFeedback', {
@@ -148,5 +163,15 @@ export const bookingRouter = createRouter()
     input: z.object({ slug: z.string() }),
     resolve: async ({ ctx, input }) => {
       return await getServiceBySlug(input, ctx)
+    },
+  })
+  .query('getPendingBookingForProvider', {
+    resolve: async ({ ctx }) => {
+      return await getPendingBookingForProvider(ctx)
+    },
+  })
+  .query('getPendingBookingForUser', {
+    resolve: async ({ ctx }) => {
+      return await getPendingBookingForUser(ctx)
     },
   })
