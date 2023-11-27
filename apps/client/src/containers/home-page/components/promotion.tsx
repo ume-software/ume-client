@@ -93,7 +93,7 @@ export const Promotion = () => {
           </div>
           <div className="flex flex-col gap-5 pb-5 mt-10">
             <p className="text-3xl font-bold text-white">Ume Player</p>
-            <div className="grid gap-6 mt-2 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1">
+            <div className="grid gap-6 mt-2 2xl:grid-cols-4 xl:grid-cols-3 md:grid-cols-2 sm:grid-cols-1">
               {listProvider?.map((provider) => (
                 <Link
                   key={provider?.id}

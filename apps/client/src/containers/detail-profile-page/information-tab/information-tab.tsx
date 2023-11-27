@@ -9,6 +9,7 @@ import getWindowDimensions from '~/hooks/useWindowDimensions'
 import { useContext, useEffect, useState } from 'react'
 
 import { notification } from 'antd'
+import { parse } from 'cookie'
 import Image from 'next/legacy/image'
 import { useRouter } from 'next/router'
 import { Swiper, SwiperSlide } from 'swiper/react'
@@ -32,6 +33,8 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
   const slug = router.query
 
   const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
+  const accessToken = parse(document.cookie).accessToken
+
   const { user } = useAuth()
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
   const { childrenDrawer, setChildrenDrawer } = useContext(DrawerContext)
@@ -309,7 +312,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                         Chat
                       </button>
                     }
-                    token={userInfo}
+                    token={!!accessToken}
                   >
                     {childrenDrawer}
                   </CustomDrawer>
@@ -327,7 +330,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                           Thuê
                         </button>
                       }
-                      token={userInfo}
+                      token={!!accessToken}
                     >
                       {childrenDrawer}
                     </CustomDrawer>
