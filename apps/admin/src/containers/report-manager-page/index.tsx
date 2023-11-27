@@ -192,7 +192,6 @@ const ReportManagerContainer = () => {
       },
     },
   )
-  console.log(reports)
 
   const handleFilter = (title, key) => {
     setPage(1)

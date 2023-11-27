@@ -3,9 +3,11 @@ import { getEnv } from '~/env'
 
 import { parse } from 'cookie'
 import {
+  AdminManageBookingApi,
   AdminManageDepositRequestApi,
-  AdminManageStatisticApi,
+  AdminManageDonationApi,
   AdminManageWithdrawalRequestApi,
+  AdminManageStatisticApi,
 } from 'ume-service-openapi'
 
 import { TransactionType, UnitQueryTime } from '~/utils/constant'
@@ -22,6 +24,67 @@ export const getDepositTransactions = async (
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
     }).adminGetListDepositRequest('10', query.page, query.select, query.where, query.order)
+
+    return {
+      data: response.data,
+      success: true,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.message || 'Authentication failed',
+    })
+  }
+}
+
+export const getBookingTransactions = async (
+  ctx,
+  query: {
+    limit?: string
+    page: string
+    select?: string
+    where?: string
+    order?: string
+  },
+) => {
+  try {
+    console.log(query)
+    const cookies = parse(ctx.req.headers.cookie ?? '')
+    const response = await new AdminManageBookingApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).adminGetListBookingHistory(query.limit, query.page, query.select, query.where, query.order)
+
+    return {
+      data: response.data,
+      success: true,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.message || 'Authentication failed',
+    })
+  }
+}
+
+export const getDonationTransactions = async (
+  ctx,
+  query: {
+    limit?: string
+    page: string
+    select?: string
+    where?: string
+    order?: string
+  },
+) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie ?? '')
+    const response = await new AdminManageDonationApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).adminGetListDonation(query.limit, query.page, query.select, query.where, query.order)
 
     return {
       data: response.data,

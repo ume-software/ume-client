@@ -18,7 +18,7 @@ const SideBarDropdown = () => {
     )
   }
   useEffect(() => {
-    setSelectNavigation(router.pathname?.replace(/^\//, ''))
+    setSelectNavigation(router.pathname)
   }, [])
 
   function handleSelectNavigation(key) {

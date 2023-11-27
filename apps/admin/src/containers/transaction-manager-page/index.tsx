@@ -2,8 +2,10 @@ import { useId } from 'react'
 
 import Head from 'next/head'
 
-import DepositTransactionPage from './deposit-transaction'
-import WithdrawTransactionPage from './withdraw-transaction'
+import BookingTransactionContainer from './booking-transaction.container'
+import DepositTransactionContainer from './deposit-transaction.container'
+import DonationTransactionContainer from './donation-transaction.container'
+import WithdrawTransactionPage from './withdraw-transaction.container'
 
 const SwitchTransactionManager = ({ selectedTask }) => {
   const id = useId()
@@ -11,7 +13,11 @@ const SwitchTransactionManager = ({ selectedTask }) => {
     case 'withdraw':
       return <WithdrawTransactionPage key={id} />
     case 'deposit':
-      return <DepositTransactionPage key={id} />
+      return <DepositTransactionContainer />
+    case 'booking':
+      return <BookingTransactionContainer />
+    case 'donation':
+      return <DonationTransactionContainer />
   }
 }
 
