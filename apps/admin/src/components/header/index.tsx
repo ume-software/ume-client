@@ -83,7 +83,7 @@ export const Header = ({ handleOpen, openSideBar, setOpenPopupSideBar, openPopup
             <Image width={100} height={35} src={WhiteTextLogo} alt="logo" />
           </div>
         )}
-        <div className="min-w-[6.5rem] flex justify-between items-center">
+        <div className="flex justify-end items-center">
           <Dropdown
             menu={{
               items,
