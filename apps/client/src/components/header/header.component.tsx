@@ -1,12 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Menu, Transition } from '@headlessui/react'
-import { Dot, Gift, Remind } from '@icon-park/react'
+import { Dot, Remind } from '@icon-park/react'
 import { Button } from '@ume/ui'
 import logo from 'public/ume-logo-2.svg'
-import Notificate from '~/containers/notificate/order-notificate.container'
+import MainNotificate from '~/containers/notificate/main-notificate.container'
+import OrderNotificationForProvider from '~/containers/notificate/provider-order-notificate.container'
+import OrderNotificationForUser from '~/containers/notificate/user-order-notificate.container'
 import { useAuth } from '~/contexts/auth'
 
-import React, { Fragment, ReactElement, useContext, useEffect, useId, useState } from 'react'
+import React, { Fragment, ReactElement, useContext, useEffect, useState } from 'react'
 
 import { isNil } from 'lodash'
 import Image from 'next/legacy/image'
@@ -20,12 +22,12 @@ import { RechargeModal } from './recharge-form.component'
 import { trpc } from '~/utils/trpc'
 
 interface TabProps {
+  key: string
   label: string
   children: ReactElement
 }
 
 export const Header: React.FC = () => {
-  const index = useId()
   const [showRechargeModal, setShowRechargeModal] = useState(false)
   const [balance, setBalance] = useState<any>()
   const [notificatedAmount, setNotificatedAmount] = useState<number>(0)
@@ -57,13 +59,12 @@ export const Header: React.FC = () => {
 
   const tabDatas: TabProps[] = [
     {
+      key: 'Main',
       label: `Chính`,
-      children: <Notificate />,
+      children: <MainNotificate />,
     },
-    {
-      label: `Đơn`,
-      children: <Notificate />,
-    },
+    { key: 'OrderForProvider', label: `Đơn nhận`, children: <OrderNotificationForProvider /> },
+    { key: 'OrderForUser', label: `Đơn đặt`, children: <OrderNotificationForUser /> },
   ]
 
   const handleChangeTab = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -103,13 +104,6 @@ export const Header: React.FC = () => {
       </div>
       <div className="flex items-center">
         <div className="flex flex-1 pr-2 duration-500 hover:ease-in-out">
-          {userInfo && (
-            <span className="self-center my-auto mr-4 rounded-ful hover:scale-110 hover:ease-in-out">
-              <button className="pt-2">
-                <Gift size={22} strokeWidth={4} fill="#FFFFFF" />
-              </button>
-            </span>
-          )}
           {userInfo && (
             <button onClick={() => setShowRechargeModal(true)}>
               <div className="flex items-center justify-end rounded-full bg-[#37354F] pr-2 pl-4 mr-2 self-center text-white">
@@ -174,23 +168,43 @@ export const Header: React.FC = () => {
                     <Menu.Items className="absolute right-0 p-5 text-white origin-top-right divide-y divide-gray-200 rounded-md shadow-lg bg-umeHeader w-96 ring-1 ring-black ring-opacity-30 focus:outline-none">
                       <div className="flex flex-row gap-10" style={{ zIndex: 2 }}>
                         {tabDatas.map((item) => (
-                          <a
-                            href="#tab"
-                            className={`xl:text-lg text-md font-medium p-2 ${
-                              item.label == selectedTab ? 'border-b-4 border-purple-700' : ''
-                            }`}
-                            key={index}
-                            onClick={handleChangeTab}
-                            data-tab={item.label}
-                          >
-                            {item.label}
-                          </a>
+                          <>
+                            {item.key == 'OrderForProvider' ? (
+                              <>
+                                {userInfo.isProvider && (
+                                  <a
+                                    href="#tab"
+                                    className={`xl:text-lg text-md font-medium p-2 ${
+                                      item.label == selectedTab ? 'border-b-4 border-purple-700' : ''
+                                    }`}
+                                    key={item.key}
+                                    onClick={handleChangeTab}
+                                    data-tab={item.label}
+                                  >
+                                    {item.label}
+                                  </a>
+                                )}
+                              </>
+                            ) : (
+                              <a
+                                href="#tab"
+                                className={`xl:text-lg text-md font-medium p-2 ${
+                                  item.label == selectedTab ? 'border-b-4 border-purple-700' : ''
+                                }`}
+                                key={item.key}
+                                onClick={handleChangeTab}
+                                data-tab={item.label}
+                              >
+                                {item.label}
+                              </a>
+                            )}
+                          </>
                         ))}
                       </div>
-                      <div className="p-3 overflow-auto h-96">
+                      <div className="p-3 overflow-auto h-96 custom-scrollbar">
                         {tabDatas.map((item) => {
                           return (
-                            <div key={index} hidden={selectedTab !== item.label}>
+                            <div key={item.key + 'child'} hidden={selectedTab !== item.label}>
                               {item.children}
                             </div>
                           )

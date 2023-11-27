@@ -428,6 +428,7 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                 }
                 `}
                   onClick={handleImageClick}
+                  onKeyDown={() => {}}
                 >
                   {form.values.imageSource && (
                     <Image
@@ -818,7 +819,6 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                           }
                           form.handleChange(e)
                         } else {
-                          console.log(form.values.discountUnit)
                           const rawValue = e.target.value
                           const newValue = parseFloat(rawValue.replace(/,/g, ''))
                           if (!isNaN(newValue) && newValue >= 0) {

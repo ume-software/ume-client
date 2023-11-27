@@ -3,8 +3,10 @@ import { z } from 'zod'
 import { createRouter } from './configurations'
 import {
   approveWithdrawal,
+  getBookingTransactions,
   getDepositDetail,
   getDepositTransactions,
+  getDonationTransactions,
   getWaitingTransactions,
   statisticTransasction,
 } from './services/transactions-service'
@@ -30,6 +32,30 @@ export const transactionRouter = createRouter()
     }),
     resolve: async ({ ctx, input }) => {
       return await getDepositDetail(ctx, input)
+    },
+  })
+  .query('getDonationTransactions', {
+    input: z.object({
+      limit: z.string(),
+      page: z.string(),
+      select: z.optional(z.string()),
+      where: z.optional(z.string()),
+      order: z.optional(z.string()),
+    }),
+    resolve: async ({ ctx, input }) => {
+      return await getDonationTransactions(ctx, input)
+    },
+  })
+  .query('getBookingTransactions', {
+    input: z.object({
+      limit: z.string(),
+      page: z.string(),
+      select: z.optional(z.string()),
+      where: z.optional(z.string()),
+      order: z.optional(z.string()),
+    }),
+    resolve: async ({ ctx, input }) => {
+      return await getBookingTransactions(ctx, input)
     },
   })
   .query('getWithdrawRequest', {

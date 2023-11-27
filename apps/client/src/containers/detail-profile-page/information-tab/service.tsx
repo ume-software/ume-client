@@ -1,4 +1,4 @@
-import { Picture, Send } from '@icon-park/react'
+import { Send } from '@icon-park/react'
 import { Button, InputWithButton } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
 
@@ -6,6 +6,7 @@ import { useState } from 'react'
 
 import { Rate } from 'antd'
 import Image from 'next/legacy/image'
+import { useRouter } from 'next/router'
 import { ProviderServiceResponse } from 'ume-service-openapi'
 
 import { CommentSkeletonLoader } from '~/components/skeleton-load'
@@ -18,7 +19,27 @@ interface PostFeedbackProps {
 }
 
 const Service = (props: { data: ProviderServiceResponse }) => {
-  const feedbackGame = trpc.useQuery(['booking.getFeedbackServiceById', props.data.id!.toString()]) ?? undefined
+  const router = useRouter()
+  const slug = router.query
+
+  const feedbackGame =
+    trpc.useQuery(['booking.getFeedbackServiceById', String(props.data.id ?? '')], {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: 'always',
+      cacheTime: 0,
+      refetchOnMount: true,
+      enabled: !!props.data.id,
+    }) ?? undefined
+  const { data: userCanFeedBackProvider, isLoading: isUserCanFeedBackProviderLoading } = trpc.useQuery(
+    ['booking.getCanFeedbackProvider', String(slug.profileId ?? '')],
+    {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: 'always',
+      cacheTime: 0,
+      refetchOnMount: true,
+      enabled: !!slug.profileId,
+    },
+  )
   const postFeedback = trpc.useMutation(['booking.postFeedback'])
 
   const [feedback, setFeedback] = useState<PostFeedbackProps>({ rate: 5, content: '' })
@@ -44,19 +65,11 @@ const Service = (props: { data: ProviderServiceResponse }) => {
     <>
       <div className="p-10 bg-zinc-800 rounded-3xl">
         <p className="text-2xl font-bold text-white font-roboto">{props.data.service?.name}</p>
-        {/* <Carousel autoplay>
-          {props.data.images?.map((item, index) => <Image key={index} src={item} alt="Game Image" />) || (
-            <>
-              <Image src={ImgForEmpty} alt="Empty" />
-              <p className="text-2xl font-semibold leading-9 text-center text-white font-roboto">Chưa có gì ở đây cả</p>
-            </>
-          )}
-        </Carousel> */}
         <span className="text-lg font-normal leading-9 font-roboto">
           {props.data.description ?? 'Không có giới thiệu'}
         </span>
       </div>
-      {feedbackGame.data?.success ? (
+      {feedbackGame.data?.success && !isUserCanFeedBackProviderLoading ? (
         <div className="relative p-5 bg-zinc-800 rounded-3xl">
           <div className="h-[600px] flex flex-col gap-5 p-3 overflow-y-auto">
             <p className="text-2xl font-bold font-inter">Đánh giá</p>
@@ -93,33 +106,34 @@ const Service = (props: { data: ProviderServiceResponse }) => {
               </>
             )}
           </div>
-          <div className="flex items-end gap-3 bg-transparent">
-            <div className="p-2 content-center bg-[#413F4D] rounded-full cursor-pointer hover:bg-gray-500 active:bg-gray-400">
-              <Picture theme="outline" size="24" fill="#FFFFFF" strokeLinejoin="bevel" />
-            </div>
-            <div className="w-full">
-              <div className="p-2">
-                <Rate defaultValue={feedback.rate} onChange={(value) => setFeedback({ ...feedback, rate: value })} />
+          {userCanFeedBackProvider?.data?.id && userCanFeedBackProvider?.data?.providerService?.id == props.data.id ? (
+            <div className="flex items-end gap-3 bg-transparent">
+              <div className="w-full">
+                <div className="p-2">
+                  <Rate defaultValue={feedback.rate} onChange={(value) => setFeedback({ ...feedback, rate: value })} />
+                </div>
+                <InputWithButton
+                  className="outline-none bg-[#413F4D] text-white border-none focus:outline-[#6d3fe0] max-h-10 rounded-2xl"
+                  placeholder="Bình luận"
+                  position={'right'}
+                  component={
+                    <Button
+                      customCSS={`absolute top-2 right-5 bg-transparent ${!!feedback.rate && 'hover:scale-105'} `}
+                      onClick={handleSendFeedback}
+                      isLoading={postFeedback.isLoading}
+                      type="button"
+                      icon={<Send theme="filled" size="25" fill="#FFFFFF" strokeLinejoin="bevel" />}
+                    />
+                  }
+                  onKeyDown={handleKeyPress}
+                  value={feedback.content}
+                  onChange={(e) => setFeedback({ ...feedback, content: e.target.value })}
+                />
               </div>
-              <InputWithButton
-                className="outline-none bg-[#413F4D] text-white border-none focus:outline-[#6d3fe0] max-h-10 rounded-2xl"
-                placeholder="Bình luận"
-                position={'right'}
-                component={
-                  <Button
-                    customCSS={`absolute top-0 bottom-0 right-3 ${!!feedback.rate && 'hover:scale-105'} `}
-                    onClick={handleSendFeedback}
-                    isLoading={postFeedback.isLoading}
-                    type="button"
-                    icon={<Send theme="filled" size="25" fill="#FFFFFF" strokeLinejoin="bevel" />}
-                  />
-                }
-                onKeyDown={handleKeyPress}
-                value={feedback.content}
-                onChange={(e) => setFeedback({ ...feedback, content: e.target.value })}
-              />
             </div>
-          </div>
+          ) : (
+            ''
+          )}
         </div>
       ) : (
         <div className="relative p-5 bg-zinc-800 rounded-3xl">

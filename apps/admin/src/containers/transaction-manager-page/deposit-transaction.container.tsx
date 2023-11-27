@@ -51,12 +51,11 @@ const mappingPlatform = {
 type DepositTableProps = {
   key: string
   id: string
-  email: string
-  name: string
-  phone: string
-  address: string
-  status: string
-  action: string
+  transactionCode: string
+  platform: string
+  requester: string
+  amountMoney: string
+  createdAt: string
 }
 
 const DepositTransactionPage = () => {
@@ -103,7 +102,6 @@ const DepositTransactionPage = () => {
       refetchOnWindowFocus: false,
       refetchOnReconnect: 'always',
       onSuccess(data) {
-        console.log(data?.data)
         updateTransactionsWithKeys(data?.data as any)
       },
     },

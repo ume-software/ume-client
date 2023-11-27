@@ -1183,6 +1183,7 @@ const AddSkillForm = () => {
                                                       value_attr.id,
                                                     )
                                                   }
+                                                  onKeyDown={() => {}}
                                                 >
                                                   <p className="text-mg font-semibold">{value_attr.viAttribute}</p>
                                                 </div>
@@ -1336,6 +1337,7 @@ const AddSkillForm = () => {
                                                                     },
                                                                   )
                                                                 }
+                                                                onKeyDown={() => {}}
                                                               >
                                                                 <p className="text-mg font-semibold">
                                                                   {value_attr.viValue != ''
@@ -1431,9 +1433,7 @@ const AddSkillForm = () => {
           </div>
         </>
       ) : (
-        <>
-          <SkeletonProviderService />
-        </>
+        <SkeletonProviderService />
       )}
     </>
   )

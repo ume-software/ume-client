@@ -146,7 +146,7 @@ const CommunityPost = (props: CommunityPostProps) => {
           <div className="flex gap-3">
             <Link
               href={`profile/${props.data.user.slug ?? props.data.userId}`}
-              className="relative w-[70px] h-[70px] cursor-pointer"
+              className="relative xl:w-[70px] xl:h-[70px] lg:w-[60px] lg:h-[60px] w-[50px] h-[50px] cursor-pointer"
             >
               <Image
                 className="absolute rounded-full"
@@ -159,11 +159,13 @@ const CommunityPost = (props: CommunityPostProps) => {
             <div className="flex flex-col">
               <Link
                 href={`profile/${props.data.user.slug ?? props.data.userId}`}
-                className="text-xl font-semibold cursor-pointer hover:underline"
+                className="xl:text-xl lg:text-lg text-md font-semibold cursor-pointer hover:underline"
               >
                 {props.data?.user.name}
               </Link>
-              <p className="text-lg font-normal opacity-40">{TimeFormat({ date: props.data?.createdAt })}</p>
+              <p className="xl:text-lg lg:text-md text-sm font-normal opacity-40">
+                {TimeFormat({ date: props.data?.createdAt })}
+              </p>
             </div>
           </div>
           <div>
@@ -216,7 +218,7 @@ const CommunityPost = (props: CommunityPostProps) => {
         </div>
         <div className="flex mt-2">
           <div className="flex flex-col w-full gap-2">
-            <p className="text-lg font-normal">{props.data?.content}</p>
+            <p className="xl:text-lg text-md font-normal">{props.data?.content}</p>
             <div className="cursor-pointer" onClick={handleOpenImageModal} onKeyDown={() => {}}>
               <PostImageLayout data={props.data?.thumbnails} />
             </div>

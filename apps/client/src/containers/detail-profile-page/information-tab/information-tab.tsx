@@ -9,6 +9,7 @@ import getWindowDimensions from '~/hooks/useWindowDimensions'
 import { useContext, useEffect, useState } from 'react'
 
 import { notification } from 'antd'
+import { parse } from 'cookie'
 import Image from 'next/legacy/image'
 import { useRouter } from 'next/router'
 import { Swiper, SwiperSlide } from 'swiper/react'
@@ -31,7 +32,9 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
   const basePath = router.asPath.split('?')[0]
   const slug = router.query
 
-  const { isAuthenticated } = useAuth()
+  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
+  const accessToken = parse(document.cookie).accessToken
+
   const { user } = useAuth()
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
   const { childrenDrawer, setChildrenDrawer } = useContext(DrawerContext)
@@ -70,7 +73,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
   }, [props.data, setChannelId])
 
   const handleChatOpen = async () => {
-    if (isAuthenticated) {
+    if (userInfo) {
       setChildrenDrawer(<ChatSkeleton />)
       try {
         createNewChatChannel.mutate(
@@ -103,7 +106,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
     }
   }
   const handleOrderOpen = () => {
-    if (isAuthenticated) {
+    if (userInfo) {
       setChildrenDrawer(<BookingProvider data={props.data} />)
     } else {
       setIsModalLoginVisible(true)
@@ -309,7 +312,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                         Chat
                       </button>
                     }
-                    token={isAuthenticated}
+                    token={!!accessToken}
                   >
                     {childrenDrawer}
                   </CustomDrawer>
@@ -327,7 +330,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                           Thuê
                         </button>
                       }
-                      token={isAuthenticated}
+                      token={!!accessToken}
                     >
                       {childrenDrawer}
                     </CustomDrawer>

@@ -1,6 +1,6 @@
 import { CloseSmall, Plus } from '@icon-park/react'
 import { Button, FormInput, FormInputWithAffix, Modal, TextArea } from '@ume/ui'
-import { uploadImageBooking } from '~/apis/upload-media'
+import { uploadImage } from '~/apis/upload-media'
 import { useAuth } from '~/contexts/auth'
 import { ActionEnum } from '~/enumVariable/enumVariable'
 import useDebounce from '~/hooks/useDebounce'
@@ -370,7 +370,7 @@ export default function VourcherModal(
     if (createVoucherFormRef.current && checkFieldRequire) {
       if (form.values.selectedImage) {
         const formData = new FormData(createVoucherFormRef.current)
-        const responseData = await uploadImageBooking(formData.getAll('files'))
+        const responseData = await uploadImage(formData.getAll('files'))
 
         if (responseData?.data?.data?.results) {
           try {
@@ -450,7 +450,7 @@ export default function VourcherModal(
     if (createVoucherFormRef.current && checkFieldRequire && props.voucherSelected?.id) {
       if (String(form.values.imageSource) != String(props.voucherSelected?.image)) {
         const formData = new FormData(createVoucherFormRef.current)
-        const responseData = await uploadImageBooking(formData.getAll('files'))
+        const responseData = await uploadImage(formData.getAll('files'))
 
         if (responseData?.data?.data?.results) {
           try {
@@ -630,7 +630,7 @@ export default function VourcherModal(
                     name="name"
                     type="text"
                     className={` ${
-                      form.values.name == props.voucherSelected?.name ? 'bg-zinc-800' : 'bg-[#413F4D]'
+                      form.values.name == (props.voucherSelected?.name ?? '') ? 'bg-zinc-800' : 'bg-[#413F4D]'
                     } border-2 border-[#FFFFFF] h-8 border-opacity-30 ${
                       form.errors.name && form.touched.name ? 'text-red-500' : ''
                     }`}
@@ -653,7 +653,7 @@ export default function VourcherModal(
                   <FormInput
                     name="vourcherCode"
                     className={`${
-                      form.values.vourcherCode == props.voucherSelected?.code ? 'bg-zinc-800' : 'bg-[#413F4D]'
+                      form.values.vourcherCode == (props.voucherSelected?.code ?? '') ? 'bg-zinc-800' : 'bg-[#413F4D]'
                     } border-2 border-[#FFFFFF] h-8 border-opacity-30`}
                     placeholder="Ex: SUPPERSALE"
                     disabled={false}

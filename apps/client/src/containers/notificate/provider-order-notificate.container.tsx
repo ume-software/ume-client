@@ -1,5 +1,3 @@
-import { useAuth } from '~/contexts/auth'
-
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { notification } from 'antd'
@@ -10,8 +8,8 @@ import { NotificateSkeletonLoader } from '~/components/skeleton-load'
 
 import { trpc } from '~/utils/trpc'
 
-const OrderNotificate = () => {
-  const { isAuthenticated } = useAuth()
+const OrderNotificationForProvider = () => {
+  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
   const [page, setPage] = useState<number>(1)
   const limit = '10'
   const [listNotificated, setListNotificated] = useState<any>([])
@@ -24,7 +22,7 @@ const OrderNotificate = () => {
     isLoading: loadingNotificated,
     isFetching: fetchingNotificated,
     refetch: refetchNotificated,
-  } = trpc.useQuery(['booking.getCurrentBookingForProvider'], {
+  } = trpc.useQuery(['booking.getPendingBookingForProvider'], {
     refetchOnWindowFocus: false,
     refetchOnReconnect: 'always',
     cacheTime: 0,
@@ -110,7 +108,7 @@ const OrderNotificate = () => {
   }, [])
 
   useEffect(() => {
-    if (containerRef?.current && isAuthenticated) {
+    if (containerRef?.current && Boolean(userInfo.id)) {
       const { scrollTop, scrollHeight, clientHeight } = containerRef.current
       const isAtEnd = scrollTop + clientHeight >= scrollHeight
 
@@ -126,7 +124,7 @@ const OrderNotificate = () => {
 
   return (
     <>
-      {isAuthenticated ? (
+      {Boolean(userInfo.id) ? (
         <>
           {loadingNotificated ? (
             <NotificateSkeletonLoader />
@@ -136,7 +134,7 @@ const OrderNotificate = () => {
                 listNotificated.map((item) => (
                   <div
                     key={item.id}
-                    className="p-2 border-b-2 border-gray-200 rounded-lg hover:bg-violet-100 custom-scrollbar"
+                    className="px-2 py-3 border-b-2 border-gray-200 border-opacity-30 rounded-t-lg hover:bg-gray-700 cursor-pointer"
                   >
                     <div className="grid grid-cols-10">
                       <div className="col-span-3">
@@ -195,4 +193,4 @@ const OrderNotificate = () => {
     </>
   )
 }
-export default OrderNotificate
+export default OrderNotificationForProvider
