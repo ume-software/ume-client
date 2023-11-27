@@ -18,17 +18,39 @@ info  - Linting and checking validity of types...
 65:19  Warning: Image elements must have an alt prop, either with meaningful text, or an empty string for decorative images.  jsx-a11y/alt-text
 
 info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules
-Failed to compile.
+info  - Creating an optimized production build...
+info  - Compiled successfully
+info  - Collecting page data...
+info  - Generating static pages (0/10)
+info  - Generating static pages (2/10)
+info  - Generating static pages (4/10)
+info  - Generating static pages (7/10)
+info  - Generating static pages (10/10)
+info  - Finalizing page optimization...
 
-./src/api/services/services-service.ts:104:8
-Type error: Expected 1-2 arguments, but got 0.
+Route (pages)                              Size     First Load JS
+┌ λ /                                      257 B           188 kB
+├   /_app                                  0 B             188 kB
+├ λ /404                                   334 B           189 kB
+├ ○ /admin-account-manager                 1.85 kB         190 kB
+├ λ /api/status                            0 B             188 kB
+├ λ /api/trpc/[trpc]                       0 B             188 kB
+├ ○ /dashboard                             1.81 kB         190 kB
+├ ○ /kyc-manager/[task]                    1.88 kB         190 kB
+├ ○ /provider-manager                      1.84 kB         190 kB
+├ ○ /report-manager                        1.83 kB         190 kB
+├ ○ /services-manager                      1.84 kB         190 kB
+├ ○ /signin                                1.81 kB         190 kB
+├ ○ /transaction-manager/[task]            1.88 kB         190 kB
+├ ○ /user-manager                          1.84 kB         190 kB
+└ ○ /voucher-manager/[task]                1.9 kB          190 kB
++ First Load JS shared by all              194 kB
+  ├ chunks/framework-22108eb722d84e59.js   45.4 kB
+  ├ chunks/main-1549b305685c3af3.js        26.7 kB
+  ├ chunks/pages/_app-ada03eae0ef95072.js  114 kB
+  ├ chunks/webpack-c2f2fc99b539be19.js     2.22 kB
+  └ css/5395697fdc21b562.css               5.98 kB
 
-[0m [90m 102 | [39m      isJsonMime[33m:[39m () [33m=>[39m [36mtrue[39m[33m,[39m[0m
-[0m [90m 103 | [39m      accessToken[33m:[39m cookies[[32m'accessToken'[39m][33m,[39m[0m
-[0m[31m[1m>[22m[39m[90m 104 | [39m    })[33m.[39madminGetMostProviderServicesStatistics()[0m
-[0m [90m     | [39m       [31m[1m^[22m[39m[0m
-[0m [90m 105 | [39m[0m
-[0m [90m 106 | [39m    [36mreturn[39m {[0m
-[0m [90m 107 | [39m      data[33m:[39m response[33m.[39mdata[33m,[39m[0m
-error Command failed with exit code 1.
-info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+λ  (Server)  server-side renders at runtime (uses getInitialProps or getServerSideProps)
+○  (Static)  automatically rendered as static HTML (uses no initial props)
+
