@@ -1,23 +1,25 @@
 import { getEnv } from '~/env'
 
-import { AudioApi, FileApi, ImageApi } from 'ume-service-openapi'
+import { AudioApi, FileApi, ImageApi } from 'ume-upload-service-openapi'
 
-export const uploadImageBooking = async (formData) => {
+export const uploadImage = async (formData) => {
   try {
     const response = await new ImageApi({
-      basePath: getEnv().baseUmeServiceURL,
+      basePath: getEnv().baseUploadServiceURL,
       isJsonMime: () => true,
-    }).uploadImage(undefined, formData)
+    }).uploadImage(formData)
     return {
       data: response,
     }
-  } catch (error) {}
+  } catch (error) {
+    console.log('error at catch', error)
+  }
 }
 
-export const uploadAudioBooking = async (formData) => {
+export const uploadAudio = async (formData) => {
   try {
     const response = await new AudioApi({
-      basePath: getEnv().baseUmeServiceURL,
+      basePath: getEnv().baseUploadServiceURL,
       isJsonMime: () => true,
     }).uploadAudio(undefined, formData)
     return {
@@ -28,12 +30,12 @@ export const uploadAudioBooking = async (formData) => {
   }
 }
 
-export const uploadFileBooking = async (formData) => {
+export const uploadFile = async (formData) => {
   try {
     const response = await new FileApi({
-      basePath: getEnv().baseUmeServiceURL,
+      basePath: getEnv().baseUploadServiceURL,
       isJsonMime: () => true,
-    }).uploadFile(formData)
+    }).uploadFile(undefined, formData)
     return {
       data: response,
     }

@@ -17,7 +17,6 @@ const GeneralPost = () => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [idPostArray, setIdPostArray] = useState<string[]>([])
   const {
-    data: suggestPost,
     isLoading: loadingSuggestPost,
     isFetching: fetchingSuggestPost,
     refetch: refetchSuggestPost,
@@ -28,7 +27,7 @@ const GeneralPost = () => {
         cacheTime: 0,
         refetchOnMount: true,
         onSuccess(data) {
-          setSuggestPostData((prevData) => [...(prevData || []), ...(data?.data?.row || [])])
+          setSuggestPostData((prevData) => [...(prevData ?? []), ...(data?.data?.row ?? [])])
         },
       })
     : trpc.useQuery(['community.getSuggestPostWithoutCookies'], {
@@ -37,7 +36,7 @@ const GeneralPost = () => {
         cacheTime: 0,
         refetchOnMount: true,
         onSuccess(data) {
-          setSuggestPostData((prevData) => [...(prevData || []), ...(data?.data?.row || [])])
+          setSuggestPostData((prevData) => [...(prevData ?? []), ...(data?.data?.row ?? [])])
         },
       })
   const watchedPost = trpc.useMutation(['community.watchedPost'])
@@ -85,7 +84,7 @@ const GeneralPost = () => {
           ))}
         </div>
       )}
-      {(loadingSuggestPost || fetchingSuggestPost) && <PostSkeletonLoader />}
+      {(loadingSuggestPost ?? fetchingSuggestPost) && <PostSkeletonLoader />}
     </>
   )
 }

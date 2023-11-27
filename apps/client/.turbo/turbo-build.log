@@ -19,23 +19,23 @@ info  - Finalizing page optimization...
 Route (pages)                                     Size     First Load JS
 ┌ λ /                                             257 B           100 kB
 ├   /_app                                         0 B             100 kB
-├ ○ /404 (719 ms)                                 6.28 kB         106 kB
-├ ○ /account-setting (716 ms)                     1.85 kB         102 kB
+├ ○ /404 (369 ms)                                 6.28 kB         106 kB
+├ ○ /account-setting (336 ms)                     1.85 kB         102 kB
 ├ λ /api/status                                   0 B             100 kB
 ├ λ /api/trpc/[trpc]                              0 B             100 kB
-├ ○ /community (718 ms)                           1.83 kB         102 kB
-├ ○ /filter-service/[filterServiceName] (709 ms)  1.89 kB         102 kB
-├ ○ /home (719 ms)                                1.83 kB         102 kB
-├ ○ /live (716 ms)                                1.83 kB         102 kB
-├ λ /logout                                       375 B           100 kB
-├ ○ /profile/[profileId] (707 ms)                 1.85 kB         102 kB
-└ ○ /register-provider (717 ms)                   1.83 kB         102 kB
-+ First Load JS shared by all                     108 kB
+├ ○ /community (336 ms)                           1.84 kB         102 kB
+├ ○ /filter-service/[filterServiceName] (327 ms)  1.89 kB         102 kB
+├ ○ /home (334 ms)                                1.84 kB         102 kB
+├ ○ /live (328 ms)                                1.83 kB         102 kB
+├ λ /logout                                       288 B           100 kB
+├ ○ /profile/[profileId] (326 ms)                 1.85 kB         102 kB
+└ ○ /register-provider (329 ms)                   1.83 kB         102 kB
++ First Load JS shared by all                     109 kB
   ├ chunks/framework-22108eb722d84e59.js          45.4 kB
   ├ chunks/main-1549b305685c3af3.js               26.7 kB
-  ├ chunks/pages/_app-fe58ec66e612b6b4.js         25.4 kB
-  ├ chunks/webpack-ee32bdfe6dde2009.js            2.62 kB
-  └ css/299d3c8811097201.css                      8.28 kB
+  ├ chunks/pages/_app-fa5e663c716608af.js         25.4 kB
+  ├ chunks/webpack-b73618df079c67dd.js            2.65 kB
+  └ css/f28124a2b6ce517a.css                      8.32 kB
 
 λ  (Server)  server-side renders at runtime (uses getInitialProps or getServerSideProps)
 ○  (Static)  automatically rendered as static HTML (uses no initial props)

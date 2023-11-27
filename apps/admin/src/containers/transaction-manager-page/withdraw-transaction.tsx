@@ -3,7 +3,7 @@ import { Button, Modal } from '@ume/ui'
 
 import React, { useState } from 'react'
 
-import { notification } from 'antd'
+import { Tooltip, notification } from 'antd'
 import { ColumnsType } from 'antd/es/table'
 import { PrismaWhereConditionType, prismaWhereConditionToJsonString } from 'query-string-prisma-ume'
 import { WithdrawalRequestPagingResponse, WithdrawalRequestResponse } from 'ume-service-openapi'
@@ -32,6 +32,17 @@ const ConfirmForm = ({ visible, handleClose, id, action }: ConfirmModalType) => 
     show: visible,
     form: (
       <div>
+        <div className="flex justify-center mt-2 font-medium">
+          <span className="text-white">
+            Bạn có chắc chắn muốn{' '}
+            {action === 'COMPLETED' ? (
+              <span className="font-bold text-green-400">duyệt</span>
+            ) : (
+              <span className="font-bold text-red-400">từ chối</span>
+            )}{' '}
+            giao dịch này?
+          </span>
+        </div>
         <div className="flex flex-row justify-center gap-4 p-5">
           <Button
             customCSS="px-3 w-24 py-2 hover:bg-green-400 hover:text-black"
@@ -92,7 +103,7 @@ const ConfirmForm = ({ visible, handleClose, id, action }: ConfirmModalType) => 
   return <>{confirmModal}</>
 }
 
-const WithdrawTransactionContainer = () => {
+const WithdrawTransactionPage = () => {
   const ORDER = [{ createdAt: 'asc' }]
   const SELECT = ['$all', { requester: ['$all'] }]
   const [transactions, setTransactions] = useState<Array<any>>([])
@@ -180,24 +191,28 @@ const WithdrawTransactionContainer = () => {
           <div>
             <Button isActive={false} customCSS="flex justify-center items-center">
               {record.status === 'PENDING' && (
-                <CheckOne
-                  onClick={() => handleOpenConfirmModal(record.id, 'COMPLETED')}
-                  className="p-2 mr-2 rounded-full hover:bg-gray-500"
-                  theme="two-tone"
-                  size="30"
-                  fill={['#48e05f', '#292734']}
-                />
+                <Tooltip placement="top" title={'Chấp thuận'}>
+                  <CheckOne
+                    onClick={() => handleOpenConfirmModal(record.id, 'COMPLETED')}
+                    className="p-2 mr-2 rounded-full hover:bg-gray-500"
+                    theme="two-tone"
+                    size="30"
+                    fill={['#48e05f', '#292734']}
+                  />
+                </Tooltip>
               )}
             </Button>
             <Button isActive={false} customCSS="flex justify-center items-center">
               {record.status === 'PENDING' && (
-                <HandleX
-                  onClick={() => handleOpenConfirmModal(record.id, 'REJECTED')}
-                  className="p-2 mr-2 rounded-full hover:bg-gray-500"
-                  theme="two-tone"
-                  size="30"
-                  fill={['#e04848', '#292734']}
-                />
+                <Tooltip placement="top" title={'Từ chối'}>
+                  <HandleX
+                    onClick={() => handleOpenConfirmModal(record.id, 'REJECTED')}
+                    className="p-2 mr-2 rounded-full hover:bg-gray-500"
+                    theme="two-tone"
+                    size="30"
+                    fill={['#e04848', '#292734']}
+                  />
+                </Tooltip>
               )}
             </Button>
           </div>
@@ -226,4 +241,4 @@ const WithdrawTransactionContainer = () => {
   )
 }
 
-export default WithdrawTransactionContainer
+export default WithdrawTransactionPage

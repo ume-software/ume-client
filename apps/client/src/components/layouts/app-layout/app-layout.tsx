@@ -1,5 +1,4 @@
 import { socket } from '~/apis/socket/socket-connect'
-import { useAuth } from '~/contexts/auth'
 
 import {
   Dispatch,
@@ -58,7 +57,7 @@ export const DrawerContext = createContext<DrawerProps>({
 })
 
 export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
-  const { isAuthenticated } = useAuth()
+  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
   const accessToken = parse(document.cookie).accessToken
 
   const [childrenDrawer, setChildrenDrawer] = useState<ReactNode>()
@@ -72,8 +71,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   })
 
   useEffect(() => {
-    if (isAuthenticated) {
-      const socketInstance = isAuthenticated ? socket(accessToken) : null
+    if (Boolean(userInfo.id)) {
+      const socketInstance = Boolean(userInfo.id) ? socket(accessToken) : null
 
       setSocketClientEmit({ socketInstanceChatting: socketInstance?.socketInstanceChatting })
 
@@ -100,7 +99,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         }
       }
     }
-  }, [accessToken, isAuthenticated])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accessToken, Boolean(userInfo.id)])
+
   const socketClientEmitValue = useMemo(
     () => ({ socketClientEmit, socketContext, setSocketContext, childrenDrawer, setChildrenDrawer }),
     [socketClientEmit, socketContext, setSocketContext, childrenDrawer, setChildrenDrawer],

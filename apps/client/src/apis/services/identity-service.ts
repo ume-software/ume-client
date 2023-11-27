@@ -11,6 +11,7 @@ import {
   ProviderServiceApi,
   ServiceApi,
   ServiceAttributeApi,
+  UpdateProviderProfileRequestStatusEnum,
   UpdateUserProfileRequestGenderEnum,
   UpdateVoucherRequest,
   UserApi,
@@ -606,6 +607,30 @@ export const cancelWithdrawRequests = async (withdrawalRequestId: string, ctx) =
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
       message: error.message || 'Fail to cancel withdraw request',
+    })
+  }
+}
+
+export const userUpdateProviderProfile = async (
+  query: { voiceUrl?: string; status?: UpdateProviderProfileRequestStatusEnum; description?: string },
+  ctx,
+) => {
+  const cookies = parse(ctx.req.headers.cookie ?? '')
+  try {
+    const reponse = await new UserApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).userUpdateProviderProfile(query)
+    return {
+      data: reponse.data,
+      success: true,
+      message: '',
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to update provider profile',
     })
   }
 }

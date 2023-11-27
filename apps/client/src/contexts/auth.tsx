@@ -26,8 +26,10 @@ export const AuthProvider = ({ children }: AuthProviderType) => {
 
     const logout = async (): Promise<void> => {
       sessionStorage.removeItem('user')
-      router.push('/logout')
+      document.cookie = 'accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
+      document.cookie = 'refeshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
       setUser(null)
+      await router.push('/logout')
     }
 
     return { isAuthenticated: Boolean(user), user, login, logout }

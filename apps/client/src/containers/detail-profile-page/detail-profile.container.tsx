@@ -21,7 +21,7 @@ import {
 import * as Yup from 'yup'
 
 import AlbumTab from './album-tab/album-tab'
-import { ReportModal } from './component/report-modal'
+import { ReportModal } from './components/report-modal'
 import InformationTab from './information-tab/information-tab'
 import PostTab from './post-tab'
 

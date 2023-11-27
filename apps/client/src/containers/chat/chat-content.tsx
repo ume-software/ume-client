@@ -39,7 +39,7 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
   const { socketClientEmit } = useContext(SocketClientEmit)
   const { socketContext } = useContext(SocketContext)
   const { isAuthenticated } = useAuth()
-  const { user } = useAuth()
+  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
   const utils = trpc.useContext()
   const { data: chattingMessageChannel, isLoading: loadingChattingMessageChannel } = trpc.useQuery([
     'chatting.getMessagesByChannelId',
@@ -61,11 +61,11 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
   )
 
   const images = chattingMessageChannel?.data.members.filter((member) => {
-    return member.userId.toString() != user?.id.toString()
+    return member.userId.toString() != userInfo?.id.toString()
   })!
 
   const handleSentMessage = () => {
-    if (isAuthenticated && messageInput != '') {
+    if (!!userInfo.id && messageInput != '') {
       socketClientEmit?.socketInstanceChatting?.emit(getSocket().SOCKER_CHATTING_SERVER_ON.SENT_MESSAGE_TO_CHANNEL, {
         channelId: props.channel._id,
         content: messageInput,
@@ -129,7 +129,7 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
                 <div className="flex flex-col mt-5 ">
                   {chattingMessageChannel?.data.messages.map((item, index) => {
                     const sender = mappingMember[item.senderId]
-                    const isSeftMessage = sender.userId.toString() == user?.id.toString()
+                    const isSeftMessage = sender.userId.toString() == userInfo?.id.toString()
                     return (
                       <div
                         key={index}

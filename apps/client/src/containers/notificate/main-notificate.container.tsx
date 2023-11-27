@@ -9,7 +9,7 @@ import { NotificateSkeletonLoader } from '~/components/skeleton-load'
 import { trpc } from '~/utils/trpc'
 
 const MainNotificate = () => {
-  const { isAuthenticated } = useAuth()
+  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
   const [page, setPage] = useState<number>(1)
   const limit = '10'
   const [listNotificated, setListNotificated] = useState<any>([])
@@ -45,7 +45,7 @@ const MainNotificate = () => {
   }, [])
 
   useEffect(() => {
-    if (containerRef?.current && isAuthenticated) {
+    if (containerRef?.current && Boolean(userInfo.id)) {
       const { scrollTop, scrollHeight, clientHeight } = containerRef.current
       const isAtEnd = scrollTop + clientHeight >= scrollHeight
 
@@ -61,7 +61,7 @@ const MainNotificate = () => {
 
   return (
     <>
-      {isAuthenticated ? (
+      {Boolean(userInfo.id) ? (
         <>
           {loadingNotificated ? (
             <NotificateSkeletonLoader />
@@ -71,7 +71,7 @@ const MainNotificate = () => {
                 listNotificated.map((item) => (
                   <div
                     key={item.id}
-                    className="p-2 border-b-2 border-gray-200 rounded-lg hover:bg-violet-100 custom-scrollbar"
+                    className="px-2 py-3 border-b-2 border-gray-200 border-opacity-30 rounded-t-lg hover:bg-gray-700 cursor-pointer"
                   >
                     <div className="grid grid-cols-10">
                       <div className="col-span-3">

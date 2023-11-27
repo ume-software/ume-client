@@ -15,7 +15,6 @@ import { UserKYCRequestResponse } from 'ume-service-openapi'
 
 import EmptyErrorPic from '../../../../public/empty_error.png'
 import { KYCModal } from './kyc-modal'
-import StatusBlock from './kyc-status'
 
 import CommonTable from '~/components/common-table/Table'
 
@@ -112,16 +111,7 @@ export const PendingKYCTable = () => {
     {
       title: 'Số điện thoại',
       dataIndex: 'phone',
-      width: '15%',
       align: 'center',
-    },
-    {
-      title: <div className="ml-5">Trạng thái</div>,
-      width: '10%',
-      dataIndex: 'status',
-      render(value) {
-        return <StatusBlock status={value} />
-      },
     },
     {
       title: <div className="flex">Ngày tạo đơn</div>,

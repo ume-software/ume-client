@@ -6,7 +6,13 @@ import {
 import { z } from 'zod'
 
 import { createRouter } from './configurations'
-import { createService, getServiceDetails, getServiceList, updateService } from './services/services-service'
+import {
+  createService,
+  getServiceDetails,
+  getServiceList,
+  statisticProviderService,
+  updateService,
+} from './services/services-service'
 
 export const servicesRouter = createRouter()
   .query('getServiceList', {
@@ -89,5 +95,10 @@ export const servicesRouter = createRouter()
     }),
     resolve: async ({ input, ctx }) => {
       return await updateService(input, ctx)
+    },
+  })
+  .query('getStatisticProviderService', {
+    resolve: async ({ ctx }) => {
+      return await statisticProviderService(ctx)
     },
   })

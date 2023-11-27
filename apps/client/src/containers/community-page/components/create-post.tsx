@@ -1,6 +1,6 @@
 import { AddPicture, DeleteFive } from '@icon-park/react'
 import { Button, TextArea } from '@ume/ui'
-import { uploadAudioBooking, uploadImageBooking } from '~/apis/upload-media'
+import { uploadAudio, uploadImage } from '~/apis/upload-media'
 
 import { ChangeEvent, FormEvent, useEffect, useId, useState } from 'react'
 
@@ -54,7 +54,7 @@ const CreatePost = (props: any) => {
 
       try {
         if (images.getAll('file').length > 0) {
-          const responseData = await uploadImageBooking(images)
+          const responseData = await uploadImage(images)
           if (responseData?.data?.data?.results) {
             responseData?.data?.data?.results.map((image) => {
               thumbnails.push({ url: image, type: ThumbnailResponseTypeEnum.Image })
@@ -62,7 +62,7 @@ const CreatePost = (props: any) => {
           }
         }
         if (videos.getAll('file').length > 0) {
-          const responseData = await uploadAudioBooking(videos)
+          const responseData = await uploadAudio(videos)
           if (responseData?.data?.data?.results) {
             responseData?.data?.data?.results.map((video) => {
               thumbnails.push({ url: video, type: ThumbnailResponseTypeEnum.Video })
