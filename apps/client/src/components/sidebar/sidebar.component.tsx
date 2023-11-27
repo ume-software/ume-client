@@ -4,6 +4,7 @@ import Chat from '~/containers/chat/chat.container'
 
 import { useContext, useEffect, useState } from 'react'
 
+import { parse } from 'cookie'
 import Image from 'next/legacy/image'
 
 import { LoginModal } from '../header/login-modal.component'
@@ -15,6 +16,8 @@ export const Sidebar = () => {
   const { childrenDrawer, setChildrenDrawer } = useContext(DrawerContext)
 
   const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
+  const accessToken = parse(document.cookie).accessToken
+
   const { socketContext, setSocketContext } = useContext(SocketContext)
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
   const [showMessage, setShowMessage] = useState(false)
@@ -56,7 +59,7 @@ export const Sidebar = () => {
       return () => clearTimeout(timeout)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socketContext?.socketChattingContext, socketContext?.socketChattingContext[0]?.channelId])
+  }, [socketContext?.socketChattingContext, socketContext?.socketChattingContext[0]?.channelId, !!accessToken])
 
   return (
     <>
@@ -78,7 +81,7 @@ export const Sidebar = () => {
               <ArrowLeft theme="outline" size="30" fill="#fff" />
             </div>
           }
-          token={userInfo}
+          token={!!accessToken}
         >
           {childrenDrawer}
         </CustomDrawer>

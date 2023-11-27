@@ -8,7 +8,7 @@ import OrderNotificationForProvider from '~/containers/notificate/provider-order
 import OrderNotificationForUser from '~/containers/notificate/user-order-notificate.container'
 import { useAuth } from '~/contexts/auth'
 
-import React, { Fragment, ReactElement, useContext, useEffect, useId, useState } from 'react'
+import React, { Fragment, ReactElement, useContext, useEffect, useState } from 'react'
 
 import { isNil } from 'lodash'
 import Image from 'next/legacy/image'
@@ -28,7 +28,6 @@ interface TabProps {
 }
 
 export const Header: React.FC = () => {
-  const index = useId()
   const [showRechargeModal, setShowRechargeModal] = useState(false)
   const [balance, setBalance] = useState<any>()
   const [notificatedAmount, setNotificatedAmount] = useState<number>(0)
@@ -178,7 +177,7 @@ export const Header: React.FC = () => {
                                     className={`xl:text-lg text-md font-medium p-2 ${
                                       item.label == selectedTab ? 'border-b-4 border-purple-700' : ''
                                     }`}
-                                    key={index}
+                                    key={item.key}
                                     onClick={handleChangeTab}
                                     data-tab={item.label}
                                   >
@@ -192,7 +191,7 @@ export const Header: React.FC = () => {
                                 className={`xl:text-lg text-md font-medium p-2 ${
                                   item.label == selectedTab ? 'border-b-4 border-purple-700' : ''
                                 }`}
-                                key={index}
+                                key={item.key}
                                 onClick={handleChangeTab}
                                 data-tab={item.label}
                               >
@@ -205,7 +204,7 @@ export const Header: React.FC = () => {
                       <div className="p-3 overflow-auto h-96 custom-scrollbar">
                         {tabDatas.map((item) => {
                           return (
-                            <div key={index} hidden={selectedTab !== item.label}>
+                            <div key={item.key + 'child'} hidden={selectedTab !== item.label}>
                               {item.children}
                             </div>
                           )
