@@ -135,7 +135,7 @@ const DetailProfileContainer = () => {
     refetchOnMount: true,
     enabled: !!accessToken,
   })
-  const { data: getCurrentBookingForProviderData } = trpc.useQuery(['booking.getCurrentBookingForUser'], {
+  const { data: getCurrentBookingForProviderData } = trpc.useQuery(['booking.getCurrentBookingForProvider'], {
     refetchOnWindowFocus: false,
     refetchOnReconnect: 'always',
     cacheTime: 0,
@@ -203,10 +203,20 @@ const DetailProfileContainer = () => {
     return time < 10 ? `0${time}` : `${time}`
   }
 
-  const bookingPeriodCount = (bookingAcceptAt: string, bookingPeriod: number) => {
-    const timeStamp = new Date(bookingAcceptAt)
+  const bookingPeriodCount = () => {
+    const timeStamp = new Date(
+      getCurrentBookingForProviderData?.data?.row?.[0]?.updatedAt ??
+        getCurrentBookingForUserData?.data?.row?.[0]?.updatedAt ??
+        '',
+    )
     const endHours =
-      (timeStamp.getHours() + bookingPeriod) * 3600 + timeStamp.getMinutes() * 60 + timeStamp.getSeconds()
+      (timeStamp.getHours() +
+        (getCurrentBookingForProviderData?.data?.row?.[0]?.bookingPeriod ??
+          getCurrentBookingForUserData?.data?.row?.[0]?.bookingPeriod ??
+          0)) *
+        3600 +
+      timeStamp.getMinutes() * 60 +
+      timeStamp.getSeconds()
     const currentHours = new Date().getHours() * 3600 + new Date().getMinutes() * 60 + new Date().getSeconds()
 
     const remainingTimeInSeconds = endHours - currentHours
@@ -215,7 +225,24 @@ const DetailProfileContainer = () => {
     const minutes = Math.floor((remainingTimeInSeconds % 3600) / 60)
     const seconds = remainingTimeInSeconds % 60
 
-    return `${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}`
+    return `${formatTime(hours)}h: ${formatTime(minutes)}m: ${formatTime(seconds)}s`
+  }
+
+  const BookingCountdown = () => {
+    const bookingData = getCurrentBookingForProviderData?.data?.row?.[0]
+
+    const [remainingTime, setRemainingTime] = useState(() => bookingPeriodCount())
+
+    useEffect(() => {
+      const intervalId = setInterval(() => {
+        const newRemainingTime = bookingPeriodCount()
+        setRemainingTime(newRemainingTime)
+      }, 1000)
+
+      return () => clearInterval(intervalId)
+    }, [bookingData])
+
+    return <div className="text-center p-2 bg-gray-700 rounded-full">Thời gian còn lại: {remainingTime}</div>
   }
 
   const caculateAge = (dateOfBirth: string | undefined) => {
@@ -512,16 +539,31 @@ const DetailProfileContainer = () => {
                         </div>
                       </Tooltip>
                     </div>
-                    {getCurrentBookingForProviderData?.data?.row &&
-                      (getCurrentBookingForProviderData?.data?.row?.length ?? 0) > 0 && (
-                        <div className="text-center p-2 bg-gray-700 rounded-full">
-                          Thời gian còn lại:{' '}
-                          {bookingPeriodCount(
-                            getCurrentBookingForProviderData?.data?.row[0]?.updatedAt ?? '',
-                            getCurrentBookingForProviderData?.data?.row[0]?.bookingPeriod ?? 0,
+                    <div className="mt-2">
+                      <>
+                        {getCurrentBookingForProviderData?.data?.row &&
+                          ((getCurrentBookingForProviderData?.data?.row[0]?.providerService?.provider as any)?.slug ==
+                            slug.profileId ||
+                            getCurrentBookingForProviderData?.data?.row[0]?.booker?.slug == slug.profileId) &&
+                          (getCurrentBookingForProviderData?.data?.row?.length ?? 0) > 0 && (
+                            <div className="text-center bg-gray-700 rounded-full">
+                              <BookingCountdown />
+                            </div>
                           )}
-                        </div>
-                      )}
+                      </>
+                      <>
+                        {getCurrentBookingForUserData?.data?.row &&
+                          ((getCurrentBookingForUserData?.data?.row[0]?.providerService?.provider as any)?.slug ==
+                            slug.profileId ||
+                            getCurrentBookingForUserData?.data?.row[0]?.booker?.slug == slug.profileId) &&
+                          (getCurrentBookingForUserData?.data?.row?.length ?? 0) > 0 && (
+                            <div className="text-center bg-gray-700 rounded-full">
+                              <BookingCountdown />
+                            </div>
+                          )}
+                      </>
+                      <div>End Soon</div>
+                    </div>
                   </div>
                 </div>
 

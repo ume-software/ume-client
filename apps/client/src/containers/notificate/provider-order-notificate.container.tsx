@@ -52,6 +52,7 @@ const OrderNotificationForProvider = () => {
                 placement: 'bottomLeft',
               })
               utils.invalidateQueries('booking.getPendingBookingForProvider')
+              utils.invalidateQueries('booking.getCurrentBookingForProvider')
             }
           },
           onError: (error, data) => {

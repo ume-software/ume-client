@@ -105,13 +105,13 @@ const NotificateSkeletonLoader = () => (
       {[...Array(2)].map((_, index) => (
         <div
           tabIndex={index}
-          className="w-full h-[150px] mt-3 p-3 duration-500 ease-in-out cursor-pointer bg-gray-100 hover:scale-105"
+          className="w-full h-[150px] mt-3 p-3 duration-500 ease-in-out cursor-pointer bg-gray-700 rounded-lg hover:scale-105"
           key={index}
         >
-          <div className="relative w-full bg-gray-300 h-2/3 animate-pulse"></div>
+          <div className="relative w-full bg-gray-500 h-2/3 animate-pulse"></div>
           <div className="flex justify-around w-full mt-2 h-1/3">
-            <div className="relative w-1/3 bg-gray-300 h-2/3 animate-pulse"></div>
-            <div className="relative w-1/3 bg-gray-300 h-2/3 animate-pulse"></div>
+            <div className="relative w-1/3 bg-gray-500 h-2/3 animate-pulse"></div>
+            <div className="relative w-1/3 bg-gray-500 h-2/3 animate-pulse"></div>
           </div>
         </div>
       ))}
