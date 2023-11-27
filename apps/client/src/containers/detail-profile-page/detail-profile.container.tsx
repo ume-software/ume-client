@@ -114,6 +114,7 @@ const DetailProfileContainer = () => {
   const basePath = router.asPath.split('?')[0]
   const slug = router.query
 
+  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
   const accessToken = parse(document.cookie).accessToken
 
   const { isAuthenticated, user } = useAuth()
@@ -126,6 +127,21 @@ const DetailProfileContainer = () => {
 
   const [isModalDonationVisible, setIsModalDonationVisible] = useState<boolean>(false)
   const [isModalConfirmationVisible, setIsModalConfirmationVisible] = useState<boolean>(false)
+
+  const { data: getCurrentBookingForUserData } = trpc.useQuery(['booking.getCurrentBookingForUser'], {
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: 'always',
+    cacheTime: 0,
+    refetchOnMount: true,
+    enabled: !!accessToken,
+  })
+  const { data: getCurrentBookingForProviderData } = trpc.useQuery(['booking.getCurrentBookingForUser'], {
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: 'always',
+    cacheTime: 0,
+    refetchOnMount: true,
+    enabled: !!accessToken && userInfo.isProvider,
+  })
 
   const { isLoading: isProviderDetailLoading } = trpc.useQuery(['booking.getUserBySlug', slug.profileId!.toString()], {
     refetchOnWindowFocus: false,
@@ -181,6 +197,25 @@ const DetailProfileContainer = () => {
       { shallow: true },
     )
     setSelectedTab(item)
+  }
+
+  const formatTime = (time: number): string => {
+    return time < 10 ? `0${time}` : `${time}`
+  }
+
+  const bookingPeriodCount = (bookingAcceptAt: string, bookingPeriod: number) => {
+    const timeStamp = new Date(bookingAcceptAt)
+    const endHours =
+      (timeStamp.getHours() + bookingPeriod) * 3600 + timeStamp.getMinutes() * 60 + timeStamp.getSeconds()
+    const currentHours = new Date().getHours() * 3600 + new Date().getMinutes() * 60 + new Date().getSeconds()
+
+    const remainingTimeInSeconds = endHours - currentHours
+
+    const hours = Math.floor(remainingTimeInSeconds / 3600)
+    const minutes = Math.floor((remainingTimeInSeconds % 3600) / 60)
+    const seconds = remainingTimeInSeconds % 60
+
+    return `${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}`
   }
 
   const caculateAge = (dateOfBirth: string | undefined) => {
@@ -457,27 +492,36 @@ const DetailProfileContainer = () => {
                       <Tooltip placement="bottomLeft" title={`${providerDetail?.isOnline ? 'Online' : 'Offline'}`}>
                         <div className="flex items-center gap-1 p-2 bg-gray-700 rounded-full">
                           <Dot theme="multi-color" size="24" fill={providerDetail?.isOnline ? '#008000' : '#FF0000'} />
-                          {providerDetail?.isOnline ? (
-                            <>
-                              <p>
-                                {providerDetail?.providerConfig?.status == ProviderConfigResponseStatusEnum.Activated &&
-                                  'Sẵn sàng'}
-                              </p>
-                              <p>
-                                {providerDetail?.providerConfig?.status == ProviderConfigResponseStatusEnum.Busy &&
-                                  'Bận'}
-                              </p>
-                              <p>
-                                {providerDetail?.providerConfig?.status ==
-                                  ProviderConfigResponseStatusEnum.StoppedAcceptingBooking && 'Ngừng nhận đơn'}
-                              </p>
-                            </>
-                          ) : (
+                          {/* {providerDetail?.isOnline ? ( */}
+                          <>
+                            <p>
+                              {providerDetail?.providerConfig?.status == ProviderConfigResponseStatusEnum.Activated &&
+                                'Sẵn sàng'}
+                            </p>
+                            <p>
+                              {providerDetail?.providerConfig?.status == ProviderConfigResponseStatusEnum.Busy && 'Bận'}
+                            </p>
+                            <p>
+                              {providerDetail?.providerConfig?.status ==
+                                ProviderConfigResponseStatusEnum.StoppedAcceptingBooking && 'Ngừng nhận đơn'}
+                            </p>
+                          </>
+                          {/* ) : (
                             'Offline'
-                          )}
+                          )} */}
                         </div>
                       </Tooltip>
                     </div>
+                    {getCurrentBookingForProviderData?.data?.row &&
+                      (getCurrentBookingForProviderData?.data?.row?.length ?? 0) > 0 && (
+                        <div className="text-center p-2 bg-gray-700 rounded-full">
+                          Thời gian còn lại:{' '}
+                          {bookingPeriodCount(
+                            getCurrentBookingForProviderData?.data?.row[0]?.updatedAt ?? '',
+                            getCurrentBookingForProviderData?.data?.row[0]?.bookingPeriod ?? 0,
+                          )}
+                        </div>
+                      )}
                   </div>
                 </div>
 
