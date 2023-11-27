@@ -1,10 +1,13 @@
 import {
   Abnormal,
+  Bank,
   ChartHistogramTwo,
   DataFile,
   EveryUser,
+  Exchange,
   Expenses,
   GameEmoji,
+  Gift,
   Income,
   RightUser,
   Setting,
@@ -122,15 +125,32 @@ export const SidebarNavigation: SidebarNavigationItem[] = [
     children: [
       {
         label: 'Giao dịch nạp tiền',
-        key: 'deposit',
+        key: '/transaction-manager/deposit',
         path: '/transaction-manager/deposit',
         icon: <Income theme="outline" size="22" fill="#fff" />,
       },
       {
         label: 'Giao dịch rút tiền',
-        key: 'withdraw',
+        key: '/transaction-manager/withdraw',
         path: '/transaction-manager/withdraw',
         icon: <Expenses theme="outline" size="22" fill="#fff" />,
+      },
+      {
+        label: 'Giao dịch trong hệ thống',
+        key: '/transaction-manager',
+        icon: <Bank theme="outline" size="22" fill="#fff" />,
+        children: [
+          {
+            label: 'Lịch sử thuê',
+            key: '/transaction-manager/booking',
+            path: '/transaction-manager/booking',
+          },
+          {
+            label: 'Lịch sử ủng hộ',
+            key: '/transaction-manager/donation',
+            path: '/transaction-manager/donation',
+          },
+        ],
       },
     ],
   },

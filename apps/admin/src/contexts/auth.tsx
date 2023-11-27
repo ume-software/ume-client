@@ -27,7 +27,6 @@ export const AuthProvider = ({ children }: AuthProviderType) => {
           setRole((prev) => [...prev, role.roleType])
         }
       }
-      console.log(role)
     }
 
     const logout = async (): Promise<void> => {

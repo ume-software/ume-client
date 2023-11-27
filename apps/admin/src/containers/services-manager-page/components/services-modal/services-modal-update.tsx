@@ -321,8 +321,6 @@ export const ServicesModalUpdate = ({ idService, closeFunction, openValue }: ISe
     }
   }
   function isDisableButton() {
-    console.log('form.isValid: ', form.isValid, '\nform.dirty: ', form.dirty)
-
     return !form.isValid || !form.dirty
   }
   return (
