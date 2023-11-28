@@ -24,6 +24,9 @@ COPY . .
 RUN yarn install
 RUN yarn build:client
 
+# Add a volume to store logs
+VOLUME /app/logs
+
 WORKDIR /app/apps/client
 
 EXPOSE 3000
