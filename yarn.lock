@@ -6988,9 +6988,9 @@ typescript@^4.8.4:
   integrity sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==
 
 ume-chatting-service-openapi@latest:
-  version "1.0.15"
-  resolved "https://registry.yarnpkg.com/ume-chatting-service-openapi/-/ume-chatting-service-openapi-1.0.15.tgz#3cf3fa7a7cc2b9541ccc00d0e1588ea07dca7971"
-  integrity sha512-NMddJOr4bmoWJjReHnYSMdB0yTidw8pOQiEMxk+jVDrWms/dtOOthpKp1Nuo8z8C5bDl43TD17UNCtynEiwHaA==
+  version "1.0.16"
+  resolved "https://registry.yarnpkg.com/ume-chatting-service-openapi/-/ume-chatting-service-openapi-1.0.16.tgz#ad4d1bf70c64cc103de923f1860340d0bc7fd848"
+  integrity sha512-dt1lQzKHcY+svd4gGxxFdz8N7OHY4MpWJhKKdHvSe6p0gz63zjcFOSIqEASErXHN/RjWopbzINqrTdyHh/6Lmg==
   dependencies:
     axios "^0.27.2"
 
