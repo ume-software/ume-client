@@ -36,6 +36,7 @@ const EndSoonModal = ({ isEndSoonModalVisible, setIsEndSoonModalVisible, booking
                 {
                   onSuccess: (data) => {
                     if (data.success) {
+                      setIsEndSoonModalVisible(false)
                       notification.success({
                         message: 'Kết thúc phiên sớm',
                         description: `Kết thúc phiên thành công!`,
@@ -58,6 +59,7 @@ const EndSoonModal = ({ isEndSoonModalVisible, setIsEndSoonModalVisible, booking
               console.error('Failed to accept booking:', error)
             }
           }}
+          isLoading={responeBooking.isLoading}
         />
       </>
     ),

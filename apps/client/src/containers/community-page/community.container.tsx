@@ -66,7 +66,7 @@ const CommunityContainer = () => {
   })
 
   const handleCreatePost = () => {
-    setIsModalVisible(userInfo)
+    setIsModalVisible(!!userInfo)
     setIsModalLoginVisible(!userInfo)
   }
 

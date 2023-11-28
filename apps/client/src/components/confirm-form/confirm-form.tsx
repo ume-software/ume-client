@@ -18,7 +18,7 @@ const ConfirmForm = (props: ConfirmFormProps) => {
       <div className="pb-3 text-xl font-bold text-white border-b border-opacity-30">
         {props.title ? props.title : 'Bạn có đồng ý hay không?'}
       </div>
-      <div className="text-white text-md">{props?.description && props?.description}</div>
+      <div className="text-white text-md">{props?.description}</div>
       <div className="flex items-center justify-around">
         {props.cancelButton ? (
           props.cancelButton
@@ -27,7 +27,9 @@ const ConfirmForm = (props: ConfirmFormProps) => {
             isActive={false}
             isOutlinedButton={true}
             customCSS="w-[100px] text-xl p-2 rounded-xl hover:scale-105"
-            onClick={props.onClose}
+            onClick={() => {
+              !props.isLoading && props.onClose()
+            }}
           >
             Hủy
           </Button>
@@ -42,7 +44,9 @@ const ConfirmForm = (props: ConfirmFormProps) => {
             isActive={true}
             isOutlinedButton={true}
             isLoading={props.isLoading}
-            onClick={(e) => props.onOk(e)}
+            onClick={(e) => {
+              !props.isLoading && props.onOk(e)
+            }}
           >
             Chấp nhận
           </Button>
