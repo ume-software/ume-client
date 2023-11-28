@@ -7008,7 +7008,7 @@ ume-service-openapi@latest:
   dependencies:
     axios "^0.27.2"
 
-ume-upload-service-openapi@^1.1.0:
+ume-upload-service-openapi@latest:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/ume-upload-service-openapi/-/ume-upload-service-openapi-1.1.0.tgz#eaf8bc6f1f81e4c826799b2e47232d82260e66ea"
   integrity sha512-em61LPGM/J6btGvvtcBU4CY27piPd19lFh8b1pZ2QIUpk2JjoUKrymzILpsNuGplUTM7SGWRq0gf1aYvpgkItg==
