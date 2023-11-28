@@ -251,7 +251,10 @@ const BecomeProvider = () => {
                         <div className="relative">
                           <Menu>
                             <Menu.Button>
-                              <button className="min-w-[200px] text-xl font-semibold px-8 py-2 bg-[#292734] hover:bg-gray-700 rounded-xl">
+                              <button
+                                className="min-w-[200px] text-xl font-semibold px-8 py-2 bg-[#292734] hover:bg-gray-700 rounded-xl"
+                                type="button"
+                              >
                                 {
                                   mappingStatusOfProvider.find((itemStatus) => itemStatus.key == form.values.status)
                                     ?.label
