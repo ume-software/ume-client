@@ -211,6 +211,7 @@ export const identityRouter = createRouter()
   .mutation('updateServiceProvider', {
     input: z.object({
       serviceId: z.string(),
+      position: z.number(),
       defaultCost: z.number(),
       description: z.optional(z.string()),
       handleBookingCosts: z.optional(
@@ -232,6 +233,7 @@ export const identityRouter = createRouter()
   .mutation('createServiceProvider', {
     input: z.object({
       serviceId: z.string(),
+      position: z.number(),
       defaultCost: z.number(),
       description: z.optional(z.string()),
       createBookingCosts: z.optional(

@@ -1,15 +1,19 @@
-import { useAuth } from '~/contexts/auth'
+import ImgForEmpty from 'public/img-for-empty.png'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 
+import { parse } from 'cookie'
 import Image from 'next/image'
 
 import { NotificateSkeletonLoader } from '~/components/skeleton-load'
+import { TimeFormat } from '~/components/time-format'
 
 import { trpc } from '~/utils/trpc'
 
 const MainNotificate = () => {
+  const accessToken = parse(document.cookie).accessToken
   const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
+
   const [page, setPage] = useState<number>(1)
   const limit = '10'
   const [listNotificated, setListNotificated] = useState<any>([])
@@ -29,6 +33,7 @@ const MainNotificate = () => {
     onSuccess(data) {
       setListNotificated(data?.data?.row)
     },
+    enabled: !!accessToken,
   })
 
   useEffect(() => {
@@ -78,7 +83,7 @@ const MainNotificate = () => {
                         <div className="w-[90%] h-full relative rounded-lg">
                           <Image
                             className="rounded-lg"
-                            src={item?.booker?.avatarUrl || item?.providerService?.service?.imageUrl}
+                            src={item?.booker?.avatarUrl || item?.providerService?.service?.imageUrl || ImgForEmpty}
                             alt="Game Image"
                             layout="fill"
                             objectFit="contain"
@@ -97,6 +102,9 @@ const MainNotificate = () => {
                             <p className="inline font-bold">{item?.bookingPeriod || item?.data?.bookingPeriod}h</p>
                           </div>
                         </div>
+                        <p className="text-end text-md font-bold opacity-30 space-y-2">
+                          {TimeFormat({ date: item?.createdAt })}
+                        </p>
                       </div>
                     </div>
                   </div>

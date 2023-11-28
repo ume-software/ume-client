@@ -46,7 +46,8 @@ const mappingStatusOfProvider: IStatus[] = [
 
 const BecomeProvider = () => {
   const { user } = useAuth()
-  const [checked, setChecked] = useState<boolean>(false)
+  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
+  const [checked, setChecked] = useState<boolean>(userInfo?.isProvider)
 
   const [isModalConfirmationVisible, setIsModalConfirmationVisible] = useState(false)
   const [audioSource, setAudioSource] = useState<string | undefined>(undefined)
@@ -100,22 +101,13 @@ const BecomeProvider = () => {
     userSettingData?.data.providerConfig,
   ])
 
-  useEffect(() => {
-    if (user) setChecked(user?.isProvider)
-  }, [user])
-
   const handleBecomeProvider = () => {
-    checked
-      ? registerBecomeProvider.mutate(undefined, {
-          onSuccess() {
-            setChecked(false)
-          },
-        })
-      : registerBecomeProvider.mutate(undefined, {
-          onSuccess() {
-            setChecked(true)
-          },
-        })
+    !userInfo?.isProvider &&
+      registerBecomeProvider.mutate(undefined, {
+        onSuccess() {
+          setChecked(true)
+        },
+      })
   }
 
   const handleFileChange = (event) => {
@@ -221,133 +213,143 @@ const BecomeProvider = () => {
               onChange={handleBecomeProvider}
             />
           </div>
-          {!isLoadingUserSettingData ? (
-            <form ref={updateIntroduceForProviderFormRef} onSubmit={form.handleSubmit} className="space-y-3">
-              <p className="text-md font-semibold">Giới thiệu</p>
-              <div className="py-5 px-7 rounded-2xl space-y-3 border-2 border-white border-opacity-30">
-                <div className="flex justify-between">
-                  <div className="flex items-center gap-5">
-                    <label className="font-semibold">Giọng của bạn:</label>
-                    {audioSource && (
-                      <audio controls key={audioSource} className="h-7">
-                        <source src={audioSource} />
-                      </audio>
-                    )}
+          {checked && (
+            <>
+              {!isLoadingUserSettingData ? (
+                <form ref={updateIntroduceForProviderFormRef} onSubmit={form.handleSubmit} className="space-y-3">
+                  <p className="text-md font-semibold">Giới thiệu</p>
+                  <div className="py-5 px-7 rounded-2xl space-y-3 border-2 border-white border-opacity-30">
+                    <div className="flex justify-between">
+                      <div className="flex items-center gap-5">
+                        <label className="font-semibold">Giọng của bạn:</label>
+                        {audioSource && (
+                          <audio controls key={audioSource} className="h-7">
+                            <source src={audioSource} />
+                          </audio>
+                        )}
 
-                    <div className={`relative p-2 rounded-full bg-zinc-800 hover:bg-gray-700 cursor-pointer`}>
-                      {form.values.voice ? (
-                        <Write theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />
-                      ) : (
-                        <div className="min-w-[200px] flex items-center gap-2">
-                          Thêm giọng của bạn
-                          <Voice theme="filled" size="20" fill="#fff" strokeLinejoin="bevel" />
+                        <div className={`relative p-2 rounded-full bg-zinc-800 hover:bg-gray-700 cursor-pointer`}>
+                          {form.values.voice ? (
+                            <Write theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />
+                          ) : (
+                            <div className="min-w-[200px] flex items-center gap-2">
+                              Thêm giọng của bạn
+                              <Voice theme="filled" size="20" fill="#fff" strokeLinejoin="bevel" />
+                            </div>
+                          )}
+                          <input
+                            className="absolute top-0 left-0 z-20 w-full h-full cursor-pointer opacity-0"
+                            type="file"
+                            name="files"
+                            onChange={(e) => handleFileChange(e)}
+                            accept="audio/mp3,audio/*;capture=microphone"
+                          />
                         </div>
-                      )}
-                      <input
-                        className="absolute top-0 left-0 z-20 w-full h-full cursor-pointer opacity-0"
-                        type="file"
-                        name="files"
-                        onChange={(e) => handleFileChange(e)}
-                        accept="audio/mp3,audio/*;capture=microphone"
+                      </div>
+                      <div className="flex items-center gap-5">
+                        <label className="font-semibold">Trạng thái:</label>
+                        <div className="relative">
+                          <Menu>
+                            <Menu.Button>
+                              <button
+                                className="min-w-[200px] text-xl font-semibold px-8 py-2 bg-[#292734] hover:bg-gray-700 rounded-xl"
+                                type="button"
+                              >
+                                {
+                                  mappingStatusOfProvider.find((itemStatus) => itemStatus.key == form.values.status)
+                                    ?.label
+                                }
+                              </button>
+                            </Menu.Button>
+                            <Transition
+                              as={Fragment}
+                              enter="transition ease-out duration-400"
+                              enterFrom="transform opacity-0 scale-95"
+                              enterTo="transform opacity-100 scale-100"
+                              leave="transition ease-in duration-400"
+                              leaveFrom="transform opacity-100 scale-100"
+                              leaveTo="transform opacity-0 scale-95"
+                            >
+                              <Menu.Items className="min-w-[200px] absolute right-0 p-2 mt-1 origin-top-right bg-[#292734] divide-y divide-gray-100 rounded-xl shadow-lg w-full ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+                                {mappingStatusOfProvider.map((itemStatus) => (
+                                  <Menu.Item as={'div'} key={itemStatus.key}>
+                                    <div
+                                      className={`flex justify-between items-center px-2 rounded-lg hover:bg-gray-700 ${
+                                        itemStatus.key == form.values.status
+                                          ? 'bg-violet-500 text-white'
+                                          : 'text-gray-900'
+                                      }`}
+                                    >
+                                      <button
+                                        className={`text-white text-md font-semibold group flex w-full items-center rounded-md px-2 py-2`}
+                                        name="status"
+                                        onClick={() => form.setFieldValue('status', itemStatus.key)}
+                                      >
+                                        {itemStatus.label}
+                                      </button>
+                                      <div>
+                                        {itemStatus.key == form.values.status ? (
+                                          <Check theme="filled" size="10" fill="#FFFFFF" strokeLinejoin="bevel" />
+                                        ) : (
+                                          ''
+                                        )}
+                                      </div>
+                                    </div>
+                                  </Menu.Item>
+                                ))}
+                              </Menu.Items>
+                            </Transition>
+                          </Menu>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="font-semibold">Giới thiệu về bạn:</label>
+                      <TextArea
+                        name="description"
+                        className={`${
+                          form.values.description == (userSettingData?.data.providerConfig?.description ?? '')
+                            ? 'bg-zinc-800'
+                            : 'bg-gray-700'
+                        } w-4/5 rounded-md`}
+                        rows={5}
+                        value={form.values.description}
+                        onChange={form.handleChange}
                       />
                     </div>
-                  </div>
-                  <div className="flex items-center gap-5">
-                    <label className="font-semibold">Trạng thái:</label>
-                    <div className="relative">
-                      <Menu>
-                        <Menu.Button>
-                          <button className="min-w-[200px] text-xl font-semibold px-8 py-2 bg-[#292734] hover:bg-gray-700 rounded-xl">
-                            {mappingStatusOfProvider.find((itemStatus) => itemStatus.key == form.values.status)?.label}
-                          </button>
-                        </Menu.Button>
-                        <Transition
-                          as={Fragment}
-                          enter="transition ease-out duration-400"
-                          enterFrom="transform opacity-0 scale-95"
-                          enterTo="transform opacity-100 scale-100"
-                          leave="transition ease-in duration-400"
-                          leaveFrom="transform opacity-100 scale-100"
-                          leaveTo="transform opacity-0 scale-95"
+                    {(form.values.voice != (userSettingData?.data.providerConfig?.voiceUrl ?? '') ||
+                      form.values.status != userSettingData?.data.providerConfig?.status ||
+                      form.values.description != (userSettingData?.data.providerConfig?.description ?? '')) && (
+                      <div className="flex justify-end items-center gap-3">
+                        <Button
+                          isActive={false}
+                          isOutlinedButton={true}
+                          type="button"
+                          customCSS="w-[100px] text-md p-2 rounded-xl hover:scale-105"
+                          onClick={() => handleResetForm()}
                         >
-                          <Menu.Items className="min-w-[200px] absolute right-0 p-2 mt-1 origin-top-right bg-[#292734] divide-y divide-gray-100 rounded-xl shadow-lg w-full ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
-                            {mappingStatusOfProvider.map((itemStatus) => (
-                              <Menu.Item as={'div'} key={itemStatus.key}>
-                                <div
-                                  className={`flex justify-between items-center px-2 rounded-lg hover:bg-gray-700 ${
-                                    itemStatus.key == form.values.status ? 'bg-violet-500 text-white' : 'text-gray-900'
-                                  }`}
-                                >
-                                  <button
-                                    className={`text-white text-md font-semibold group flex w-full items-center rounded-md px-2 py-2`}
-                                    name="status"
-                                    onClick={() => form.setFieldValue('status', itemStatus.key)}
-                                  >
-                                    {itemStatus.label}
-                                  </button>
-                                  <div>
-                                    {itemStatus.key == form.values.status ? (
-                                      <Check theme="filled" size="10" fill="#FFFFFF" strokeLinejoin="bevel" />
-                                    ) : (
-                                      ''
-                                    )}
-                                  </div>
-                                </div>
-                              </Menu.Item>
-                            ))}
-                          </Menu.Items>
-                        </Transition>
-                      </Menu>
-                    </div>
+                          Hủy
+                        </Button>
+                        <Button
+                          customCSS="w-[100px] text-md p-2 rounded-xl hover:scale-105"
+                          type="submit"
+                          isActive={true}
+                          isOutlinedButton={true}
+                        >
+                          Thay đổi
+                        </Button>
+                      </div>
+                    )}
                   </div>
-                </div>
-                <div className="space-y-2">
-                  <label className="font-semibold">Giới thiệu về bạn:</label>
-                  <TextArea
-                    name="description"
-                    className={`${
-                      form.values.description == (userSettingData?.data.providerConfig?.description ?? '')
-                        ? 'bg-zinc-800'
-                        : 'bg-gray-700'
-                    } w-4/5 rounded-md`}
-                    rows={5}
-                    value={form.values.description}
-                    onChange={form.handleChange}
-                  />
-                </div>
-                {(form.values.voice != (userSettingData?.data.providerConfig?.voiceUrl ?? '') ||
-                  form.values.status != userSettingData?.data.providerConfig?.status ||
-                  form.values.description != (userSettingData?.data.providerConfig?.description ?? '')) && (
-                  <div className="flex justify-end items-center gap-3">
-                    <Button
-                      isActive={false}
-                      isOutlinedButton={true}
-                      type="button"
-                      customCSS="w-[100px] text-md p-2 rounded-xl hover:scale-105"
-                      onClick={() => handleResetForm()}
-                    >
-                      Hủy
-                    </Button>
-                    <Button
-                      customCSS="w-[100px] text-md p-2 rounded-xl hover:scale-105"
-                      type="submit"
-                      isActive={true}
-                      isOutlinedButton={true}
-                    >
-                      Thay đổi
-                    </Button>
-                  </div>
-                )}
+                </form>
+              ) : (
+                <SkeletonProviderService />
+              )}
+              <div className="space-y-3">
+                <p className="text-md font-semibold">Dịch vụ</p>
+                <ServiceForm />
               </div>
-            </form>
-          ) : (
-            <SkeletonProviderService />
-          )}
-          {checked && (
-            <div className="space-y-3">
-              <p className="text-md font-semibold">Dịch vụ</p>
-              <ServiceForm />
-            </div>
+            </>
           )}
         </div>
       </div>

@@ -10,6 +10,7 @@ import { useAuth } from '~/contexts/auth'
 
 import React, { Fragment, ReactElement, useContext, useEffect, useState } from 'react'
 
+import { parse } from 'cookie'
 import { isNil } from 'lodash'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
@@ -36,8 +37,8 @@ export const Header: React.FC = () => {
   const [isModalLoginVisible, setIsModalLoginVisible] = React.useState(false)
 
   const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
-
-  const { isAuthenticated, login } = useAuth()
+  const accessToken = parse(document.cookie).accessToken
+  const { login } = useAuth()
 
   trpc.useQuery(['identity.identityInfo'], {
     onSuccess(data) {
@@ -54,7 +55,7 @@ export const Header: React.FC = () => {
     onSuccess(data) {
       setBalance(data.data.totalBalanceAvailable)
     },
-    enabled: isAuthenticated,
+    enabled: !!accessToken,
   })
 
   const tabDatas: TabProps[] = [

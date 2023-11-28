@@ -1,15 +1,19 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { notification } from 'antd'
+import { parse } from 'cookie'
 import Image from 'next/image'
 import { BookingHandleRequestStatusEnum } from 'ume-service-openapi'
 
 import { NotificateSkeletonLoader } from '~/components/skeleton-load'
+import { TimeFormat } from '~/components/time-format'
 
 import { trpc } from '~/utils/trpc'
 
 const OrderNotificationForProvider = () => {
+  const accessToken = parse(document.cookie).accessToken
   const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
+
   const [page, setPage] = useState<number>(1)
   const limit = '10'
   const [listNotificated, setListNotificated] = useState<any>([])
@@ -30,6 +34,7 @@ const OrderNotificationForProvider = () => {
     onSuccess(data) {
       setListNotificated(data?.data?.row)
     },
+    enabled: !!accessToken && userInfo?.isProvider,
   })
 
   const responeBooking = trpc.useMutation(['booking.putProviderResponeBooking'])
@@ -46,6 +51,7 @@ const OrderNotificationForProvider = () => {
                 description: `Bạn đã chấp nhận yêu cầu từ ${bookerName}`,
                 placement: 'bottomLeft',
               })
+              utils.invalidateQueries('booking.getPendingBookingForProvider')
               utils.invalidateQueries('booking.getCurrentBookingForProvider')
             }
           },
@@ -160,6 +166,9 @@ const OrderNotificationForProvider = () => {
                             <p className="inline font-bold">{item?.bookingPeriod || item?.data?.bookingPeriod}h</p>
                           </div>
                         </div>
+                        <p className="text-end text-md font-bold opacity-30 space-y-2">
+                          {TimeFormat({ date: item?.createdAt })}
+                        </p>
                       </div>
                     </div>
                     <div className="flex justify-around gap-5 px-3 pt-3">

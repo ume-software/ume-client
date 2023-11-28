@@ -1,5 +1,5 @@
-import { Transition } from '@headlessui/react'
-import { CloseSmall, DeleteFive, Down, Plus, Save, Write } from '@icon-park/react'
+import { Menu, Transition } from '@headlessui/react'
+import { CloseSmall, DeleteFive, Down, More, Plus, Save, Write } from '@icon-park/react'
 import { Button, FormInputWithAffix, Input, InputWithAffix, Modal, TextArea } from '@ume/ui'
 import { MenuModalEnum } from '~/enumVariable/enumVariable'
 
@@ -27,6 +27,7 @@ interface ServiceForm {
 
 interface AttributeProps {
   id: string | undefined
+  position: number
   intro: string
   service: ServiceResponse | undefined
   serviceDefaultPrice: string
@@ -38,6 +39,7 @@ interface AttributeProps {
 }
 
 interface AttributeDisplayProps {
+  position: number
   intro: string
   service: string
   serviceDefaultPrice?: string
@@ -89,6 +91,7 @@ const AddSkillForm = () => {
   const [attributes, setAttributes] = useState<AttributeProps[]>([
     {
       id: undefined,
+      position: 0,
       intro: '',
       service: undefined,
       serviceDefaultPrice: '1,000',
@@ -104,6 +107,7 @@ const AddSkillForm = () => {
 
   const [attributesDisplay, setAttributesDisplay] = useState<AttributeDisplayProps[]>([
     {
+      position: 0,
       intro: '',
       service: '',
       serviceDefaultPrice: '1,000',
@@ -155,7 +159,7 @@ const AddSkillForm = () => {
   const createProvicerService = trpc.useMutation('identity.createServiceProvider')
   const updateProvicerService = trpc.useMutation('identity.updateServiceProvider')
 
-  const [displaySearchBox, setSearchBox] = useState<MenuDisplayProps>({
+  const [displaySearchBox, setDisplaySearchBox] = useState<MenuDisplayProps>({
     parent: 0,
     type: '',
     isShow: false,
@@ -167,6 +171,7 @@ const AddSkillForm = () => {
       setAttributes(
         listOwnService?.map((ownService) => ({
           id: ownService.id,
+          position: ownService.position ?? 0,
           intro: ownService.description ?? '',
           service: ownService.service,
           serviceDefaultPrice:
@@ -195,6 +200,7 @@ const AddSkillForm = () => {
 
       setAttributesDisplay(
         listOwnService?.map((ownService) => ({
+          position: ownService.position ?? 0,
           intro: ownService.description ?? '',
           service: ownService.service?.name ?? '',
           serviceDefaultPrice:
@@ -228,6 +234,7 @@ const AddSkillForm = () => {
       ...attributes,
       {
         id: undefined,
+        position: listOwnService?.length ?? 0,
         intro: '',
         service: undefined,
         serviceDefaultPrice: '1,000',
@@ -243,6 +250,7 @@ const AddSkillForm = () => {
     setAttributesDisplay([
       ...attributesDisplay,
       {
+        position: listOwnService?.length ?? 0,
         intro: '',
         service: '',
         serviceDefaultPrice: '1,000',
@@ -282,10 +290,15 @@ const AddSkillForm = () => {
     sub_index?: number,
     serviceChange?: boolean,
     sub_attr_index?: number,
+    position?: number,
   ) => {
     const updatedAttributesDisplay = [...attributesDisplay]
 
     switch (name) {
+      case 'Position':
+        updatedAttributesDisplay[index] = { ...updatedAttributesDisplay[index], position: position ?? 0 }
+        setAttributesDisplay(updatedAttributesDisplay)
+        break
       case 'Intro':
         updatedAttributesDisplay[index] = { ...updatedAttributesDisplay[index], intro: searchText ?? '' }
         setAttributesDisplay(updatedAttributesDisplay)
@@ -363,6 +376,11 @@ const AddSkillForm = () => {
   ) => {
     const updatedAttributes = [...attributes]
     switch (name) {
+      case 'Position':
+        updatedAttributes[index] = { ...updatedAttributes[index], position: value ?? 0 }
+        setAttributes(updatedAttributes)
+        handleServiceInputChange('Position', index, '', undefined, true, undefined, value ?? 0)
+        break
       case 'Intro':
         updatedAttributes[index] = { ...updatedAttributes[index], intro: intro ?? '' }
         setAttributes(updatedAttributes)
@@ -381,7 +399,7 @@ const AddSkillForm = () => {
           ],
         }
 
-        setSearchBox({
+        setDisplaySearchBox({
           parent: index,
           type: MenuModalEnum.SERVICE,
           isShow: !displaySearchBox.isShow,
@@ -623,6 +641,7 @@ const AddSkillForm = () => {
     if (attributes[index].service?.id && attributes[index].intro != '') {
       const req = {
         serviceId: attributes[index]?.service?.id,
+        position: attributes[index]?.position,
         defaultCost: attributes[index]?.serviceDefaultPrice,
         description: attributes[index]?.intro,
         createBookingCosts: attributes[index].specialTimeLot.filter((specialTimeLot) => {
@@ -653,6 +672,7 @@ const AddSkillForm = () => {
         updateProvicerService.mutate(
           {
             serviceId: req.serviceId ?? '',
+            position: req.position ?? 0,
             defaultCost: Number(req.defaultCost.replace(/,/g, '')),
             description: req.description,
             handleBookingCosts: (req.createBookingCosts.length > 0
@@ -673,6 +693,7 @@ const AddSkillForm = () => {
           },
           {
             onSuccess() {
+              utils.invalidateQueries('identity.providerGetOwnServices')
               notification.success({
                 message: `Cập nhật dịch vụ thành công`,
                 description: `Dịch vụ đã được cập nhật`,
@@ -692,6 +713,7 @@ const AddSkillForm = () => {
         createProvicerService.mutate(
           {
             serviceId: req.serviceId ?? '',
+            position: req.position ?? 0,
             defaultCost: Number(req.defaultCost.replace(/,/g, '')),
             description: req.description,
             createBookingCosts:
@@ -807,51 +829,94 @@ const AddSkillForm = () => {
                     </div>
                   ) : (
                     <div key={index} className="col-span-2 border border-white border-opacity-30 p-5 rounded-3xl">
-                      <div className="flex justify-end items-center gap-2">
-                        <Button
-                          customCSS="text-xl p-2 rounded-xl hover:scale-105"
-                          isActive={true}
-                          isOutlinedButton={true}
-                          onClick={() => {
-                            if (!(Number(attributes[index].serviceDefaultPrice.replace(/,/g, '')) <= 0)) {
-                              setIndexServiceForm(index)
-                              setServiceForm({
-                                title: `${attr.id ? 'Cập nhật kỹ năng' : 'Tạo mới kỹ năng'}`,
-                                description: `${
-                                  attr.id
-                                    ? `Bạn có chấp nhận cập nhật kỹ năng ${attributesDisplay[index].service} không?`
-                                    : `Bạn có chấp nhận tạo mới kỹ năng ${attributesDisplay[index].service} không?`
-                                }`,
-                                form: 'UPDATE',
-                              })
+                      <div className="flex justify-between items-center pb-3">
+                        <div className="flex items-center gap-2">
+                          <p>Vị trí: </p>
+                          <div className="relative">
+                            <Menu>
+                              <div>
+                                <Menu.Button>
+                                  <div className="min-w-[80px] flex justify-between items-center px-3 py-1 rounded-lg bg-zinc-800 border border-white border-opacity-30">
+                                    <p>{attributesDisplay[index].position}</p>
+                                    <Down theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
+                                  </div>
+                                </Menu.Button>
+                              </div>
+                              <Transition
+                                as={Fragment}
+                                enter="transition ease-out duration-400"
+                                enterFrom="transform opacity-0 scale-95"
+                                enterTo="transform opacity-100 scale-100"
+                                leave="transition ease-in duration-400"
+                                leaveFrom="transform opacity-100 scale-100"
+                                leaveTo="transform opacity-0 scale-95"
+                              >
+                                <Menu.Items className="min-w-full max-h-[200px] absolute right-0 p-2 origin-top-right bg-umeHeader divide-y divide-gray-200 rounded-md shadow-lg w-fit top-9 ring-1 ring-black ring-opacity-30 focus:outline-none overflow-y-auto hide-scrollbar">
+                                  <div className="flex flex-col gap-2 w-full">
+                                    {attributes?.map((_, position_index) => (
+                                      <div
+                                        key={position_index}
+                                        className="w-full p-2 text-md font-medium rounded-md cursor-pointer hover:bg-gray-700"
+                                        onClick={() => {
+                                          handleServiceChange('Position', index, undefined, position_index + 1)
+                                        }}
+                                        onKeyDown={() => {}}
+                                      >
+                                        {position_index + 1}
+                                      </div>
+                                    ))}
+                                  </div>
+                                </Menu.Items>
+                              </Transition>
+                            </Menu>
+                          </div>
+                        </div>
+                        <div className="flex justify-end items-center gap-2">
+                          <Button
+                            customCSS="text-xl p-2 rounded-xl hover:scale-105"
+                            isActive={true}
+                            isOutlinedButton={true}
+                            onClick={() => {
+                              if (!(Number(attributes[index].serviceDefaultPrice.replace(/,/g, '')) <= 0)) {
+                                setIndexServiceForm(index)
+                                setServiceForm({
+                                  title: `${attr.id ? 'Cập nhật kỹ năng' : 'Tạo mới kỹ năng'}`,
+                                  description: `${
+                                    attr.id
+                                      ? `Bạn có chấp nhận cập nhật kỹ năng ${attributesDisplay[index].service} không?`
+                                      : `Bạn có chấp nhận tạo mới kỹ năng ${attributesDisplay[index].service} không?`
+                                  }`,
+                                  form: 'UPDATE',
+                                })
 
+                                openConfirmModal()
+                              }
+                            }}
+                          >
+                            {attr.id ? (
+                              <Write theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
+                            ) : (
+                              <Save theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />
+                            )}
+                          </Button>
+                          <Button
+                            customCSS={`text-xl p-2 bg-red-500 hover:scale-105 rounded-xl`}
+                            type="button"
+                            isActive={true}
+                            isOutlinedButton={true}
+                            onClick={() => {
+                              setServiceForm({
+                                title: 'Xóa kỹ năng',
+                                description: 'Bạn có chấp nhận xóa kỹ năng này không?',
+                                form: 'DELETE',
+                              })
+                              setIndexServiceForm(index)
                               openConfirmModal()
-                            }
-                          }}
-                        >
-                          {attr.id ? (
-                            <Write theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
-                          ) : (
-                            <Save theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />
-                          )}
-                        </Button>
-                        <Button
-                          customCSS={`text-xl p-2 bg-red-500 hover:scale-105 rounded-xl`}
-                          type="button"
-                          isActive={true}
-                          isOutlinedButton={true}
-                          onClick={() => {
-                            setServiceForm({
-                              title: 'Xóa kỹ năng',
-                              description: 'Bạn có chấp nhận xóa kỹ năng này không?',
-                              form: 'DELETE',
-                            })
-                            setIndexServiceForm(index)
-                            openConfirmModal()
-                          }}
-                        >
-                          <DeleteFive theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />
-                        </Button>
+                            }}
+                          >
+                            <DeleteFive theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />
+                          </Button>
+                        </div>
                       </div>
                       <div className="flex flex-col gap-1 mb-5">
                         <label>Giới thiệu về kỹ năng* : </label>
@@ -900,7 +965,7 @@ const AddSkillForm = () => {
                                     strokeLinejoin="bevel"
                                     className="cursor-pointer"
                                     onMouseDown={() =>
-                                      setSearchBox({
+                                      setDisplaySearchBox({
                                         parent: index,
                                         type: MenuModalEnum.SERVICE,
                                         isShow: true,
@@ -911,7 +976,7 @@ const AddSkillForm = () => {
                                 )
                               }
                               onMouseDown={() =>
-                                setSearchBox({
+                                setDisplaySearchBox({
                                   parent: index,
                                   type: MenuModalEnum.SERVICE,
                                   isShow: true,
@@ -937,7 +1002,7 @@ const AddSkillForm = () => {
                                 className="absolute right-0 left-0  max-h-[300px] w-full overflow-y-auto p-2 origin-top-right bg-[#292734] divide-y divide-gray-100 rounded-xl shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none hide-scrollbar"
                                 style={{ zIndex: 5 }}
                                 onMouseLeave={() =>
-                                  setSearchBox({
+                                  setDisplaySearchBox({
                                     parent: index,
                                     type: MenuModalEnum.SERVICE,
                                     isShow: false,
@@ -1121,7 +1186,7 @@ const AddSkillForm = () => {
                                           strokeLinejoin="bevel"
                                           className="cursor-pointer"
                                           onMouseDown={() =>
-                                            setSearchBox({
+                                            setDisplaySearchBox({
                                               parent: index,
                                               type: MenuModalEnum.ATTRIBUTE,
                                               isShow: true,
@@ -1132,7 +1197,7 @@ const AddSkillForm = () => {
                                         />
                                       }
                                       onMouseDown={() =>
-                                        setSearchBox({
+                                        setDisplaySearchBox({
                                           parent: index,
                                           type: MenuModalEnum.ATTRIBUTE,
                                           isShow: true,
@@ -1160,7 +1225,7 @@ const AddSkillForm = () => {
                                         className="absolute right-0 left-0 max-h-[300px] w-full overflow-y-auto p-2 origin-top-right bg-[#292734] divide-y divide-gray-100 rounded-xl shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none hide-scrollbar"
                                         style={{ zIndex: 5 }}
                                         onMouseLeave={() =>
-                                          setSearchBox({
+                                          setDisplaySearchBox({
                                             parent: index,
                                             type: MenuModalEnum.ATTRIBUTE,
                                             isShow: false,
@@ -1250,7 +1315,7 @@ const AddSkillForm = () => {
                                                       strokeLinejoin="bevel"
                                                       className="cursor-pointer"
                                                       onMouseDown={() =>
-                                                        setSearchBox({
+                                                        setDisplaySearchBox({
                                                           parent: index,
                                                           type: MenuModalEnum.SUB_ATTRIBUTE,
                                                           isShow: true,
@@ -1267,7 +1332,7 @@ const AddSkillForm = () => {
                                                     />
                                                   }
                                                   onMouseDown={() =>
-                                                    setSearchBox({
+                                                    setDisplaySearchBox({
                                                       parent: index,
                                                       type: MenuModalEnum.SUB_ATTRIBUTE,
                                                       isShow: true,
@@ -1302,7 +1367,7 @@ const AddSkillForm = () => {
                                                     className="absolute right-0 left-0 max-h-[300px] w-full overflow-y-auto p-2 origin-top-right bg-[#292734] divide-y divide-gray-100 rounded-xl shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none hide-scrollbar"
                                                     style={{ zIndex: 5 }}
                                                     onMouseLeave={() =>
-                                                      setSearchBox({
+                                                      setDisplaySearchBox({
                                                         parent: index,
                                                         type: MenuModalEnum.SUB_ATTRIBUTE,
                                                         isShow: false,

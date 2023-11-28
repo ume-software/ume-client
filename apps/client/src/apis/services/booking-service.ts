@@ -160,7 +160,7 @@ export const createBooking = async (provider: BookingProviderRequest, ctx) => {
   } catch (error) {
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.response?.status),
-      message: error.response?.data.message || 'Fail to create new booking',
+      message: error.response?.data.data.message || 'Fail to create new booking',
     })
   }
 }

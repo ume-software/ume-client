@@ -402,7 +402,7 @@ export const providerGetOwnServices = async (ctx) => {
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).providerGetOwnServices('unlimited', '1', '["$all"]', '{}', `[{ "createdAt": "asc" }]`)
+    }).providerGetOwnServices('unlimited', '1', '["$all"]', '{}', `[{ "position": "asc" }]`)
     return {
       data: reponse.data,
       success: true,
@@ -419,6 +419,7 @@ export const providerGetOwnServices = async (ctx) => {
 export const createServiceProvider = async (
   query: {
     serviceId: string
+    position: number
     defaultCost: number
     description?: string
     createBookingCosts?: { startTimeOfDay: string; endTimeOfDay: string; amount: number }[]
@@ -449,6 +450,7 @@ export const createServiceProvider = async (
 export const updateServiceProvider = async (
   query: {
     serviceId: string
+    position: number
     defaultCost: number
     description?: string
     handleBookingCosts?: { startTimeOfDay: string; endTimeOfDay: string; amount: number }[]

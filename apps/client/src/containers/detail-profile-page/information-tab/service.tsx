@@ -5,6 +5,7 @@ import ImgForEmpty from 'public/img-for-empty.png'
 import { useState } from 'react'
 
 import { Rate } from 'antd'
+import { parse } from 'cookie'
 import Image from 'next/legacy/image'
 import { useRouter } from 'next/router'
 import { ProviderServiceResponse } from 'ume-service-openapi'
@@ -22,6 +23,8 @@ const Service = (props: { data: ProviderServiceResponse }) => {
   const router = useRouter()
   const slug = router.query
 
+  const accessToken = parse(document.cookie).accessToken
+
   const feedbackGame =
     trpc.useQuery(['booking.getFeedbackServiceById', String(props.data.id ?? '')], {
       refetchOnWindowFocus: false,
@@ -37,7 +40,7 @@ const Service = (props: { data: ProviderServiceResponse }) => {
       refetchOnReconnect: 'always',
       cacheTime: 0,
       refetchOnMount: true,
-      enabled: !!slug.profileId,
+      enabled: !!slug.profileId && !!accessToken,
     },
   )
   const postFeedback = trpc.useMutation(['booking.postFeedback'])

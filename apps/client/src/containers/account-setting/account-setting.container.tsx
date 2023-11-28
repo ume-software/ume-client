@@ -122,8 +122,9 @@ const AccountSettingContainer = () => {
                     onClick={() => {
                       if (
                         !(
-                          (item.key == 'becomeProvider' && !userInfo.slug) ||
-                          (item.key == 'vouchers' && !userInfo.isProvider)
+                          (item.key == 'becomeProvider' && !userInfo.isVerified) ||
+                          (item.key == 'vouchers' && !userInfo.isProvider) ||
+                          (item.key == 'withdraw' && !userInfo.isProvider)
                         )
                       ) {
                         handleChangeTab(item.key)
@@ -135,7 +136,7 @@ const AccountSettingContainer = () => {
                       <>
                         <div className={`${!userInfo.isVerified && 'opacity-30'}`}>{item.icon}</div>
                         {!userInfo.isVerified ? (
-                          <Tooltip placement="right" title={'Xác minh danh tính để mở kháo tính năng này'} arrow={true}>
+                          <Tooltip placement="right" title={'Xác minh danh tính để mở khoá tính năng này'} arrow={true}>
                             <span
                               className={`w-full flex justify-between items-center 2xl:text-lg xl:text-sm text-xs font-semibold truncate ${
                                 !userInfo.isVerified && 'opacity-30'
