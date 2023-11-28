@@ -4,7 +4,6 @@ import ImgForEmpty from 'public/img-for-empty.png'
 import 'swiper/swiper-bundle.css'
 import Chat from '~/containers/chat/chat.container'
 import { useAuth } from '~/contexts/auth'
-import getWindowDimensions from '~/hooks/useWindowDimensions'
 
 import { useContext, useEffect, useState } from 'react'
 
@@ -26,8 +25,6 @@ import { BGFullGridSkeleton, ChatSkeleton } from '~/components/skeleton-load'
 import { trpc } from '~/utils/trpc'
 
 const InformationTab = (props: { data: UserInformationResponse }) => {
-  const { windowWidth } = getWindowDimensions()
-
   const router = useRouter()
   const basePath = router.asPath.split('?')[0]
   const slug = router.query
@@ -145,132 +142,119 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
           <div className="2xl:col-span-2 col-span-10">
             <div className="sticky p-10 bg-zinc-800 rounded-3xl top-20">
               <div className="flex flex-col gap-5">
-                {windowWidth >= 1536 ? (
-                  <>
-                    <div
-                      className={`flex items-center p-3 rounded-xl gap-2 cursor-pointer hover:bg-gray-700 ${
-                        !gameSelected ? 'bg-gray-700' : ''
-                      }`}
-                      onClick={() => handleSelected(undefined)}
-                      onKeyDown={() => {}}
-                    >
-                      <People theme="outline" size="18" fill="#fff" />
-                      <p className="xl:text-lg lg:text-sm text-xs lg:font-semibold font-normal truncate">
-                        Đôi chút về tui
-                      </p>
-                    </div>
-                    <div className="flex flex-col gap-5 cursor-pointer">
+                <div
+                  className={`hidden 2xl:flex items-center p-3 rounded-xl gap-2 cursor-pointer hover:bg-gray-700 ${
+                    !gameSelected ? 'bg-gray-700' : ''
+                  }`}
+                  onClick={() => handleSelected(undefined)}
+                  onKeyDown={() => {}}
+                >
+                  <People theme="outline" size="18" fill="#fff" />
+                  <p className="xl:text-lg lg:text-sm text-xs lg:font-semibold font-normal truncate">Đôi chút về tui</p>
+                </div>
+                <div className="hidden 2xl:flex flex-col gap-5 cursor-pointer">
+                  <div
+                    className="flex flex-row items-center gap-2 p-3"
+                    onClick={handleGamesToggle}
+                    onKeyDown={() => {}}
+                  >
+                    <Gamepad theme="outline" size="18" fill="#fff" />
+                    <p className="xl:text-lg lg:text-sm text-xs lg:font-semibold font-normal truncate">Game tui chơi</p>
+                    {gamesToggle ? (
+                      <Down theme="outline" size="20" fill="#fff" />
+                    ) : (
+                      <Right theme="outline" size="20" fill="#fff" />
+                    )}
+                  </div>
+                  <div
+                    className={`pl-5 gap-3 ${
+                      gamesToggle
+                        ? 'flex flex-col items-start h-[500px] overflow-y-scroll overflow-x-hidden hide-scrollbar'
+                        : 'hidden'
+                    }`}
+                  >
+                    {props.data?.providerServices?.map((item) => (
                       <div
-                        className="flex flex-row items-center gap-2 p-3"
-                        onClick={handleGamesToggle}
+                        key={item.id}
+                        className={`flex items-center w-full group gap-3 hover:bg-gray-700 p-1 rounded-xl ${
+                          gameSelected && (gameSelected == item.service?.slug || gameSelected == item.serviceId)
+                            ? 'bg-gray-700'
+                            : ''
+                        }`}
+                        onClick={() => handleSelected(item.service?.slug ?? item.serviceId)}
                         onKeyDown={() => {}}
                       >
-                        <Gamepad theme="outline" size="18" fill="#fff" />
-                        <p className="xl:text-lg lg:text-sm text-xs lg:font-semibold font-normal truncate">
-                          Game tui chơi
-                        </p>
-                        {gamesToggle ? (
-                          <Down theme="outline" size="20" fill="#fff" />
-                        ) : (
-                          <Right theme="outline" size="20" fill="#fff" />
-                        )}
+                        <Image
+                          className="min-w-[60px] min-h-[80px]"
+                          src={item?.service?.imageUrl ?? ImgForEmpty}
+                          alt="Game Image"
+                          width={60}
+                          height={80}
+                        />
+                        <div className="w-full">
+                          <p className="lg:font-semibold font-normal xl:text-md lg:text-sm text-xs text-white z-[4] group-hover:w-fit">
+                            {item?.service?.name}
+                          </p>
+                          <span className="flex items-center gap-1 lg:font-semibold font-normal xl:text-sm lg:text-xs text-white opacity-30 z-[4] truncate group-hover:w-fit">
+                            {(
+                              item.bookingCosts?.find((spectialTime) => {
+                                if (isSpecialTime(spectialTime?.startTimeOfDay, spectialTime?.endTimeOfDay)) {
+                                  return spectialTime
+                                }
+                              })?.amount ?? item.defaultCost
+                            )?.toLocaleString('en-US', {
+                              currency: 'VND',
+                            })}
+                            <p className="text-xs italic"> đ</p> / 1h
+                          </span>
+                        </div>
                       </div>
-                      <div
-                        className={`pl-5 gap-3 ${
-                          gamesToggle
-                            ? 'flex flex-col items-start h-[500px] overflow-y-scroll overflow-x-hidden hide-scrollbar'
-                            : 'hidden'
-                        }`}
-                      >
-                        {props.data?.providerServices?.map((item) => (
-                          <div
-                            key={item.id}
-                            className={`flex items-center w-full group gap-3 hover:bg-gray-700 p-1 rounded-xl ${
-                              gameSelected && (gameSelected == item.service?.slug || gameSelected == item.serviceId)
-                                ? 'bg-gray-700'
-                                : ''
-                            }`}
-                            onClick={() => handleSelected(item.service?.slug ?? item.serviceId)}
-                            onKeyDown={() => {}}
-                          >
-                            <Image
-                              className="min-w-[60px] min-h-[80px]"
-                              src={item?.service?.imageUrl ?? ImgForEmpty}
-                              alt="Game Image"
-                              width={60}
-                              height={80}
-                            />
-                            <div className="w-full">
-                              <p className="lg:font-semibold font-normal xl:text-md lg:text-sm text-xs text-white z-[4] group-hover:w-fit">
-                                {item?.service?.name}
-                              </p>
-                              <span className="flex items-center gap-1 lg:font-semibold font-normal xl:text-sm lg:text-xs text-white opacity-30 z-[4] truncate group-hover:w-fit">
-                                {(
-                                  item.bookingCosts?.find((spectialTime) => {
-                                    if (isSpecialTime(spectialTime?.startTimeOfDay, spectialTime?.endTimeOfDay)) {
-                                      return spectialTime
-                                    }
-                                  })?.amount ?? item.defaultCost
-                                )?.toLocaleString('en-US', {
-                                  currency: 'VND',
-                                })}
-                                <p className="text-xs italic"> đ</p> / 1h
-                              </span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`flex flex-col justify-center items-center p-3 rounded-xl gap-2 cursor-pointer hover:bg-gray-700 ${
-                        !gameSelected ? 'bg-gray-700' : ''
-                      }`}
-                      onClick={() => handleSelected(undefined)}
-                      onKeyDown={() => {}}
-                    >
-                      <People theme="outline" size="25" fill="#fff" />
-                      <p className="xl:text-lg lg:text-sm text-xs lg:font-semibold font-normal truncate">Về tui</p>
-                    </div>
-                    <Swiper
-                      spaceBetween={20}
-                      slidesPerView="auto"
-                      mousewheel={true}
-                      direction="horizontal"
-                      className="w-full"
-                    >
-                      {props.data?.providerServices?.map((item) => (
-                        <SwiperSlide
-                          key={item.id}
-                          className={`min-w-[250px] max-w-fit gap-3 border-2 border-white border-opacity-30 px-3 py-1 hover:bg-gray-700 rounded-xl ${
-                            gameSelected && (gameSelected == item.service?.slug || gameSelected == item.serviceId)
-                              ? 'bg-gray-700'
-                              : ''
-                          }`}
-                          onClick={() => handleSelected(item.service?.slug ?? item.serviceId)}
-                        >
-                          <div className="flex items-center gap-3">
-                            <Image
-                              src={item?.service?.imageUrl ?? ImgForEmpty}
-                              alt="Game Image"
-                              width={60}
-                              height={80}
-                            />
-                            <div className="">
-                              <p className="font-normal text-sm text-white">{item?.service?.name}</p>
-                              <div className="flex items-center">
-                                <span className="text-xs italic"> đ</span>
-                                <p className="font-normal text-xs text-white opacity-30">{item.defaultCost} / 1h</p>
-                              </div>
-                            </div>
-                          </div>
-                        </SwiperSlide>
-                      ))}
-                    </Swiper>
+                    ))}
                   </div>
-                )}
+                </div>
+
+                <div className="2xl:hidden flex items-center gap-3">
+                  <div
+                    className={`flex flex-col justify-center items-center p-3 rounded-xl gap-2 cursor-pointer hover:bg-gray-700 ${
+                      !gameSelected ? 'bg-gray-700' : ''
+                    }`}
+                    onClick={() => handleSelected(undefined)}
+                    onKeyDown={() => {}}
+                  >
+                    <People theme="outline" size="25" fill="#fff" />
+                    <p className="xl:text-lg lg:text-sm text-xs lg:font-semibold font-normal truncate">Về tui</p>
+                  </div>
+                  <Swiper
+                    spaceBetween={20}
+                    slidesPerView="auto"
+                    mousewheel={true}
+                    direction="horizontal"
+                    className="w-full"
+                  >
+                    {props.data?.providerServices?.map((item) => (
+                      <SwiperSlide
+                        key={item.id}
+                        className={`min-w-[250px] max-w-fit gap-3 border-2 border-white border-opacity-30 px-3 py-1 hover:bg-gray-700 rounded-xl ${
+                          gameSelected && (gameSelected == item.service?.slug || gameSelected == item.serviceId)
+                            ? 'bg-gray-700'
+                            : ''
+                        }`}
+                        onClick={() => handleSelected(item.service?.slug ?? item.serviceId)}
+                      >
+                        <div className="flex items-center gap-3">
+                          <Image src={item?.service?.imageUrl ?? ImgForEmpty} alt="Game Image" width={60} height={80} />
+                          <div className="">
+                            <p className="font-normal text-sm text-white">{item?.service?.name}</p>
+                            <div className="flex items-center">
+                              <span className="text-xs italic"> đ</span>
+                              <p className="font-normal text-xs text-white opacity-30">{item.defaultCost} / 1h</p>
+                            </div>
+                          </div>
+                        </div>
+                      </SwiperSlide>
+                    ))}
+                  </Swiper>
+                </div>
               </div>
             </div>
           </div>
