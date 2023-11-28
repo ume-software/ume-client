@@ -182,6 +182,7 @@ const DonateModal = ({ isModalDonationVisible, setIsModalDonationVisible, provid
               },
             )
           }}
+          isLoading={donationForRecipient.isLoading}
         />
       </>
     ),

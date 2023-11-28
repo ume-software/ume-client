@@ -13,7 +13,7 @@ const Table = (props: {
   loadingUserDonation?: boolean
 }) => {
   return (
-    <div className="w-fit bg-zinc-800 rounded-xl p-3 animate-running-border">
+    <div className="w-full bg-zinc-800 rounded-xl p-3 animate-running-border">
       {!props.loadingUserDonation ? (
         <div>
           <span className="space-y-5">
@@ -48,25 +48,24 @@ const Table = (props: {
                             className="absolute rounded-full"
                             layout="fill"
                             objectFit="cover"
-                            src={data?.user?.avatarUrl || data?.recipient?.avatarUrl}
+                            src={data?.donor?.avatarUrl || data?.recipient?.avatarUrl}
                             alt="Donationr Image"
                           />
                         </div>
-                        <p className="truncate">{data?.user?.name || data?.recipient?.name}</p>
+                        <p className="truncate">{data?.donor?.name || data?.recipient?.name}</p>
                       </div>
                     </td>
                     <td className="py-2">
                       <div className="min-w-[80px]">
-                        {Math.floor(data?.totalCoinDonation) ||
-                          data?.totalReceivedAmount?.toLocaleString('en-US', {
-                            currency: 'VND',
-                          })}
+                        {Math.floor(
+                          data?.totalCoinDonation ?? data?.totalBalanceDonated ?? data?.totalReceivedAmount,
+                        )?.toLocaleString('en-US')}
                         <span className="text-xs italic"> đ</span>
                         <p
                           className="opacity-30
                         "
                         >
-                          ({data?.numberDonationsReceived} lượt)
+                          ({data?.numberDonationsReceived ?? data?.numberDonated} lượt)
                         </p>
                       </div>
                     </td>
