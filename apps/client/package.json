@@ -45,7 +45,7 @@
     "turbo": "^1.6.3",
     "ume-chatting-service-openapi": "latest",
     "ume-service-openapi": "latest",
-    "ume-upload-service-openapi": "^1.1.0",
+    "ume-upload-service-openapi": "latest",
     "url-loader": "^4.1.1",
     "yup": "^1.2.0",
     "zod": "^3.19.1"
