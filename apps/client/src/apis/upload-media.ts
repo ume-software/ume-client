@@ -1,11 +1,12 @@
 import { getEnv } from '~/env'
 
-import { AudioApi, FileApi, ImageApi } from 'ume-upload-service-openapi'
+import { FileApi, ImageApi } from 'ume-chatting-service-openapi'
+import { AudioApi } from 'ume-upload-service-openapi'
 
 export const uploadImage = async (formData) => {
   try {
     const response = await new ImageApi({
-      basePath: getEnv().baseUploadServiceURL,
+      basePath: getEnv().baseChattingURL,
       isJsonMime: () => true,
     }).uploadImage(formData)
     return {
@@ -33,7 +34,7 @@ export const uploadAudio = async (formData) => {
 export const uploadFile = async (formData) => {
   try {
     const response = await new FileApi({
-      basePath: getEnv().baseUploadServiceURL,
+      basePath: getEnv().baseChattingURL,
       isJsonMime: () => true,
     }).uploadFile(undefined, formData)
     return {
