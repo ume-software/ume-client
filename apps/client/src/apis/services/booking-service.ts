@@ -294,7 +294,7 @@ export const postFeedback = async (
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).createFeedbackBooking(query.id, query.feedback as any)
+    }).createFeedbackBooking(query.id, query.feedback)
     return {
       data: respone.data,
       success: true,

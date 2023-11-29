@@ -330,11 +330,10 @@ const DetailProfileContainer = () => {
                           )}
                       </>
 
-                      {currentBookingForProviderData &&
-                        ((currentBookingForProviderData?.length ?? 0) > 0 ||
-                          (currentBookingForUserData?.length ?? 0) > 0) &&
-                        ((currentBookingForProviderData[0]?.providerService?.provider as any)?.slug == slug.profileId ||
-                          currentBookingForProviderData[0]?.booker?.slug == slug.profileId) && (
+                      {currentBookingForUserData &&
+                        (currentBookingForUserData?.length ?? 0) > 0 &&
+                        ((currentBookingForUserData[0]?.providerService?.provider as any)?.slug == slug.profileId ||
+                          currentBookingForUserData[0]?.booker?.slug == slug.profileId) && (
                           <>
                             <Tooltip placement="right" title={`Kết thúc sớm`}>
                               <div

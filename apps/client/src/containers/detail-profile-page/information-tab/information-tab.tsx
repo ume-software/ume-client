@@ -3,7 +3,6 @@ import { CustomDrawer } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
 import 'swiper/swiper-bundle.css'
 import Chat from '~/containers/chat/chat.container'
-import { useAuth } from '~/contexts/auth'
 
 import { useContext, useEffect, useState } from 'react'
 
@@ -32,7 +31,6 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
   const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
   const accessToken = parse(document.cookie).accessToken
 
-  const { user } = useAuth()
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
   const { childrenDrawer, setChildrenDrawer } = useContext(DrawerContext)
   const [channelId, setChannelId] = useState<string>('')
@@ -82,7 +80,6 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
               setChildrenDrawer(<Chat providerId={data.data._id} />)
             },
             onError: (error) => {
-              console.error(error)
               notification.error({
                 message: 'Create New Channel Fail',
                 description: 'Create New Channel Fail. Please try again!',
@@ -278,7 +275,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                   alt="Empty Image"
                 />
               </div>
-              {user?.id != props.data?.id ? (
+              {userInfo?.id != props.data?.id ? (
                 <div className="flex flex-col gap-5 my-10">
                   <CustomDrawer
                     customOpenBtn={`rounded-full text-purple-700 border-2 border-purple-700 font-semibold text-2xl cursor-pointer hover:scale-105 text-center`}

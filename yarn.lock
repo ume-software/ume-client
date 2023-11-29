@@ -2588,9 +2588,9 @@ ee-first@1.1.1:
   integrity sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==
 
 electron-to-chromium@^1.4.535:
-  version "1.4.595"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.595.tgz#fa33309eb9aabb7426915f8e166ec60f664e9ad4"
-  integrity sha512-+ozvXuamBhDOKvMNUQvecxfbyICmIAwS4GpLmR0bsiSBlGnLaOcs2Cj7J8XSbW+YEaN3Xl3ffgpm+srTUWFwFQ==
+  version "1.4.596"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.596.tgz#6752d1aa795d942d49dfc5d3764d6ea283fab1d7"
+  integrity sha512-zW3zbZ40Icb2BCWjm47nxwcFGYlIgdXkAx85XDO7cyky9J4QQfq8t0W19/TLZqq3JPQXtlv8BPIGmfa9Jb4scg==
 
 emittery@^0.13.1:
   version "0.13.1"
@@ -7002,9 +7002,9 @@ ume-identity-service-openapi@latest:
     axios "^0.27.2"
 
 ume-service-openapi@latest:
-  version "1.3.38"
-  resolved "https://registry.yarnpkg.com/ume-service-openapi/-/ume-service-openapi-1.3.38.tgz#4ff2ba57aa4e9b3ba73bc7bdef887cf9efb4b8c3"
-  integrity sha512-LwezEQsO3QqdvtttaLeOGEtXpyBQQ5rv4nsIy1hrSTCXh5ytW6c2dEkunXeqlCUnOYF2fHHrSPO+urIImaqnzQ==
+  version "1.3.39"
+  resolved "https://registry.yarnpkg.com/ume-service-openapi/-/ume-service-openapi-1.3.39.tgz#3eeb1c5254bb96fd691d2b8e2dcb979dcc7903ea"
+  integrity sha512-IetMHj3YJanbm3dxuIBLFDMOTw04KJNY6ZLaKXap969bXsbGtKhGpFC4FVHo+uvMjdUCoBubu/A78yQ8x14Pdw==
   dependencies:
     axios "^0.27.2"
 
