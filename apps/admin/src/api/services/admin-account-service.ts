@@ -16,7 +16,7 @@ export const getAdminAccountList = async (
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).supperAdminGetListAdminAccount('10', query.page, query.select, query.where, query.order)
+    }).supperAdminGetListAdminAccount('10', query.page, query.select, query.where, '[{"createdAt":"desc"}]')
 
     return {
       data: response.data,

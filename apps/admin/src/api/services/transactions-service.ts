@@ -6,8 +6,8 @@ import {
   AdminManageBookingApi,
   AdminManageDepositRequestApi,
   AdminManageDonationApi,
-  AdminManageWithdrawalRequestApi,
   AdminManageStatisticApi,
+  AdminManageWithdrawalRequestApi,
 } from 'ume-service-openapi'
 
 import { TransactionType, UnitQueryTime } from '~/utils/constant'
@@ -48,13 +48,12 @@ export const getBookingTransactions = async (
   },
 ) => {
   try {
-    console.log(query)
     const cookies = parse(ctx.req.headers.cookie ?? '')
     const response = await new AdminManageBookingApi({
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).adminGetListBookingHistory(query.limit, query.page, query.select, query.where, query.order)
+    }).adminGetListBookingHistory(query.limit, query.page, query.select, query.where, '[{"createdAt":"desc"}]')
 
     return {
       data: response.data,
@@ -84,7 +83,7 @@ export const getDonationTransactions = async (
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).adminGetListDonation(query.limit, query.page, query.select, query.where, query.order)
+    }).adminGetListDonation(query.limit, query.page, query.select, query.where, '[{"createdAt":"desc"}]')
 
     return {
       data: response.data,
@@ -140,7 +139,7 @@ export const getWaitingTransactions = async (
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).adminGetListWithdrawalRequest(query?.limit, query?.page, query?.select, query?.where, query?.order)
+    }).adminGetListWithdrawalRequest(query?.limit, query?.page, query?.select, query?.where, '[{"createdAt":"desc"}]')
 
     return {
       data: response.data.row,

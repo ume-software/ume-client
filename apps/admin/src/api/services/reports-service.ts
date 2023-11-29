@@ -13,7 +13,7 @@ export const getReportList = async (ctx, query: { page: string; where?: string; 
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).adminGetReportUser('10', query.page, query.select, query.where, query.order)
+    }).adminGetReportUser('10', query.page, query.select, query.where, '[{"createdAt":"desc"}]')
 
     return {
       data: response.data,

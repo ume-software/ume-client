@@ -47,9 +47,10 @@ const SELECT_TRANS: PrismaSelectType<UserKYCRequestResponse> = [
 
 export const KYCTable = () => {
   const [kycList, setKYCList] = useState<any>([])
-
+  const [page, setPage] = useState(1)
   const [kcyModal, setKYCModal] = useState(false)
   const [record, setRecord] = useState<any>(null)
+  const [total, setTotal] = useState(0)
 
   const handleClose = useCallback(() => {
     setKYCModal(false)
@@ -63,7 +64,7 @@ export const KYCTable = () => {
       {
         select: prismaSelectToJsonString(SELECT_TRANS),
         limit: LIMIT_PAGE_SIZE,
-        page: `${1}`,
+        page: `${page}`,
         where: prismaWhereConditionToJsonString(IGNORE_PENDING_QUERY),
       },
     ],
@@ -72,6 +73,7 @@ export const KYCTable = () => {
       refetchOnReconnect: 'always',
       onSuccess(data) {
         setKYCList(data.data)
+        setTotal(Number(data.count))
       },
       onError(error: any) {
         notification.error({
@@ -170,6 +172,10 @@ export const KYCTable = () => {
               columns={kycTable}
               data={kycList}
               loading={getKYCList.isLoading || getKYCList.isFetching}
+              total={total}
+              page={page}
+              setPage={setPage}
+              pageSize={Number(LIMIT_PAGE_SIZE)}
             />
             <KYCModal visible={kcyModal} handleClose={handleClose} data={record} />
           </div>
