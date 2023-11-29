@@ -144,14 +144,10 @@ const UserPaymentPlatform = (props: {
             <FormInputWithAffix
               name="platform"
               className={`${
-                props.paymentAccount && form.values.platform == props.paymentAccount?.platform
-                  ? 'bg-zinc-800'
-                  : 'bg-gray-700'
+                form.values.platform == (props.paymentAccount?.platform ?? '') ? 'bg-zinc-800' : 'bg-gray-700'
               } rounded border border-white border-opacity-30`}
               styleInput={`${
-                props.paymentAccount && form.values.platform == props.paymentAccount?.platform
-                  ? 'bg-zinc-800'
-                  : 'bg-gray-700'
+                form.values.platform == (props.paymentAccount?.platform ?? '') ? 'bg-zinc-800' : 'bg-gray-700'
               } border-none focus:border-none outline-none`}
               value={form.values.platform}
               onChange={(e) => {
@@ -237,7 +233,7 @@ const UserPaymentPlatform = (props: {
           <FormInput
             name="platformAccount"
             className={`${
-              props.paymentAccount && form.values.platformAccount == props.paymentAccount?.platformAccount
+              form.values.platformAccount == (props.paymentAccount?.platformAccount ?? '')
                 ? 'bg-zinc-800'
                 : 'bg-gray-700'
             } border border-white border-opacity-30`}
@@ -257,9 +253,7 @@ const UserPaymentPlatform = (props: {
           <FormInput
             name="beneficiary"
             className={`${
-              props.paymentAccount && form.values.beneficiary == props.paymentAccount?.beneficiary
-                ? 'bg-zinc-800'
-                : 'bg-gray-700'
+              form.values.beneficiary == (props.paymentAccount?.beneficiary ?? '') ? 'bg-zinc-800' : 'bg-gray-700'
             } border border-white border-opacity-30`}
             value={form.values.beneficiary}
             onChange={(e) => form.handleChange(e)}
