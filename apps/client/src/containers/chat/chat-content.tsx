@@ -1,5 +1,4 @@
 import { GrinningFaceWithOpenMouth, MoreOne, PhoneTelephone, Videocamera } from '@icon-park/react'
-import { useAuth } from '~/contexts/auth'
 import useChatScroll from '~/hooks/useChatScroll'
 
 import { ReactNode, useContext, useEffect, useRef, useState } from 'react'
@@ -38,7 +37,6 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
   const [messageInput, setMessageInput] = useState('')
   const { socketClientEmit } = useContext(SocketClientEmit)
   const { socketContext } = useContext(SocketContext)
-  const { isAuthenticated } = useAuth()
   const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
   const utils = trpc.useContext()
   const { data: chattingMessageChannel, isLoading: loadingChattingMessageChannel } = trpc.useQuery([
@@ -53,7 +51,7 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
       utils.invalidateQueries('chatting.getMessagesByChannelId')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socketContext?.socketChattingContext, isAuthenticated])
+  }, [socketContext?.socketChattingContext, !!userInfo])
 
   const mappingMember: { [key: string]: MemberChatChannelResponse } = convertArrayObjectToObject(
     chattingMessageChannel?.data.members ?? [],

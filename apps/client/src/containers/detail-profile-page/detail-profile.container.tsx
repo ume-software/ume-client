@@ -374,7 +374,7 @@ const DetailProfileContainer = () => {
                       leaveFrom="transform opacity-100 scale-100"
                       leaveTo="transform opacity-0 scale-95"
                     >
-                      <Menu.Items className="absolute right-0 p-2 origin-top-right bg-umeHeader divide-y divide-gray-200 rounded-md shadow-lg w-fit top-7 ring-1 ring-black ring-opacity-30 focus:outline-none">
+                      <Menu.Items className="absolute right-0 p-2 origin-top-right bg-umeHeader divide-y divide-gray-200 divide-opacity-30 rounded-md shadow-lg w-fit top-7 ring-1 ring-black ring-opacity-30 focus:outline-none">
                         <div className="flex flex-col gap-2 w-max">
                           {moreButtonDatas.map((item) => (
                             <Fragment key={item.key}>
@@ -382,7 +382,7 @@ const DetailProfileContainer = () => {
                                 item.key != 'Donate' &&
                                 item.key != 'Report' && (
                                   <div
-                                    className="p-2 cursor-pointer rounded-t-md hover:bg-gray-700 text-white group border-b-2 border-white last:border-none last:rounded-md"
+                                    className="p-2 cursor-pointer rounded-t-md hover:bg-gray-700 text-white group border-b-2 border-white border-opacity-30 last:border-none last:rounded-md"
                                     onClick={() => {
                                       handleMenuButtonAction(item)
                                     }}

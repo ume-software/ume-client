@@ -438,6 +438,7 @@ const EditProfile = () => {
         </div>
         <div className="min-h-[50px] flex justify-around items-start">
           <Button
+            type="button"
             isActive={false}
             isOutlinedButton={true}
             customCSS="w-[100px] text-xl p-2 rounded-xl hover:scale-105"

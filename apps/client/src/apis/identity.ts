@@ -19,7 +19,6 @@ import {
   getAccountBalance,
   getHistoryTransaction,
   getIdentityInfo,
-  getMyVoucher,
   getServiceAttributeByServiceSlug,
   getServiceAttributeValueByServiceAttributeId,
   getUserBySlug,
@@ -170,17 +169,7 @@ export const identityRouter = createRouter()
       return await providerUpdateVoucher(input, ctx)
     },
   })
-  .query('getMyVoucher', {
-    input: z.object({
-      limit: z.string(),
-      page: z.string(),
-      where: z.optional(z.string()),
-      order: z.optional(z.string()),
-    }),
-    resolve: async ({ input, ctx }) => {
-      return await getMyVoucher(input, ctx)
-    },
-  })
+
   .mutation('registerBecomeProvider', {
     resolve: async ({ ctx }) => {
       return await registerBecomeProvider(ctx)

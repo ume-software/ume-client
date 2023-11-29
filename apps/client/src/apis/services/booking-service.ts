@@ -12,6 +12,7 @@ import {
   ProviderServiceApi,
   ServiceApi,
   UserApi,
+  VoucherApi,
 } from 'ume-service-openapi'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
@@ -140,6 +141,30 @@ export const getCurrentBookingForUser = async (ctx) => {
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
       message: error.message || 'Fail to create new booking',
+    })
+  }
+}
+
+export const getMyVoucherForBooking = async (
+  query: { providerSlug: string; limit: string; page: string; where?: string; order?: string },
+  ctx,
+) => {
+  const cookies = parse(ctx.req.headers.cookie ?? '')
+  try {
+    const reponse = await new VoucherApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).getMyVoucher(query.providerSlug, query.limit, query.page, '["$all"]', query.where, query.order)
+    return {
+      data: reponse.data,
+      success: true,
+      message: '',
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to get data recharge',
     })
   }
 }
