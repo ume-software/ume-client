@@ -86,16 +86,6 @@ const BookingTransactionContainer = () => {
     },
   )
 
-  const handleFilter = (title, key) => {
-    setPage(1)
-    if (title == 'platform') {
-      setFilter({
-        ...filter,
-        platform: key,
-      })
-    }
-  }
-
   const handleSearchChange = (e) => {
     if (e.target.value == '') {
       setPage(1)
@@ -170,16 +160,6 @@ const BookingTransactionContainer = () => {
       <span className="content-title">Quản lý nạp tiền</span>
       <div className="flex flex-col my-10">
         <div className="flex items-center justify-end">
-          {/* <div className="flex">
-            <FilterDropdown
-              id={'platform'}
-              CustomCss="w-[10rem]"
-              title={`Nền tảng: ${mappingPlatform[filter.platform]}`}
-              items={platformFilterItems}
-              handleFilter={handleFilter}
-            />
-          </div> */}
-
           <div className="flex items-center border-2 border-white rounded-lg bg-umeHeader">
             <Search className="pl-2 rounded-full active:bg-gray-700" theme="outline" size="24" fill="#fff" />
             <Input

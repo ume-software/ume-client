@@ -18,7 +18,7 @@ export const getServiceList = async (ctx, query: { page: string; select?: string
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).adminGetAllServices('10', query.page, query.select || '["$all"]', query.where, query.order)
+    }).adminGetAllServices('10', query.page, query.select || '["$all"]', query.where, '[{"createdAt":"desc"}]')
 
     return {
       data: response.data,

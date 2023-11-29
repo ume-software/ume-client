@@ -252,7 +252,7 @@ export const getListKYC = async (
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).adminGetListUserKYCRequest(query?.limit, query?.page, query?.select, query?.where, query?.order)
+    }).adminGetListUserKYCRequest(query?.limit, query?.page, query?.select, query?.where, '[{"createdAt":"desc"}]')
 
     const res = response.data.row?.map((data: UserKYCRequestResponse) => ({
       ...data.user,
