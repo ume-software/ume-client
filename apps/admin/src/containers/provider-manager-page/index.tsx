@@ -160,7 +160,7 @@ const ProviderManager = () => {
   return (
     <div>
       <Head>
-        <title>Admin | Provider Manager</title>
+        <title>UME | Provider Manager</title>
       </Head>
       <div className="pb-80">
         <span className="content-title">Quản lý nhà cung cấp</span>

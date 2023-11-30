@@ -1,31 +1,35 @@
 import { Menu, Transition } from '@headlessui/react'
-import { CloseSmall, CopyOne, Dot, Female, Lock, Male, More, PaperMoneyTwo, ShareTwo } from '@icon-park/react'
-import { Button, InputWithAffix, Modal, TextArea } from '@ume/ui'
-import coin from 'public/coin-icon.png'
-import TestImage4 from 'public/cover.png'
+import { Alarm, CopyOne, Dot, Female, Lock, Male, More, PaperMoneyTwo, ShareTwo, Stopwatch } from '@icon-park/react'
 import detailBackground from 'public/detail-cover-background.png'
 import ImgForEmpty from 'public/img-for-empty.png'
 import lgbtIcon from 'public/rainbow-flag-11151.svg'
 import { useAuth } from '~/contexts/auth'
 
-import { Fragment, ReactElement, useState } from 'react'
+import { Fragment, ReactElement, useEffect, useState } from 'react'
 
-import { ConfigProvider, Tooltip, message, notification, theme } from 'antd'
-import { Formik } from 'formik'
-import Image, { StaticImageData } from 'next/legacy/image'
+import { ConfigProvider, Tooltip, message, theme } from 'antd'
+import { parse } from 'cookie'
+import Image from 'next/legacy/image'
 import { useRouter } from 'next/router'
 import {
+  BookingHistoryPagingResponse,
   ProviderConfigResponseStatusEnum,
   UserInformationResponse,
   UserInformationResponseGenderEnum,
 } from 'ume-service-openapi'
-import * as Yup from 'yup'
 
 import AlbumTab from './album-tab/album-tab'
+import {
+  BookingCountdown,
+  getCurrentBookingForProviderData,
+  getCurrentBookingForUserData,
+} from './components/booking-countdown'
+import DonateModal from './components/donate-modal'
+import EndSoonModal from './components/end-soon-modal'
+import { ReportModal } from './components/report-modal'
 import InformationTab from './information-tab/information-tab'
 import PostTab from './post-tab'
 
-import ConfirmForm from '~/components/confirm-form/confirmForm'
 import { LoginModal } from '~/components/header/login-modal.component'
 import { SkeletonDetailProvider } from '~/components/skeleton-load'
 
@@ -38,12 +42,19 @@ interface TabDataProps {
   [key: string]: any
 }
 
-interface DonateProps {
-  donateValue: number
-  donateContent?: string
-}
-
 const moreButtonDatas: TabDataProps[] = [
+  {
+    key: 'Report',
+    label: 'Tố cáo',
+    icon: (
+      <Alarm
+        className={`transition-opacity opacity-0 group-hover:opacity-100 group-hover:translate-x-3 duration-300`}
+        theme="outline"
+        size="20"
+        fill="#fff"
+      />
+    ),
+  },
   {
     key: 'Donate',
     label: 'Tặng quà',
@@ -102,15 +113,23 @@ const DetailProfileContainer = () => {
   const basePath = router.asPath.split('?')[0]
   const slug = router.query
 
-  const { isAuthenticated } = useAuth()
+  const accessToken = parse(document.cookie).accessToken
+
+  const { isAuthenticated, user } = useAuth()
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
 
   const [messageApi, contextHolder] = message.useMessage()
   const [providerDetail, setProviderDetail] = useState<UserInformationResponse | undefined>(undefined)
-  const [donationValues, setDonationValues] = useState<DonateProps>({ donateValue: 1 })
+
+  const [isModalReportVisible, setIsModalReportVisible] = useState<boolean>(false)
   const [isModalDonationVisible, setIsModalDonationVisible] = useState<boolean>(false)
-  const [isModalConfirmationVisible, setIsModalConfirmationVisible] = useState<boolean>(false)
+  const [isEndSoonModalVisible, setIsEndSoonModalVisible] = useState<boolean>(false)
+
   const { isLoading: isProviderDetailLoading } = trpc.useQuery(['booking.getUserBySlug', slug.profileId!.toString()], {
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: 'always',
+    cacheTime: 0,
+    refetchOnMount: true,
     onSuccess(data) {
       if (data.data.id) {
         setProviderDetail(data.data)
@@ -121,15 +140,26 @@ const DetailProfileContainer = () => {
     onError() {
       router.replace('/404')
     },
+    enabled: !!slug.profileId!.toString(),
   })
-  const donationForRecipient = trpc.useMutation(['booking.donationForRecipient'])
-  const utils = trpc.useContext()
+
+  const currentBookingForProviderData: BookingHistoryPagingResponse['row'] | undefined =
+    getCurrentBookingForProviderData()
+  const currentBookingForUserData: BookingHistoryPagingResponse['row'] | undefined = getCurrentBookingForUserData()
 
   const [selectedTab, setSelectedTab] = useState<TabDataProps>(
     tabDatas.find((tab) => {
       return tab.key.toString() == slug.tab?.toString()
     }) ?? tabDatas[0],
   )
+
+  useEffect(() => {
+    if (!providerDetail?.isProvider) {
+      setSelectedTab(tabDatas[1])
+    } else {
+      setSelectedTab(tabDatas[0])
+    }
+  }, [providerDetail])
 
   const handleChangeTab = (item: TabDataProps) => {
     router.replace(
@@ -172,172 +202,19 @@ const DetailProfileContainer = () => {
         duration: 2,
       })
     } else if (item.key == 'Donate') {
-      if (providerDetail && isAuthenticated) {
+      if (providerDetail && (isAuthenticated || user || accessToken)) {
         setIsModalDonationVisible(true)
+      } else {
+        setIsModalLoginVisible(true)
+      }
+    } else if (item.key == 'Report') {
+      if (providerDetail && (isAuthenticated || user || accessToken)) {
+        setIsModalReportVisible(true)
       } else {
         setIsModalLoginVisible(true)
       }
     }
   }
-
-  const handleCloseDonationModal = () => {
-    setIsModalDonationVisible(false)
-  }
-  const handleCloseComfirmModal = () => {
-    setIsModalConfirmationVisible(false)
-  }
-
-  const confirmModal = Modal.useEditableForm({
-    onOK: () => {},
-    onClose: handleCloseComfirmModal,
-    show: isModalConfirmationVisible,
-    form: (
-      <>
-        <ConfirmForm
-          title="Donate cho nhà cung cấp"
-          description="Bạn có chấp nhận donate cho nhà cung cấp này hay không?"
-          onClose={handleCloseComfirmModal}
-          onOk={() => {
-            donationForRecipient.mutate(
-              {
-                recipientId: providerDetail?.id ?? '',
-                amount: donationValues.donateValue,
-                message: donationValues.donateContent,
-              },
-              {
-                onSuccess() {
-                  notification.success({
-                    message: 'Donate thành công!',
-                    description: 'Nhà cung cấp đã nhận được tấm lòng của bạn :>',
-                    placement: 'bottomLeft',
-                  })
-                  utils.invalidateQueries('identity.account-balance')
-                  handleCloseComfirmModal()
-                  handleCloseDonationModal()
-                },
-                onError() {
-                  notification.error({
-                    message: 'Donate thất bại!',
-                    description: 'Có lỗi trong hệ thống của chúng tôi. Vui lòng thử lại sau :<',
-                    placement: 'bottomLeft',
-                  })
-                },
-              },
-            )
-          }}
-        />
-      </>
-    ),
-    backgroundColor: '#15151b',
-    closeWhenClickOutSide: true,
-    closeButtonOnConner: (
-      <>
-        <CloseSmall
-          onClick={handleCloseComfirmModal}
-          onKeyDown={(e) => e.key === 'Enter' && handleCloseComfirmModal()}
-          tabIndex={1}
-          className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
-          theme="outline"
-          size="24"
-          fill="#FFFFFF"
-        />
-      </>
-    ),
-  })
-
-  const validationSchema = Yup.object().shape({
-    donateValue: Yup.string()
-      .required('Xin hãy nhập số tiền')
-      .matches(/^\d+$/)
-      .min(1)
-      .max(7, 'Chỉ được nhập nhiều nhất 7 chữ số'),
-  })
-
-  const donateModal = Modal.useEditableForm({
-    onOK: () => {},
-    onClose: handleCloseDonationModal,
-    title: <p className="text-white">Tặng quà</p>,
-    show: isModalDonationVisible,
-    form: (
-      <>
-        <Formik
-          initialValues={{
-            donateValue: '1',
-            donateContent: undefined,
-          }}
-          onSubmit={(values) => {
-            setDonationValues({ donateValue: Number(values.donateValue), donateContent: values.donateContent })
-          }}
-          validationSchema={validationSchema}
-        >
-          {({ handleSubmit, handleChange, handleBlur, values, errors }) => (
-            <div className="flex flex-col gap-5 p-10 text-white">
-              <div className="space-y-2">
-                <label>Tiền quà: </label>
-                <InputWithAffix
-                  placeholder="Tiền donate"
-                  value={values.donateValue}
-                  name="donateValue"
-                  type="number"
-                  min={1}
-                  onChange={handleChange}
-                  className="w-full max-h-[50px] bg-zinc-800 border border-white border-opacity-30 rounded-xl my-2"
-                  styleInput={`bg-zinc-800 rounded-xl border-none focus:outline-none`}
-                  iconStyle="border-none"
-                  position="right"
-                  component={<Image src={coin} width={50} height={50} alt="coin" />}
-                  autoComplete="off"
-                  onBlur={handleBlur}
-                />
-                {!!errors.donateValue && <p className="pl-3 text-xs text-red-500">{errors.donateValue}</p>}
-              </div>
-              <div className="space-y-2">
-                <label>Nội dung: </label>
-                <TextArea
-                  name="donateContent"
-                  className="bg-[#413F4D] w-full max-h-[140px]"
-                  rows={5}
-                  value={values.donateContent}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="w-full text-center">
-                <Button
-                  customCSS={`text-md py-2 px-5 rounded-xl ${
-                    !errors.donateValue ? 'hover:scale-105' : 'opacity-30 cursor-not-allowed'
-                  }`}
-                  type="button"
-                  isActive={!errors.donateValue}
-                  isOutlinedButton={true}
-                  onClick={() => {
-                    handleSubmit()
-                    setIsModalConfirmationVisible(true)
-                  }}
-                >
-                  Chấp nhận
-                </Button>
-              </div>
-            </div>
-          )}
-        </Formik>
-      </>
-    ),
-    backgroundColor: '#15151b',
-    closeWhenClickOutSide: true,
-    closeButtonOnConner: (
-      <>
-        <CloseSmall
-          onClick={handleCloseDonationModal}
-          onKeyDown={(e) => e.key === 'Enter' && handleCloseDonationModal()}
-          tabIndex={1}
-          className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
-          theme="outline"
-          size="24"
-          fill="#FFFFFF"
-        />
-      </>
-    ),
-  })
 
   return (
     <>
@@ -349,9 +226,21 @@ const DetailProfileContainer = () => {
         {contextHolder}
       </ConfigProvider>
       <LoginModal isModalLoginVisible={isModalLoginVisible} setIsModalLoginVisible={setIsModalLoginVisible} />
-
-      {isModalDonationVisible && donateModal}
-      {isModalConfirmationVisible && confirmModal}
+      <ReportModal
+        isModalReportVisible={isModalReportVisible}
+        setIsModalReportVisible={setIsModalReportVisible}
+        providerId={providerDetail?.id ?? ''}
+      />
+      <DonateModal
+        isModalDonationVisible={isModalDonationVisible}
+        setIsModalDonationVisible={setIsModalDonationVisible}
+        providerId={providerDetail?.id ?? ''}
+      />
+      <EndSoonModal
+        isEndSoonModalVisible={isEndSoonModalVisible}
+        setIsEndSoonModalVisible={setIsEndSoonModalVisible}
+        bookingHistoryId={currentBookingForProviderData?.[0]?.id ?? currentBookingForUserData?.[0]?.id ?? ''}
+      />
 
       {!providerDetail && isProviderDetailLoading ? (
         <SkeletonDetailProvider />
@@ -398,19 +287,68 @@ const DetailProfileContainer = () => {
                       <Tooltip placement="bottomLeft" title={`${providerDetail?.isOnline ? 'Online' : 'Offline'}`}>
                         <div className="flex items-center gap-1 p-2 bg-gray-700 rounded-full">
                           <Dot theme="multi-color" size="24" fill={providerDetail?.isOnline ? '#008000' : '#FF0000'} />
-                          <p>
-                            {providerDetail?.providerConfig?.status == ProviderConfigResponseStatusEnum.Activated &&
-                              'Sẵn sàng'}
-                          </p>
-                          <p>
-                            {providerDetail?.providerConfig?.status == ProviderConfigResponseStatusEnum.Busy && 'Bận'}
-                          </p>
-                          <p>
-                            {providerDetail?.providerConfig?.status ==
-                              ProviderConfigResponseStatusEnum.StoppedAcceptingBooking && 'Ngừng nhận đơn'}
-                          </p>
+                          {/* {providerDetail?.isOnline ? ( */}
+                          <>
+                            <p>
+                              {providerDetail?.providerConfig?.status == ProviderConfigResponseStatusEnum.Activated &&
+                                'Sẵn sàng'}
+                            </p>
+                            <p>
+                              {providerDetail?.providerConfig?.status == ProviderConfigResponseStatusEnum.Busy && 'Bận'}
+                            </p>
+                            <p>
+                              {providerDetail?.providerConfig?.status ==
+                                ProviderConfigResponseStatusEnum.StoppedAcceptingBooking && 'Ngừng nhận đơn'}
+                            </p>
+                          </>
+                          {/* ) : (
+                            'Offline'
+                          )} */}
                         </div>
                       </Tooltip>
+                    </div>
+                    <div className="mt-2 flex items-center gap-2">
+                      <>
+                        {currentBookingForProviderData &&
+                          ((currentBookingForProviderData[0]?.providerService?.provider as any)?.slug ==
+                            slug.profileId ||
+                            currentBookingForProviderData[0]?.booker?.slug == slug.profileId) &&
+                          (currentBookingForProviderData?.length ?? 0) > 0 && (
+                            <div className="text-center bg-gray-700 rounded-full">
+                              <BookingCountdown />
+                            </div>
+                          )}
+                      </>
+                      <>
+                        {currentBookingForUserData &&
+                          ((currentBookingForUserData[0]?.providerService?.provider as any)?.slug == slug.profileId ||
+                            currentBookingForUserData[0]?.booker?.slug == slug.profileId) &&
+                          (currentBookingForUserData?.length ?? 0) > 0 && (
+                            <div className="text-center bg-gray-700 rounded-full">
+                              <BookingCountdown />
+                            </div>
+                          )}
+                      </>
+
+                      {currentBookingForProviderData &&
+                        ((currentBookingForProviderData?.length ?? 0) > 0 ||
+                          (currentBookingForUserData?.length ?? 0) > 0) &&
+                        ((currentBookingForProviderData[0]?.providerService?.provider as any)?.slug == slug.profileId ||
+                          currentBookingForProviderData[0]?.booker?.slug == slug.profileId) && (
+                          <>
+                            <Tooltip placement="right" title={`Kết thúc sớm`}>
+                              <div
+                                className="p-2 bg-red-500 rounded-full cursor-pointer"
+                                onClick={() => {
+                                  setIsEndSoonModalVisible(true)
+                                }}
+                                onKeyDown={() => {}}
+                              >
+                                <Stopwatch theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
+                              </div>
+                            </Tooltip>
+                          </>
+                        )}
                     </div>
                   </div>
                 </div>
@@ -437,21 +375,41 @@ const DetailProfileContainer = () => {
                       leaveFrom="transform opacity-100 scale-100"
                       leaveTo="transform opacity-0 scale-95"
                     >
-                      <Menu.Items className="absolute right-0 py-3 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg w-fit top-7 ring-1 ring-black ring-opacity-5 focus:outline-none">
+                      <Menu.Items className="absolute right-0 p-2 origin-top-right bg-umeHeader divide-y divide-gray-200 rounded-md shadow-lg w-fit top-7 ring-1 ring-black ring-opacity-30 focus:outline-none">
                         <div className="flex flex-col gap-2 w-max">
-                          {moreButtonDatas.map((item, index) => (
-                            <div
-                              key={index}
-                              className="px-2 py-1 rounded-md cursor-pointer hover:bg-purple-600 hover:text-white group"
-                              onClick={() => {
-                                handleMenuButtonAction(item)
-                              }}
-                            >
-                              <div className="flex items-center justify-between gap-2 duration-300 scale-x-100 group-hover:scale-x-95 group-hover:-translate-x-2">
-                                <div>{item.label}</div>
-                                {item.icon}
-                              </div>
-                            </div>
+                          {moreButtonDatas.map((item) => (
+                            <Fragment key={item.key}>
+                              {user?.id == providerDetail?.id ? (
+                                item.key != 'Donate' &&
+                                item.key != 'Report' && (
+                                  <div
+                                    className="p-2 cursor-pointer rounded-t-md hover:bg-gray-700 text-white group border-b-2 border-white last:border-none last:rounded-md"
+                                    onClick={() => {
+                                      handleMenuButtonAction(item)
+                                    }}
+                                    onKeyDown={() => {}}
+                                  >
+                                    <div className="flex items-center justify-between gap-2 rounded-md duration-300 scale-x-100 group-hover:scale-x-95 group-hover:-translate-x-2">
+                                      <div>{item.label}</div>
+                                      {item.icon}
+                                    </div>
+                                  </div>
+                                )
+                              ) : (
+                                <div
+                                  className="p-2 cursor-pointer rounded-t-md hover:bg-gray-700 text-white group border-b-2 border-white last:border-none last:rounded--md"
+                                  onClick={() => {
+                                    handleMenuButtonAction(item)
+                                  }}
+                                  onKeyDown={() => {}}
+                                >
+                                  <div className="flex items-center justify-between gap-2 rounded-md duration-300 scale-x-100 group-hover:scale-x-95 group-hover:-translate-x-2">
+                                    <div>{item.label}</div>
+                                    {item.icon}
+                                  </div>
+                                </div>
+                              )}
+                            </Fragment>
                           ))}
                         </div>
                       </Menu.Items>
@@ -462,16 +420,33 @@ const DetailProfileContainer = () => {
 
               <div className="flex flex-row gap-10" style={{ zIndex: 2 }}>
                 {tabDatas.map((item) => (
-                  <span
-                    className={`text-white xl:text-2xl text-xl font-medium p-4 cursor-pointer ${
-                      item.key == selectedTab.key ? 'border-b-4 border-purple-700' : ''
-                    }`}
-                    key={item.key}
-                    onClick={() => handleChangeTab(item)}
-                    data-tab={item.label}
-                  >
-                    {item.label}
-                  </span>
+                  <Fragment key={item.key}>
+                    {providerDetail?.isProvider ? (
+                      <span
+                        className={`text-white xl:text-2xl text-xl font-medium p-4 cursor-pointer ${
+                          item.key == selectedTab.key ? 'border-b-4 border-purple-700' : ''
+                        }`}
+                        onClick={() => handleChangeTab(item)}
+                        data-tab={item.label}
+                        onKeyDown={() => {}}
+                      >
+                        {item.label}
+                      </span>
+                    ) : (
+                      item.key != 'Service' && (
+                        <span
+                          className={`text-white xl:text-2xl text-xl font-medium p-4 cursor-pointer ${
+                            item.key == selectedTab.key ? 'border-b-4 border-purple-700' : ''
+                          }`}
+                          onClick={() => handleChangeTab(item)}
+                          data-tab={item.label}
+                          onKeyDown={() => {}}
+                        >
+                          {item.label}
+                        </span>
+                      )
+                    )}
+                  </Fragment>
                 ))}
               </div>
             </div>
@@ -479,7 +454,7 @@ const DetailProfileContainer = () => {
           <div className="p-5">
             <span className="text-white">
               <div className="flex justify-center my-10">
-                {selectedTab.key == 'Service' && <InformationTab data={providerDetail!} />}
+                {providerDetail?.isProvider && selectedTab.key == 'Service' && <InformationTab data={providerDetail} />}
                 {selectedTab.key == 'Album' && <AlbumTab data={providerDetail!} />}
                 {selectedTab.key == 'Post' && <PostTab providerId={providerDetail!.slug} />}
               </div>

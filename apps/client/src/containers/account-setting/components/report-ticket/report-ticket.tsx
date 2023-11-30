@@ -19,25 +19,19 @@ const ReportTicket = () => {
     onClose: handleClose,
     show: isModalReportVisible,
     title: <p className="text-white">Tố cáo</p>,
-    form: (
-      <>
-        <ReportTicketModal />
-      </>
-    ),
+    form: <ReportTicketModal />,
     backgroundColor: '#15151b',
     closeWhenClickOutSide: true,
     closeButtonOnConner: (
-      <>
-        <CloseSmall
-          onClick={handleClose}
-          onKeyDown={(e) => e.key === 'Enter' && handleClose()}
-          tabIndex={1}
-          className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
-          theme="outline"
-          size="24"
-          fill="#FFFFFF"
-        />
-      </>
+      <CloseSmall
+        onClick={handleClose}
+        onKeyDown={(e) => e.key === 'Enter' && handleClose()}
+        tabIndex={1}
+        className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
+        theme="outline"
+        size="24"
+        fill="#FFFFFF"
+      />
     ),
   })
   return (
@@ -46,7 +40,7 @@ const ReportTicket = () => {
       <div className="w-full px-10">
         <p className="text-4xl font-bold">Tố cáo</p>
 
-        <div className="flex flex-col gap-5 mt-10 pr-5 space-y-10">
+        <div className="flex flex-col gap-5 mt-10 space-y-10">
           <div className="flex flex-col gap-3">
             <div className="flex items-end justify-between">
               <p className="text-xl font-bold">Chi tiết tố cáo</p>

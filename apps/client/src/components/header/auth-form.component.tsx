@@ -17,9 +17,8 @@ export const AuthForm = ({ setShowModal }: AuthFormProps) => {
         { token: response.access_token, type: 'GOOGLE' },
         {
           onSuccess: (data) => {
-            setShowModal(false)
-            localStorage.setItem('accessToken', data.data.accessToken)
             login({ ...data.data.user })
+            setShowModal(false)
           },
           onError: (error) => console.log(error),
         },
@@ -43,17 +42,6 @@ export const AuthForm = ({ setShowModal }: AuthFormProps) => {
               />
             </svg>
             <span className="ml-3 text-white ">Đăng nhập bằng Google</span>
-          </div>
-        </button>
-        <button disabled className="hover:bg-slate-700 bg-[#292734] px-3 py-2 rounded-2xl">
-          <div className="flex justify-center flex-1">
-            <svg width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M15.5 11.1425C15.5 13.8725 13.8725 15.5 11.1425 15.5H10.25C9.8375 15.5 9.5 15.1625 9.5 14.75V10.4225C9.5 10.22 9.665 10.0475 9.8675 10.0475L11.1875 10.025C11.2925 10.0175 11.3825 9.9425 11.405 9.8375L11.6675 8.405C11.6726 8.37253 11.6706 8.33934 11.6616 8.30773C11.6527 8.27611 11.6369 8.24681 11.6155 8.22186C11.5942 8.1969 11.5676 8.17689 11.5377 8.16319C11.5079 8.14949 11.4754 8.14243 11.4425 8.1425L9.845 8.165C9.635 8.165 9.47 8 9.4625 7.7975L9.4325 5.96C9.4325 5.84 9.53 5.735 9.6575 5.735L11.4575 5.705C11.585 5.705 11.6825 5.6075 11.6825 5.48L11.6525 3.68C11.6525 3.5525 11.555 3.455 11.4275 3.455L9.4025 3.485C9.1069 3.48949 8.81508 3.55227 8.54379 3.66974C8.27249 3.78721 8.02704 3.95707 7.8215 4.16957C7.61597 4.38207 7.45439 4.63305 7.34602 4.90811C7.23766 5.18317 7.18464 5.47691 7.19 5.7725L7.2275 7.835C7.235 8.045 7.07 8.21 6.86 8.2175L5.96 8.2325C5.8325 8.2325 5.735 8.33 5.735 8.4575L5.7575 9.8825C5.7575 10.01 5.855 10.1075 5.9825 10.1075L6.8825 10.0925C7.0925 10.0925 7.2575 10.2575 7.265 10.46L7.3325 14.735C7.34 15.155 7.0025 15.5 6.5825 15.5H4.8575C2.1275 15.5 0.5 13.8725 0.5 11.135V4.8575C0.5 2.1275 2.1275 0.5 4.8575 0.5H11.1425C13.8725 0.5 15.5 2.1275 15.5 4.8575V11.1425Z"
-                fill="white"
-              />
-            </svg>
-            <span className="ml-3 text-white ">Đăng nhập bằng Facebook</span>
           </div>
         </button>
       </div>

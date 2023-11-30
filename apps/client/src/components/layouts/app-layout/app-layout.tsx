@@ -1,7 +1,16 @@
 import { socket } from '~/apis/socket/socket-connect'
 import { useAuth } from '~/contexts/auth'
 
-import { Dispatch, PropsWithChildren, ReactNode, SetStateAction, createContext, useEffect, useState } from 'react'
+import {
+  Dispatch,
+  PropsWithChildren,
+  ReactNode,
+  SetStateAction,
+  createContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 
 import { parse } from 'cookie'
 
@@ -49,8 +58,9 @@ export const DrawerContext = createContext<DrawerProps>({
 })
 
 export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
-  const { isAuthenticated, user } = useAuth()
+  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
   const accessToken = parse(document.cookie).accessToken
+  const { isAuthenticated } = useAuth()
 
   const [childrenDrawer, setChildrenDrawer] = useState<ReactNode>()
 
@@ -63,8 +73,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   })
 
   useEffect(() => {
-    if (isAuthenticated) {
-      const socketInstance = isAuthenticated ? socket(accessToken) : null
+    if (!!accessToken && isAuthenticated) {
+      const socketInstance = Boolean(userInfo.id) ? socket(accessToken) : null
 
       setSocketClientEmit({ socketInstanceChatting: socketInstance?.socketInstanceChatting })
 
@@ -91,25 +101,28 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         }
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accessToken, isAuthenticated])
 
+  const socketClientEmitValue = useMemo(
+    () => ({ socketClientEmit, socketContext, setSocketContext, childrenDrawer, setChildrenDrawer }),
+    [socketClientEmit, socketContext, setSocketContext, childrenDrawer, setChildrenDrawer],
+  )
   return (
-    <>
-      <SocketClientEmit.Provider value={{ socketClientEmit }}>
-        <SocketContext.Provider value={{ socketContext, setSocketContext }}>
-          <div className="flex flex-col">
-            <div className="fixed z-10 flex flex-col w-full ">
-              <Header />
-            </div>
-            <DrawerContext.Provider value={{ childrenDrawer, setChildrenDrawer }}>
-              <div className="pb-8 bg-umeBackground pt-[90px] pr-[60px] pl-[10px]">{children}</div>
-              <div className="fixed h-full bg-umeHeader top-[65px] right-0">
-                <Sidebar />
-              </div>
-            </DrawerContext.Provider>
+    <SocketClientEmit.Provider value={socketClientEmitValue}>
+      <SocketContext.Provider value={socketClientEmitValue}>
+        <div className="flex flex-col">
+          <div className="fixed z-10 flex flex-col w-full ">
+            <Header />
           </div>
-        </SocketContext.Provider>
-      </SocketClientEmit.Provider>
-    </>
+          <DrawerContext.Provider value={socketClientEmitValue}>
+            <div className="pb-8 bg-umeBackground pt-[90px] pr-[60px] pl-[10px]">{children}</div>
+            <div className="fixed h-full bg-umeHeader top-[65px] right-0">
+              <Sidebar />
+            </div>
+          </DrawerContext.Provider>
+        </div>
+      </SocketContext.Provider>
+    </SocketClientEmit.Provider>
   )
 }

@@ -7,14 +7,12 @@ import * as React from 'react'
 import { useRef, useState } from 'react'
 
 import { Select, notification } from 'antd'
-import { FormikErrors, useFormik } from 'formik'
-import { values } from 'lodash'
+import { useFormik } from 'formik'
 import Image from 'next/legacy/image'
 import {
   HandleServiceAttributeRequest,
   HandleServiceAttributeRequestHandleTypeEnum,
   HandleServiceAttributeValueRequestHandleTypeEnum,
-  ServiceAttributeResponse,
   ServiceResponse,
   UpdateServiceRequest,
 } from 'ume-service-openapi'
@@ -33,7 +31,7 @@ export interface IServicesModalUpdateProps {
   idService: string
 }
 
-export default function ServicesModalUpdate({ idService, closeFunction, openValue }: IServicesModalUpdateProps) {
+export const ServicesModalUpdate = ({ idService, closeFunction, openValue }: IServicesModalUpdateProps) => {
   const utils = trpc.useContext()
   const [servicesDetails, setServicesDetails] = useState<ServiceResponse>()
   const SELECT = [
@@ -48,24 +46,21 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
       ],
     },
   ]
-  const { isLoading, isFetching } = trpc.useQuery(
-    ['services.getServiceDetails', { id: idService, select: JSON.stringify(SELECT) }],
-    {
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: 'always',
-      onSuccess(data) {
-        setServicesDetails(data.data)
-      },
+  trpc.useQuery(['services.getServiceDetails', { id: idService, select: JSON.stringify(SELECT) }], {
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: 'always',
+    onSuccess(data) {
+      setServicesDetails(data.data)
     },
-  )
+  })
   const titleValue = 'Chỉnh sửa dịch vụ'
   const [openConfirm, setOpenConfirm] = useState(false)
   const [isCreate, setIsCreate] = useState<boolean>(false)
   const [isSubmiting, setSubmiting] = useState(false)
   const imageInputRef = useRef<HTMLInputElement>(null)
-  const nameInit = servicesDetails?.name || ''
-  const viNameInit = servicesDetails?.viName || ''
-  const imageUrlInit = servicesDetails?.imageUrl || empty_img
+  const nameInit = servicesDetails?.name ?? ''
+  const viNameInit = servicesDetails?.viName ?? ''
+  const imageUrlInit = servicesDetails?.imageUrl ?? empty_img
   const isActivatedInit = true
   const numberUsedInit = 100
   const createdAtInit = servicesDetails?.createdAt
@@ -139,6 +134,7 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
         },
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nameInit])
 
   function closeHandleSmall() {
@@ -235,7 +231,7 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
     return isoDate
   }
 
-  function getUpdateReq() {
+  const getUpdateReq = () => {
     let updateRes: Array<HandleServiceAttributeRequest> = JSON.parse(JSON.stringify(form.values.serviceAttributes))
     serviceAttributesInit.filter((service) => {
       const matchingUpdateService = form.values.serviceAttributes.find(
@@ -254,7 +250,7 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
           const valueNotInValueInit = serviceAttributeValues.filter((value) => {
             return !updateServiceAttributeValues?.some((item) => item.id === value.id)
           })
-          if (valueNotInValueInit.length != 0) {
+          if (valueNotInValueInit.length !== 0) {
             valueNotInValueInit.filter((value) => {
               const res = { ...value, handleType: HandleServiceAttributeRequestHandleTypeEnum.Delete }
               const indexToUpdate = updateRes.findIndex((item) => item.id === service.id)
@@ -263,18 +259,18 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
           }
         }
       }
+      return true
     })
     return updateRes
   }
+
   async function submitHandle() {
     setOpenConfirm(false)
     setIsCreate(false)
     const imgURL = await uploadImage()
     try {
-      let updateRes = await getUpdateReq()
+      let updateRes = getUpdateReq()
       const req = {
-        // name: [form.values.name, nameInit],
-        // imageUrl: [form.values.selectedImage ? imgURL.imageUrl : imageUrlInit, imageUrlInit],
         viName: [form.values.viName, viNameInit],
         isActivated: [form.values.isActivated, isActivatedInit],
         serviceAttributes: [updateRes, serviceAttributesInit],
@@ -293,7 +289,7 @@ export default function ServicesModalUpdate({ idService, closeFunction, openValu
       if (reqWithValuesNotNull) {
         try {
           let req = {
-            id: idService as string,
+            id: `${idService}`,
             updateServiceRequest: reqWithValuesNotNull as UpdateServiceRequest,
           }
           updateService.mutate(req, {

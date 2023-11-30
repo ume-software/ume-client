@@ -6,8 +6,7 @@ import { useState } from 'react'
 
 import { Select, Space } from 'antd'
 import Image from 'next/legacy/image'
-import { prismaSelectToJsonString } from 'query-string-prisma-ume'
-import { CreateVoucherRequestDiscountUnitEnum, VoucherResponse } from 'ume-service-openapi'
+import { CreateVoucherRequestDiscountUnitEnum } from 'ume-service-openapi'
 
 import ModalBase from '~/components/modal-base'
 
@@ -76,6 +75,12 @@ export default function VourcherModalView({ vourcherId, closeFunction, openValue
   function closeHandle() {
     closeFunction()
   }
+  function formatNumberWithCommas(number) {
+    return parseFloat(number)
+      .toString()
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  }
+
   return (
     <div>
       <ModalBase titleValue={titleValue} closeFunction={closeHandle} openValue={openValue} className="w-auto bg-black">
@@ -204,9 +209,11 @@ export default function VourcherModalView({ vourcherId, closeFunction, openValue
               </div>
               <div className="flex h-12 text-white">
                 <div className="flex items-center">
-                  {'Khuyến mãi dùng cho hóa đơn có xu tối thiểu:'}
-                  <span className="ml-2">{minimumBookingTotalPriceForUsageInit} </span>
-                  <Image className="" alt="Xu" src={coinIcon} width={24} height={24} />
+                  {'Khuyến mãi dùng cho hóa đơn tối thiểu:'}
+                  <span className="ml-2 font-bold">
+                    {formatNumberWithCommas(minimumBookingTotalPriceForUsageInit)}{' '}
+                    <span className="ml-1 text-xs italic">đ</span>
+                  </span>
                 </div>
               </div>
             </div>
@@ -220,11 +227,17 @@ export default function VourcherModalView({ vourcherId, closeFunction, openValue
               </div>
               <div className="flex items-baseline h-12 text-white">
                 <span className="h-8">Giảm :</span>
-                <div className="inline-block w-2/12 ml-1 font-bold">{minimize}</div>
+                <div className="inline-block w-4/12 ml-1 font-bold">
+                  {formatNumberWithCommas(minimize) || 0}{' '}
+                  {discountUnitInit == CreateVoucherRequestDiscountUnitEnum.Percent ? ' %' : ' VND'}
+                </div>
+
                 {discountUnitInit == CreateVoucherRequestDiscountUnitEnum.Percent && (
                   <div className="flex items-center justify-end w-8/12">
                     <span className="">Giảm Tối Đa:</span>
-                    <div className="inline-block w-3/12 ml-1 mr-1">{maximumDiscountValueInit} Xu</div>
+                    <div className="inline-block w-5/12 ml-1 mr-1 font-bold">
+                      {formatNumberWithCommas(maximumDiscountValueInit)} <span className="text-xs italic"> đ</span>
+                    </div>
                   </div>
                 )}
               </div>
@@ -234,7 +247,7 @@ export default function VourcherModalView({ vourcherId, closeFunction, openValue
               <div className="flex h-12 text-white">
                 <div className="flex items-center">
                   {'Khuyến mãi dùng cho hóa đơn có giờ tối thiểu: '}
-                  <span className="ml-2">{minimumBookingDurationForUsageInit} h</span>
+                  <span className="ml-2 font-bold">{minimumBookingDurationForUsageInit} h</span>
                 </div>
               </div>
             </div>

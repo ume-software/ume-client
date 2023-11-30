@@ -103,6 +103,9 @@ const AdminVoucherTable = ({ data, isLoading }) => {
     }
     setOpenConfirm(false)
   }
+  function formatNumberWithCommas(number) {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  }
   const columns = [
     {
       title: 'Tên',
@@ -113,11 +116,6 @@ const AdminVoucherTable = ({ data, isLoading }) => {
           <p className="text-gray-400"> {record.code}</p>
         </div>
       ),
-    },
-    {
-      title: 'Mô tả',
-      dataIndex: 'description',
-      key: 'description',
     },
     {
       title: <div className="flex justify-center w-full">Loại</div>,
@@ -132,7 +130,12 @@ const AdminVoucherTable = ({ data, isLoading }) => {
         if (record.discountUnit == 'PERCENT')
           return <div className="flex justify-center w-full">{record.discountValue + '%'}</div>
         else if (record.discountUnit == 'CASH')
-          return <div className="flex justify-center w-full">{record.discountValue + ' xu'}</div>
+          return (
+            <div className="flex items-baseline justify-center w-full">
+              {formatNumberWithCommas(parseInt(record.discountValue))}
+              <span className="text-xs italic"> đ</span>
+            </div>
+          )
       },
     },
     {
@@ -158,46 +161,44 @@ const AdminVoucherTable = ({ data, isLoading }) => {
       key: 'action',
       render: (record) => {
         return (
-          <>
-            <div className="flex max-w-[6rem]">
+          <div className="flex max-w-[6rem]">
+            <Button isActive={false}>
+              <Eyes
+                onClick={() => {
+                  openModalHandle('view', record.key)
+                }}
+                className="p-2 mr-2 rounded-full hover:bg-gray-500"
+                theme="outline"
+                size="18"
+                fill="#fff"
+              />
+            </Button>
+            {record.isPublished ? (
+              <Button isActive={false} className="pointer-events-none ">
+                <Write className="p-2 rounded-full opacity-40" theme="outline" size="18" fill="#fff" />
+              </Button>
+            ) : (
               <Button isActive={false}>
-                <Eyes
+                <Write
                   onClick={() => {
-                    openModalHandle('view', record.key)
+                    openModalHandle('update', record.key)
                   }}
-                  className="p-2 mr-2 rounded-full hover:bg-gray-500"
+                  className="p-2 rounded-full hover:bg-gray-500"
                   theme="outline"
                   size="18"
-                  fill="#fff"
+                  fill="#1677ff"
                 />
               </Button>
-              {record.isPublished ? (
-                <Button isActive={false} className="pointer-events-none ">
-                  <Write className="p-2 rounded-full opacity-40" theme="outline" size="18" fill="#fff" />
-                </Button>
-              ) : (
-                <Button isActive={false}>
-                  <Write
-                    onClick={() => {
-                      openModalHandle('update', record.key)
-                    }}
-                    className="p-2 rounded-full hover:bg-gray-500"
-                    theme="outline"
-                    size="18"
-                    fill="#1677ff"
-                  />
-                </Button>
-              )}
+            )}
 
-              <Button isActive={false} onClick={() => handleOpenConfirm(record)}>
-                {record.isActivated ? (
-                  <CloseOne className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="20" fill="#ff0000" />
-                ) : (
-                  <CheckOne className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="20" fill="#85ea2d" />
-                )}
-              </Button>
-            </div>
-          </>
+            <Button isActive={false} onClick={() => handleOpenConfirm(record)}>
+              {record.isActivated ? (
+                <CloseOne className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="20" fill="#ff0000" />
+              ) : (
+                <CheckOne className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="20" fill="#85ea2d" />
+              )}
+            </Button>
+          </div>
         )
       },
     },

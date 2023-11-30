@@ -114,11 +114,6 @@ const ProviderVoucherTable = ({ data, isLoading }) => {
       ),
     },
     {
-      title: 'Mô tả',
-      dataIndex: 'description',
-      key: 'description',
-    },
-    {
       title: <div className="flex justify-center w-full">Loại</div>,
       dataIndex: 'type',
       key: 'type',

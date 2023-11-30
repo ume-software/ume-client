@@ -5,7 +5,7 @@ import { useState } from 'react'
 
 import { Pagination, Table } from 'antd'
 import Image from 'next/image'
-import { CoinHistoryPagingResponse, UserCoinResponse } from 'ume-service-openapi'
+import { BalanceHistoryPagingResponse, UserBalanceResponse } from 'ume-service-openapi'
 
 import EmptyErrorPic from '../../../../public/empty_error.png'
 
@@ -35,8 +35,8 @@ const tableDataMapping = (data?) => {
 }
 
 export default function UserDetails({ details, openValue, closeFunction }: IUserDetailsProps) {
-  const [transaction, setTransaction] = useState<CoinHistoryPagingResponse>()
-  const [totalCoin, setTotalCoin] = useState<UserCoinResponse>()
+  const [transaction, setTransaction] = useState<BalanceHistoryPagingResponse>()
+  const [total, setTotal] = useState<UserBalanceResponse>()
   const [page, setPage] = useState(1)
   const ORDER = [{ id: 'asc' }]
 
@@ -54,7 +54,7 @@ export default function UserDetails({ details, openValue, closeFunction }: IUser
 
   trpc.useQuery(['user.getUserTotalCoin', { slug: details?.key }], {
     onSuccess(data) {
-      setTotalCoin(data.data)
+      setTotal(data.data)
     },
   })
 
@@ -74,12 +74,12 @@ export default function UserDetails({ details, openValue, closeFunction }: IUser
       key: 'coinType',
     },
     {
-      title: <div className="flex justify-center items-center">Số tiền</div>,
+      title: <div className="flex items-center justify-center">Số tiền</div>,
       dataIndex: 'amount',
       key: 'amount',
       render: (amount) => (
-        <div className="flex justify-center items-center">
-          {amount} <Image alt="Xu" src={coinIcon} width={30} height={30} />
+        <div className="flex items-center justify-center">
+          {formatNumberWithCommas(amount)} <span className="text-xs italic"> đ</span>
         </div>
       ),
     },
@@ -87,12 +87,18 @@ export default function UserDetails({ details, openValue, closeFunction }: IUser
 
   const locale = {
     emptyText: (
-      <div className="flex flex-col items-center justify-center w-full h-full font-bold text-2xl text-white">
+      <div className="flex flex-col items-center justify-center w-full h-full text-2xl font-bold text-white">
         <Image height={600} alt="empty data" src={EmptyErrorPic} />
         Không có data
       </div>
     ),
   }
+  function formatNumberWithCommas(number) {
+    return parseFloat(number)
+      .toString()
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  }
+
   return (
     <ModalBase
       titleValue="Thông tin tài khoản"
@@ -101,15 +107,15 @@ export default function UserDetails({ details, openValue, closeFunction }: IUser
       className="w-auto bg-black"
     >
       <PersionalInfo data={details} />
-      <div className="flex justify-between items-center text-white mt-5 px-4">
+      <div className="flex items-center justify-between px-4 mt-5 text-white">
         <span>Biến động số dư</span>
         <div className="border-b-2 border-[#7463F0] mx-4 mr-6"></div>
 
         <div className=" flex items-center text-white w-[6rem]">
-          Số dư: {totalCoin?.totalCoin} <Image alt="Xu" src={coinIcon} width={30} height={30} />
+          Số dư: {formatNumberWithCommas(total?.totalBalance) || 0} <span className="text-xs italic"> đ</span>
         </div>
       </div>
-      <div className="my-4 px-4">
+      <div className="px-4 my-4">
         <Table
           loading={isLoading}
           pagination={false}
@@ -117,7 +123,7 @@ export default function UserDetails({ details, openValue, closeFunction }: IUser
           columns={columns}
           dataSource={tableDataMapping(transaction?.row)}
         />
-        <div className="flex w-full justify-center mb-2 mt-5">
+        <div className="flex justify-center w-full mt-5 mb-2">
           <Pagination
             itemRender={(page, type) => (
               <div className="text-white">

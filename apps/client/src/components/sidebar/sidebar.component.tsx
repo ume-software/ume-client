@@ -1,47 +1,39 @@
 import { ArrowLeft, Dot } from '@icon-park/react'
 import { CustomDrawer } from '@ume/ui'
-import cover from 'public/cover.png'
 import Chat from '~/containers/chat/chat.container'
-import { useAuth } from '~/contexts/auth'
 
-import { ReactNode, useContext, useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
-import Image, { StaticImageData } from 'next/legacy/image'
+import { parse } from 'cookie'
+import Image from 'next/legacy/image'
 
 import { LoginModal } from '../header/login-modal.component'
 import { DrawerContext, SocketContext } from '../layouts/app-layout/app-layout'
 
 import { trpc } from '~/utils/trpc'
 
-interface chatProps {
-  imgSrc: string | StaticImageData
-  name: string
-  message?: {
-    player?: { context: any; time: Date }[]
-    me?: { context: any; time: Date }[]
-  }
-}
-
-export const Sidebar = (props) => {
+export const Sidebar = () => {
   const { childrenDrawer, setChildrenDrawer } = useContext(DrawerContext)
 
-  const { isAuthenticated, user } = useAuth()
+  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
+  const accessToken = parse(document.cookie).accessToken
+
   const { socketContext, setSocketContext } = useContext(SocketContext)
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
   const [showMessage, setShowMessage] = useState(false)
   const utils = trpc.useContext()
   const { data: chattingChannels } = trpc.useQuery(['chatting.getListChattingChannels', { limit: '5', page: '1' }], {
-    enabled: isAuthenticated,
+    enabled: !!userInfo,
   })
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (userInfo) {
       setIsModalLoginVisible(false)
     }
-  }, [isAuthenticated])
+  }, [userInfo])
 
   const handleChatOpen = (channelId?: string) => {
-    if (isAuthenticated) {
+    if (userInfo) {
       setChildrenDrawer(<Chat providerId={channelId} />)
       if (channelId) {
         setSocketContext((prevState) => ({
@@ -67,7 +59,7 @@ export const Sidebar = (props) => {
       return () => clearTimeout(timeout)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socketContext?.socketChattingContext, socketContext?.socketChattingContext[0]?.channelId, isAuthenticated])
+  }, [socketContext?.socketChattingContext, socketContext?.socketChattingContext[0]?.channelId, !!accessToken])
 
   return (
     <>
@@ -78,27 +70,35 @@ export const Sidebar = (props) => {
         <CustomDrawer
           customOpenBtn={`p-2 bg-gray-700 rounded-full cursor-pointer hover:bg-gray-500 active:bg-gray-400`}
           openBtn={
-            <div onClick={() => handleChatOpen()}>
+            <div
+              onClick={() => handleChatOpen()}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  handleChatOpen()
+                }
+              }}
+            >
               <ArrowLeft theme="outline" size="30" fill="#fff" />
             </div>
           }
-          token={isAuthenticated}
+          token={!!accessToken}
         >
           {childrenDrawer}
         </CustomDrawer>
         <div className="flex flex-col gap-3">
-          {isAuthenticated &&
+          {userInfo &&
             chattingChannels?.data.row.map((item) => {
               const images = item.members.filter((member) => {
-                return member.userId.toString() != user?.id.toString()
+                return member.userId.toString() != userInfo?.id.toString()
               })
+
               return (
                 <div key={item._id} className="relative">
                   <CustomDrawer
                     openBtn={
                       <div>
                         {item._id === socketContext?.socketChattingContext[0]?.channelId &&
-                        socketContext?.socketChattingContext[0]?.senderId !== user?.id ? (
+                        socketContext?.socketChattingContext[0]?.senderId !== userInfo?.id ? (
                           <>
                             <div className="relative">
                               <Dot
@@ -123,7 +123,6 @@ export const Sidebar = (props) => {
                             className="absolute rounded-full"
                             layout="fill"
                             objectFit="cover"
-                            key={item._id}
                             src={images[0].userInformation.avatarUrl}
                             alt="avatar"
                             onClick={() => handleChatOpen(item._id)}

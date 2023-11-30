@@ -41,17 +41,15 @@ const PostItem = (props: { data: PostResponse }) => {
     backgroundColor: '#15151b',
     closeWhenClickOutSide: true,
     closeButtonOnConner: (
-      <>
-        <CloseSmall
-          onClick={handleClose}
-          onKeyDown={(e) => e.key === 'Enter' && handleClose()}
-          tabIndex={1}
-          className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
-          theme="outline"
-          size="24"
-          fill="#FFFFFF"
-        />
-      </>
+      <CloseSmall
+        onClick={handleClose}
+        onKeyDown={(e) => e.key === 'Enter' && handleClose()}
+        tabIndex={1}
+        className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
+        theme="outline"
+        size="24"
+        fill="#FFFFFF"
+      />
     ),
   })
 
@@ -64,17 +62,15 @@ const PostItem = (props: { data: PostResponse }) => {
     backgroundColor: '#15151b',
     closeWhenClickOutSide: true,
     closeButtonOnConner: (
-      <>
-        <CloseSmall
-          onClick={handleClose}
-          onKeyDown={(e) => e.key === 'Enter' && handleClose()}
-          tabIndex={1}
-          className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
-          theme="outline"
-          size="24"
-          fill="#FFFFFF"
-        />
-      </>
+      <CloseSmall
+        onClick={handleClose}
+        onKeyDown={(e) => e.key === 'Enter' && handleClose()}
+        tabIndex={1}
+        className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
+        theme="outline"
+        size="24"
+        fill="#FFFFFF"
+      />
     ),
   })
 
@@ -125,7 +121,7 @@ const PostItem = (props: { data: PostResponse }) => {
       {!isPostModal && isModalVisible && InforPostModal}
       <LoginModal isModalLoginVisible={isModalLoginVisible} setIsModalLoginVisible={setIsModalLoginVisible} />
       <div className="col-span-2">
-        <div className="relative w-full flex justify-around">
+        <div className="relative flex justify-around w-full">
           <div
             style={{
               width: '350px',
@@ -136,11 +132,12 @@ const PostItem = (props: { data: PostResponse }) => {
               position: 'relative',
             }}
             onClick={() => handleOpenImageModal(props.data.id)}
+            onKeyDown={() => {}}
           >
             <PostImageLayout data={props.data?.thumbnails} />
           </div>
           <div
-            className="absolute bottom-5 left-0 pl-5 pt-2 pb-2 pr-3 rounded-r-xl flex gap-5"
+            className="absolute left-0 flex gap-5 pt-2 pb-2 pl-5 pr-3 bottom-5 rounded-r-xl"
             style={{ background: 'gray' }}
           >
             <div className="flex items-center gap-3 ">
@@ -151,11 +148,11 @@ const PostItem = (props: { data: PostResponse }) => {
                 className="cursor-pointer"
                 onClick={handleLikePost}
               />
-              <p className="text-xl font-medium cursor-pointer" onClick={handleLikeOpen}>
+              <p className="text-xl font-medium cursor-pointer" onClick={handleLikeOpen} onKeyDown={() => {}}>
                 {(props.data.likeCount ?? 0) + postLike}
               </p>
             </div>
-            <div className="flex items-center gap-3" onClick={handleCommentOpen}>
+            <div className="flex items-center gap-3" onClick={handleCommentOpen} onKeyDown={() => {}}>
               <Comment theme="outline" size="25" fill="#FFFFFF" />
               <p className="text-xl font-medium cursor-pointer">{(props.data.commentCount ?? 0) + postComment}</p>
             </div>

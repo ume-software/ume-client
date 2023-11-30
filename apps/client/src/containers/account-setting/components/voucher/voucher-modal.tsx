@@ -1,7 +1,6 @@
 import { CloseSmall, Plus } from '@icon-park/react'
-import { Button, FormInput, Modal, TextArea } from '@ume/ui'
-import coin from 'public/coin-icon.png'
-import { uploadImageBooking } from '~/apis/upload-media'
+import { Button, FormInput, FormInputWithAffix, Modal, TextArea } from '@ume/ui'
+import { uploadImage } from '~/apis/upload-media'
 import { useAuth } from '~/contexts/auth'
 import { ActionEnum } from '~/enumVariable/enumVariable'
 import useDebounce from '~/hooks/useDebounce'
@@ -23,7 +22,7 @@ import * as Yup from 'yup'
 
 import MenuForVoucher from './menu-voucher'
 
-import ConfirmForm from '~/components/confirm-form/confirmForm'
+import ConfirmForm from '~/components/confirm-form/confirm-form'
 
 import { trpc } from '~/utils/trpc'
 
@@ -52,7 +51,7 @@ const moneyType: IEnumType[] = [
   },
   {
     key: CreateVoucherRequestDiscountUnitEnum.Cash,
-    label: <Image src={coin} width={25} height={25} alt="coin" />,
+    label: 'đ',
   },
 ]
 
@@ -87,11 +86,13 @@ const timeInWeekType: IEnumType[] = [
   },
 ]
 
-export default function VourcherModal(props: {
-  handleCloseModalVoucher: () => void
-  actionModal: string
-  voucherSelected: VoucherResponse | undefined
-}) {
+export default function VourcherModal(
+  props: Readonly<{
+    handleCloseModalVoucher: () => void
+    actionModal: string
+    voucherSelected?: VoucherResponse
+  }>,
+) {
   const { user } = useAuth()
   const issuer = user?.name
   const today = new Date().toISOString().split('T')[0]
@@ -104,10 +105,10 @@ export default function VourcherModal(props: {
       description: props.voucherSelected?.description ?? '',
       numVoucher: props.voucherSelected?.numberIssued,
       numVoucherInDay: props.voucherSelected?.dailyNumberIssued,
-      discountValue: props.voucherSelected?.discountValue,
-      minimize: props.voucherSelected?.maximumDiscountValue,
+      discountValue: props.voucherSelected?.discountValue?.toLocaleString(),
+      minimize: props.voucherSelected?.maximumDiscountValue?.toLocaleString(),
       minimumBookingTotalPriceForUsage: props.voucherSelected?.minimumBookingTotalPriceForUsage,
-      minimumBookingDurationForUsage: props.voucherSelected?.minimumBookingDurationForUsage,
+      minimumBookingDurationForUsage: props.voucherSelected?.minimumBookingDurationForUsage?.toLocaleString(),
       startDate: props.voucherSelected?.startDate?.split('T')[0] ?? new Date().toISOString().split('T')[0],
       endDate: props.voucherSelected?.endDate?.split('T')[0] ?? '',
       applyTime: props.voucherSelected?.applyISODayOfWeek ?? [timeInWeekType[0].key],
@@ -122,7 +123,7 @@ export default function VourcherModal(props: {
     },
     validationSchema: Yup.object({
       name: Yup.string().required('Tên là bắt buộc'),
-      vourcherCode: Yup.string().required('Mã là bắt buộc'),
+      vourcherCode: Yup.string().required('Mã là bắt buộc').min(3, 'Mã ít nhất có 3 ký tự'),
       endDate: Yup.date()
         .required('Ngày kết thúc là bắt buộc')
         .when(
@@ -136,7 +137,7 @@ export default function VourcherModal(props: {
       numVoucherInDay: Yup.number().test({
         name: 'numVoucherInDay',
         test: function (value, { parent }) {
-          if ((value ?? 0) <= parent.numVoucher) {
+          if (value && value <= parent.numVoucher) {
             return true
           } else {
             return this.createError({
@@ -148,7 +149,7 @@ export default function VourcherModal(props: {
       numUserCanUse: Yup.number().test({
         name: 'numUserCanUse',
         test: function (value, { parent }) {
-          if ((value ?? 0) <= parent.numVoucher) {
+          if (value && value <= parent.numVoucher) {
             return true
           } else {
             return this.createError({
@@ -160,7 +161,7 @@ export default function VourcherModal(props: {
       numUserCanUseInDay: Yup.number().test({
         name: 'numUserCanUseInDay',
         test: function (value, { parent }) {
-          if ((value ?? 0) <= parent.numUserCanUse) {
+          if (value && value <= parent.numUserCanUse) {
             return true
           } else {
             return this.createError({
@@ -172,10 +173,10 @@ export default function VourcherModal(props: {
       typeVoucher: Yup.string().required('Loại là bắt buộc'),
       discountUnit: Yup.string().required('Đơn vị là bắt buộc'),
       audience: Yup.string().required('Đối tượng là bắt buộc'),
-      discountValue: Yup.number().moreThan(0, 'Số tiền phải lớn hơn 0').lessThan(101, 'Số tiền không vượt quá 100'),
-      minimize: Yup.number().moreThan(0, 'Số tiền phải lớn hơn 0').lessThan(101, 'Số tiền không vượt quá 100'),
-      minimumBookingTotalPriceForUsage: Yup.number().lessThan(10001, 'Số tiền không vượt quá 10.000'),
-      minimumBookingDurationForUsage: Yup.number().lessThan(10001, 'Số tiền không vượt quá 10.000'),
+      discountValue: Yup.string().required('Giá trị là bắt buộc'),
+      minimize: Yup.string().max(6, 'Số tiền không vượt quá 6 chữ số'),
+      minimumBookingTotalPriceForUsage: Yup.string().max(6, 'Số tiền không vượt quá 6 chữ số'),
+      minimumBookingDurationForUsage: Yup.number().lessThan(12, 'Số giờ không vượt quá 12h'),
     }),
     onSubmit: (values, { resetForm }) => {
       openConfirmModal()
@@ -186,15 +187,15 @@ export default function VourcherModal(props: {
   const imageInputRef = useRef<HTMLInputElement>(null)
   const [isModalConfirmationVisible, setIsModalConfirmationVisible] = useState<boolean>(false)
   const debouncedValue = useDebounce<string>(form.values.vourcherCode, 500)
-  const { data: checkVoucherCode, isLoading: isCheckVoucherCodeLoading } = trpc.useQuery([
-    'identity.providerCheckVoucherCode',
-    debouncedValue,
-  ])
+  const { data: checkVoucherCode, isLoading: isCheckVoucherCodeLoading } = trpc.useQuery(
+    ['identity.providerCheckVoucherCode', debouncedValue],
+    { refetchOnWindowFocus: false, refetchOnReconnect: 'always', cacheTime: 0, refetchOnMount: true },
+  )
   const providerCreateVoucher = trpc.useMutation(['identity.providerCreateVoucher'])
   const providerUpdateVoucher = trpc.useMutation(['identity.providerUpdateVoucher'])
   const utils = trpc.useContext()
 
-  const [checkFieldRequied, setCheckFieldRequire] = useState<boolean>(false)
+  const [checkFieldRequire, setCheckFieldRequire] = useState<boolean>(false)
   const [checkFieldChange, setCheckFieldChange] = useState<boolean>(false)
 
   React.useEffect(() => {
@@ -203,8 +204,8 @@ export default function VourcherModal(props: {
         form.values.name &&
         form.values.typeVoucher &&
         form.values.numVoucher &&
+        form.values.discountValue &&
         form.values.numVoucherInDay &&
-        form.values.minimize &&
         form.values.typeVoucher &&
         form.values.discountUnit &&
         form.values.audience &&
@@ -224,8 +225,9 @@ export default function VourcherModal(props: {
           form.values.description == props.voucherSelected?.description &&
           form.values.numVoucher == props.voucherSelected?.numberIssued &&
           form.values.numVoucherInDay == props.voucherSelected?.dailyNumberIssued &&
-          form.values.minimize == props.voucherSelected?.maximumDiscountValue &&
+          Number(form.values.minimize?.replace(/,/g, '')) == props.voucherSelected?.maximumDiscountValue &&
           form.values.typeVoucher == props.voucherSelected?.type &&
+          Number(form.values.discountValue?.replace(/,/g, '')) == props.voucherSelected?.discountValue &&
           form.values.discountUnit == props.voucherSelected?.discountUnit &&
           form.values.audience == props.voucherSelected?.recipientType &&
           form.values.applyTime == props.voucherSelected?.applyISODayOfWeek &&
@@ -240,6 +242,7 @@ export default function VourcherModal(props: {
     form.values.audience,
     form.values.description,
     form.values.discountUnit,
+    form.values.discountValue,
     form.values.endDate,
     form.values.imageSource,
     form.values.minimize,
@@ -306,7 +309,24 @@ export default function VourcherModal(props: {
   }
 
   function openConfirmModal() {
-    setIsModalConfirmationVisible(true)
+    if (
+      form.values.discountUnit === CreateVoucherRequestDiscountUnitEnum.Percent &&
+      (Number((form.values.discountValue ?? '0').replace(/,/g, '')) <= 0 ||
+        Number((form.values.discountValue ?? '0').replace(/,/g, '')) >= 100)
+    ) {
+      form.setFieldError('discountValue', 'Giá trị phải lớn hơn 0 và nhỏ hơn 100')
+    } else if (
+      form.values.discountUnit === CreateVoucherRequestDiscountUnitEnum.Cash &&
+      Number((form.values.discountValue ?? '0').replace(/,/g, '')) < 1000
+    ) {
+      form.setFieldError('discountValue', 'Giá trị phải lớn hơn 1,000')
+    } else if (
+      props.actionModal == ActionEnum.CREATE
+        ? checkFieldRequire && !checkVoucherCode?.data.isExisted
+        : !checkFieldChange
+    ) {
+      setIsModalConfirmationVisible(true)
+    }
   }
 
   const handleClose = () => {
@@ -318,43 +338,39 @@ export default function VourcherModal(props: {
     onClose: handleClose,
     show: isModalConfirmationVisible,
     form: (
-      <>
-        <ConfirmForm
-          title={`${props.actionModal == ActionEnum.CREATE ? 'Tạo khuyến mãi mới' : 'Cập hật khuyến mãi'}`}
-          description={`${
-            props.actionModal == ActionEnum.CREATE
-              ? 'Bạn có chấp nhận tạo khuyến mãi mới hay không?'
-              : 'Bạn có chấp nhận cập khuyến mãi này hay không?'
-          }`}
-          onClose={handleClose}
-          onOk={() => {
-            props.actionModal == ActionEnum.CREATE ? handleSubmitCreateVoucher() : handleSubmitUpdateVoucher()
-          }}
-        />
-      </>
+      <ConfirmForm
+        title={`${props.actionModal == ActionEnum.CREATE ? 'Tạo khuyến mãi mới' : 'Cập hật khuyến mãi'}`}
+        description={`${
+          props.actionModal == ActionEnum.CREATE
+            ? 'Bạn có chấp nhận tạo khuyến mãi mới hay không?'
+            : 'Bạn có chấp nhận cập khuyến mãi này hay không?'
+        }`}
+        onClose={handleClose}
+        onOk={() => {
+          props.actionModal == ActionEnum.CREATE ? handleSubmitCreateVoucher() : handleSubmitUpdateVoucher()
+        }}
+      />
     ),
     backgroundColor: '#15151b',
     closeWhenClickOutSide: true,
     closeButtonOnConner: (
-      <>
-        <CloseSmall
-          onClick={handleClose}
-          onKeyDown={(e) => e.key === 'Enter' && handleClose()}
-          tabIndex={1}
-          className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
-          theme="outline"
-          size="24"
-          fill="#FFFFFF"
-        />
-      </>
+      <CloseSmall
+        onClick={handleClose}
+        onKeyDown={(e) => e.key === 'Enter' && handleClose()}
+        tabIndex={1}
+        className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
+        theme="outline"
+        size="24"
+        fill="#FFFFFF"
+      />
     ),
   })
 
   async function handleSubmitCreateVoucher() {
-    if (createVoucherFormRef.current && checkFieldRequied) {
+    if (createVoucherFormRef.current && checkFieldRequire) {
       if (form.values.selectedImage) {
         const formData = new FormData(createVoucherFormRef.current)
-        const responseData = await uploadImageBooking(formData.getAll('files'))
+        const responseData = await uploadImage(formData.getAll('files'))
 
         if (responseData?.data?.data?.results) {
           try {
@@ -364,6 +380,7 @@ export default function VourcherModal(props: {
                 image: String(responseData.data.data.results),
                 name: form.values.name,
                 type: form.values.typeVoucher as CreateVoucherRequestTypeEnum,
+                discountValue: Number(form.values.discountValue?.replace(/,/g, '')),
                 discountUnit: form.values.discountUnit as CreateVoucherRequestDiscountUnitEnum,
                 recipientType: form.values.audience as CreateVoucherRequestRecipientTypeEnum,
                 isHided: true,
@@ -372,7 +389,7 @@ export default function VourcherModal(props: {
                 dailyNumberIssued: form.values.numVoucherInDay,
                 numberUsablePerBooker: form.values.numUserCanUse,
                 dailyUsageLimitPerBooker: form.values.numUserCanUseInDay,
-                maximumDiscountValue: form.values.minimize,
+                maximumDiscountValue: Number(form.values.minimize?.replace(/,/g, '')),
                 startDate: new Date(today).toISOString(),
                 endDate: new Date(form.values.endDate).toISOString(),
                 applyISODayOfWeek: form.values.applyTime as number[],
@@ -430,10 +447,10 @@ export default function VourcherModal(props: {
   }
 
   async function handleSubmitUpdateVoucher() {
-    if (createVoucherFormRef.current && checkFieldRequied && props.voucherSelected?.id) {
+    if (createVoucherFormRef.current && checkFieldRequire && props.voucherSelected?.id) {
       if (String(form.values.imageSource) != String(props.voucherSelected?.image)) {
         const formData = new FormData(createVoucherFormRef.current)
-        const responseData = await uploadImageBooking(formData.getAll('files'))
+        const responseData = await uploadImage(formData.getAll('files'))
 
         if (responseData?.data?.data?.results) {
           try {
@@ -444,6 +461,7 @@ export default function VourcherModal(props: {
                   image: String(responseData.data.data.results),
                   name: form.values.name,
                   type: form.values.typeVoucher as CreateVoucherRequestTypeEnum,
+                  discountValue: Number(form.values.discountValue?.replace(/,/g, '')),
                   discountUnit: form.values.discountUnit as CreateVoucherRequestDiscountUnitEnum,
                   recipientType: form.values.audience as CreateVoucherRequestRecipientTypeEnum,
                   isHided: true,
@@ -452,7 +470,7 @@ export default function VourcherModal(props: {
                   dailyNumberIssued: form.values.numVoucherInDay,
                   numberUsablePerBooker: form.values.numUserCanUse,
                   dailyUsageLimitPerBooker: form.values.numUserCanUseInDay,
-                  maximumDiscountValue: form.values.minimize,
+                  maximumDiscountValue: Number(form.values.minimize?.replace(/,/g, '')),
                   startDate: new Date(today).toISOString(),
                   endDate: new Date(form.values.endDate).toISOString(),
                   applyISODayOfWeek: form.values.applyTime as number[],
@@ -502,6 +520,7 @@ export default function VourcherModal(props: {
                 image: form.values.imageSource,
                 name: form.values.name,
                 type: form.values.typeVoucher as CreateVoucherRequestTypeEnum,
+                discountValue: Number(form.values.discountValue?.replace(/,/g, '')),
                 discountUnit: form.values.discountUnit as CreateVoucherRequestDiscountUnitEnum,
                 recipientType: form.values.audience as CreateVoucherRequestRecipientTypeEnum,
                 isHided: true,
@@ -510,7 +529,7 @@ export default function VourcherModal(props: {
                 dailyNumberIssued: form.values.numVoucherInDay,
                 numberUsablePerBooker: form.values.numUserCanUse,
                 dailyUsageLimitPerBooker: form.values.numUserCanUseInDay,
-                maximumDiscountValue: form.values.minimize,
+                maximumDiscountValue: Number(form.values.minimize?.replace(/,/g, '')),
                 startDate: new Date(today).toISOString(),
                 endDate: new Date(form.values.endDate).toISOString(),
                 applyISODayOfWeek: form.values.applyTime as number[],
@@ -574,6 +593,7 @@ export default function VourcherModal(props: {
                 }
                 `}
                 onClick={handleImageClick}
+                onKeyDown={() => {}}
               >
                 {form.values.imageSource && (
                   <Image
@@ -605,12 +625,12 @@ export default function VourcherModal(props: {
             <div className="flex flex-col justify-end w-2/5">
               <div className="w-full text-white">
                 Tên* :
-                <div className="relative h-12 ml-4 inline-block w-2/3">
+                <div className="relative inline-block w-2/3 h-12 ml-4">
                   <FormInput
                     name="name"
                     type="text"
                     className={` ${
-                      form.values.name == props.voucherSelected?.name ? 'bg-zinc-800' : 'bg-[#413F4D]'
+                      form.values.name == (props.voucherSelected?.name ?? '') ? 'bg-zinc-800' : 'bg-[#413F4D]'
                     } border-2 border-[#FFFFFF] h-8 border-opacity-30 ${
                       form.errors.name && form.touched.name ? 'text-red-500' : ''
                     }`}
@@ -623,17 +643,17 @@ export default function VourcherModal(props: {
                     errorMessage={''}
                   />
                   {!!form.errors.name && form.touched.name && (
-                    <p className="absolute bottom-0 text-red-500 text-xs">{form.errors.name}</p>
+                    <p className="absolute bottom-0 text-xs text-red-500">{form.errors.name}</p>
                   )}
                 </div>
               </div>
               <div className="h-12 text-white">
                 Mã* :
-                <div className="relative h-12 ml-4 inline-block w-2/3">
+                <div className="relative inline-block w-2/3 h-12 ml-4">
                   <FormInput
                     name="vourcherCode"
                     className={`${
-                      form.values.vourcherCode == props.voucherSelected?.code ? 'bg-zinc-800' : 'bg-[#413F4D]'
+                      form.values.vourcherCode == (props.voucherSelected?.code ?? '') ? 'bg-zinc-800' : 'bg-[#413F4D]'
                     } border-2 border-[#FFFFFF] h-8 border-opacity-30`}
                     placeholder="Ex: SUPPERSALE"
                     disabled={false}
@@ -650,20 +670,21 @@ export default function VourcherModal(props: {
                     errorMessage={''}
                     isDisable={!!props.voucherSelected?.code}
                     type="text"
+                    autoComplete="off"
                   />
                   {!!form.errors.vourcherCode && form.touched.vourcherCode && (
-                    <p className="absolute bottom-0 text-red-500 text-xs">{form.errors.vourcherCode}</p>
+                    <p className="absolute bottom-0 text-xs text-red-500">{form.errors.vourcherCode}</p>
                   )}
-                  {!isCheckVoucherCodeLoading ? (
-                    props.actionModal == ActionEnum.CREATE &&
-                    checkVoucherCode?.data.isExisted && (
-                      <p className="absolute bottom-0 text-red-500 text-xs">Mã này đã được sử dụng</p>
-                    )
-                  ) : (
-                    <span
-                      className={`absolute bottom-0 right-0 spinner h-3 w-3 animate-spin rounded-full border-[2px] border-r-transparent dark:border-navy-300 dark:border-r-transparent border-white`}
-                    />
-                  )}
+                  {!isCheckVoucherCodeLoading
+                    ? props.actionModal == ActionEnum.CREATE &&
+                      checkVoucherCode?.data.isExisted && (
+                        <p className="absolute bottom-0 text-xs text-red-500">Mã này đã được sử dụng</p>
+                      )
+                    : form.values.vourcherCode != '' && (
+                        <span
+                          className={`absolute bottom-0 right-0 spinner h-3 w-3 animate-spin rounded-full border-[2px] border-r-transparent dark:border-navy-300 dark:border-r-transparent border-white`}
+                        />
+                      )}
                 </div>
               </div>
               <div className="h-12 text-white">
@@ -694,7 +715,7 @@ export default function VourcherModal(props: {
                   />
                 </div>
               </div>
-              <div className="h-12 flex justify-start text-white">
+              <div className="flex justify-start h-12 text-white">
                 Ngày kết thúc* :
                 <div className="relative inline-block w-1/3 ml-4">
                   <FormInput
@@ -715,7 +736,7 @@ export default function VourcherModal(props: {
                     required
                   />
                   {!!form.errors.endDate && form.touched.endDate && (
-                    <p className="absolute bottom-0 text-red-500 text-xs">{form.errors.endDate}</p>
+                    <p className="absolute bottom-0 text-xs text-red-500">{form.errors.endDate}</p>
                   )}
                 </div>
               </div>
@@ -725,8 +746,8 @@ export default function VourcherModal(props: {
             </div>
           </div>
 
-          <div className="flex w-auto px-4 border-b-2 border-[#FFFFFF80] pb-5">
-            <div className="flex flex-col justify-end w-3/5 mt-5 gap-3">
+          <div className="flex gap-12 w-full px-4 mt-5 border-b-2 border-[#FFFFFF80] pb-5">
+            <div className="flex flex-col justify-end gap-3">
               <div className="text-white">
                 Số lượng phát hành* :
                 <div className="relative inline-block w-2/5 h-12 ml-4">
@@ -749,7 +770,7 @@ export default function VourcherModal(props: {
                     />
                   </div>
                   {!!form.errors.numVoucher && form.touched.numVoucher && (
-                    <p className="absolute bottom-0 text-red-500 text-xs">{form.errors.numVoucher}</p>
+                    <p className="absolute bottom-0 text-xs text-red-500">{form.errors.numVoucher}</p>
                   )}
                 </div>
               </div>
@@ -777,7 +798,7 @@ export default function VourcherModal(props: {
                     />
                   </div>
                   {!!form.errors.numUserCanUse && form.touched.numUserCanUse && (
-                    <p className="absolute bottom-0 text-red-500 text-xs">{form.errors.numUserCanUse}</p>
+                    <p className="absolute bottom-0 text-xs text-red-500">{form.errors.numUserCanUse}</p>
                   )}
                 </div>
               </div>
@@ -813,10 +834,10 @@ export default function VourcherModal(props: {
                   />
                 }
               </div>
-              <div className="h-12 text-white flex items-center">
+              <div className="flex items-center h-12 text-white">
                 Số giờ tối thiểu để sử dụng:
-                <div className="relative ml-4 h-12 flex items-center w-6/12 ">
-                  <div className="w-5/12 flex items-center">
+                <div className="relative flex items-center w-6/12 h-12 ml-4 ">
+                  <div className="flex items-center w-5/12">
                     <FormInput
                       name="minimumBookingDurationForUsage"
                       className={`${
@@ -846,14 +867,14 @@ export default function VourcherModal(props: {
                 </div>
               </div>
             </div>
-            <div className="flex flex-col justify-end w-2/5 gap-3">
+            <div className="flex flex-col justify-end gap-3">
               <div className="h-12 text-white">
                 Số lượng phát hành mỗi ngày:
                 <div className="relative inline-block w-2/5 h-12 ml-4">
                   <div className="w-3/5">
                     <FormInput
                       name="numVoucherInDay"
-                      className={`${
+                      className={`min-w-[130px] ${
                         form.values.numVoucherInDay == props.voucherSelected?.dailyNumberIssued
                           ? 'bg-zinc-800'
                           : 'bg-[#413F4D]'
@@ -870,7 +891,7 @@ export default function VourcherModal(props: {
                     />
                   </div>
                   {!!form.errors.numVoucherInDay && form.touched.numVoucherInDay && (
-                    <p className="absolute bottom-0 text-red-500 text-xs">{form.errors.numVoucherInDay}</p>
+                    <p className="absolute bottom-0 text-xs text-red-500">{form.errors.numVoucherInDay}</p>
                   )}
                 </div>
               </div>
@@ -879,7 +900,7 @@ export default function VourcherModal(props: {
                 <div className="inline-block w-1/5 h-12 ml-4">
                   <FormInput
                     name="numUserCanUseInDay"
-                    className={`${
+                    className={`min-w-[130px] ${
                       form.values.numUserCanUseInDay == props.voucherSelected?.dailyUsageLimitPerBooker
                         ? 'bg-zinc-800'
                         : 'bg-[#413F4D]'
@@ -896,16 +917,16 @@ export default function VourcherModal(props: {
                   />
                 </div>
                 {!!form.errors.numUserCanUseInDay && form.touched.numUserCanUseInDay && (
-                  <p className="absolute bottom-0 right-0 text-red-500 text-xs">{form.errors.numUserCanUseInDay}</p>
+                  <p className="absolute bottom-0 right-44 text-xs text-red-500">{form.errors.numUserCanUseInDay}</p>
                 )}
               </div>
-              <div className="flex items-center gap-3 text-white">
-                <div className="relative h-12 flex items-center">
+              <div className="flex items-center gap-5 text-white">
+                <div className="relative flex items-center h-12">
                   Giảm* :
-                  <div className="w-4/12 ml-4 flex items-center">
+                  <div className="flex items-center w-4/12 ml-4 mr-2">
                     <FormInput
                       name="discountValue"
-                      className={`${
+                      className={`min-w-[120px] ${
                         form.values.discountValue == props.voucherSelected?.discountValue
                           ? 'bg-zinc-800'
                           : 'bg-[#413F4D]'
@@ -915,13 +936,19 @@ export default function VourcherModal(props: {
                       onBlur={form.handleBlur}
                       error={!!form.errors.discountValue && form.touched.discountValue}
                       errorMessage={''}
-                      onChange={(e) => form.handleChange(e)}
-                      type="number"
-                      min={0}
-                      max={100}
+                      onChange={(e) => {
+                        const inputValue = e.target.value.replace(/,/g, '')
+                        const numericValue = parseFloat(inputValue)
+                        const formattedValue = isNaN(numericValue) ? '0' : numericValue.toLocaleString()
+
+                        form.values.discountUnit === CreateVoucherRequestDiscountUnitEnum.Percent
+                          ? numericValue < 100 && form.setFieldValue('discountValue', formattedValue)
+                          : numericValue < 100001 && form.setFieldValue('discountValue', formattedValue)
+                      }}
+                      type="text"
                     />
                   </div>
-                  <div className="w-4/12 ml-1 flex items-center">
+                  <div className="flex items-center w-3/12">
                     <MenuForVoucher
                       buttonTitle={moneyType.find((item) => item.key == form.values.discountUnit)?.label}
                       buttonCustomCss={`min-w-[50px] ${
@@ -938,28 +965,39 @@ export default function VourcherModal(props: {
                   )}
                 </div>
                 {form.values.discountUnit == CreateVoucherRequestDiscountUnitEnum.Percent && (
-                  <div className="relative w-6/12 h-12 flex items-center">
+                  <div className="relative flex items-center w-fit h-12">
                     Giảm tối đa:
-                    <div className="w-5/12 flex items-center">
-                      <FormInput
+                    <div className="flex items-center w-5/12">
+                      <FormInputWithAffix
                         name="minimize"
                         className={`${
-                          form.values.minimize == props.voucherSelected?.maximumDiscountValue
+                          form.values.minimize == props.voucherSelected?.maximumDiscountValue?.toLocaleString()
                             ? 'bg-zinc-800'
                             : 'bg-[#413F4D]'
-                        } border-2 border-[#FFFFFF] h-8 ml-4 border-opacity-30`}
+                        } rounded-md border-2 border-[#FFFFFF] h-8 ml-4 border-opacity-30`}
+                        styleInput={`min-w-[120px] ${
+                          form.values.minimize == props.voucherSelected?.maximumDiscountValue?.toLocaleString()
+                            ? 'bg-zinc-800'
+                            : 'bg-[#413F4D]'
+                        } border-none focus:border-none outline-none`}
                         placeholder=""
                         value={form.values.minimize}
                         onBlur={form.handleBlur}
                         error={!!form.errors.minimize && form.touched.minimize}
                         errorMessage={''}
-                        onChange={(e) => form.handleChange(e)}
-                        type="number"
-                        min={0}
-                        max={100}
+                        onChange={(e) => {
+                          const inputValue = e.target.value.replace(/,/g, '')
+                          const numericValue = parseFloat(inputValue)
+                          const formattedValue = isNaN(numericValue) ? '0' : numericValue.toLocaleString()
+                          if (Number(inputValue) < 100001) {
+                            form.setFieldValue('minimize', formattedValue)
+                          }
+                        }}
+                        type="text"
+                        position={'right'}
+                        component={<span className="text-xs italic"> đ</span>}
                       />
                     </div>
-                    <Image src={coin} width={35} height={35} alt="coin" />
                     {!!form.errors.minimize && form.touched.minimize && (
                       <p className="absolute bottom-[-10px] left-20 text-red-500 text-xs">{form.errors.minimize}</p>
                     )}
@@ -979,18 +1017,24 @@ export default function VourcherModal(props: {
                   onChange={(e) => handleRecipientType(e.key)}
                 />
               </div>
-              <div className="h-12 text-white flex items-center">
+              <div className="flex items-center h-12 text-white">
                 Số tiền tối thiểu để sử dụng:
-                <div className="relative w-6/12 h-12 flex items-center">
-                  <div className="w-8/12 flex items-center">
-                    <FormInput
+                <div className="relative flex items-center w-6/12 h-12">
+                  <div className="flex items-center w-8/12">
+                    <FormInputWithAffix
                       name="minimumBookingTotalPriceForUsage"
                       className={`${
                         form.values.minimumBookingTotalPriceForUsage ==
                         props.voucherSelected?.minimumBookingTotalPriceForUsage
                           ? 'bg-zinc-800'
                           : 'bg-[#413F4D]'
-                      } border-2 border-[#FFFFFF] h-8 ml-4 border-opacity-30`}
+                      } rounded-md border-2 border-[#FFFFFF] h-8 ml-4 border-opacity-30`}
+                      styleInput={`min-w-[120px] ${
+                        form.values.minimumBookingTotalPriceForUsage ==
+                        props.voucherSelected?.minimumBookingTotalPriceForUsage
+                          ? 'bg-zinc-800'
+                          : 'bg-[#413F4D]'
+                      } border-none focus:border-none outline-none`}
                       placeholder="Số tiền"
                       value={form.values.minimumBookingTotalPriceForUsage}
                       onBlur={form.handleBlur}
@@ -998,13 +1042,19 @@ export default function VourcherModal(props: {
                         !!form.errors.minimumBookingTotalPriceForUsage && form.touched.minimumBookingTotalPriceForUsage
                       }
                       errorMessage={''}
-                      onChange={(e) => form.handleChange(e)}
-                      type="number"
-                      min={0}
-                      max={100000}
+                      onChange={(e) => {
+                        const inputValue = e.target.value.replace(/,/g, '')
+                        const numericValue = parseFloat(inputValue)
+                        const formattedValue = isNaN(numericValue) ? '0' : numericValue.toLocaleString()
+                        if (Number(inputValue) < 100001) {
+                          form.setFieldValue('minimumBookingTotalPriceForUsage', formattedValue)
+                        }
+                      }}
+                      type="text"
+                      position={'right'}
+                      component={<span className="text-xs italic"> đ</span>}
                     />
                   </div>
-                  <Image src={coin} width={35} height={35} alt="coin" />
                   {!!form.errors.minimumBookingTotalPriceForUsage && form.touched.minimumBookingTotalPriceForUsage && (
                     <p className="absolute bottom-[-10px] left-0 text-red-500 text-xs">
                       {form.errors.minimumBookingTotalPriceForUsage}
@@ -1033,9 +1083,7 @@ export default function VourcherModal(props: {
         </div>
         <div className="flex justify-center gap-10 pb-4 mt-6">
           {props.voucherSelected?.status == VoucherResponseStatusEnum.Approved ? (
-            <>
-              <p className="text-white opacity-30">Bạn chỉ có thể chỉnh sửa voucher chưa được admin chấp nhận</p>
-            </>
+            <p className="text-white opacity-30">Bạn chỉ có thể chỉnh sửa voucher chưa được admin chấp nhận</p>
           ) : (
             <>
               <Button
@@ -1051,7 +1099,7 @@ export default function VourcherModal(props: {
                 customCSS={`w-[100px] text-xl p-2 rounded-xl ${
                   (
                     props.actionModal == ActionEnum.CREATE
-                      ? !checkFieldRequied || checkVoucherCode?.data.isExisted
+                      ? !checkFieldRequire || checkVoucherCode?.data.isExisted
                       : checkFieldChange
                   )
                     ? 'opacity-30 cursor-not-allowed'
@@ -1060,20 +1108,14 @@ export default function VourcherModal(props: {
                 type="button"
                 isActive={
                   props.actionModal == ActionEnum.CREATE
-                    ? checkFieldRequied && !checkVoucherCode?.data.isExisted
+                    ? checkFieldRequire && !checkVoucherCode?.data.isExisted
                     : !checkFieldChange
                 }
                 isOutlinedButton={true}
                 onClick={() => {
-                  if (
-                    props.actionModal == ActionEnum.CREATE
-                      ? checkFieldRequied && !checkVoucherCode?.data.isExisted
-                      : !checkFieldChange
-                  ) {
-                    openConfirmModal()
-                  }
+                  openConfirmModal()
                 }}
-                isDisable={(!form.isValid || !checkFieldRequied) && !checkVoucherCode?.data.isExisted}
+                isDisable={(!form.isValid || !checkFieldRequire) && !checkVoucherCode?.data.isExisted}
                 isLoading={providerCreateVoucher.isLoading ?? providerUpdateVoucher.isLoading}
               >
                 {props.actionModal == ActionEnum.CREATE ? 'Tạo' : 'Lưu'}

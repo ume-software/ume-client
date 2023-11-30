@@ -1,3 +1,4 @@
+import { CreateReportUserRequestReasonTypeEnum } from 'ume-service-openapi'
 import { z } from 'zod'
 
 import { createRouter } from './configurations'
@@ -6,15 +7,21 @@ import {
   donationForRecipient,
   getAlbumByUserSlug,
   getAllNotice,
+  getCanFeedbackProvider,
   getCurrentBookingForProvider,
+  getCurrentBookingForUser,
   getFeedbackServiceById,
   getHotProviders,
   getListService,
   getNoticeAmount,
+  getPendingBookingForProvider,
+  getPendingBookingForUser,
   getPostByUserSlug,
   getProviders,
+  getServiceBySlug,
   getUserBySlug,
   postFeedback,
+  postReportUser,
   putProviderResponeBooking,
 } from './services/booking-service'
 
@@ -35,6 +42,7 @@ export const bookingRouter = createRouter()
         startCost: z.optional(z.number()),
         endCost: z.optional(z.number()),
         serviceId: z.optional(z.string()),
+        serviceAttributeValueIds: z.array(z.string()),
         name: z.optional(z.string()),
         gender: z.optional(z.string()),
         status: z.optional(z.string()),
@@ -63,6 +71,11 @@ export const bookingRouter = createRouter()
       return await getCurrentBookingForProvider(ctx)
     },
   })
+  .query('getCurrentBookingForUser', {
+    resolve: async ({ ctx }) => {
+      return await getCurrentBookingForUser(ctx)
+    },
+  })
   .mutation('createBooking', {
     input: z.object({
       providerServiceId: z.string(),
@@ -86,6 +99,12 @@ export const bookingRouter = createRouter()
     input: z.string(),
     resolve: async ({ input }) => {
       return await getFeedbackServiceById(input)
+    },
+  })
+  .query('getCanFeedbackProvider', {
+    input: z.string(),
+    resolve: async ({ ctx, input }) => {
+      return await getCanFeedbackProvider(input, ctx)
     },
   })
   .mutation('postFeedback', {
@@ -128,5 +147,31 @@ export const bookingRouter = createRouter()
     input: z.object({ userSlug: z.string(), page: z.string() }),
     resolve: async ({ ctx, input }) => {
       return await getPostByUserSlug(input, ctx)
+    },
+  })
+  .mutation('postReportUser', {
+    input: z.object({
+      slug: z.string(),
+      reasonType: z.nativeEnum(CreateReportUserRequestReasonTypeEnum),
+      content: z.string(),
+    }),
+    resolve: async ({ ctx, input }) => {
+      return await postReportUser(input, ctx)
+    },
+  })
+  .query('getServiceBySlug', {
+    input: z.object({ slug: z.string() }),
+    resolve: async ({ ctx, input }) => {
+      return await getServiceBySlug(input, ctx)
+    },
+  })
+  .query('getPendingBookingForProvider', {
+    resolve: async ({ ctx }) => {
+      return await getPendingBookingForProvider(ctx)
+    },
+  })
+  .query('getPendingBookingForUser', {
+    resolve: async ({ ctx }) => {
+      return await getPendingBookingForUser(ctx)
     },
   })

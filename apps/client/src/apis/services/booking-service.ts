@@ -5,6 +5,7 @@ import { parse } from 'cookie'
 import {
   BookingApi,
   BookingProviderRequest,
+  CreateReportUserRequestReasonTypeEnum,
   DonationApi,
   NoticeApi,
   ProviderApi,
@@ -37,6 +38,7 @@ export const getProviders = async (query?: {
   startCost?: number
   endCost?: number
   serviceId?: string
+  serviceAttributeValueIds: string[]
   name?: string
   gender?: string
   status?: string
@@ -52,7 +54,7 @@ export const getProviders = async (query?: {
       query?.startCost,
       query?.endCost,
       query?.serviceId,
-      [],
+      query?.serviceAttributeValueIds,
       query?.name,
       query?.gender as 'MALE' | 'FEMALE' | 'OTHER' | 'PRIVATE',
       query?.status as 'ACTIVATED' | 'UN_ACTIVATED' | 'STOPPED_ACCEPTING_BOOKING' | 'BUSY',
@@ -123,6 +125,24 @@ export const getCurrentBookingForProvider = async (ctx) => {
     })
   }
 }
+export const getCurrentBookingForUser = async (ctx) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie)
+    const respone = await new BookingApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).getCurrentBookingForUser()
+    return {
+      data: respone.data,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to create new booking',
+    })
+  }
+}
 
 export const createBooking = async (provider: BookingProviderRequest, ctx) => {
   try {
@@ -140,7 +160,7 @@ export const createBooking = async (provider: BookingProviderRequest, ctx) => {
   } catch (error) {
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.response?.status),
-      message: error.response?.data.message || 'Fail to create new booking',
+      message: error.response?.data.data.message || 'Fail to create new booking',
     })
   }
 }
@@ -244,6 +264,26 @@ export const getAlbumByUserSlug = async (query: { slug: string; page?: string; l
   }
 }
 
+export const getCanFeedbackProvider = async (slug: string, ctx) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie)
+    const respone = await new UserApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).getBookingCanFeedbackByUserSlug(slug)
+    return {
+      data: respone.data,
+      success: true,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to get user can feedback provider',
+    })
+  }
+}
+
 export const postFeedback = async (
   query: { id: string; feedback?: { content?: string; amountStar?: number } },
   ctx,
@@ -262,7 +302,7 @@ export const postFeedback = async (
   } catch (error) {
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
-      message: error.message || 'Fail to create get album',
+      message: error.message || 'Fail to create feedback',
     })
   }
 }
@@ -303,6 +343,84 @@ export const getPostByUserSlug = async (query: { userSlug: string; page: string 
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
       message: error.message || 'Fail to get post by user slug',
+    })
+  }
+}
+export const postReportUser = async (
+  query: { slug: string; reasonType: CreateReportUserRequestReasonTypeEnum; content: string },
+  ctx,
+) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie)
+    const respone = await new UserApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).reportUserBySlug(query.slug, { reasonType: query.reasonType, content: query.content })
+    return {
+      data: respone.data,
+      success: true,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to get post report user',
+    })
+  }
+}
+
+export const getServiceBySlug = async (query: { slug: string }, ctx) => {
+  try {
+    const respone = await new ServiceApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+    }).getServiceBySlug(query.slug, 'unlimited', '1', '["$all"]')
+    return {
+      data: respone.data,
+      success: true,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to get service attribute',
+    })
+  }
+}
+
+export const getPendingBookingForProvider = async (ctx) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie)
+    const respone = await new BookingApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).getPendingBookingForProvider()
+    return {
+      data: respone.data,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to create new booking',
+    })
+  }
+}
+
+export const getPendingBookingForUser = async (ctx) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie)
+    const respone = await new BookingApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).getPendingBookingForUser()
+    return {
+      data: respone.data,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to create new booking',
     })
   }
 }

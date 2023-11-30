@@ -9,7 +9,7 @@ import { PrismaWhereConditionType, prismaWhereConditionToJsonString } from 'quer
 import { ServicePagingResponse } from 'ume-service-openapi'
 
 import ServicesModalCreate from './components/services-modal/services-modal-create'
-import ServicesModalUpdate from './components/services-modal/services-modal-update'
+import { ServicesModalUpdate } from './components/services-modal/services-modal-update'
 import ServicesTable from './components/services-table'
 
 import FilterDropdown from '~/components/filter-dropdown'
@@ -55,7 +55,6 @@ const ServicesManagerPage = () => {
   const [openServicesModalUpdate, setOpenServicesModalUpdate] = useState(false)
 
   const [filter, setFilter] = useState({
-    gender: 'ALL',
     isActivated: 'all',
     search: '',
   })
@@ -65,9 +64,7 @@ const ServicesManagerPage = () => {
       contains: filter.search,
       mode: 'insensitive',
     },
-
-    gender: filter.gender !== 'ALL' ? filter.gender : undefined,
-    isActivated: filter.isActivated !== 'all' ? (filter.isActivated == 'true' ? true : false) : undefined,
+    isActivated: filter.isActivated !== 'all' ? filter.isActivated === 'true' : undefined,
   })
 
   const { isLoading } = trpc.useQuery(
@@ -88,12 +85,7 @@ const ServicesManagerPage = () => {
   )
   const handleFilter = (title, key) => {
     setPage(1)
-    if (title == 'gender') {
-      setFilter({
-        ...filter,
-        gender: key,
-      })
-    } else if (title == 'status') {
+    if (title == 'status') {
       setFilter({
         ...filter,
         isActivated: key,
@@ -139,7 +131,7 @@ const ServicesManagerPage = () => {
   return (
     <div>
       <Head>
-        <title>Admin | Services Manager</title>
+        <title>UME | Services Manager</title>
       </Head>
       <div className="pb-10">
         <div className="flex justify-between">

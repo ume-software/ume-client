@@ -14,7 +14,7 @@ import {
 
 import VourcherModal from './voucher-modal'
 
-import ConfirmForm from '~/components/confirm-form/confirmForm'
+import ConfirmForm from '~/components/confirm-form/confirm-form'
 import { TableSkeletonLoader } from '~/components/skeleton-load'
 import Table from '~/components/table/table'
 
@@ -27,8 +27,8 @@ interface IEnumType {
 }
 const mappingRecipientType: IEnumType[] = [
   { key: CreateVoucherRequestRecipientTypeEnum.All, label: 'Tất cả' },
-  { key: CreateVoucherRequestRecipientTypeEnum.FirstTimeBooking, label: 'Người lần đầu thuê' },
-  { key: CreateVoucherRequestRecipientTypeEnum.PreviousBooking, label: ' Người đã từng thuê' },
+  { key: CreateVoucherRequestRecipientTypeEnum.FirstTimeBooking, label: 'Lần đầu thuê' },
+  { key: CreateVoucherRequestRecipientTypeEnum.PreviousBooking, label: ' Người từng thuê' },
   { key: CreateVoucherRequestRecipientTypeEnum.SelectiveBooker, label: ' Top 5 người thuê' },
   { key: CreateVoucherRequestRecipientTypeEnum.Top10Booker, label: ' Top 10 người thuê' },
   { key: CreateVoucherRequestRecipientTypeEnum.Top5Booker, label: 'Người đặt chọn' },
@@ -81,9 +81,11 @@ const Voucher = () => {
         new Date(voucherArray[23]).toLocaleDateString('en-GB'),
         <div className="flex justify-center" key={voucherArray[0]}>
           <p
-            className={`w-fit px-2 py-1 text-lg font-semibold rounded-xl text-[${
-              mappingStatus.find((statusType) => statusType.key == voucherArray[28])?.textColor
-            }] bg-[${mappingStatus.find((statusType) => statusType.key == voucherArray[28])?.color}]`}
+            className={`w-fit px-2 py-1 text-lg font-semibold rounded-xl`}
+            style={{
+              background: `${mappingStatus.find((statusType) => statusType.key == voucherArray[28])?.color}`,
+              color: `${mappingStatus.find((statusType) => statusType.key == voucherArray[28])?.textColor}`,
+            }}
           >
             {mappingStatus.find((statusType) => statusType.key == voucherArray[28])?.label}
           </p>
@@ -98,7 +100,7 @@ const Voucher = () => {
             setIsModalConfirmationVisible(true)
             setIdSelectedVoucher(voucherArray[0])
           }}
-          disabled={!(voucherArray[28] == VoucherResponseStatusEnum.Approved)}
+          disabled={voucherArray[28] != VoucherResponseStatusEnum.Approved}
         />,
       ]
       return newVoucherArray
@@ -133,28 +135,24 @@ const Voucher = () => {
     show: isModalVisible,
     customModalCSS: 'w-fit top-5 overflow-y-auto custom-scrollbar',
     form: (
-      <>
-        <VourcherModal
-          handleCloseModalVoucher={handleClose}
-          actionModal={modalStatus}
-          voucherSelected={voucherSelected}
-        />
-      </>
+      <VourcherModal
+        handleCloseModalVoucher={handleClose}
+        actionModal={modalStatus}
+        voucherSelected={voucherSelected}
+      />
     ),
     backgroundColor: '#15151b',
     closeWhenClickOutSide: true,
     closeButtonOnConner: (
-      <>
-        <CloseSmall
-          onClick={handleClose}
-          onKeyDown={(e) => e.key === 'Enter' && handleClose()}
-          tabIndex={1}
-          className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
-          theme="outline"
-          size="24"
-          fill="#FFFFFF"
-        />
-      </>
+      <CloseSmall
+        onClick={handleClose}
+        onKeyDown={(e) => e.key === 'Enter' && handleClose()}
+        tabIndex={1}
+        className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
+        theme="outline"
+        size="24"
+        fill="#FFFFFF"
+      />
     ),
   })
 
@@ -192,31 +190,27 @@ const Voucher = () => {
     onClose: handleCloseComfirmModal,
     show: isModalConfirmationVisible,
     form: (
-      <>
-        <ConfirmForm
-          title="Thay đổi thông tin khuyến mãi"
-          description="Bạn có chấp nhận thay đổi thông tin khuyến mãi này hay không?"
-          onClose={handleCloseComfirmModal}
-          onOk={() => {
-            handleChangeStatusVoucher(idSelectedVoucher)
-          }}
-        />
-      </>
+      <ConfirmForm
+        title="Thay đổi thông tin khuyến mãi"
+        description="Bạn có chấp nhận thay đổi thông tin khuyến mãi này hay không?"
+        onClose={handleCloseComfirmModal}
+        onOk={() => {
+          handleChangeStatusVoucher(idSelectedVoucher)
+        }}
+      />
     ),
     backgroundColor: '#15151b',
     closeWhenClickOutSide: true,
     closeButtonOnConner: (
-      <>
-        <CloseSmall
-          onClick={handleCloseComfirmModal}
-          onKeyDown={(e) => e.key === 'Enter' && handleClose()}
-          tabIndex={1}
-          className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
-          theme="outline"
-          size="24"
-          fill="#FFFFFF"
-        />
-      </>
+      <CloseSmall
+        onClick={handleCloseComfirmModal}
+        onKeyDown={(e) => e.key === 'Enter' && handleClose()}
+        tabIndex={1}
+        className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
+        theme="outline"
+        size="24"
+        fill="#FFFFFF"
+      />
     ),
   })
 
@@ -226,7 +220,7 @@ const Voucher = () => {
       {isModalVisible && VoucherModal}
       <div className="w-full px-10">
         <p className="text-4xl font-bold">Khuyến mãi</p>
-        <div className="flex flex-col gap-5 mt-10 pr-5 space-y-10">
+        <div className="flex flex-col gap-5 mt-10 space-y-10">
           <div className="flex flex-col gap-3">
             <div className="flex items-end justify-between">
               <p className="text-xl font-bold">Danh sách khuyến mãi của tôi</p>
@@ -263,9 +257,7 @@ const Voucher = () => {
                 onDelete={() => {}}
               />
             ) : (
-              <>
-                <TableSkeletonLoader />
-              </>
+              <TableSkeletonLoader />
             )}
           </div>
         </div>

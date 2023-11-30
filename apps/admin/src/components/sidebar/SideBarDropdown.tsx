@@ -2,6 +2,7 @@ import { Down, Up } from '@icon-park/react'
 
 import React, { useEffect, useState } from 'react'
 
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 
 import { SidebarNavigation } from './SidebarNavigation'
@@ -19,6 +20,7 @@ const SideBarDropdown = () => {
   useEffect(() => {
     setSelectNavigation(router.pathname?.replace(/^\//, ''))
   }, [])
+
   function handleSelectNavigation(key) {
     setSelectNavigation(key)
   }
@@ -27,7 +29,7 @@ const SideBarDropdown = () => {
     <div className="h-full overflow-auto pb-28 side-bar">
       {SidebarNavigation.map((item) => (
         <div key={item.key} className="pl-5 mb-5">
-          <span className="font-bold text-lg text-white">{item.label}</span>
+          <span className="text-lg font-bold text-white">{item.label}</span>
           {item.children &&
             item.children.map((subItem) => (
               <div key={subItem.key} className="cursor-pointer ">
@@ -38,7 +40,7 @@ const SideBarDropdown = () => {
                       className="ml-3 my-2 px-4 mr-4 py-2 w-[17rem] rounded-xl text-white flex justify-between"
                     >
                       <div className="flex">
-                        {subItem.icon} <div className="ml-2 font-bold text-sm">{subItem.label}</div>
+                        {subItem.icon} <div className="ml-2 text-sm font-bold">{subItem.label}</div>
                       </div>
                       <div className="h-fit w-fit">
                         {expandedItems.includes(subItem.key) ? (
@@ -52,8 +54,9 @@ const SideBarDropdown = () => {
                       expandedItems.includes(subItem.key) &&
                       subItem.children.map((subItem2) => {
                         return (
-                          <div key={subItem2.key} className="ml-12 mr-4 my-2">
-                            <div
+                          <div key={subItem2.key} className="my-2 ml-12 mr-4">
+                            <Link
+                              href={subItem2?.path!}
                               onClick={() => {
                                 handleSelectNavigation(subItem2.key)
                               }}
@@ -61,14 +64,15 @@ const SideBarDropdown = () => {
                                 selectNavigation === subItem2.key ? 'bg-[#7463f0]' : ''
                               }`}
                             >
-                              {subItem2.icon} <div className="ml-2 font-bold text-sm">{subItem2.label}</div>
-                            </div>
+                              {subItem2.icon} <div className="ml-2 text-sm font-bold">{subItem2.label}</div>
+                            </Link>
                           </div>
                         )
                       })}
                   </div>
                 ) : (
-                  <div
+                  <Link
+                    href={subItem?.path!}
                     className={`ml-3 my-2 px-4 mr-4 py-2 w-[16rem] rounded-xl text-white flex justify-between items-center ${
                       selectNavigation === subItem.key ? 'bg-[#7463f0]' : ''
                     }`}
@@ -78,9 +82,9 @@ const SideBarDropdown = () => {
                     }}
                   >
                     <div className="flex">
-                      {subItem.icon} <div className="ml-2 font-bold text-sm">{subItem.label}</div>
+                      {subItem.icon} <div className="ml-2 text-sm font-bold">{subItem.label}</div>
                     </div>
-                  </div>
+                  </Link>
                 )}
               </div>
             ))}

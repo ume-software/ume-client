@@ -33,7 +33,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
   const titleValue = 'Thông Tin Khuyến Mãi'
   const issuer = 'ADMIN'
   const MAX_NUMBER = '100000'
-  const MAX_NUMBER_DISCOUNT = '100'
+  const MAX_NUMBER_DISCOUNT = '100000000'
   const [startDate, setstartDate] = useState<any>(new Date().toLocaleDateString('en-GB'))
   const [isSubmiting, setSubmiting] = useState(false)
   interface IFormValues {
@@ -178,6 +178,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
   }
 
   function handleDisCountUnit(value) {
+    form.setFieldValue('minimize', '0')
     form.setFieldValue('discountUnit', value)
   }
 
@@ -193,7 +194,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
     setOpenConfirm(true)
   }
 
-  function checkFieldRequỉed() {
+  function checkFieldRequired() {
     if (form.values.name && form.values.typeVoucher && form.values.discountUnit && form.values.audience) {
       return true
     } else {
@@ -224,7 +225,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
   async function submitHandle() {
     setOpenConfirm(false)
     setIsCreate(false)
-    if (await checkFieldRequỉed()) {
+    if (await checkFieldRequired()) {
       const imgURL = await uploadImage()
       try {
         const req = {
@@ -236,13 +237,15 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
           dailyNumberIssued: form.values.numVoucherInDay,
           numberUsablePerBooker: form.values.numUserCanUse,
           dailyUsageLimitPerBooker: form.values.numUserCanUseInDay,
-          discountValue: form.values.minimize,
+          discountValue: parseFloat(form.values.minimize.toString().replace(/,/g, '')),
           startDate: convertToIsoDate(form.values.startDate),
           endDate: convertToIsoDate(form.values.endDate),
           applyISODayOfWeek: form.values.applyTime,
           minimumBookingDurationForUsage: form.values.minimumBookingDurationForUsage,
-          minimumBookingTotalPriceForUsage: form.values.minimumBookingTotalPriceForUsage,
-          maximumDiscountValue: form.values.maximumDiscountValue,
+          minimumBookingTotalPriceForUsage: parseFloat(
+            form.values.minimumBookingTotalPriceForUsage.toString().replace(/,/g, ''),
+          ),
+          maximumDiscountValue: parseFloat(form.values.maximumDiscountValue.toString().replace(/,/g, '')),
         }
         let reqWithValuesNotNull = {
           name: form.values.name,
@@ -303,6 +306,11 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
   }
   function isDisableButton() {
     return !form.isValid || form.values.name == '' || (adminCheckVoucherCodeExisted?.isExisted ? true : false)
+  }
+  function formatNumberWithCommas(number) {
+    return number.toLocaleString('en-US', {
+      currency: 'VND',
+    })
   }
 
   return (
@@ -615,7 +623,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                   </Select>
                 </div>
                 <div className="h-12 text-white">
-                  Khuyến mãi dùng cho hóa đơn có xu tối thiểu:
+                  Khuyến mãi dùng cho hóa đơn tối thiểu:
                   <div className="inline-block w-1/5 ">
                     <FormInput
                       name="minimumBookingTotalPriceForUsage"
@@ -628,21 +636,19 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                       }
                       errorMessage={form.errors.minimumBookingTotalPriceForUsage}
                       onChange={(e) => {
-                        const newValue = parseInt(e.target.value)
+                        const rawValue = e.target.value
+                        const newValue = parseFloat(rawValue.replace(/,/g, ''))
                         if (!isNaN(newValue) && newValue >= 0) {
-                          if (newValue > parseInt(MAX_NUMBER)) {
-                            e.target.value = MAX_NUMBER
+                          if (newValue > parseFloat(MAX_NUMBER_DISCOUNT)) {
+                            e.target.value = formatNumberWithCommas(parseFloat(MAX_NUMBER_DISCOUNT))
                           } else {
-                            e.target.value = newValue.toString()
+                            e.target.value = formatNumberWithCommas(newValue)
                           }
                         } else {
                           e.target.value = '0'
                         }
                         form.handleChange(e)
                       }}
-                      type="number"
-                      min={0}
-                      max={100000}
                     />
                   </div>
                 </div>
@@ -718,33 +724,50 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                     />
                   </div>
                 </div>
-                <div className="flex items-baseline h-12 text-white">
-                  <span className="h-8">Giảm :</span>
-                  <div className="inline-block w-2/12 ml-1">
+                <div className="flex items-baseline w-full h-12 text-white">
+                  <span className="h-8">Giảm:</span>
+                  <div
+                    className={`inline-block  ml-1 ${
+                      form.values.discountUnit == CreateVoucherRequestDiscountUnitEnum.Percent ? 'w-2/12' : 'w-3/12'
+                    }`}
+                  >
                     <FormInput
                       name="minimize"
-                      className="bg-[#413F4D]  border-2 border-[#FFFFFF] h-8 border-opacity-30"
+                      className="bg-[#413F4D]  border-2 border-[#FFFFFF] h-8 border-opacity-30 "
                       placeholder="Số Lượng"
                       value={form.values.minimize}
                       onBlur={form.handleBlur}
                       error={!!form.errors.minimize && form.touched.minimize}
                       errorMessage={form.errors.minimize}
                       onChange={(e) => {
-                        const newValue = parseInt(e.target.value)
-                        if (!isNaN(newValue) && newValue >= 1) {
-                          if (newValue > parseInt(MAX_NUMBER_DISCOUNT)) {
-                            e.target.value = MAX_NUMBER_DISCOUNT
+                        if (form.values.discountUnit == CreateVoucherRequestDiscountUnitEnum.Percent) {
+                          const newValue = parseInt(e.target.value)
+                          if (!isNaN(newValue) && newValue >= 1) {
+                            if (newValue > parseInt('100')) {
+                              e.target.value = '100'
+                            } else {
+                              e.target.value = newValue.toString()
+                            }
                           } else {
-                            e.target.value = newValue.toString()
+                            e.target.value = '1'
                           }
+                          form.handleChange(e)
                         } else {
-                          e.target.value = '1'
+                          const rawValue = e.target.value
+                          const newValue = parseFloat(rawValue.replace(/,/g, ''))
+                          if (!isNaN(newValue) && newValue >= 0) {
+                            if (newValue > parseFloat(MAX_NUMBER_DISCOUNT)) {
+                              e.target.value = formatNumberWithCommas(parseFloat(MAX_NUMBER_DISCOUNT))
+                            } else {
+                              e.target.value = formatNumberWithCommas(newValue)
+                            }
+                          } else {
+                            e.target.value = '0'
+                          }
+                          form.handleChange(e)
                         }
-                        form.handleChange(e)
                       }}
-                      type="number"
-                      min={0}
-                      max={100}
+                      type="text"
                     />
                   </div>
                   <div className="inline-block w-2/12 ml-1">
@@ -765,7 +788,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                         },
                         {
                           value: CreateVoucherRequestDiscountUnitEnum.Cash,
-                          label: 'Xu',
+                          label: 'VND',
                         },
                       ]}
                     />
@@ -773,34 +796,33 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                   {form.values.discountUnit == CreateVoucherRequestDiscountUnitEnum.Percent && (
                     <div className="flex items-center justify-end w-6/12">
                       <span className="">Giảm Tối Đa:</span>
-                      <div className="inline-block w-3/12 ml-1 mr-1">
+                      <div className="inline-block w-6/12 ml-1 mr-1">
                         <FormInput
                           name="maximumDiscountValue"
                           className="bg-[#413F4D]  border-2 border-[#FFFFFF] h-8 border-opacity-30"
                           placeholder=""
-                          value={form.values.maximumDiscountValue}
+                          value={formatNumberWithCommas(form.values.maximumDiscountValue)}
                           onBlur={form.handleBlur}
                           error={!!form.errors.maximumDiscountValue && form.touched.maximumDiscountValue}
                           errorMessage={form.errors.maximumDiscountValue}
                           onChange={(e) => {
-                            const newValue = parseInt(e.target.value)
+                            const rawValue = e.target.value
+                            const newValue = parseFloat(rawValue.replace(/,/g, ''))
                             if (!isNaN(newValue) && newValue >= 0) {
-                              if (newValue > parseInt(MAX_NUMBER_DISCOUNT)) {
-                                e.target.value = MAX_NUMBER_DISCOUNT
+                              if (newValue > parseFloat(MAX_NUMBER_DISCOUNT)) {
+                                e.target.value = formatNumberWithCommas(parseFloat(MAX_NUMBER_DISCOUNT))
                               } else {
-                                e.target.value = newValue.toString()
+                                e.target.value = formatNumberWithCommas(newValue)
                               }
                             } else {
                               e.target.value = '0'
                             }
                             form.handleChange(e)
                           }}
-                          type="number"
-                          min={0}
-                          max={100}
+                          type="text"
                         />
                       </div>
-                      {' Xu'}
+                      <span className="text-xs italic"> đ</span>
                     </div>
                   )}
                 </div>

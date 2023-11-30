@@ -1,5 +1,6 @@
 import { Menu, Transition } from '@headlessui/react'
 import { Help, Logout, Setting, User, WalletOne } from '@icon-park/react'
+import { useAuth } from '~/contexts/auth'
 
 import { Fragment } from 'react'
 
@@ -8,12 +9,10 @@ import Link from 'next/link'
 
 interface MenuProps {
   user: any
-  handleLogout: () => void
 }
 
-//TODO: map link for dropdown menu
-
-export const DropDownMenu = ({ user, handleLogout }: MenuProps) => {
+export const DropDownMenu = ({ user }: MenuProps) => {
+  const { logout } = useAuth()
   return (
     <Menu>
       <div>
@@ -37,11 +36,11 @@ export const DropDownMenu = ({ user, handleLogout }: MenuProps) => {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="absolute w-56 p-2 text-white origin-top-right divide-y divide-gray-200 rounded-md shadow-lg bg-umeHeader right-12 ring-1 ring-black ring-opacity-5 focus:outline-none">
+        <Menu.Items className="absolute w-56 p-2 text-white origin-top-right divide-y divide-gray-200 rounded-md shadow-lg bg-umeHeader right-12 ring-1 ring-black ring-opacity-30 focus:outline-none">
           <Menu.Item as="div">
             {({ active }) => (
               <Link
-                href={`/profile/${user?.id}`}
+                href={`/profile/${user?.slug ?? user?.id}?tab=${user.isProvider ? 'Service' : 'Album'}`}
                 className={`${
                   active ? 'bg-slate-700' : 'text-gray-900'
                 } group flex w-full items-center rounded-md px-2 text-white py-2 text-sm`}
@@ -53,14 +52,15 @@ export const DropDownMenu = ({ user, handleLogout }: MenuProps) => {
           </Menu.Item>
           <Menu.Item as="div">
             {({ active }) => (
-              <button
+              <Link
+                href={`/account-setting?user=${user?.name}&tab=transactionHistory`}
                 className={`${
                   active ? 'bg-slate-700' : 'text-gray-900'
                 } group flex w-full items-center rounded-md  text-white px-2 py-2 text-sm`}
               >
                 <WalletOne theme="outline" size="20" fill="#ffffff" className="mr-3" />
                 Lich sử giao dịch
-              </button>
+              </Link>
             )}
           </Menu.Item>
           <Menu.Item as="div">
@@ -93,7 +93,7 @@ export const DropDownMenu = ({ user, handleLogout }: MenuProps) => {
           <Menu.Item as="div">
             {({ active }) => (
               <button
-                onClick={handleLogout}
+                onClick={logout}
                 className={`${
                   active ? 'bg-slate-700 ' : 'text-gray-900'
                 } group flex w-full items-center rounded-md text-white px-2 py-2 text-sm`}

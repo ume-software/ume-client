@@ -1,8 +1,8 @@
-import { GrinningFaceWithOpenMouth, MoreOne, PhoneTelephone, Picture, Videocamera } from '@icon-park/react'
+import { GrinningFaceWithOpenMouth, MoreOne, PhoneTelephone, Videocamera } from '@icon-park/react'
 import { useAuth } from '~/contexts/auth'
 import useChatScroll from '~/hooks/useChatScroll'
 
-import { ReactNode, useContext, useEffect, useId, useRef, useState } from 'react'
+import { ReactNode, useContext, useEffect, useRef, useState } from 'react'
 
 import Image from 'next/legacy/image'
 import Link from 'next/link'
@@ -14,11 +14,11 @@ import { CommentSkeletonLoader } from '~/components/skeleton-load'
 import { getSocket } from '~/utils/constants'
 import { trpc } from '~/utils/trpc'
 
-interface actionButtonProps {
+interface ActionButtonProps {
   actionButton: ReactNode
 }
 
-const actionButtons: actionButtonProps[] = [
+const actionButtons: ActionButtonProps[] = [
   {
     actionButton: <Videocamera theme="outline" size="20" fill="#FFFFFF" strokeLinejoin="bevel" />,
   },
@@ -39,7 +39,7 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
   const { socketClientEmit } = useContext(SocketClientEmit)
   const { socketContext } = useContext(SocketContext)
   const { isAuthenticated } = useAuth()
-  const { user } = useAuth()
+  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
   const utils = trpc.useContext()
   const { data: chattingMessageChannel, isLoading: loadingChattingMessageChannel } = trpc.useQuery([
     'chatting.getMessagesByChannelId',
@@ -56,16 +56,16 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
   }, [socketContext?.socketChattingContext, isAuthenticated])
 
   const mappingMember: { [key: string]: MemberChatChannelResponse } = convertArrayObjectToObject(
-    chattingMessageChannel?.data.members || [],
+    chattingMessageChannel?.data.members ?? [],
     'userId',
   )
 
   const images = chattingMessageChannel?.data.members.filter((member) => {
-    return member.userId.toString() != user?.id.toString()
+    return member.userId.toString() != userInfo?.id.toString()
   })!
 
   const handleSentMessage = () => {
-    if (isAuthenticated && messageInput != '') {
+    if (!!userInfo.id && messageInput != '') {
       socketClientEmit?.socketInstanceChatting?.emit(getSocket().SOCKER_CHATTING_SERVER_ON.SENT_MESSAGE_TO_CHANNEL, {
         channelId: props.channel._id,
         content: messageInput,
@@ -85,9 +85,9 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
         <CommentSkeletonLoader />
       ) : (
         <div className="relative max-h-screen overflow-hidden">
-          <div className="w-full flex items-center justify-between">
+          <div className="flex items-center justify-between w-full">
             <Link
-              href={`/profile/${images[0].providerInformation.slug || images[0].providerInformation.id}`}
+              href={`/profile/${images[0].userInformation.slug ?? images[0].userId}`}
               className="w-3/4 p-2 rounded-lg hover:bg-gray-700"
             >
               {images && (
@@ -97,7 +97,7 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
                       className="absolute rounded-full"
                       layout="fill"
                       objectFit="cover"
-                      src={images[0].userInformation.avatarUrl!}
+                      src={images[0].userInformation.avatarUrl}
                       alt="Avatar"
                     />
                   </div>
@@ -116,12 +116,11 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
               ))}
             </div>
           </div>
-          <div className="flex flex-col gap-2 h-full overflow-y-auto">
+          <div className="flex flex-col h-full gap-2 overflow-y-auto">
             <div className="flex gap-2 pb-5 overflow-auto border-b-2 border-[#B9B8CC] custom-scrollbar"></div>
-            <div className="bg-[#413F4D] p-2 rounded-3xl"></div>
           </div>
           <div className="relative">
-            <div className="h-[75vh] flex flex-col justify-end">
+            <div className="h-[78vh] flex flex-col justify-end">
               {/* <!-- message --> */}
               <div
                 ref={divRef}
@@ -130,9 +129,12 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
                 <div className="flex flex-col mt-5 ">
                   {chattingMessageChannel?.data.messages.map((item, index) => {
                     const sender = mappingMember[item.senderId]
-                    const isSeftMessage = sender.userId.toString() == user?.id.toString()
+                    const isSeftMessage = sender.userId.toString() == userInfo?.id.toString()
                     return (
-                      <div key={index} className={`flex justify-end  ${!isSeftMessage ? 'flex-row-reverse' : ''} mb-4`}>
+                      <div
+                        key={index}
+                        className={`flex justify-end items-end ${!isSeftMessage ? 'flex-row-reverse' : ''} mb-4`}
+                      >
                         <div
                           className={`max-w-xs mx-2 py-3 px-4 text-white text-lg
                         ${
@@ -165,9 +167,9 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
               {/* <!-- end message --> */}
             </div>
             <div className="absolute bottom-2 left-5 right-5  bg-[#15151b] flex items-center gap-3">
-              <div className="p-2 content-center bg-[#413F4D] rounded-full cursor-pointer hover:bg-gray-500 active:bg-gray-400">
+              {/* <div className="p-2 content-center bg-[#413F4D] rounded-full cursor-pointer hover:bg-gray-500 active:bg-gray-400">
                 <Picture theme="outline" size="24" fill="#FFFFFF" strokeLinejoin="bevel" />
-              </div>
+              </div> */}
 
               <div className="w-[100%] h-[40px] relative">
                 <input
@@ -176,7 +178,7 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
                   placeholder="Nhập tin nhắn"
                   value={messageInput}
                   onChange={(e) => setMessageInput(e.target.value)}
-                  onKeyPress={handleKeyPress}
+                  onKeyDown={handleKeyPress}
                 />
                 <div className="absolute transform -translate-y-1/2 rounded-full cursor-pointer top-1/2 right-3 z-4 hover:bg-gray-500 active:bg-gray-400">
                   <GrinningFaceWithOpenMouth theme="outline" size="24" fill="#FFFFFF" strokeLinejoin="bevel" />

@@ -2,7 +2,12 @@ import { TRPCError } from '@trpc/server'
 import { getEnv } from '~/env'
 
 import { parse } from 'cookie'
-import { AdminManageServiceApi, CreateServiceRequest, UpdateServiceRequest } from 'ume-service-openapi'
+import {
+  AdminManageServiceApi,
+  AdminManageStatisticApi,
+  CreateServiceRequest,
+  UpdateServiceRequest,
+} from 'ume-service-openapi'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
@@ -13,7 +18,7 @@ export const getServiceList = async (ctx, query: { page: string; select?: string
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).adminGetAllServices('10', query.page, query.select || '["$all"]', query.where, query.order)
+    }).adminGetAllServices('10', query.page, query.select || '["$all"]', query.where, '[{"createdAt":"desc"}]')
 
     return {
       data: response.data,
@@ -67,6 +72,7 @@ export const getServiceDetails = async (ctx, query: { id; select }) => {
     })
   }
 }
+
 export const updateService = async (input: { id: string; updateServiceRequest: UpdateServiceRequest }, ctx) => {
   const cookies = parse(ctx.req.headers.cookie)
   try {
@@ -84,6 +90,28 @@ export const updateService = async (input: { id: string; updateServiceRequest: U
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
       message: error.response.data.data.message || 'Failed to update service',
+    })
+  }
+}
+
+export const statisticProviderService = async (ctx) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie ?? '')
+    const response = await new AdminManageStatisticApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).adminGetMostProviderServicesStatistics(10, {})
+
+    return {
+      data: response.data,
+      success: true,
+    }
+  } catch (error) {
+    console.log('Failed to statistic service', error.response.data)
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.response.data.data.message || 'Failed to statistic service',
     })
   }
 }

@@ -22,9 +22,7 @@ const Category = () => {
   return (
     <>
       {loadingService ? (
-        <>
-          <SliderSkeletonLoader />
-        </>
+        <SliderSkeletonLoader />
       ) : (
         <>
           {services && (

@@ -20,15 +20,16 @@ export const AuthProvider = ({ children }: AuthProviderType) => {
 
   const authContextValue = useMemo(() => {
     const login = async (user: UserInformationResponse): Promise<void> => {
-      localStorage.setItem('user', JSON.stringify(user))
+      sessionStorage.setItem('user', JSON.stringify(user))
       setUser(user)
     }
 
     const logout = async (): Promise<void> => {
-      localStorage.removeItem('user')
-      localStorage.removeItem('accessToken')
-      router.push('/logout')
+      sessionStorage.removeItem('user')
+      document.cookie = 'accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
+      document.cookie = 'refeshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
       setUser(null)
+      await router.push('/logout')
     }
 
     return { isAuthenticated: Boolean(user), user, login, logout }

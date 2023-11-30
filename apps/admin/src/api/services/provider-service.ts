@@ -181,7 +181,7 @@ export const getProviderTotalCoin = async (
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).adminGetTotalCoinByProviderSlug(query?.slug!!)
+    }).adminGetTotalBalanceByProviderSlug(query?.slug!!)
     return {
       data: response.data,
       success: true,
@@ -252,7 +252,7 @@ export const getListKYC = async (
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).adminGetListUserKYCRequest(query?.limit, query?.page, query?.select, query?.where, query?.order)
+    }).adminGetListUserKYCRequest(query?.limit, query?.page, query?.select, query?.where, '[{"createdAt":"desc"}]')
 
     const res = response.data.row?.map((data: UserKYCRequestResponse) => ({
       ...data.user,
@@ -280,15 +280,15 @@ export const getListKYC = async (
 export const kcyAction = async (ctx, { id, action }) => {
   const cookies = parse(ctx.req.headers.cookie)
   try {
-    let response = await new AdminManageUserKYCRequestApi({
+    let response = new AdminManageUserKYCRequestApi({
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
     })
     if (action === 'APPROVE') {
-      response.adminApprovedUserKYCRequest(id)
+      await response.adminApprovedUserKYCRequest(id)
     } else if (action === 'REJECT') {
-      response.adminRejectedUserKYCRequest(id)
+      await response.adminRejectedUserKYCRequest(id)
     }
     return {
       data: response,

@@ -18,7 +18,7 @@ const KYCManagerment = ({ task }) => {
   return (
     <div>
       <Head>
-        <title>Admin | KYC Manager</title>
+        <title>UME | KYC Manager</title>
       </Head>
       <div className="h-full pb-10">
         <SwitchKYCManager selectedTask={task} />

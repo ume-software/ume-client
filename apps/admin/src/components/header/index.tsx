@@ -1,4 +1,4 @@
-import { HamburgerButton, Remind } from '@icon-park/react'
+import { HamburgerButton } from '@icon-park/react'
 import emptyPic from 'public/empty_error.png'
 import WhiteTextLogo from 'public/ume-logo-2.png'
 import { useAuth } from '~/contexts/auth'
@@ -7,7 +7,7 @@ import useWindowDimensions from '~/hooks/windownDimensions'
 
 import { useCallback, useEffect } from 'react'
 
-import { Badge, Dropdown } from 'antd'
+import { Dropdown } from 'antd'
 import Cookies from 'js-cookie'
 import Image from 'next/legacy/image'
 import { useRouter } from 'next/router'
@@ -36,7 +36,7 @@ export const Header = ({ handleOpen, openSideBar, setOpenPopupSideBar, openPopup
   const items = [
     {
       key: 'logOut',
-      label: <div className="p-2 text-white active:bg-gray-500">Đăng xuất</div>,
+      label: <div className="w-full p-2 text-white rounded-lg hover:bg-gray-600 active:bg-gray-500">Đăng xuất</div>,
     },
   ]
 
@@ -70,11 +70,11 @@ export const Header = ({ handleOpen, openSideBar, setOpenPopupSideBar, openPopup
   return (
     <div
       className={`fixed top-0 w-full h-16 z-40 bg-umeHeader pr-7 ${
-        width <= 900 ? 'pl-7%' : !openSideBar || width <= 1200 ? 'pl-[9%]' : 'pl-[23%]'
+        width <= 900 ? 'pl-7%' : !openSideBar || width <= 1200 ? 'pl-[9%]' : 'pl-[21%]'
       } shadow-md`}
     >
-      <div className="flex items-center ml-5 justify-between flex-1 h-full align-middle">
-        <div onClick={handleOpenSideBar} className="p-1 cursor-pointer rounded-full hover:bg-gray-500">
+      <div className="flex items-center justify-between flex-1 h-full align-middle">
+        <div onClick={handleOpenSideBar} className="p-1 rounded-full cursor-pointer hover:bg-gray-500">
           <HamburgerButton theme="outline" size="22" fill="#fff" />
         </div>
         {width <= 900 && (
@@ -82,14 +82,7 @@ export const Header = ({ handleOpen, openSideBar, setOpenPopupSideBar, openPopup
             <Image width={100} height={35} src={WhiteTextLogo} alt="logo" />
           </div>
         )}
-        <div className="min-w-[6.5rem] flex justify-between items-center">
-          <div className="mr-10 pt-2">
-            <Badge size="small" count={20}>
-              <div className="rounded-full p-[0.25rem] bg-gray-500">
-                <Remind theme="outline" size={width <= 900 ? '20' : '24'} fill="#fff" />
-              </div>
-            </Badge>
-          </div>
+        <div className="flex justify-end items-center">
           <Dropdown
             menu={{
               items,

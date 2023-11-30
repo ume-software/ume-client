@@ -1,7 +1,6 @@
 import { z } from 'zod'
 
 import { createRouter } from './configurations'
-import { kcyAction } from './services/provider-service'
 import {
   BanProvider,
   UnBanProvider,
@@ -12,6 +11,7 @@ import {
   getProviderList,
   getProviderSkill,
   getProviderTotalCoin,
+  kcyAction,
 } from './services/provider-service'
 
 export const providerRouter = createRouter()
