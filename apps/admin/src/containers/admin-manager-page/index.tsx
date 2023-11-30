@@ -326,14 +326,23 @@ const UserManager = () => {
                 />
               </Button>
             )}
-
-            <Button isActive={false} onClick={() => handleOpenConfirm(record)}>
-              {record.isActivated ? (
-                <CloseOne className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="20" fill="#ff0000" />
-              ) : (
-                <CheckOne className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="20" fill="#85ea2d" />
-              )}
-            </Button>
+            {record.adminRoles.some((item) => item.roleType === 'SUPER_ADMIN') ? (
+              <Button isActive={false} className="pointer-events-none cursor-none">
+                {record.isActivated ? (
+                  <CloseOne className="p-2 rounded-full opacity-40" theme="outline" size="20" fill="#fff" />
+                ) : (
+                  <CheckOne className="p-2 rounded-full opacity-40" theme="outline" size="20" fill="#fff" />
+                )}
+              </Button>
+            ) : (
+              <Button isActive={false} onClick={() => handleOpenConfirm(record)}>
+                {record.isActivated ? (
+                  <CloseOne className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="20" fill="#ff0000" />
+                ) : (
+                  <CheckOne className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="20" fill="#85ea2d" />
+                )}
+              </Button>
+            )}
           </div>
         )
       },

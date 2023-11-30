@@ -26,6 +26,9 @@ const CreateAccountModal = ({ openValue, closeFunction }: ICreateAdminProps) => 
   const [openConfirm, setOpenConfirm] = useState(false)
   const [isCreate, setIsCreate] = useState<boolean>(false)
   const createAdminAccount = trpc.useMutation(['admin.createAdminAccount'])
+
+  const regexPhoneNumber = /^(84|0[3|5|7|8|9])+([0-9]{8})\b$/
+
   const form = useFormik({
     initialValues: {
       avatarUrl: '',
@@ -44,6 +47,7 @@ const CreateAccountModal = ({ openValue, closeFunction }: ICreateAdminProps) => 
       userName: Yup.string().required('Tên đăng nhập là bắt buộc'),
       password: Yup.string().required('Mật khẩu là bắt buộc'),
       gender: Yup.string().required('Giới tính là bắt buộc'),
+      phone: Yup.string().matches(regexPhoneNumber, 'Số điện thoại không hợp lệ'),
     }),
     onSubmit: () => {
       openConfirmModal()
@@ -170,11 +174,17 @@ const CreateAccountModal = ({ openValue, closeFunction }: ICreateAdminProps) => 
       className="w-auto bg-black"
     >
       <div className="m-7">
-        <form autoComplete="off" onSubmit={form.handleSubmit} className="text-white grid grid-cols-5">
-          <div className="col-span-2 ">
+        <form
+          autoComplete="off"
+          onSubmit={(e) => {
+            e.preventDefault()
+          }}
+          className="text-white grid grid-cols-5"
+        >
+          <div className="col-span-2 pl-5">
             <div
               className={`
-                w-36 h-52 overflow-hidden rounded-2xl bg-[#413F4D]
+                w-36 h-36 overflow-hidden rounded-full bg-[#413F4D]
                 ${
                   !form.values.avatarUrl &&
                   ' flex items-center justify-center border-dashed border-2 border-[#FFFFFF80]'
@@ -184,7 +194,7 @@ const CreateAccountModal = ({ openValue, closeFunction }: ICreateAdminProps) => 
             >
               {form.values.avatarUrl && (
                 <Image
-                  className="overflow-hidden rounded-2xl"
+                  className="overflow-hidden rounded-full"
                   width={144}
                   height={208}
                   src={form.values.avatarUrl}
@@ -355,25 +365,36 @@ const CreateAccountModal = ({ openValue, closeFunction }: ICreateAdminProps) => 
               <label className="col-span-2 flex items-center" htmlFor="phone">
                 Số điện thoại
               </label>
-              <Input
+              <FormInput
                 name="phone"
                 placeholder={'0912345678'}
                 onBlur={form.handleBlur}
                 value={form.values.phone}
+                error={!!form.errors.phone && form.touched.phone}
+                errorMessage={''}
                 onChange={form.handleChange}
                 disabled={false}
-                className={`bg-[#413F4D] border-2 col-span-4 border-[#FFFFFF] w-[80%] ml-2 h-8  border-opacity-30`}
+                className={`bg-[#413F4D] border-2 col-span-4 border-[#FFFFFF] w-[80%] ml-2 h-8  border-opacity-30 ${
+                  form.errors.phone && form.touched.phone ? 'placeholder:text-red-500' : ''
+                }`}
               />
             </div>
           </div>
           <div className="col-span-5 flex justify-center pb-4 mt-10">
             <Button
+              onClick={closeHandleSmall}
+              customCSS={`mx-6 px-4 py-1 border-2 hover:scale-110 bg-red-500 border-red-500`}
+            >
+              Hủy
+            </Button>
+            <Button
               customCSS={`mx-6 px-4 py-1 border-2  ${
-                !isDisableButton() && 'hover:scale-110 bg-[#7463F0] border-[#7463F0]'
+                !isDisableButton() && 'hover:scale-110 bg-blue-500 border-blue-500'
               }`}
               onClick={(e) => {
                 openConfirmModal()
               }}
+              type="submit"
               isDisable={isDisableButton()}
             >
               Tạo

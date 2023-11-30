@@ -37,7 +37,7 @@ const Layout = ({ children }: ILayout) => {
   const { width } = useWindowDimensions()
 
   useEffect(() => {
-    if (width <= 1024) {
+    if (width <= 1200) {
       setOpenSideBar(false)
     } else {
       setOpenSideBar(true)
