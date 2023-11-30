@@ -45,9 +45,8 @@ const CreateAccountModal = ({ openValue, closeFunction }: ICreateAdminProps) => 
       password: Yup.string().required('Mật khẩu là bắt buộc'),
       gender: Yup.string().required('Giới tính là bắt buộc'),
     }),
-    onSubmit: (values, { resetForm }) => {
+    onSubmit: () => {
       openConfirmModal()
-      resetForm()
     },
   })
 
@@ -115,8 +114,8 @@ const CreateAccountModal = ({ openValue, closeFunction }: ICreateAdminProps) => 
     form.resetForm()
   }
   function closeComfirmFormHandle() {
-    setOpenConfirm(false)
     setIsCreate(false)
+    setOpenConfirm(false)
   }
   function closeHandle() {
     setOpenConfirm(false)

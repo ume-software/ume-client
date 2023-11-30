@@ -142,12 +142,10 @@ const UpdateAccountModal = ({ id, openValue, closeFunction }: IUpdateAdminProps)
       name: Yup.string().required('Tên là bắt buộc'),
       userName: Yup.string().required('Tên đăng nhập là bắt buộc'),
       roles: Yup.array().of(Yup.string().required('Vai trò là bắt buộc')).required('Vai trò là bắt buộc'),
-      email: Yup.string().required('Email là bắt buộc'),
       phone: Yup.string().matches(regexPhoneNumber, 'Số điện thoại không hợp lệ'),
     }),
-    onSubmit: (values, { resetForm }) => {
+    onSubmit: () => {
       openConfirmModal()
-      resetForm()
     },
   })
 
@@ -367,7 +365,6 @@ const UpdateAccountModal = ({ id, openValue, closeFunction }: IUpdateAdminProps)
                 *Role
               </label>
               <Select
-                // mode="multiple"
                 placeholder="Chọn role"
                 defaultValue={form.values.roles}
                 value={form.values.roles}
