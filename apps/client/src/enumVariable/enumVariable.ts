@@ -21,4 +21,7 @@ export enum ActionEnum {
   CREATE = 'CREATE',
   UPDATE = 'UPDATE',
   DELETE = 'DELETE',
+  WITHDRAW = 'WITHDRAW',
+  DONATE = 'DONATE',
+  END_SOON = 'END_SOON',
 }

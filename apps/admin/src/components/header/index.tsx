@@ -1,26 +1,42 @@
-import { Remind } from '@icon-park/react'
+import { HamburgerButton } from '@icon-park/react'
 import emptyPic from 'public/empty_error.png'
+import WhiteTextLogo from 'public/ume-logo-2.png'
+import { useAuth } from '~/contexts/auth'
 import { getItem, removeItem } from '~/hooks/localHooks'
+import useWindowDimensions from '~/hooks/windownDimensions'
 
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 
-import { Badge, Dropdown, Space } from 'antd'
+import { Dropdown } from 'antd'
 import Cookies from 'js-cookie'
 import Image from 'next/legacy/image'
 import { useRouter } from 'next/router'
 
-export const Header = () => {
+export interface IHeaderProps {
+  handleOpen?: any
+  openSideBar?: boolean
+  setOpenPopupSideBar?: any
+  openPopupSideBar?: boolean
+}
+
+export const Header = ({ handleOpen, openSideBar, setOpenPopupSideBar, openPopupSideBar }: IHeaderProps) => {
   const router = useRouter()
-  function handleLogOut() {
+  const { width } = useWindowDimensions()
+
+  const { user, login, logout } = useAuth()
+
+  const handleLogOut = useCallback(() => {
     removeItem('user')
     Cookies.remove('refreshToken')
     Cookies.remove('accessToken')
+    logout()
     router.push('/signin')
-  }
+  }, [router, logout])
+
   const items = [
     {
       key: 'logOut',
-      label: <div className="active:bg-gray-500 text-white p-2">Đăng xuất</div>,
+      label: <div className="w-full p-2 text-white rounded-lg hover:bg-gray-600 active:bg-gray-500">Đăng xuất</div>,
     },
   ]
 
@@ -28,27 +44,16 @@ export const Header = () => {
 
   useEffect(() => {
     if (adminInfo) {
-      return
-    } else {
+      login(adminInfo)
+    }
+    if (!Cookies.get('accessToken')) {
       handleLogOut()
     }
-  }, [adminInfo])
-
-  const test = {
-    id: '93ac1c91-8660-4589-b559-8222fbab9d1b',
-    createdAt: '2023-09-25T03:17:53.350Z',
-    updatedAt: '2023-09-25T03:17:53.350Z',
-    deletedAt: null,
-    name: 'Vo Van Que',
-    username: 'queadmin',
-    dob: '2001-05-31T17:00:00.000Z',
-    gender: 'MALE',
-    phone: '0123456789',
-    email: 'shinamonvu@gmail.com',
-    password: '$2b$10$yLZVOWv1px8mreKT4jXzEOQwgYFrXv.3kdhxFqu0dag2virW4D6WW',
-    avatarUrl: 'https://haycafe.vn/wp-content/uploads/2022/02/anh-meo-cute-hinh-cute-meo.jpg',
-    ipv4: null,
-  }
+    if (!user && !adminInfo) {
+      handleLogOut()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const handleItemSelected = (e) => {
     switch (e.key) {
@@ -57,15 +62,28 @@ export const Header = () => {
         break
     }
   }
+
+  function handleOpenSideBar() {
+    if (width <= 900) {
+      setOpenPopupSideBar(!openPopupSideBar)
+    } else handleOpen()
+  }
   return (
-    <div className="fixed top-0 min-w-full h-16 z-40 bg-umeHeader px-7 shadow-md">
-      <div className="flex items-center justify-end flex-1 h-full align-middle">
-        <Space>
-          <div className="mr-5">
-            <Badge size="small" count={20}>
-              <Remind theme="outline" size="24" fill="#fff" />
-            </Badge>
+    <div
+      className={`fixed top-0 w-full h-16 z-40 bg-umeHeader pr-7 ${
+        width <= 900 ? 'pl-7%' : !openSideBar || width <= 1200 ? 'pl-[9%]' : 'pl-[21%]'
+      } shadow-md`}
+    >
+      <div className="flex items-center justify-between flex-1 h-full align-middle">
+        <div onClick={handleOpenSideBar} className="p-1 rounded-full cursor-pointer hover:bg-gray-500">
+          <HamburgerButton theme="outline" size="22" fill="#fff" />
+        </div>
+        {width <= 900 && (
+          <div className="">
+            <Image width={100} height={35} src={WhiteTextLogo} alt="logo" />
           </div>
+        )}
+        <div className="flex justify-end items-center">
           <Dropdown
             menu={{
               items,
@@ -83,7 +101,7 @@ export const Header = () => {
               />
             </div>
           </Dropdown>
-        </Space>
+        </div>
       </div>
     </div>
   )

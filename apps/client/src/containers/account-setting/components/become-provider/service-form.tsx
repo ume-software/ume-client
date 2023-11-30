@@ -1,14 +1,11 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { Transition } from '@headlessui/react'
-import { CloseSmall, DeleteFive, Down, Plus, Save, Write } from '@icon-park/react'
-import { Button, Input, InputWithAffix, Modal, TextArea } from '@ume/ui'
-import coin from 'public/coin-icon.png'
+import { Menu, Transition } from '@headlessui/react'
+import { CloseSmall, DeleteFive, Down, More, Plus, Save, Write } from '@icon-park/react'
+import { Button, FormInputWithAffix, Input, InputWithAffix, Modal, TextArea } from '@ume/ui'
 import { MenuModalEnum } from '~/enumVariable/enumVariable'
 
 import { Fragment, useEffect, useState } from 'react'
 
 import { ConfigProvider, message, notification, theme } from 'antd'
-import Image from 'next/legacy/image'
 import {
   ProviderServicePagingResponse,
   ServiceAttributePagingResponse,
@@ -17,7 +14,8 @@ import {
   ServiceResponse,
 } from 'ume-service-openapi'
 
-import ConfirmForm from '~/components/confirm-form/confirmForm'
+import ConfirmForm from '~/components/confirm-form/confirm-form'
+import { SkeletonProviderService } from '~/components/skeleton-load'
 
 import { trpc } from '~/utils/trpc'
 
@@ -29,25 +27,27 @@ interface ServiceForm {
 
 interface AttributeProps {
   id: string | undefined
+  position: number
   intro: string
   service: ServiceResponse | undefined
-  serviceDefaultPrice: number
+  serviceDefaultPrice: string
   serviceAttribute: {
     serviceAttributeId: string | undefined
     subServiceAttibute: { serviceAttributeValueId: string; serviceAttributeValueName: string }[]
   }[]
-  specialTimeLot: { startTimeOfDay?: string; endTimeOfDay?: string; amount?: number }[]
+  specialTimeLot: { id?: string; startTimeOfDay?: string; endTimeOfDay?: string; amount?: string }[]
 }
 
 interface AttributeDisplayProps {
+  position: number
   intro: string
   service: string
-  serviceDefaultPrice?: number
+  serviceDefaultPrice?: string
   serviceAttribute: {
     serviceAttributeId: string
     subServiceAttibute: { serviceAttributeValueId: string; serviceAttributeValueName: string }[]
   }[]
-  specialTimeLot: { startTimeOfDay?: string; endTimeOfDay?: string; amount?: number }[]
+  specialTimeLot: { id?: string; startTimeOfDay?: string; endTimeOfDay?: string; amount?: string }[]
 }
 
 interface MenuDisplayProps {
@@ -91,9 +91,10 @@ const AddSkillForm = () => {
   const [attributes, setAttributes] = useState<AttributeProps[]>([
     {
       id: undefined,
+      position: 0,
       intro: '',
       service: undefined,
-      serviceDefaultPrice: 1,
+      serviceDefaultPrice: '1,000',
       serviceAttribute: [
         {
           serviceAttributeId: undefined,
@@ -106,9 +107,10 @@ const AddSkillForm = () => {
 
   const [attributesDisplay, setAttributesDisplay] = useState<AttributeDisplayProps[]>([
     {
+      position: 0,
       intro: '',
       service: '',
-      serviceDefaultPrice: 1,
+      serviceDefaultPrice: '1,000',
       serviceAttribute: [
         {
           serviceAttributeId: '',
@@ -157,7 +159,7 @@ const AddSkillForm = () => {
   const createProvicerService = trpc.useMutation('identity.createServiceProvider')
   const updateProvicerService = trpc.useMutation('identity.updateServiceProvider')
 
-  const [displaySearchBox, setSearchBox] = useState<MenuDisplayProps>({
+  const [displaySearchBox, setDisplaySearchBox] = useState<MenuDisplayProps>({
     parent: 0,
     type: '',
     isShow: false,
@@ -169,28 +171,42 @@ const AddSkillForm = () => {
       setAttributes(
         listOwnService?.map((ownService) => ({
           id: ownService.id,
+          position: ownService.position ?? 0,
           intro: ownService.description ?? '',
           service: ownService.service,
-          serviceDefaultPrice: ownService.defaultCost ?? 1,
+          serviceDefaultPrice:
+            ownService.defaultCost?.toLocaleString('en-US', {
+              currency: 'VND',
+            }) ?? '1,000',
           serviceAttribute: ownService.providerServiceAttributes?.map((providerServiceAttr) => ({
             serviceAttributeId: providerServiceAttr.serviceAttributeId,
             subServiceAttibute: providerServiceAttr.providerServiceAttributeValues?.map((providerServiceAttrValue) => ({
-              serviceAttributeValueId: providerServiceAttrValue.providerServiceAttributeId ?? '',
+              serviceAttributeValueId: providerServiceAttrValue.serviceAttributeValueId ?? '',
               serviceAttributeValueName:
                 (providerServiceAttrValue?.serviceAttributeValue?.viValue != ''
                   ? providerServiceAttrValue?.serviceAttributeValue?.viValue
                   : providerServiceAttrValue?.serviceAttributeValue?.value) ?? '',
             })),
           })) as any,
-          specialTimeLot: ownService.bookingCosts ?? [],
+          specialTimeLot:
+            ownService.bookingCosts?.map((specialTime) => ({
+              ...specialTime,
+              amount: (specialTime?.amount ?? 0).toLocaleString('en-US', {
+                currency: 'VND',
+              }),
+            })) ?? [],
         })),
       )
 
       setAttributesDisplay(
         listOwnService?.map((ownService) => ({
+          position: ownService.position ?? 0,
           intro: ownService.description ?? '',
           service: ownService.service?.name ?? '',
-          serviceDefaultPrice: ownService.defaultCost ?? 1,
+          serviceDefaultPrice:
+            ownService.defaultCost?.toLocaleString('en-US', {
+              currency: 'VND',
+            }) ?? '1,000',
           serviceAttribute: ownService.providerServiceAttributes?.map((providerServiceAttr) => ({
             serviceAttributeId: providerServiceAttr?.serviceAttribute?.viAttribute ?? '',
             subServiceAttibute: providerServiceAttr.providerServiceAttributeValues?.map((providerServiceAttrValue) => ({
@@ -201,7 +217,13 @@ const AddSkillForm = () => {
                   : providerServiceAttrValue?.serviceAttributeValue?.value) ?? '',
             })),
           })) as any,
-          specialTimeLot: ownService.bookingCosts ?? [],
+          specialTimeLot:
+            ownService.bookingCosts?.map((specialTime) => ({
+              ...specialTime,
+              amount: (specialTime?.amount ?? 0).toLocaleString('en-US', {
+                currency: 'VND',
+              }),
+            })) ?? [],
         })),
       )
     }
@@ -212,9 +234,10 @@ const AddSkillForm = () => {
       ...attributes,
       {
         id: undefined,
+        position: listOwnService?.length ?? 0,
         intro: '',
         service: undefined,
-        serviceDefaultPrice: 1,
+        serviceDefaultPrice: '1,000',
         serviceAttribute: [
           {
             serviceAttributeId: undefined,
@@ -227,9 +250,10 @@ const AddSkillForm = () => {
     setAttributesDisplay([
       ...attributesDisplay,
       {
+        position: listOwnService?.length ?? 0,
         intro: '',
         service: '',
-        serviceDefaultPrice: 1,
+        serviceDefaultPrice: '1,000',
         serviceAttribute: [
           {
             serviceAttributeId: '',
@@ -266,10 +290,15 @@ const AddSkillForm = () => {
     sub_index?: number,
     serviceChange?: boolean,
     sub_attr_index?: number,
+    position?: number,
   ) => {
     const updatedAttributesDisplay = [...attributesDisplay]
 
     switch (name) {
+      case 'Position':
+        updatedAttributesDisplay[index] = { ...updatedAttributesDisplay[index], position: position ?? 0 }
+        setAttributesDisplay(updatedAttributesDisplay)
+        break
       case 'Intro':
         updatedAttributesDisplay[index] = { ...updatedAttributesDisplay[index], intro: searchText ?? '' }
         setAttributesDisplay(updatedAttributesDisplay)
@@ -347,6 +376,11 @@ const AddSkillForm = () => {
   ) => {
     const updatedAttributes = [...attributes]
     switch (name) {
+      case 'Position':
+        updatedAttributes[index] = { ...updatedAttributes[index], position: value ?? 0 }
+        setAttributes(updatedAttributes)
+        handleServiceInputChange('Position', index, '', undefined, true, undefined, value ?? 0)
+        break
       case 'Intro':
         updatedAttributes[index] = { ...updatedAttributes[index], intro: intro ?? '' }
         setAttributes(updatedAttributes)
@@ -365,7 +399,7 @@ const AddSkillForm = () => {
           ],
         }
 
-        setSearchBox({
+        setDisplaySearchBox({
           parent: index,
           type: MenuModalEnum.SERVICE,
           isShow: !displaySearchBox.isShow,
@@ -432,26 +466,95 @@ const AddSkillForm = () => {
     }
   }
 
-  const handleServicePriceChange = (index: number, value: number) => {
+  const handleServicePriceChange = (index: number, value: string) => {
     const updatedAttributes = [...attributes]
     updatedAttributes[index] = { ...updatedAttributes[index], serviceDefaultPrice: value }
     setAttributes(updatedAttributes)
+  }
+
+  const isTimePeriodIncluded = (period1: string[], period2: string[]) => {
+    const [startInputTime, endInputTime] = period1
+    const [startInputHours, startInputMinutes] = startInputTime.split(':').map(Number)
+    const [endInputHours, endInputMinutes] = endInputTime.split(':').map(Number)
+
+    const [startTime, endTime] = period2
+    const [startHours, startMinutes] = startTime.split(':').map(Number)
+    const [endHours, endMinutes] = endTime.split(':').map(Number)
+
+    if (endHours > startHours) {
+      return (
+        (startInputHours > startHours &&
+          startInputHours < endHours &&
+          endInputHours > startHours &&
+          endInputHours < endHours) ||
+        (startInputHours == startHours && startInputMinutes > startMinutes) ||
+        (endInputHours == endHours && endInputMinutes < endMinutes) ||
+        (startInputHours == endHours && startInputMinutes < endMinutes) ||
+        (endInputHours == startHours && endInputMinutes > startMinutes) ||
+        (endInputHours && endInputHours < startInputHours) ||
+        (endInputHours == startInputHours && endInputMinutes < startInputMinutes)
+      )
+    } else if (endHours < startHours) {
+      return (
+        (startInputHours < startHours &&
+          startInputHours > endHours &&
+          endInputHours < startHours &&
+          endInputHours > endHours) ||
+        (startInputHours == startHours && startInputMinutes < startMinutes) ||
+        (endInputHours == endHours && endInputMinutes > endMinutes) ||
+        (endInputHours && endInputHours > startInputHours) ||
+        (endInputHours == startInputHours && endInputMinutes > startInputMinutes)
+      )
+    }
   }
 
   const handleSpecialTimeChange = (index: number, value: string, type: string, time_slotIndex: number) => {
     const updatedAttributes = [...attributes]
     switch (type) {
       case 'startTimeOfDay':
-        updatedAttributes[index].specialTimeLot[time_slotIndex].startTimeOfDay = value
-        setAttributes(updatedAttributes)
+        const found = updatedAttributes[index].specialTimeLot.some((timeSlot, time_slot_index) => {
+          if (time_slot_index != time_slotIndex) {
+            return isTimePeriodIncluded(
+              [value, updatedAttributes[index].specialTimeLot[time_slotIndex].endTimeOfDay ?? ''],
+              [timeSlot.startTimeOfDay ?? '', timeSlot.endTimeOfDay ?? ''],
+            )
+          }
+        })
+
+        if (found) {
+          messageApi.open({
+            type: 'warning',
+            content: 'Khoảng thời gian không được trùng',
+            duration: 2,
+          })
+        } else {
+          updatedAttributes[index].specialTimeLot[time_slotIndex].startTimeOfDay = value
+          setAttributes(updatedAttributes)
+        }
 
         break
       case 'endTimeOfDay':
-        updatedAttributes[index].specialTimeLot[time_slotIndex].endTimeOfDay = value
-        setAttributes(updatedAttributes)
+        const foundEOD = updatedAttributes[index].specialTimeLot.some((timeSlot, time_slot_index) => {
+          if (time_slot_index != time_slotIndex) {
+            return isTimePeriodIncluded(
+              [updatedAttributes[index].specialTimeLot[time_slotIndex].startTimeOfDay ?? '', value],
+              [timeSlot.startTimeOfDay ?? '', timeSlot.endTimeOfDay ?? ''],
+            )
+          }
+        })
+        if (foundEOD) {
+          messageApi.open({
+            type: 'warning',
+            content: 'Khoảng thời gian không được trùng',
+            duration: 2,
+          })
+        } else {
+          updatedAttributes[index].specialTimeLot[time_slotIndex].endTimeOfDay = value
+          setAttributes(updatedAttributes)
+        }
         break
       case 'amount':
-        updatedAttributes[index].specialTimeLot[time_slotIndex].amount = Number(value)
+        updatedAttributes[index].specialTimeLot[time_slotIndex].amount = value
         setAttributes(updatedAttributes)
         break
     }
@@ -465,7 +568,7 @@ const AddSkillForm = () => {
         updatedAttributes[index].specialTimeLot.push({
           startTimeOfDay: '',
           endTimeOfDay: '',
-          amount: 0,
+          amount: '0',
         })
         setAttributes(updatedAttributes)
 
@@ -538,11 +641,17 @@ const AddSkillForm = () => {
     if (attributes[index].service?.id && attributes[index].intro != '') {
       const req = {
         serviceId: attributes[index]?.service?.id,
+        position: attributes[index]?.position,
         defaultCost: attributes[index]?.serviceDefaultPrice,
         description: attributes[index]?.intro,
         createBookingCosts: attributes[index].specialTimeLot.filter((specialTimeLot) => {
           if (specialTimeLot.startTimeOfDay != '' && specialTimeLot.endTimeOfDay != '') {
-            return specialTimeLot
+            return {
+              id: specialTimeLot.id,
+              startTimeOfDay: specialTimeLot.startTimeOfDay,
+              endTimeOfDay: specialTimeLot.endTimeOfDay,
+              amount: specialTimeLot.amount,
+            }
           }
         }),
         createServiceAttributes: attributes[index].serviceAttribute
@@ -558,15 +667,23 @@ const AddSkillForm = () => {
             }
           }),
       }
-      console.log(req)
 
       if (attributes[index].id) {
         updateProvicerService.mutate(
           {
             serviceId: req.serviceId ?? '',
-            defaultCost: req.defaultCost,
+            position: req.position ?? 0,
+            defaultCost: Number(req.defaultCost.replace(/,/g, '')),
             description: req.description,
-            handleBookingCosts: (req.createBookingCosts.length > 0 ? req.createBookingCosts : undefined) as any,
+            handleBookingCosts: (req.createBookingCosts.length > 0
+              ? req.createBookingCosts.map((bookingCost) => {
+                  return {
+                    startTimeOfDay: bookingCost.startTimeOfDay,
+                    endTimeOfDay: bookingCost.endTimeOfDay,
+                    amount: Number((bookingCost.amount ?? '0').replace(/,/g, '')),
+                  }
+                })
+              : undefined) as any,
             handleProviderServiceAttributes: req.createServiceAttributes.map((serAttr) => {
               return {
                 id: serAttr.id ?? '',
@@ -576,6 +693,7 @@ const AddSkillForm = () => {
           },
           {
             onSuccess() {
+              utils.invalidateQueries('identity.providerGetOwnServices')
               notification.success({
                 message: `Cập nhật dịch vụ thành công`,
                 description: `Dịch vụ đã được cập nhật`,
@@ -595,9 +713,16 @@ const AddSkillForm = () => {
         createProvicerService.mutate(
           {
             serviceId: req.serviceId ?? '',
-            defaultCost: req.defaultCost,
+            position: req.position ?? 0,
+            defaultCost: Number(req.defaultCost.replace(/,/g, '')),
             description: req.description,
-            createBookingCosts: (req.createBookingCosts.length > 0 ? req.createBookingCosts : undefined) as any,
+            createBookingCosts:
+              req.createBookingCosts.length > 0
+                ? (req.createBookingCosts.map((bookingCost) => ({
+                    ...bookingCost,
+                    amount: Number(bookingCost.amount?.replace(/,/g, '')),
+                  })) as any)
+                : undefined,
             createServiceAttributes: req.createServiceAttributes as any,
           },
           {
@@ -665,17 +790,15 @@ const AddSkillForm = () => {
     backgroundColor: '#15151b',
     closeWhenClickOutSide: true,
     closeButtonOnConner: (
-      <>
-        <CloseSmall
-          onClick={closeConfirmModal}
-          onKeyDown={(e) => e.key === 'Enter' && closeConfirmModal()}
-          tabIndex={1}
-          className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
-          theme="outline"
-          size="24"
-          fill="#FFFFFF"
-        />
-      </>
+      <CloseSmall
+        onClick={closeConfirmModal}
+        onKeyDown={(e) => e.key === 'Enter' && closeConfirmModal()}
+        tabIndex={1}
+        className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
+        theme="outline"
+        size="24"
+        fill="#FFFFFF"
+      />
     ),
   })
 
@@ -706,49 +829,94 @@ const AddSkillForm = () => {
                     </div>
                   ) : (
                     <div key={index} className="col-span-2 border border-white border-opacity-30 p-5 rounded-3xl">
-                      <div className="flex justify-end items-center gap-2">
-                        <Button
-                          customCSS="text-xl p-2 rounded-xl hover:scale-105"
-                          isActive={true}
-                          isOutlinedButton={true}
-                          onClick={() => {
-                            setIndexServiceForm(index)
-                            setServiceForm({
-                              title: `${attr.id ? 'Cập nhật kỹ năng' : 'Tạo mới kỹ năng'}`,
-                              description: `${
-                                attr.id
-                                  ? `Bạn có chấp nhận cập nhật kỹ năng ${attributesDisplay[index].service} không?`
-                                  : `Bạn có chấp nhận tạo mới kỹ năng ${attributesDisplay[index].service} không?`
-                              }`,
-                              form: 'UPDATE',
-                            })
+                      <div className="flex justify-between items-center pb-3">
+                        <div className="flex items-center gap-2">
+                          <p>Vị trí: </p>
+                          <div className="relative">
+                            <Menu>
+                              <div>
+                                <Menu.Button>
+                                  <div className="min-w-[80px] flex justify-between items-center px-3 py-1 rounded-lg bg-zinc-800 border border-white border-opacity-30">
+                                    <p>{attributesDisplay[index].position}</p>
+                                    <Down theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
+                                  </div>
+                                </Menu.Button>
+                              </div>
+                              <Transition
+                                as={Fragment}
+                                enter="transition ease-out duration-400"
+                                enterFrom="transform opacity-0 scale-95"
+                                enterTo="transform opacity-100 scale-100"
+                                leave="transition ease-in duration-400"
+                                leaveFrom="transform opacity-100 scale-100"
+                                leaveTo="transform opacity-0 scale-95"
+                              >
+                                <Menu.Items className="min-w-full max-h-[200px] absolute right-0 p-2 origin-top-right bg-umeHeader divide-y divide-gray-200 rounded-md shadow-lg w-fit top-9 ring-1 ring-black ring-opacity-30 focus:outline-none overflow-y-auto hide-scrollbar">
+                                  <div className="flex flex-col gap-2 w-full">
+                                    {attributes?.map((_, position_index) => (
+                                      <div
+                                        key={position_index}
+                                        className="w-full p-2 text-md font-medium rounded-md cursor-pointer hover:bg-gray-700"
+                                        onClick={() => {
+                                          handleServiceChange('Position', index, undefined, position_index + 1)
+                                        }}
+                                        onKeyDown={() => {}}
+                                      >
+                                        {position_index + 1}
+                                      </div>
+                                    ))}
+                                  </div>
+                                </Menu.Items>
+                              </Transition>
+                            </Menu>
+                          </div>
+                        </div>
+                        <div className="flex justify-end items-center gap-2">
+                          <Button
+                            customCSS="text-xl p-2 rounded-xl hover:scale-105"
+                            isActive={true}
+                            isOutlinedButton={true}
+                            onClick={() => {
+                              if (!(Number(attributes[index].serviceDefaultPrice.replace(/,/g, '')) <= 0)) {
+                                setIndexServiceForm(index)
+                                setServiceForm({
+                                  title: `${attr.id ? 'Cập nhật kỹ năng' : 'Tạo mới kỹ năng'}`,
+                                  description: `${
+                                    attr.id
+                                      ? `Bạn có chấp nhận cập nhật kỹ năng ${attributesDisplay[index].service} không?`
+                                      : `Bạn có chấp nhận tạo mới kỹ năng ${attributesDisplay[index].service} không?`
+                                  }`,
+                                  form: 'UPDATE',
+                                })
 
-                            openConfirmModal()
-                          }}
-                        >
-                          {attr.id ? (
-                            <Write theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
-                          ) : (
-                            <Save theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />
-                          )}
-                        </Button>
-                        <Button
-                          customCSS={`text-xl p-2 bg-red-500 hover:scale-105 rounded-xl`}
-                          type="button"
-                          isActive={true}
-                          isOutlinedButton={true}
-                          onClick={() => {
-                            setServiceForm({
-                              title: 'Xóa kỹ năng',
-                              description: 'Bạn có chấp nhận xóa kỹ năng này không?',
-                              form: 'DELETE',
-                            })
-                            setIndexServiceForm(index)
-                            openConfirmModal()
-                          }}
-                        >
-                          <DeleteFive theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />
-                        </Button>
+                                openConfirmModal()
+                              }
+                            }}
+                          >
+                            {attr.id ? (
+                              <Write theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
+                            ) : (
+                              <Save theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />
+                            )}
+                          </Button>
+                          <Button
+                            customCSS={`text-xl p-2 bg-red-500 hover:scale-105 rounded-xl`}
+                            type="button"
+                            isActive={true}
+                            isOutlinedButton={true}
+                            onClick={() => {
+                              setServiceForm({
+                                title: 'Xóa kỹ năng',
+                                description: 'Bạn có chấp nhận xóa kỹ năng này không?',
+                                form: 'DELETE',
+                              })
+                              setIndexServiceForm(index)
+                              openConfirmModal()
+                            }}
+                          >
+                            <DeleteFive theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />
+                          </Button>
+                        </div>
                       </div>
                       <div className="flex flex-col gap-1 mb-5">
                         <label>Giới thiệu về kỹ năng* : </label>
@@ -797,7 +965,7 @@ const AddSkillForm = () => {
                                     strokeLinejoin="bevel"
                                     className="cursor-pointer"
                                     onMouseDown={() =>
-                                      setSearchBox({
+                                      setDisplaySearchBox({
                                         parent: index,
                                         type: MenuModalEnum.SERVICE,
                                         isShow: true,
@@ -808,7 +976,7 @@ const AddSkillForm = () => {
                                 )
                               }
                               onMouseDown={() =>
-                                setSearchBox({
+                                setDisplaySearchBox({
                                   parent: index,
                                   type: MenuModalEnum.SERVICE,
                                   isShow: true,
@@ -834,7 +1002,7 @@ const AddSkillForm = () => {
                                 className="absolute right-0 left-0  max-h-[300px] w-full overflow-y-auto p-2 origin-top-right bg-[#292734] divide-y divide-gray-100 rounded-xl shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none hide-scrollbar"
                                 style={{ zIndex: 5 }}
                                 onMouseLeave={() =>
-                                  setSearchBox({
+                                  setDisplaySearchBox({
                                     parent: index,
                                     type: MenuModalEnum.SERVICE,
                                     isShow: false,
@@ -851,6 +1019,7 @@ const AddSkillForm = () => {
                                         } hover:bg-gray-700 cursor-pointer p-3 rounded-lg`}
                                         key={service_index}
                                         onClick={() => handleServiceChange('Service', index, undefined, service)}
+                                        onKeyDown={() => {}}
                                       >
                                         <p className="text-md font-semibold">{service.name}</p>
                                       </div>
@@ -862,20 +1031,36 @@ const AddSkillForm = () => {
                               </div>
                             </Transition>
                           </div>
-                          <InputWithAffix
-                            placeholder="Giá dịch vụ"
-                            value={attributes[index].serviceDefaultPrice}
-                            type="number"
-                            name="ServicePrice"
-                            onChange={(e) =>
-                              handleServicePriceChange(index, Number(Number(e.target.value) > 0 ? e.target.value : 1))
-                            }
-                            className="max-w-[100px] bg-zinc-800 border border-white border-opacity-30 rounded-xl my-2"
-                            styleInput={`bg-zinc-800 rounded-xl border-none focus:outline-none`}
-                            iconStyle="border-none"
-                            position="right"
-                            component={<Image src={coin} width={100} height={100} alt="coin" />}
-                          />
+                          <div className="relative">
+                            <FormInputWithAffix
+                              placeholder="Giá dịch vụ"
+                              value={attributes[index].serviceDefaultPrice.toLocaleString()}
+                              type="text"
+                              name="ServicePrice"
+                              onChange={(e) => {
+                                const inputValue = e.target.value.replace(/,/g, '')
+                                const numericValue = parseFloat(inputValue)
+                                const formattedValue = isNaN(numericValue) ? '0' : numericValue.toLocaleString()
+                                if (Number(inputValue) < 100001) {
+                                  handleServicePriceChange(index, formattedValue)
+                                }
+                              }}
+                              error={Number(attributes[index].serviceDefaultPrice.replace(/,/g, '')) <= 0}
+                              errorMessage=""
+                              className={`max-w-[130px] bg-zinc-800 border ${
+                                Number(attributes[index].serviceDefaultPrice.replace(/,/g, '')) <= 0
+                                  ? 'border-red-500'
+                                  : 'border-white border-opacity-30'
+                              } rounded-xl my-2`}
+                              styleInput={`bg-zinc-800 rounded-xl border-none focus:outline-none`}
+                              iconStyle="border-none pl-0 pr-2"
+                              position="right"
+                              component={<span className="text-xs italic"> đ</span>}
+                            />
+                            {Number(attributes[index].serviceDefaultPrice.replace(/,/g, '')) <= 0 && (
+                              <p className="absolute bottom-[-2] text-xs text-red-500">Giá phải lớn hơn 0đ</p>
+                            )}
+                          </div>
                         </div>
                       </div>
                       <div className="flex flex-col gap-2 mt-5 mb-5 ml-3">
@@ -885,52 +1070,64 @@ const AddSkillForm = () => {
                             {attr.specialTimeLot?.map((timeSlot, time_slot_index) => (
                               <>
                                 <div className="flex items-center gap-3" key={time_slot_index}>
-                                  <div className="flex items-center gap-3">
-                                    <Input
-                                      placeholder="Thời gian bắt đầu"
-                                      value={timeSlot.startTimeOfDay}
-                                      type="time"
-                                      name="startTimeOfDay"
-                                      onChange={(e) =>
-                                        handleSpecialTimeChange(
-                                          index,
-                                          e.target.value,
-                                          'startTimeOfDay',
-                                          time_slot_index,
-                                        )
-                                      }
-                                      className="max-w-[150px] bg-zinc-800 text-white border border-white border-opacity-30 !pr-1 rounded-xl my-2"
-                                    />
-                                    <Input
-                                      placeholder="Thời gian kết thúc"
-                                      value={timeSlot.endTimeOfDay}
-                                      type="time"
-                                      name="endTimeOfDay"
-                                      onChange={(e) =>
-                                        handleSpecialTimeChange(index, e.target.value, 'endTimeOfDay', time_slot_index)
-                                      }
-                                      className="max-w-[150px] bg-zinc-800 text-white border border-white border-opacity-30 !pr-1 rounded-xl my-2"
-                                    />
-
-                                    <InputWithAffix
-                                      placeholder="Giá"
-                                      value={timeSlot.amount}
-                                      type="number"
-                                      name="amount"
-                                      onChange={(e) =>
-                                        handleSpecialTimeChange(
-                                          index,
-                                          String(Number(e.target.value) > 0 ? e.target.value : 1),
-                                          'amount',
-                                          time_slot_index,
-                                        )
-                                      }
-                                      className="max-w-[100px] bg-zinc-800 border border-white border-opacity-30 rounded-xl my-2"
-                                      styleInput={`bg-zinc-800 rounded-xl border-none focus:outline-none`}
-                                      iconStyle="border-none"
-                                      position="right"
-                                      component={<Image src={coin} width={100} height={100} alt="coin" />}
-                                    />
+                                  <div className="grid 2xl:grid-cols-6 grid-cols-4 items-center 2xl:gap-3 gap-1">
+                                    <div className="col-span-2 min-w-[105px]">
+                                      <Input
+                                        placeholder="Thời gian bắt đầu"
+                                        value={timeSlot.startTimeOfDay}
+                                        type="time"
+                                        name="startTimeOfDay"
+                                        onChange={(e) =>
+                                          handleSpecialTimeChange(
+                                            index,
+                                            e.target.value,
+                                            'startTimeOfDay',
+                                            time_slot_index,
+                                          )
+                                        }
+                                        className="max-w-[180px] bg-zinc-800 text-white border border-white border-opacity-30 !pr-1 rounded-xl my-2"
+                                      />
+                                    </div>
+                                    <div className="col-span-2 min-w-[105px]">
+                                      <Input
+                                        placeholder="Thời gian kết thúc"
+                                        value={timeSlot.endTimeOfDay}
+                                        type="time"
+                                        name="endTimeOfDay"
+                                        onChange={(e) =>
+                                          handleSpecialTimeChange(
+                                            index,
+                                            e.target.value,
+                                            'endTimeOfDay',
+                                            time_slot_index,
+                                          )
+                                        }
+                                        className="max-w-[180px] bg-zinc-800 text-white border border-white border-opacity-30 !pr-1 rounded-xl my-2"
+                                      />
+                                    </div>
+                                    <div className="col-span-2">
+                                      <InputWithAffix
+                                        placeholder="Giá"
+                                        value={timeSlot.amount}
+                                        type="text"
+                                        name="amount"
+                                        onChange={(e) => {
+                                          const inputValue = e.target.value.replace(/,/g, '')
+                                          const numericValue = parseFloat(inputValue)
+                                          const formattedValue = isNaN(numericValue)
+                                            ? '0'
+                                            : numericValue.toLocaleString()
+                                          if (Number(inputValue) < 100001) {
+                                            handleSpecialTimeChange(index, formattedValue, 'amount', time_slot_index)
+                                          }
+                                        }}
+                                        className="max-w-[130px] bg-zinc-800 border border-white border-opacity-30 rounded-xl my-2"
+                                        styleInput={`bg-zinc-800 rounded-xl border-none focus:outline-none`}
+                                        iconStyle="border-none pl-0 pr-2"
+                                        position="right"
+                                        component={<span className="text-xs italic"> đ</span>}
+                                      />
+                                    </div>
                                   </div>
                                   <Button
                                     customCSS={`text-xl p-2 bg-red-500 hover:scale-105 rounded-xl`}
@@ -989,7 +1186,7 @@ const AddSkillForm = () => {
                                           strokeLinejoin="bevel"
                                           className="cursor-pointer"
                                           onMouseDown={() =>
-                                            setSearchBox({
+                                            setDisplaySearchBox({
                                               parent: index,
                                               type: MenuModalEnum.ATTRIBUTE,
                                               isShow: true,
@@ -1000,7 +1197,7 @@ const AddSkillForm = () => {
                                         />
                                       }
                                       onMouseDown={() =>
-                                        setSearchBox({
+                                        setDisplaySearchBox({
                                           parent: index,
                                           type: MenuModalEnum.ATTRIBUTE,
                                           isShow: true,
@@ -1028,7 +1225,7 @@ const AddSkillForm = () => {
                                         className="absolute right-0 left-0 max-h-[300px] w-full overflow-y-auto p-2 origin-top-right bg-[#292734] divide-y divide-gray-100 rounded-xl shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none hide-scrollbar"
                                         style={{ zIndex: 5 }}
                                         onMouseLeave={() =>
-                                          setSearchBox({
+                                          setDisplaySearchBox({
                                             parent: index,
                                             type: MenuModalEnum.ATTRIBUTE,
                                             isShow: false,
@@ -1051,6 +1248,7 @@ const AddSkillForm = () => {
                                                       value_attr.id,
                                                     )
                                                   }
+                                                  onKeyDown={() => {}}
                                                 >
                                                   <p className="text-mg font-semibold">{value_attr.viAttribute}</p>
                                                 </div>
@@ -1117,7 +1315,7 @@ const AddSkillForm = () => {
                                                       strokeLinejoin="bevel"
                                                       className="cursor-pointer"
                                                       onMouseDown={() =>
-                                                        setSearchBox({
+                                                        setDisplaySearchBox({
                                                           parent: index,
                                                           type: MenuModalEnum.SUB_ATTRIBUTE,
                                                           isShow: true,
@@ -1134,7 +1332,7 @@ const AddSkillForm = () => {
                                                     />
                                                   }
                                                   onMouseDown={() =>
-                                                    setSearchBox({
+                                                    setDisplaySearchBox({
                                                       parent: index,
                                                       type: MenuModalEnum.SUB_ATTRIBUTE,
                                                       isShow: true,
@@ -1169,7 +1367,7 @@ const AddSkillForm = () => {
                                                     className="absolute right-0 left-0 max-h-[300px] w-full overflow-y-auto p-2 origin-top-right bg-[#292734] divide-y divide-gray-100 rounded-xl shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none hide-scrollbar"
                                                     style={{ zIndex: 5 }}
                                                     onMouseLeave={() =>
-                                                      setSearchBox({
+                                                      setDisplaySearchBox({
                                                         parent: index,
                                                         type: MenuModalEnum.SUB_ATTRIBUTE,
                                                         isShow: false,
@@ -1204,6 +1402,7 @@ const AddSkillForm = () => {
                                                                     },
                                                                   )
                                                                 }
+                                                                onKeyDown={() => {}}
                                                               >
                                                                 <p className="text-mg font-semibold">
                                                                   {value_attr.viValue != ''
@@ -1299,7 +1498,7 @@ const AddSkillForm = () => {
           </div>
         </>
       ) : (
-        <></>
+        <SkeletonProviderService />
       )}
     </>
   )

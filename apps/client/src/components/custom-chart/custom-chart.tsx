@@ -1,9 +1,7 @@
-import { Fragment } from 'react'
-
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 
-import OptionFilterDataChart from './OptionFilterDataChart'
+import OptionFilterDataChart from './option-filter-data-chart'
 
 export interface ICustomChart {
   typeChart: string
@@ -76,7 +74,7 @@ export const CustomChart = ({
       spacingBottom: 20,
       spacingRight: 20,
       spacingLeft: 20,
-      spacingTop: !!title ? 24 : 120,
+      spacingTop: title ? 24 : 120,
       ...chart,
     },
     title: {
@@ -103,7 +101,7 @@ export const CustomChart = ({
           fontFamily: 'Roboto',
           lineHeight: '2rem',
         },
-        format: xAxisFormat || '{value: %m/%Y}',
+        format: xAxisFormat ?? '{value: %m/%Y}',
       },
       lineWidth: 1,
       tickLength: 0,
@@ -144,22 +142,21 @@ export const CustomChart = ({
             fontWeight: 500,
             lineHeight: 2,
           },
-          formatter: function () {
-            return +((this as any).value | 0).toFixed(2)
+          formatter: (value: number) => {
+            return parseFloat(value.toString()).toFixed(2)
           },
         },
         ...yAxis,
       },
-      ...(yAxisOther || []),
+      ...(yAxisOther ?? []),
     ],
     tooltip: {
       ...tooltip,
       positioner: function (labelWidth: any, labelHeight: any, point: any) {
-        const { chart } = this as any
+        const { chart } = this
         const { chartWidth } = chart
         let { plotX, plotY } = point
-        // plotY += plotY <= 30 ? 50 : 0;
-        // plotY = plotY > labelHeight ? labelHeight - 100 : plotY
+
         plotY = plotY <= 70 ? 70 : plotY
         if (labelWidth + plotX > chartWidth) {
           plotX = chartWidth - labelWidth - 10
@@ -233,34 +230,32 @@ export const CustomChart = ({
   }
 
   return (
-    <Fragment>
-      <div
-        style={{
-          width: '100%',
-          position: 'relative',
-        }}
-      >
-        {!!optionsTop?.length && (
-          <div className={`absolute top-5 right-5 bg-[#15151B] p-1 rounded-md`} style={{ zIndex: 5 }}>
-            {<OptionFilterDataChart handleChangeOptionTop={handleChangeOptionTop} optionsTop={optionsTop} />}
-          </div>
-        )}
-        {!!htmlAppened && htmlAppened}
-        {optionCustomNode}
-        <div className={`relative rounded-xl shadow-md`} style={{ zIndex: 2 }}>
-          <HighchartsReact
-            style={{
-              width: '100%',
-              position: 'inherit !important',
-            }}
-            className={`relative rounded-xl shadow-md text-white`}
-            highcharts={Highcharts}
-            options={options}
-            optionTop={optionsTop}
-            handleChangeOptionTop={handleChangeOptionTop}
-          />
+    <div
+      style={{
+        width: '100%',
+        position: 'relative',
+      }}
+    >
+      {!!optionsTop?.length && (
+        <div className={`absolute top-5 right-5 bg-[#15151B] p-1 rounded-md`} style={{ zIndex: 5 }}>
+          {<OptionFilterDataChart handleChangeOptionTop={handleChangeOptionTop} optionsTop={optionsTop} />}
         </div>
+      )}
+      {!!htmlAppened && htmlAppened}
+      {optionCustomNode}
+      <div className={`relative rounded-xl shadow-md`} style={{ zIndex: 2 }}>
+        <HighchartsReact
+          style={{
+            width: '100%',
+            position: 'inherit !important',
+          }}
+          className={`relative rounded-xl shadow-md text-white`}
+          highcharts={Highcharts}
+          options={options}
+          optionTop={optionsTop}
+          handleChangeOptionTop={handleChangeOptionTop}
+        />
       </div>
-    </Fragment>
+    </div>
   )
 }

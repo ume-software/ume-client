@@ -1,4 +1,4 @@
-import { Left, Right } from '@icon-park/react'
+import { Left, Right, Star } from '@icon-park/react'
 import { Button } from '@ume/ui'
 import coinIcon from 'public/coin-icon.png'
 import EmptyErrorPic from 'public/empty_error.png'
@@ -8,9 +8,9 @@ import * as React from 'react'
 import { Avatar, Pagination } from 'antd'
 import Image from 'next/image'
 import {
+  AdminGetBookingStatisticResponse,
   AdminGetProviderServicePagingResponse,
   BookingHistoryPagingResponse,
-  UserCoinResponse,
 } from 'ume-service-openapi'
 
 import ProviderServiceTable from './provider-service-table'
@@ -25,9 +25,11 @@ export interface IProviderInfoProps {
 
 export default function ProviderInfo({ providerInfo, providerId }: IProviderInfoProps) {
   const [providerSkills, setProviderSkills] = React.useState<AdminGetProviderServicePagingResponse | undefined>()
+  const [providerBookingStatistics, setProviderBookingStatistics] = React.useState<
+    AdminGetBookingStatisticResponse | undefined
+  >()
   const [providerTransHistory, setProviderTransHistory] = React.useState<BookingHistoryPagingResponse | undefined>()
   const [pageService, setPageService] = React.useState(1)
-  const [totalCoin, setTotalCoin] = React.useState<UserCoinResponse>()
   const [pageTrans, setPageTrans] = React.useState(1)
   const PAGE_SIZE_SERVICE = 5
   const PAGE_SIZE_TRANS = 10
@@ -36,13 +38,22 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
     {
       service: ['$all'],
     },
+    { $where: { deletedAt: null } },
   ]
   const SELECT_TRANS = [
     '$all',
     {
       booker: ['$all'],
     },
-    { providerService: ['$all', { service: ['$all'] }] },
+    {
+      providerService: [
+        '$all',
+        {
+          service: ['$all'],
+        },
+        { $where: { deletedAt: null } },
+      ],
+    },
   ]
   const { isLoading: isListSkillLoading } = trpc.useQuery(
     [
@@ -60,7 +71,19 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
       },
     },
   )
-
+  const { isLoading: isListStatisticsLoading, isFetching: isListStatisticsFetching } = trpc.useQuery(
+    [
+      'provider.getProviderBookingStatistics',
+      {
+        slug: providerId,
+      },
+    ],
+    {
+      onSuccess(data) {
+        setProviderBookingStatistics(data.data)
+      },
+    },
+  )
   const dataProviderSkills = providerSkills?.row?.map((row: any) => {
     return {
       key: row.id,
@@ -93,11 +116,6 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
     },
   )
 
-  trpc.useQuery(['user.getUserTotalCoin', { slug: providerId }], {
-    onSuccess(data) {
-      setTotalCoin(data.data)
-    },
-  })
   const dataProviderTranHistory = providerTransHistory?.row?.map((row: any) => {
     return {
       key: row.id,
@@ -117,8 +135,10 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
   const createdAt = new Date(providerInfo.createdAt).toLocaleDateString('en-GB')
   const email = providerInfo.Gmail
   const phone = providerInfo.phone
-  const rating = providerInfo.rating
-  const servicedTime = providerInfo.servicedTime
+  const rating = providerBookingStatistics?.star?.toFixed(1) ?? ''
+  const servicedTime = providerBookingStatistics?.totalTime?.toFixed(0) ?? ''
+  const balance = providerBookingStatistics?.totalRevenue?.toFixed(0) ?? ''
+  const status = providerInfo.status
   const [switchTable, setSwitchTable] = React.useState(true)
 
   const handleSwitchTable = () => {
@@ -134,6 +154,11 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
     } else {
       setPageTrans(nextPage)
     }
+  }
+  function formatNumberWithCommas(number) {
+    return parseFloat(number)
+      .toString()
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
   }
 
   return (
@@ -160,28 +185,43 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
         </div>
       </div>
       <div className="flex justify-between mt-4">
-        <div className="h-6 text-white ">
-          Đánh giá: <span className="font-bold">{rating}</span>
+        <div className="flex h-6 text-white">
+          Đánh giá:
+          <span className="inline-block ml-1 font-bold">
+            {rating}
+            {rating && (
+              <Star className="inline-block ml-1" theme="filled" size="12" fill="#FFBB00" strokeLinejoin="bevel" />
+            )}
+            {!rating && 'Chưa có đánh giá'}
+          </span>
         </div>
         <div className="h-6 text-white ">
-          Số giờ đã phục vụ: <span className="font-bold">{servicedTime}</span>
+          Số giờ đã phục vụ:
+          <span className="ml-1 font-bold">
+            {servicedTime} {servicedTime && ' h'}
+            {!servicedTime && 'Chưa có giờ phục vụ'}
+          </span>
         </div>
-        <div className=" flex items-center text-white w-[6rem]">
-          Số dư: {totalCoin?.totalCoin} <Image alt="Xu" src={coinIcon} width={25} height={25} />
+        <div className="h-6 text-white ">
+          Doanh Thu:
+          <span className="inline-block ml-1 font-bold">
+            {balance && formatNumberWithCommas(balance)}
+            {balance ? <span className="text-xs italic"> đ</span> : 'Chưa có doanh thu'}
+          </span>
         </div>
       </div>
-      <div className="flex h-10 mt-4">
+      <div className="flex justify-between w-64 h-10 mt-4">
         <div className="flex flex-col">
           <Button isActive={false} onClick={handleSwitchTable} customCSS="hover:text-gray-400">
             Dịch vụ cung cấp
           </Button>
-          {switchTable && <div className="border-b-2 border-[#7463F0] mx-4 mr-6"></div>}
+          {switchTable && <div className="border-b-2 border-[#7463F0] mx-4 "></div>}
         </div>
-        <div className="flex flex-col w-40 ">
+        <div className="flex flex-col">
           <Button isActive={false} onClick={handleSwitchTable} customCSS="hover:text-gray-400">
             Lịch sử giao dịch
           </Button>
-          {!switchTable && <div className="border-b-2 border-[#7463F0] mx-4"></div>}
+          {!switchTable && <div className="border-b-2 border-[#7463F0] mx-4 "></div>}
         </div>
       </div>
       <div>
@@ -192,9 +232,13 @@ export default function ProviderInfo({ providerInfo, providerId }: IProviderInfo
             itemRender={(page, type) => (
               <div className="text-white">
                 {type == 'prev' ? (
-                  <Left theme="outline" size="24" fill="#fff" />
+                  <div className="mt-1.5 ml-1">
+                    <Left theme="outline" size="24" fill="#fff" />
+                  </div>
                 ) : type == 'next' ? (
-                  <Right theme="outline" size="24" fill="#fff" />
+                  <div className="mt-1.5">
+                    <Right theme="outline" size="24" fill="#fff" />
+                  </div>
                 ) : (
                   page
                 )}

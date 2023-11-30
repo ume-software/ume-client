@@ -100,7 +100,6 @@ const VoucherByAdmin = () => {
       },
     },
   )
-
   const handleFilter = (id, key) => {
     setPage(1)
     if (id == 'recipientType') {
@@ -145,7 +144,7 @@ const VoucherByAdmin = () => {
     <div>
       <div className="flex justify-between">
         <span className="content-title">Khuyến mãi của quản trị viên</span>
-        <Button customCSS="bg-[#7463f0] px-3 rounded-2xl active:bg-gray-600" onClick={addVourcherHandler}>
+        <Button customCSS="bg-[#7463f0] px-3 rounded-2xl active:bg-gray-600 py-2" onClick={addVourcherHandler}>
           <Plus theme="outline" size="24" fill="#fff" />
           Thêm khuyến mãi
         </Button>
@@ -193,9 +192,13 @@ const VoucherByAdmin = () => {
           itemRender={(page, type) => (
             <div className="text-white">
               {type == 'prev' ? (
-                <Left theme="outline" size="24" fill="#fff" />
+                <div className="mt-1.5 ml-1">
+                  <Left theme="outline" size="24" fill="#fff" />
+                </div>
               ) : type == 'next' ? (
-                <Right theme="outline" size="24" fill="#fff" />
+                <div className="mt-1.5">
+                  <Right theme="outline" size="24" fill="#fff" />
+                </div>
               ) : (
                 page
               )}

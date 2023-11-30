@@ -2,14 +2,16 @@ import { Plus } from '@icon-park/react'
 import { Button, FormInput, Input, TextArea } from '@ume/ui'
 import empty_img from 'public/empty_error.png'
 import { uploadImageVoucher } from '~/api/upload-media'
+import useDebounce from '~/hooks/adminDebounce'
 
 import * as React from 'react'
 import { useRef, useState } from 'react'
 
-import { Select, Space, notification } from 'antd'
+import { Select, notification } from 'antd'
 import { FormikErrors, useFormik } from 'formik'
 import Image from 'next/legacy/image'
 import {
+  CheckExistedResponse,
   CreateVoucherRequestDiscountUnitEnum,
   CreateVoucherRequestRecipientTypeEnum,
   CreateVoucherRequestTypeEnum,
@@ -43,9 +45,6 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
   trpc.useQuery(['voucher.getVoucherDetails', { id: vourcherId, select: JSON.stringify(SELECT) }], {
     refetchOnWindowFocus: false,
     refetchOnReconnect: 'always',
-    // refetchOnMount: false,
-    // refetchInterval: false,
-    // refetchIntervalInBackground: false,
     onSuccess(data) {
       setVoucherDetails(data.data)
     },
@@ -53,25 +52,30 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
 
   const updateVoucherAdmin = trpc.useMutation(['voucher.updateVoucherAdmin'])
   const MAX_NUMBER = '100000'
-  const ImageInit = voucherDetails?.image || empty_img
-  const nameInit = voucherDetails?.name || ''
-  const vourcherCodeInit = voucherDetails?.code || ''
-  const issuer = voucherDetails?.admin?.name || voucherDetails?.provider?.name || ''
-  const approverInit = voucherDetails?.admin?.name || ''
-  const statusInit = voucherDetails?.status
-  const createAt = voucherDetails?.createdAt ? new Date(voucherDetails?.createdAt).toLocaleDateString('en-GB') : ''
+  const MAX_NUMBER_DISCOUNT = '100000000'
+  const ImageInit = voucherDetails?.image ?? empty_img
+  const nameInit = voucherDetails?.name ?? ''
+  const vourcherCodeInit = voucherDetails?.code ?? ''
+  const issuer = voucherDetails?.admin?.name ?? voucherDetails?.provider?.name ?? ''
+  const approverInit = voucherDetails?.admin?.name ?? ''
+  const statusInit = voucherDetails?.status ?? ''
+  const startDateInit = voucherDetails?.startDate ? new Date(voucherDetails?.startDate).toISOString().split('T')[0] : ''
   const endDateInit = voucherDetails?.endDate ? new Date(voucherDetails?.endDate).toISOString().split('T')[0] : ''
-  const numVoucherInit = voucherDetails?.numberIssued
-  const numUserCanUseInit = voucherDetails?.numberUsablePerBooker
-  const typeVoucherInit = voucherDetails?.type
-  const applyTimeInit = voucherDetails?.applyISODayOfWeek
-  const numVoucherInDayInit = voucherDetails?.dailyNumberIssued
-  const numUserCanUseInDayInit = voucherDetails?.dailyUsageLimitPerBooker
-  const minimizeInit = voucherDetails?.maximumDiscountValue
-  const audienceInit = voucherDetails?.recipientType
-  const descriptionInit = voucherDetails?.description
+  const numVoucherInit = voucherDetails?.numberIssued ?? 0
+  const numUserCanUseInit = voucherDetails?.numberUsablePerBooker ?? 0
+  const typeVoucherInit = voucherDetails?.type ?? ''
+  const applyTimeInit = voucherDetails?.applyISODayOfWeek ?? []
+  const numVoucherInDayInit = voucherDetails?.dailyNumberIssued ?? 0
+  const numUserCanUseInDayInit = voucherDetails?.dailyUsageLimitPerBooker ?? ''
+  const minimizeInit = voucherDetails?.discountValue ?? 0
+  const audienceInit = voucherDetails?.recipientType ?? 0
+  const descriptionInit = voucherDetails?.description ?? ''
   const contentInit = 'SOME THING WRONG'
   const discountUnitInit = voucherDetails?.discountUnit
+  const minimumBookingDurationForUsageInit = voucherDetails?.minimumBookingDurationForUsage ?? 0
+  const minimumBookingTotalPriceForUsageInit = voucherDetails?.minimumBookingTotalPriceForUsage ?? 0
+  const maximumDiscountValueInit = voucherDetails?.maximumDiscountValue ?? 0
+
   const titleValue = 'Thông Tin Khuyến Mãi'
   const [isSubmiting, setSubmiting] = useState(false)
   interface IFormValues {
@@ -92,6 +96,9 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
     status: any
     numUserCanUse: number
     numUserCanUseInDay: number
+    minimumBookingDurationForUsage: number
+    minimumBookingTotalPriceForUsage: number
+    maximumDiscountValue: number
   }
   const validate = (values: IFormValues): FormikErrors<IFormValues> => {
     const errors: FormikErrors<IFormValues> = {}
@@ -106,6 +113,7 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
       numVoucherInDay: numVoucherInDayInit,
       minimize: minimizeInit,
       endDate: endDateInit,
+      startDate: startDateInit,
       applyTime: applyTimeInit,
       name: nameInit,
       typeVoucher: typeVoucherInit,
@@ -116,9 +124,12 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
       status: statusInit,
       numUserCanUse: numUserCanUseInit,
       numUserCanUseInDay: numUserCanUseInDayInit,
+      minimumBookingDurationForUsage: minimumBookingDurationForUsageInit,
+      minimumBookingTotalPriceForUsage: minimumBookingTotalPriceForUsageInit,
+      maximumDiscountValue: maximumDiscountValueInit,
     },
     validationSchema: Yup.object({
-      name: Yup.string().required('Name là bắt buộc'),
+      name: Yup.string().required('Tên là bắt buộc'),
       typeVoucher: Yup.string().required('Loại là bắt buộc'),
       discountUnit: Yup.string().required('discountUnit là bắt buộc'),
       audience: Yup.string().required('Đối tượng là bắt buộc'),
@@ -130,26 +141,56 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
       resetForm()
     },
   })
-
   React.useEffect(() => {
-    form.setFieldValue('vourcherCode', vourcherCodeInit)
-    form.setFieldValue('imageSource', ImageInit)
-    form.setFieldValue('description', descriptionInit)
-    form.setFieldValue('numVoucher', numVoucherInit)
-    form.setFieldValue('numVoucherInDay', numVoucherInDayInit)
-    form.setFieldValue('minimize', minimizeInit)
-    form.setFieldValue('endDate', endDateInit)
-    form.setFieldValue('applyTime', applyTimeInit)
-    form.setFieldValue('name', nameInit)
-    form.setFieldValue('typeVoucher', typeVoucherInit)
-    form.setFieldValue('discountUnit', discountUnitInit)
-    form.setFieldValue('audience', audienceInit)
-    form.setFieldValue('content', contentInit)
-    form.setFieldValue('status', statusInit)
-    form.setFieldValue('numUserCanUse', numUserCanUseInit)
-    form.setFieldValue('numUserCanUseInDay', numUserCanUseInDayInit)
+    if (updateVoucherAdmin) {
+      form.resetForm({
+        values: {
+          vourcherCode: vourcherCodeInit,
+          imageSource: ImageInit,
+          description: descriptionInit,
+          numVoucher: numVoucherInit,
+          numVoucherInDay: numVoucherInDayInit,
+          minimize: minimizeInit,
+          endDate: endDateInit,
+          startDate: startDateInit,
+          applyTime: applyTimeInit,
+          name: nameInit,
+          typeVoucher: typeVoucherInit,
+          discountUnit: discountUnitInit,
+          audience: audienceInit,
+          content: contentInit,
+          selectedImage: null,
+          status: statusInit,
+          numUserCanUse: numUserCanUseInit,
+          numUserCanUseInDay: numUserCanUseInDayInit,
+          minimumBookingDurationForUsage: minimumBookingDurationForUsageInit,
+          minimumBookingTotalPriceForUsage: minimumBookingTotalPriceForUsageInit,
+          maximumDiscountValue: maximumDiscountValueInit,
+        },
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [endDateInit])
 
+  const [adminCheckVoucherCodeExisted, setAdminCheckVoucherCodeExisted] = useState<CheckExistedResponse>()
+  const debouncedValue = useDebounce<string>(form.values.vourcherCode, 500)
+  trpc.useQuery(
+    [
+      'voucher.adminCheckVoucherCodeExisted',
+      {
+        code: debouncedValue + '',
+      },
+    ],
+    {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: 'always',
+      cacheTime: 0,
+      refetchOnMount: true,
+      onSuccess(data) {
+        if (debouncedValue != vourcherCodeInit) setAdminCheckVoucherCodeExisted(data.data)
+      },
+    },
+  )
   const mappingRecipientType = {
     ALL: 'Tất cả',
     FIRST_TIME_BOOKING: 'Người lần đầu thuê',
@@ -216,6 +257,7 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
     return (option?.label ?? '').toUpperCase().includes(input.toUpperCase())
   }
   function handleDisCountUnit(value) {
+    form.setFieldValue('minimize', '0')
     form.setFieldValue('discountUnit', value)
   }
 
@@ -238,8 +280,24 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
       return false
     }
   }
-
+  function convertToIsoDate(inputDate) {
+    if (inputDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      return inputDate
+    }
+    const parts = inputDate.split('-')
+    if (parts.length === 3) {
+      const year = parts[0]
+      const month = parts[1]
+      const day = parts[2]
+      const isoDate = `${year}-${month}-${day}`
+      return isoDate
+    } else {
+      throw new Error('Invalid date format')
+    }
+  }
   async function submitHandle() {
+    setOpenConfirm(false)
+    setIsCreate(false)
     const imgURL = await uploadImage()
     try {
       const req = {
@@ -250,13 +308,27 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
         dailyNumberIssued: [form.values.numVoucherInDay, numVoucherInDayInit],
         numberUsablePerBooker: [form.values.numUserCanUse, numUserCanUseInit],
         dailyUsageLimitPerBooker: [form.values.numUserCanUseInDay, numUserCanUseInDayInit],
-        maximumDiscountValue: [form.values.minimize, minimizeInit],
-        endDate: [new Date(form.values.endDate).toISOString(), new Date(endDateInit).toISOString()],
+        discountValue: [parseFloat(form.values.minimize.toString().replace(/,/g, '')), minimizeInit],
+        endDate: [convertToIsoDate(form.values.endDate), convertToIsoDate(endDateInit)],
+        startDate: [convertToIsoDate(form.values.startDate), convertToIsoDate(startDateInit)],
         applyISODayOfWeek: [form.values.applyTime, applyTimeInit],
         name: [form.values.name, nameInit],
         type: [form.values.typeVoucher, typeVoucherInit],
         discountUnit: [form.values.discountUnit, discountUnitInit],
         recipientType: [form.values.audience, audienceInit],
+        minimumBookingDurationForUsage: [
+          form.values.minimumBookingDurationForUsage,
+          minimumBookingDurationForUsageInit,
+        ],
+        minimumBookingTotalPriceForUsage: [
+          parseFloat(form.values.minimumBookingTotalPriceForUsage.toString().replace(/,/g, '')),
+          minimumBookingTotalPriceForUsageInit,
+        ],
+
+        maximumDiscountValue: [
+          parseFloat(form.values.maximumDiscountValue.toString().replace(/,/g, '')),
+          maximumDiscountValueInit,
+        ],
       }
       let reqWithValuesNotNull = {}
       for (let key in req) {
@@ -275,17 +347,21 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
               notification.success({
                 message: 'Chỉnh sửa Khuyến mãi thành công!',
                 description: 'Khuyến mãi Đã được chỉnh sửa',
-                placement: 'bottomLeft',
               })
               utils.invalidateQueries('voucher.getAllVoucher')
               closeHandle()
+            },
+            onError: (err) => {
+              notification.error({
+                message: 'Chỉnh sửa Khuyến mãi không thành công!',
+                description: err.message,
+              })
             },
           })
         } catch (error) {
           notification.error({
             message: 'Chỉnh sửa Khuyến mãi không thành công!',
             description: 'Gặp lỗi khi chỉnh sửa',
-            placement: 'bottomLeft',
           })
           console.error('Failed to Handle update voucher:', error)
         }
@@ -316,6 +392,18 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
     }
     return { imageUrl }
   }
+  function isDisableButton() {
+    return (
+      !form.isValid ??
+      !form.dirty ??
+      (adminCheckVoucherCodeExisted?.isExisted ? debouncedValue !== vourcherCodeInit : false)
+    )
+  }
+  function formatNumberWithCommas(number) {
+    return number.toLocaleString('en-US', {
+      currency: 'VND',
+    })
+  }
 
   return (
     <div>
@@ -340,13 +428,14 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                 }
                 `}
                   onClick={handleImageClick}
+                  onKeyDown={() => {}}
                 >
                   {form.values.imageSource && (
                     <Image
                       className="overflow-hidden rounded-2xl"
                       width={144}
                       height={208}
-                      src={form.values.imageSource!!}
+                      src={form.values.imageSource}
                       alt=""
                       objectFit="cover"
                     />
@@ -369,8 +458,8 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                 </div>
               </div>
               <div className="flex flex-col justify-end w-2/5 ">
-                <div className="w-full h-12 text-white">
-                  Tên:
+                <div className="flex w-full h-12 text-white">
+                  <span className="w-8">*Tên:</span>
                   <div className="inline-block w-2/3 ">
                     <FormInput
                       name="name"
@@ -387,8 +476,9 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                     />
                   </div>
                 </div>
-                <div className="h-12 text-white">
-                  Mã:
+
+                <div className="flex h-12 text-white">
+                  <span className="w-8"> Mã:</span>
                   <div className="inline-block w-2/3 ">
                     <FormInput
                       name="vourcherCode"
@@ -405,6 +495,9 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                       errorMessage={form.errors.vourcherCode}
                       type="text"
                     />
+                    {adminCheckVoucherCodeExisted?.isExisted && debouncedValue != vourcherCodeInit && (
+                      <div className="w-full ml-4 text-xs text-red-500">Mã đã tồn tại</div>
+                    )}
                   </div>
                 </div>
                 <div className="h-12 text-white">
@@ -416,7 +509,26 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
               </div>
               <div className="flex flex-col justify-end w-2/5 ">
                 <div className="h-12 text-white">
-                  Ngày phát hành: <span className="font-bold">{createAt}</span>
+                  Ngày phát hành:
+                  <div className="inline-block w-1/3 ">
+                    <FormInput
+                      name="startDate"
+                      className="bg-[#413F4D] border-2 border-[#FFFFFF] h-8 ml-4 border-opacity-30"
+                      type="date"
+                      onChange={(e) => {
+                        if (e.target.value > form.values.endDate) {
+                          form.setFieldValue('endDate', e.target.value)
+                        }
+                        form.handleChange(e)
+                      }}
+                      onBlur={form.handleBlur}
+                      value={form.values.startDate}
+                      error={!!form.errors.startDate && form.touched.startDate}
+                      errorMessage={form.errors.startDate}
+                      min={startDateInit}
+                      required
+                    />
+                  </div>
                 </div>
                 <div className="h-12 text-white">
                   Ngày kết thúc:
@@ -430,7 +542,7 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                       value={form.values.endDate}
                       error={!!form.errors.endDate && form.touched.endDate}
                       errorMessage={form.errors.endDate}
-                      min={endDateInit}
+                      min={endDateInit > form.values.startDate ? endDateInit : form.values.startDate}
                       required
                     />
                   </div>
@@ -455,14 +567,20 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                       disabled={false}
                       onChange={(e) => {
                         const newValue = parseInt(e.target.value)
-                        if (!isNaN(newValue) && newValue >= 0) {
+                        if (!isNaN(newValue) && newValue >= 1) {
                           if (newValue > parseInt(MAX_NUMBER)) {
                             e.target.value = MAX_NUMBER
                           } else {
                             e.target.value = newValue.toString()
+                            if (form.values.numUserCanUse > newValue) {
+                              form.setFieldValue('numUserCanUse', newValue)
+                            }
+                            if (form.values.numVoucherInDay > newValue) {
+                              form.setFieldValue('numVoucherInDay', newValue)
+                            }
                           }
                         } else {
-                          e.target.value = '0'
+                          e.target.value = '1'
                         }
                         form.handleChange(e)
                       }}
@@ -486,14 +604,14 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                       errorMessage={form.errors.numUserCanUse}
                       onChange={(e) => {
                         const newValue = parseInt(e.target.value)
-                        if (!isNaN(newValue) && newValue >= 0) {
-                          if (newValue > parseInt(MAX_NUMBER)) {
-                            e.target.value = MAX_NUMBER
+                        if (!isNaN(newValue) && newValue >= 1) {
+                          if (newValue > parseInt(form.values.numVoucher + '')) {
+                            e.target.value = form.values.numVoucher + ''
                           } else {
                             e.target.value = newValue.toString()
                           }
                         } else {
-                          e.target.value = '0'
+                          e.target.value = '1'
                         }
                         form.handleChange(e)
                       }}
@@ -572,6 +690,37 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                     ]}
                   ></Select>
                 </div>
+                <div className="h-12 text-white">
+                  Khuyến mãi dùng cho hóa đơn tối thiểu:
+                  <div className="inline-block w-1/5 ml-4 ">
+                    <FormInput
+                      name="minimumBookingTotalPriceForUsage"
+                      className="bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30"
+                      placeholder="Số Lượng"
+                      value={formatNumberWithCommas(form.values.minimumBookingTotalPriceForUsage)}
+                      onBlur={form.handleBlur}
+                      error={
+                        !!form.errors.minimumBookingTotalPriceForUsage && form.touched.minimumBookingTotalPriceForUsage
+                      }
+                      errorMessage={form.errors.minimumBookingTotalPriceForUsage}
+                      onChange={(e) => {
+                        const rawValue = e.target.value
+                        const newValue = parseFloat(rawValue.replace(/,/g, ''))
+                        if (!isNaN(newValue) && newValue >= 0) {
+                          if (newValue > parseFloat(MAX_NUMBER_DISCOUNT)) {
+                            e.target.value = formatNumberWithCommas(parseFloat(MAX_NUMBER_DISCOUNT))
+                          } else {
+                            e.target.value = formatNumberWithCommas(newValue)
+                          }
+                        } else {
+                          e.target.value = '0'
+                        }
+                        form.handleChange(e)
+                      }}
+                    />
+                  </div>
+                  <span className="text-xs italic"> đ</span>
+                </div>
               </div>
               <div className="flex flex-col justify-end w-2/5 ">
                 <div className="h-12 text-white">
@@ -587,14 +736,17 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                       errorMessage={form.errors.numVoucherInDay}
                       onChange={(e) => {
                         const newValue = parseInt(e.target.value)
-                        if (!isNaN(newValue) && newValue >= 0) {
-                          if (newValue > parseInt(MAX_NUMBER)) {
-                            e.target.value = MAX_NUMBER
+                        if (!isNaN(newValue) && newValue >= 1) {
+                          if (newValue > parseInt(form.values.numVoucher + '')) {
+                            e.target.value = form.values.numVoucher + ''
                           } else {
                             e.target.value = newValue.toString()
+                            if (parseInt(form.values.numUserCanUseInDay + '') > newValue) {
+                              form.setFieldValue('numUserCanUseInDay', newValue)
+                            }
                           }
                         } else {
-                          e.target.value = '0'
+                          e.target.value = '1'
                         }
                         form.handleChange(e)
                       }}
@@ -617,14 +769,14 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                       errorMessage={form.errors.numUserCanUseInDay}
                       onChange={(e) => {
                         const newValue = parseInt(e.target.value)
-                        if (!isNaN(newValue) && newValue >= 0) {
-                          if (newValue > parseInt(MAX_NUMBER)) {
-                            e.target.value = MAX_NUMBER
+                        if (!isNaN(newValue) && newValue >= 1) {
+                          if (newValue > parseInt(form.values.numVoucherInDay + '')) {
+                            e.target.value = form.values.numVoucherInDay + ''
                           } else {
                             e.target.value = newValue.toString()
                           }
                         } else {
-                          e.target.value = '0'
+                          e.target.value = '1'
                         }
                         form.handleChange(e)
                       }}
@@ -634,36 +786,56 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                     />
                   </div>
                 </div>
-                <div className="h-12 text-white">
-                  Giảm tối đa:
-                  <div className="inline-block w-1/4 ">
+                <div className="flex items-baseline h-12 text-white">
+                  <span className="h-8">Giảm :</span>
+                  <div
+                    className={`inline-block  ml-1 ${
+                      form.values.discountUnit === CreateVoucherRequestDiscountUnitEnum.Cash ? 'w-3/12' : 'w-2/12'
+                    }`}
+                  >
                     <FormInput
                       name="minimize"
-                      className="bg-[#413F4D]  border-2 border-[#FFFFFF] h-8 ml-4 border-opacity-30"
+                      className="bg-[#413F4D]  border-2 border-[rgb(255,255,255)] h-8 border-opacity-30"
                       placeholder="Số Lượng"
-                      value={form.values.minimize}
+                      value={
+                        form.values.discountUnit === CreateVoucherRequestDiscountUnitEnum.Cash
+                          ? formatNumberWithCommas(form.values.minimize)
+                          : form.values.minimize
+                      }
                       onBlur={form.handleBlur}
                       error={!!form.errors.minimize && form.touched.minimize}
                       errorMessage={form.errors.minimize}
                       onChange={(e) => {
-                        const newValue = parseInt(e.target.value)
-                        if (!isNaN(newValue) && newValue >= 0) {
-                          if (newValue > parseInt(MAX_NUMBER)) {
-                            e.target.value = MAX_NUMBER
+                        if (form.values.discountUnit == CreateVoucherRequestDiscountUnitEnum.Percent) {
+                          const newValue = parseInt(e.target.value)
+                          if (!isNaN(newValue) && newValue >= 1) {
+                            if (newValue > parseInt('100')) {
+                              e.target.value = '100'
+                            } else {
+                              e.target.value = newValue.toString()
+                            }
                           } else {
-                            e.target.value = newValue.toString()
+                            e.target.value = '1'
                           }
+                          form.handleChange(e)
                         } else {
-                          e.target.value = '0'
+                          const rawValue = e.target.value
+                          const newValue = parseFloat(rawValue.replace(/,/g, ''))
+                          if (!isNaN(newValue) && newValue >= 0) {
+                            if (newValue > parseFloat(MAX_NUMBER_DISCOUNT)) {
+                              e.target.value = formatNumberWithCommas(parseFloat(MAX_NUMBER_DISCOUNT))
+                            } else {
+                              e.target.value = formatNumberWithCommas(newValue)
+                            }
+                          } else {
+                            e.target.value = '0'
+                          }
+                          form.handleChange(e)
                         }
-                        form.handleChange(e)
                       }}
-                      type="number"
-                      min={0}
-                      max={100}
                     />
                   </div>
-                  <div className="inline-block w-1/4 ml-1 ">
+                  <div className="inline-block w-2/12 ml-1 ">
                     <Select
                       showSearch
                       placeholder="Loại"
@@ -672,8 +844,7 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                       filterOption={filterOptionDisCountUnit}
                       value={form.values.discountUnit}
                       style={{
-                        minWidth: '4rem',
-                        marginLeft: '1rem',
+                        minWidth: '2rem',
                       }}
                       options={[
                         {
@@ -682,11 +853,43 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                         },
                         {
                           value: CreateVoucherRequestDiscountUnitEnum.Cash,
-                          label: 'k/VND',
+                          label: 'VND',
                         },
                       ]}
                     />
                   </div>
+                  {form.values.discountUnit == CreateVoucherRequestDiscountUnitEnum.Percent && (
+                    <div className="flex items-center justify-end w-6/12">
+                      <span className="">Giảm Tối Đa:</span>
+                      <div className="inline-block w-6/12 ml-1 mr-1">
+                        <FormInput
+                          name="maximumDiscountValue"
+                          className="bg-[#413F4D]  border-2 border-[#FFFFFF] h-8 border-opacity-30"
+                          placeholder=""
+                          value={formatNumberWithCommas(form.values.maximumDiscountValue)}
+                          onBlur={form.handleBlur}
+                          error={!!form.errors.maximumDiscountValue && form.touched.maximumDiscountValue}
+                          errorMessage={form.errors.maximumDiscountValue}
+                          onChange={(e) => {
+                            const rawValue = e.target.value
+                            const newValue = parseFloat(rawValue.replace(/,/g, ''))
+                            if (!isNaN(newValue) && newValue >= 0) {
+                              if (newValue > parseFloat(MAX_NUMBER_DISCOUNT)) {
+                                e.target.value = formatNumberWithCommas(parseFloat(MAX_NUMBER_DISCOUNT))
+                              } else {
+                                e.target.value = formatNumberWithCommas(newValue)
+                              }
+                            } else {
+                              e.target.value = '0'
+                            }
+                            form.handleChange(e)
+                          }}
+                          type="text"
+                        />
+                      </div>
+                      <span className="text-xs italic"> đ</span>
+                    </div>
+                  )}
                 </div>
                 <div className="h-12 text-white">
                   Đối tượng:
@@ -729,6 +932,38 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                     ]}
                   />
                 </div>
+                <div className="h-12 text-white">
+                  Khuyến mãi dùng cho hóa đơn có giờ tối thiểu:
+                  <div className="inline-block w-1/5 ">
+                    <FormInput
+                      name="minimumBookingDurationForUsage"
+                      className="bg-[#413F4D] border-2 border-[#FFFFFF] h-8 ml-4 border-opacity-30"
+                      placeholder="Số Lượng"
+                      value={form.values.minimumBookingDurationForUsage}
+                      onBlur={form.handleBlur}
+                      error={
+                        !!form.errors.minimumBookingDurationForUsage && form.touched.minimumBookingDurationForUsage
+                      }
+                      errorMessage={form.errors.minimumBookingDurationForUsage}
+                      onChange={(e) => {
+                        const newValue = parseInt(e.target.value)
+                        if (!isNaN(newValue) && newValue >= 0) {
+                          if (newValue > parseInt('24')) {
+                            e.target.value = '24'
+                          } else {
+                            e.target.value = newValue.toString()
+                          }
+                        } else {
+                          e.target.value = '0'
+                        }
+                        form.handleChange(e)
+                      }}
+                      type="number"
+                      min={0}
+                      max={100000}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
             <div className="w-auto px-4 border-b-2 border-[#FFFFFF80] pb-5">
@@ -737,7 +972,7 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                   <span className="w-16 mr-4">Mô tả: </span>
                   <TextArea
                     name="description"
-                    className="bg-[#413F4D] w-4/5"
+                    className="bg-[#413F4D] w-4/5 max-h-[140px]"
                     rows={5}
                     value={form.values.description}
                     onChange={form.handleChange}
@@ -752,13 +987,17 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
             </Button>
             <Button
               customCSS={`mx-6 px-4 py-1 border-2  ${
-                form.isValid && form.values.name != '' && 'hover:scale-110 bg-[#7463F0] border-[#7463F0]'
+                !isDisableButton() && 'hover:scale-110 bg-[#7463F0] border-[#7463F0]'
               }`}
               onClick={(e) => {
-                e.preventDefault()
-                openConfirmModal()
+                if (updateVoucherAdmin.isLoading) {
+                  return
+                } else {
+                  e.preventDefault()
+                  openConfirmModal()
+                }
               }}
-              isDisable={!form.isValid || form.values.name === ''}
+              isDisable={isDisableButton()}
             >
               {'Sửa'}
             </Button>

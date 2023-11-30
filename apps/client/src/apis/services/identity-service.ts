@@ -4,15 +4,19 @@ import { getEnv } from '~/env'
 import { parse } from 'cookie'
 import {
   AuthApi,
-  BuyCoinRequestApi,
-  CoinApi,
+  BalanceApi,
   CreateVoucherRequest,
+  CreateWithdrawalRequestUnitCurrencyEnum,
+  DepositRequestApi,
   ProviderServiceApi,
   ServiceApi,
   ServiceAttributeApi,
+  UpdateProviderProfileRequestStatusEnum,
   UpdateUserProfileRequestGenderEnum,
   UpdateVoucherRequest,
   UserApi,
+  UserPaymentSystemApi,
+  UserPaymentSystemRequestPlatformEnum,
   VoucherApi,
 } from 'ume-service-openapi'
 
@@ -43,11 +47,11 @@ export const getIdentityInfo = async (ctx) => {
 export const getAccountBalance = async (ctx) => {
   const cookies = parse(ctx.req.headers.cookie)
   try {
-    const response = await new CoinApi({
+    const response = await new BalanceApi({
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).getTotalCoin()
+    }).getTotalBalance()
     return {
       data: response.data,
       success: true,
@@ -64,12 +68,12 @@ export const getAccountBalance = async (ctx) => {
 export const requestRecharge = async ({ total, platform }, ctx) => {
   const cookies = parse(ctx.req.headers.cookie ?? '')
   try {
-    const reponse = await new BuyCoinRequestApi({
+    const reponse = await new DepositRequestApi({
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).createBuyCoinRequest({
-      amountCoin: Number.parseInt(total),
+    }).createDepositRequest({
+      amountBalance: total,
       platform: platform,
       unitCurrency: 'VND',
     })
@@ -107,12 +111,34 @@ export const getUserBySlug = async (input, ctx) => {
   }
 }
 
+export const checkSlugUser = async (input: string, ctx) => {
+  const cookies = parse(ctx.req.headers.cookie ?? '')
+  try {
+    const reponse = await new UserApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).checkSlugUserExisted(input)
+    return {
+      data: reponse.data,
+      success: true,
+      message: '',
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to get data recharge',
+    })
+  }
+}
+
 export const updateUserProfile = async (
   query: {
     name?: string
     slug?: string
     gender?: UpdateUserProfileRequestGenderEnum
     dob?: string
+    phone?: string
     avatarUrl?: string
   },
   ctx,
@@ -128,6 +154,7 @@ export const updateUserProfile = async (
       avatarUrl: query.avatarUrl,
       dob: query.dob,
       gender: query.gender,
+      phone: query.phone,
       slug: query.slug,
     })
     return {
@@ -186,7 +213,7 @@ export const providerGetSelfVoucher = async (
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).providerGetSelfVoucher(query.limit, query.page, '["$all"]', query.where, query.order)
+    }).providerGetSelfVoucher(query.limit, query.page, '["$all"]', query.where, "[{ createdAt: 'asc' }]")
     return {
       data: reponse.data,
       success: true,
@@ -195,7 +222,28 @@ export const providerGetSelfVoucher = async (
   } catch (error) {
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
-      message: error.message || 'Fail to get data recharge',
+      message: error.message || 'Fail to get data voucher',
+    })
+  }
+}
+
+export const providerCheckVoucherCode = async (input: string, ctx) => {
+  const cookies = parse(ctx.req.headers.cookie ?? '')
+  try {
+    const reponse = await new VoucherApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).checkVoucherCodeExisted(input)
+    return {
+      data: reponse.data,
+      success: true,
+      message: '',
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to get voucher code',
     })
   }
 }
@@ -354,7 +402,7 @@ export const providerGetOwnServices = async (ctx) => {
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).providerGetOwnServices('unlimited', '1', '["$all"]', '{}', '[]')
+    }).providerGetOwnServices('unlimited', '1', '["$all"]', '{}', `[{ "position": "asc" }]`)
     return {
       data: reponse.data,
       success: true,
@@ -371,6 +419,7 @@ export const providerGetOwnServices = async (ctx) => {
 export const createServiceProvider = async (
   query: {
     serviceId: string
+    position: number
     defaultCost: number
     description?: string
     createBookingCosts?: { startTimeOfDay: string; endTimeOfDay: string; amount: number }[]
@@ -401,6 +450,7 @@ export const createServiceProvider = async (
 export const updateServiceProvider = async (
   query: {
     serviceId: string
+    position: number
     defaultCost: number
     description?: string
     handleBookingCosts?: { startTimeOfDay: string; endTimeOfDay: string; amount: number }[]
@@ -434,11 +484,11 @@ export const getHistoryTransaction = async (
 ) => {
   const cookies = parse(ctx.req.headers.cookie ?? '')
   try {
-    const reponse = await new CoinApi({
+    const reponse = await new BalanceApi({
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).getHistoryCoin(query.limit, query.page, '["$all"]', query.where, query.order)
+    }).getHistoryBalance(query.limit, query.page, '["$all"]', query.where, query.order)
     return {
       data: reponse.data,
       success: true,
@@ -447,7 +497,142 @@ export const getHistoryTransaction = async (
   } catch (error) {
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
-      message: error.message || 'Fail to get coin history',
+      message: error.message || 'Fail to get balance history',
+    })
+  }
+}
+
+export const getUserPaymentSystems = async (ctx) => {
+  const cookies = parse(ctx.req.headers.cookie ?? '')
+  try {
+    const reponse = await new UserPaymentSystemApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).getUserPaymentSystems('unlimited', '1', '["$all"]')
+    return {
+      data: reponse.data,
+      success: true,
+      message: '',
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to get payment system',
+    })
+  }
+}
+
+export const createUserPaymentSystem = async (
+  query: { platform: UserPaymentSystemRequestPlatformEnum; platformAccount: string; beneficiary: string },
+  ctx,
+) => {
+  const cookies = parse(ctx.req.headers.cookie ?? '')
+  try {
+    const reponse = await new UserPaymentSystemApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).createUserPaymentSystem(query)
+    return {
+      data: reponse.data,
+      success: true,
+      message: '',
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to get payment system',
+    })
+  }
+}
+
+export const getWithdrawRequests = async (query: { limit: string; page: string }, ctx) => {
+  const cookies = parse(ctx.req.headers.cookie ?? '')
+  try {
+    const reponse = await new BalanceApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).getWithdrawalRequests(query.limit, query.page, '["$all",{"userPaymentSystem":["$all"]}]')
+    return {
+      data: reponse.data,
+      success: true,
+      message: '',
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to get withdraw request',
+    })
+  }
+}
+
+export const createWithdrawRequests = async (
+  query: { amountBalance: number; unitCurrency: CreateWithdrawalRequestUnitCurrencyEnum; userPaymentSystemId: string },
+  ctx,
+) => {
+  const cookies = parse(ctx.req.headers.cookie ?? '')
+  try {
+    const reponse = await new BalanceApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).createWithdrawalRequest(query)
+    return {
+      data: reponse.data,
+      success: true,
+      message: '',
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to create withdraw request',
+    })
+  }
+}
+
+export const cancelWithdrawRequests = async (withdrawalRequestId: string, ctx) => {
+  const cookies = parse(ctx.req.headers.cookie ?? '')
+  try {
+    const reponse = await new BalanceApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).userCancelWithdrawalRequest(withdrawalRequestId)
+    return {
+      data: reponse.data,
+      success: true,
+      message: '',
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to cancel withdraw request',
+    })
+  }
+}
+
+export const userUpdateProviderProfile = async (
+  query: { voiceUrl?: string; status?: UpdateProviderProfileRequestStatusEnum; description?: string },
+  ctx,
+) => {
+  const cookies = parse(ctx.req.headers.cookie ?? '')
+  try {
+    const reponse = await new UserApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).userUpdateProviderProfile(query)
+    return {
+      data: reponse.data,
+      success: true,
+      message: '',
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to update provider profile',
     })
   }
 }

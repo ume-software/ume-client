@@ -2,13 +2,20 @@ import {
   CreateVoucherRequestDiscountUnitEnum,
   CreateVoucherRequestRecipientTypeEnum,
   CreateVoucherRequestTypeEnum,
+  CreateWithdrawalRequestUnitCurrencyEnum,
+  UpdateProviderProfileRequestStatusEnum,
   UpdateUserProfileRequestGenderEnum,
+  UserPaymentSystemRequestPlatformEnum,
 } from 'ume-service-openapi'
 import { z } from 'zod'
 
 import { createRouter } from './configurations'
 import {
+  cancelWithdrawRequests,
+  checkSlugUser,
   createServiceProvider,
+  createUserPaymentSystem,
+  createWithdrawRequests,
   getAccountBalance,
   getHistoryTransaction,
   getIdentityInfo,
@@ -16,6 +23,9 @@ import {
   getServiceAttributeByServiceSlug,
   getServiceAttributeValueByServiceAttributeId,
   getUserBySlug,
+  getUserPaymentSystems,
+  getWithdrawRequests,
+  providerCheckVoucherCode,
   providerCreateVoucher,
   providerGetOwnServices,
   providerGetSelfVoucher,
@@ -26,6 +36,7 @@ import {
   updateServiceProvider,
   updateUserProfile,
   userKYC,
+  userUpdateProviderProfile,
 } from './services/identity-service'
 
 export const identityRouter = createRouter()
@@ -42,7 +53,7 @@ export const identityRouter = createRouter()
   .mutation('request-recharge', {
     input: z.object({
       platform: z.string(),
-      total: z.string(),
+      total: z.number(),
     }),
     resolve: async ({ input, ctx }) => {
       return await requestRecharge(input, ctx)
@@ -54,12 +65,19 @@ export const identityRouter = createRouter()
       return await getUserBySlug(input, ctx)
     },
   })
+  .query('checkSlugUser', {
+    input: z.string(),
+    resolve: async ({ input, ctx }) => {
+      return await checkSlugUser(input, ctx)
+    },
+  })
   .mutation('updateUserProfile', {
     input: z.object({
       name: z.optional(z.string()),
       slug: z.optional(z.string()),
       gender: z.optional(z.nativeEnum(UpdateUserProfileRequestGenderEnum)),
       dob: z.optional(z.string()),
+      phone: z.optional(z.string()),
       avatarUrl: z.optional(z.string()),
     }),
     resolve: async ({ input, ctx }) => {
@@ -85,6 +103,12 @@ export const identityRouter = createRouter()
     }),
     resolve: async ({ input, ctx }) => {
       return await providerGetSelfVoucher(input, ctx)
+    },
+  })
+  .query('providerCheckVoucherCode', {
+    input: z.string(),
+    resolve: async ({ input, ctx }) => {
+      return await providerCheckVoucherCode(input, ctx)
     },
   })
   .mutation('providerCreateVoucher', {
@@ -187,6 +211,7 @@ export const identityRouter = createRouter()
   .mutation('updateServiceProvider', {
     input: z.object({
       serviceId: z.string(),
+      position: z.number(),
       defaultCost: z.number(),
       description: z.optional(z.string()),
       handleBookingCosts: z.optional(
@@ -208,6 +233,7 @@ export const identityRouter = createRouter()
   .mutation('createServiceProvider', {
     input: z.object({
       serviceId: z.string(),
+      position: z.number(),
       defaultCost: z.number(),
       description: z.optional(z.string()),
       createBookingCosts: z.optional(
@@ -235,5 +261,55 @@ export const identityRouter = createRouter()
     }),
     resolve: async ({ input, ctx }) => {
       return await getHistoryTransaction(input, ctx)
+    },
+  })
+  .query('getUserPaymentSystems', {
+    resolve: async ({ ctx }) => {
+      return await getUserPaymentSystems(ctx)
+    },
+  })
+  .mutation('createUserPaymentSystem', {
+    input: z.object({
+      platform: z.nativeEnum(UserPaymentSystemRequestPlatformEnum),
+      platformAccount: z.string(),
+      beneficiary: z.string(),
+    }),
+    resolve: async ({ input, ctx }) => {
+      return await createUserPaymentSystem(input, ctx)
+    },
+  })
+  .query('getWithdrawRequests', {
+    input: z.object({
+      limit: z.string(),
+      page: z.string(),
+    }),
+    resolve: async ({ input, ctx }) => {
+      return await getWithdrawRequests(input, ctx)
+    },
+  })
+  .mutation('createWithdrawRequests', {
+    input: z.object({
+      amountBalance: z.number(),
+      unitCurrency: z.nativeEnum(CreateWithdrawalRequestUnitCurrencyEnum),
+      userPaymentSystemId: z.string(),
+    }),
+    resolve: async ({ input, ctx }) => {
+      return await createWithdrawRequests(input, ctx)
+    },
+  })
+  .mutation('cancelWithdrawRequests', {
+    input: z.string(),
+    resolve: async ({ input, ctx }) => {
+      return await cancelWithdrawRequests(input, ctx)
+    },
+  })
+  .mutation('userUpdateProviderProfile', {
+    input: z.object({
+      voiceUrl: z.optional(z.string()),
+      status: z.optional(z.nativeEnum(UpdateProviderProfileRequestStatusEnum)),
+      description: z.optional(z.string()),
+    }),
+    resolve: async ({ input, ctx }) => {
+      return await userUpdateProviderProfile(input, ctx)
     },
   })

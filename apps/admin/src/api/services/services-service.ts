@@ -2,7 +2,12 @@ import { TRPCError } from '@trpc/server'
 import { getEnv } from '~/env'
 
 import { parse } from 'cookie'
-import { AdminManageServiceApi } from 'ume-service-openapi'
+import {
+  AdminManageServiceApi,
+  AdminManageStatisticApi,
+  CreateServiceRequest,
+  UpdateServiceRequest,
+} from 'ume-service-openapi'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
@@ -13,17 +18,100 @@ export const getServiceList = async (ctx, query: { page: string; select?: string
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).adminGetAllServices('10', query.page, query.select || '["$all"]', query.where, query.order)
+    }).adminGetAllServices('10', query.page, query.select || '["$all"]', query.where, '[{"createdAt":"desc"}]')
 
     return {
       data: response.data,
       success: true,
-      message: 'Success',
     }
   } catch (error) {
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
       message: error.message || 'Authentication failed',
+    })
+  }
+}
+
+export const createService = async (input: CreateServiceRequest, ctx) => {
+  const cookies = parse(ctx.req.headers.cookie)
+  try {
+    const response = await new AdminManageServiceApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).adminCreateService(input)
+
+    return {
+      data: response.data,
+      success: true,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.message || 'Failed to create service',
+    })
+  }
+}
+
+export const getServiceDetails = async (ctx, query: { id; select }) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie ?? '')
+    const response = await new AdminManageServiceApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).adminGetServiceBySlug(query.id, undefined, undefined, query.select, undefined, undefined)
+    return {
+      data: response.data,
+      success: true,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.message || 'Authentication failed',
+    })
+  }
+}
+
+export const updateService = async (input: { id: string; updateServiceRequest: UpdateServiceRequest }, ctx) => {
+  const cookies = parse(ctx.req.headers.cookie)
+  try {
+    const response = await new AdminManageServiceApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).adminUpdateServiceById(input.id, input.updateServiceRequest)
+    return {
+      data: response.data,
+      success: true,
+    }
+  } catch (error) {
+    console.log('Failed to update service', error.response.data)
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.response.data.data.message || 'Failed to update service',
+    })
+  }
+}
+
+export const statisticProviderService = async (ctx) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie ?? '')
+    const response = await new AdminManageStatisticApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).adminGetMostProviderServicesStatistics(10, {})
+
+    return {
+      data: response.data,
+      success: true,
+    }
+  } catch (error) {
+    console.log('Failed to statistic service', error.response.data)
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.response.data.data.message || 'Failed to statistic service',
     })
   }
 }

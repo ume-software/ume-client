@@ -15,13 +15,19 @@ export interface ITransactionTableProps {
 export default function TransactionTable(props: ITransactionTableProps) {
   const locale = {
     emptyText: (
-      <div className="flex flex-col items-center justify-center w-full h-full font-bold text-2xl text-white">
+      <div className="flex flex-col items-center justify-center w-full h-full text-2xl font-bold text-white">
         <Image height={600} alt="empty data" src={EmptyErrorPic} />
         Không có data
       </div>
     ),
   }
   const { data } = props
+  function formatNumberWithCommas(number) {
+    return parseFloat(number)
+      .toString()
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  }
+
   const columnsService = [
     {
       title: 'Người dùng',
@@ -45,6 +51,9 @@ export default function TransactionTable(props: ITransactionTableProps) {
       title: 'Giờ phục vụ',
       dataIndex: 'serveTime',
       key: 'serveTime',
+      render: (text) => {
+        return <div>{text ? text : 0} h</div>
+      },
     },
     {
       title: 'Trạng thái',
@@ -52,12 +61,13 @@ export default function TransactionTable(props: ITransactionTableProps) {
       key: 'status',
     },
     {
-      title: <div className="flex justify-center items-center">Số tiền</div>,
+      title: <div className="flex">Số tiền</div>,
       dataIndex: 'mountMoney',
       key: 'mountMoney',
-      render: (mountMoney) => (
-        <div className="flex justify-center items-center">
-          {mountMoney} <Image alt="Xu" src={coinIcon} width={30} height={30} />
+      render: (text) => (
+        <div>
+          {' '}
+          {text ? formatNumberWithCommas(text) : 0} <span className="text-xs italic"> đ</span>
         </div>
       ),
     },

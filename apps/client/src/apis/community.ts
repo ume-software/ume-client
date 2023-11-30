@@ -1,4 +1,4 @@
-import { CreateNewPostRequest, ThumbnailResponse } from 'ume-service-openapi'
+import { CreateNewPostRequest } from 'ume-service-openapi'
 import { z } from 'zod'
 
 import { createRouter } from './configurations'
@@ -75,7 +75,7 @@ export const communityRouter = createRouter()
   .mutation('commentForPostId', {
     input: z.object({
       id: z.string(),
-      commentPostRequest: z.object({ content: z.string(), parentCommentId: z.string() }),
+      commentPostRequest: z.object({ content: z.string(), parentCommentId: z.optional(z.string()) }),
     }),
     resolve: async ({ ctx, input }) => {
       return await commentForPostId(input, ctx)

@@ -124,7 +124,7 @@ const useDisplayPost = ({
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" />
+            <div className="fixed inset-0 transition-opacity bg-gray-400 bg-opacity-50" />
           </Transition.Child>
 
           <div className="fixed inset-0 top-0 z-50 overflow-y-auto custom-scrollbar">
@@ -140,7 +140,7 @@ const useDisplayPost = ({
               >
                 <Dialog.Panel
                   className={`relative ${
-                    customModalCSS ? customModalCSS : 'overflow-hidden sm:my-5 sm:h-[95vh] sm:w-full'
+                    customModalCSS ?? 'overflow-hidden sm:my-5 sm:h-[95vh] sm:w-full'
                   } text-left ml-3 mr-3 transition-all transform rounded-3xl shadow-xl  ${
                     backgroundColor ? `bg-[${backgroundColor}]` : 'bg-white'
                   }`}

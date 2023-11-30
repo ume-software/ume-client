@@ -16,14 +16,7 @@ export const signinService = async ({ username, password }, ctx) => {
       username: username,
       password: password,
     })
-    const { admin, accessToken, refreshToken } = response.data
-    // try {
-    //   if (typeof window !== 'undefined') {
-    //     window.localStorage.setItem('user', JSON.stringify(admin))
-    //   }
-    // } catch (localStorageError) {
-    //   console.error('Error storing data in localStorage:', localStorageError)
-    // }
+    const { accessToken, refreshToken } = response.data
     ctx.res.setHeader('Set-Cookie', [
       serialize('accessToken', accessToken ?? '', {
         path: '/',
@@ -36,10 +29,8 @@ export const signinService = async ({ username, password }, ctx) => {
     return {
       data: response.data,
       success: true,
-      message: 'Success',
     }
   } catch (error) {
-    console.log(error)
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
       message: error.message || 'Authentication failed',

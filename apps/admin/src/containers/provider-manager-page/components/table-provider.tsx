@@ -49,7 +49,6 @@ export default function TableProviders({ data, isLoading }) {
               notification.success({
                 message: 'Chặn Người Cung Cấp thành công!',
                 description: 'Người Cung Cấp Đã Bị Chặn',
-                placement: 'bottomLeft',
               })
               utils.invalidateQueries('provider.getProviderList')
             }
@@ -70,7 +69,6 @@ export default function TableProviders({ data, isLoading }) {
                 notification.success({
                   message: 'Bỏ Chặn Người Cung Cấp thành công!',
                   description: 'Người Cung Cấp Đã Được Bỏ Chặn',
-                  placement: 'bottomLeft',
                 })
                 utils.invalidateQueries('provider.getProviderList')
               }
@@ -126,21 +124,15 @@ export default function TableProviders({ data, isLoading }) {
       title: <div className="flex justify-center w-full px-0 mx-0">Trạng Thái</div>,
       key: 'isBanned',
       dataIndex: 'isBanned',
-      render: (_, { isBanned }) => {
-        let textStatus = 'Hoạt động'
-        let color = 'bg-green-500'
-        if (isBanned) {
-          textStatus = 'Bị Chặn'
-          color = 'bg-red-500'
-        }
-        return (
-          <div className="flex justify-center w-full">
-            <Tag color={color} key={isBanned} className={`text-white ${color} px-3 py-2 rounded-lg`}>
-              {textStatus.toUpperCase()}
-            </Tag>
-          </div>
-        )
-      },
+      render: (isBanned) => (
+        <div className="flex items-center justify-center">
+          {!isBanned ? (
+            <Tag className="px-3 py-2 m-0 text-white bg-green-500 rounded-lg">Hoạt động</Tag>
+          ) : (
+            <Tag className="px-3 py-2 m-0 text-white bg-red-500 rounded-lg">Tạm dừng</Tag>
+          )}
+        </div>
+      ),
     },
     {
       title: 'Ngày tham gia',
@@ -153,25 +145,31 @@ export default function TableProviders({ data, isLoading }) {
       key: 'action',
       render: (_, record) => (
         <Space size="middle">
-          <Tooltip placement="top" title="Xem Chi Tiết" arrow={mergedArrow}>
-            <Button
-              isActive={false}
-              onClick={(e) => {
-                openProviderDetailHandle(record.id)
-              }}
-            >
-              <Eyes theme="outline" size="24" fill="#fff" />
-            </Button>
+          <Tooltip placement="top" title="Xem Chi Tiết">
+            <div>
+              <Button
+                isActive={false}
+                onClick={(e) => {
+                  openProviderDetailHandle(record.id)
+                }}
+                customCSS="hover:bg-gray-500"
+              >
+                <Eyes theme="outline" size="24" fill="#fff" />
+              </Button>
+            </div>
           </Tooltip>
-          <Tooltip placement="top" title={record.isBanned ? 'Bỏ chặn' : 'Chặn'} arrow={mergedArrow}>
-            <Button
-              isActive={false}
-              onClick={(e) => {
-                banProviderHandle(record.id, record.name, record.isBanned)
-              }}
-            >
-              <ReduceOne theme="outline" size="24" fill={record.isBanned ? '#ff0000' : '#ffffff'} />
-            </Button>
+          <Tooltip placement="top" title={record.isBanned ? 'Bỏ chặn' : 'Chặn'}>
+            <div>
+              <Button
+                isActive={false}
+                onClick={(e) => {
+                  banProviderHandle(record.id, record.name, record.isBanned)
+                }}
+                customCSS="hover:bg-gray-500"
+              >
+                <ReduceOne theme="outline" size="24" fill={record.isBanned ? '#ff0000' : '#ffffff'} />
+              </Button>
+            </div>
           </Tooltip>
         </Space>
       ),
@@ -179,7 +177,7 @@ export default function TableProviders({ data, isLoading }) {
   ]
   const locale = {
     emptyText: (
-      <div className="flex flex-col items-center justify-center w-full h-full font-bold text-2xl text-white">
+      <div className="flex flex-col items-center justify-center w-full h-full text-2xl font-bold text-white">
         <Image height={600} alt="empty data" src={EmptyErrorPic} />
         Không có data
       </div>

@@ -8,7 +8,7 @@ import Image from 'next/legacy/image'
 
 import { AppLayout } from '~/components/layouts/app-layout/app-layout'
 
-interface livestreamProps {
+interface LivestreamProps {
   livePicture: string
   type: string
   imageUrl: string
@@ -17,7 +17,7 @@ interface livestreamProps {
   view: string
 }
 
-const livestreamData: livestreamProps[] = [
+const livestreamData: LivestreamProps[] = [
   {
     livePicture: 'https://cdn.pixabay.com/photo/2020/05/11/22/31/cat-5160456_960_720.png',
     imageUrl:
@@ -77,58 +77,56 @@ const LivePage = (props) => {
         <title>UME | Phát Trực Tiếp</title>
       </Head>
       <AppLayout {...props}>
-        <div className="dark:text-white flex flex-col mx-16">
+        <div className="flex flex-col mx-16 dark:text-white">
           <div className="flex justify-between my-10">
             <p className="text-4xl font-bold">Các phòng phát trực tiếp</p>
-            <div className="rounded-full p-5 text-white bg-purple-700 py-2 font-semibold text-2xl cursor-pointer hover:scale-105 text-center">
+            <div className="p-5 py-2 text-2xl font-semibold text-center text-white bg-purple-700 rounded-full cursor-pointer hover:scale-105">
               Tạo phòng
             </div>
           </div>
           <div className="grid grid-cols-4">
             {livestreamData.map((data) => (
-              <>
-                <div key={index} className="col-span-1 cursor-pointer p-5">
-                  <div className="relative">
-                    <div className="relative w-full h-[200px] bg-zinc-800 rounded-3xl p-10">
-                      <Image
-                        className="absolute rounded-xl"
-                        layout="fill"
-                        objectFit="cover"
-                        src={data.livePicture || ImgForEmpty}
-                        alt="Empty Image"
-                      />
-                    </div>
-                    <div
-                      className={`absolute top-5 left-5 py-1 px-3 text-mdfont-semibold rounded-lg ${
-                        data.type == 'Live' ? 'bg-red-700' : 'bg-purple-700'
-                      }`}
-                    >
-                      {data.type}
-                    </div>
+              <div key={index} className="col-span-1 p-5 cursor-pointer">
+                <div className="relative">
+                  <div className="relative w-full h-[200px] bg-zinc-800 rounded-3xl p-10">
+                    <Image
+                      className="absolute rounded-xl"
+                      layout="fill"
+                      objectFit="cover"
+                      src={data.livePicture || ImgForEmpty}
+                      alt="Empty Image"
+                    />
                   </div>
-                  <div className="flex gap-5 pt-3">
-                    <div>
-                      <div className="relative w-14 h-14">
-                        <Image
-                          className="absolute rounded-full"
-                          layout="fill"
-                          objectFit="cover"
-                          src={data.imageUrl || ImgForEmpty}
-                          alt="avatar"
-                        />
-                      </div>
-                    </div>
-                    <div className="w-full flex flex-col items-start justify-center truncate">
-                      <Tooltip placement="topLeft" title={data.content} arrow={false}>
-                        <p className="text-lg">{data.content}</p>
-                      </Tooltip>
-                      <p className="text-xl font-semibold opacity-30">
-                        {data.name} - {data.view}viewers
-                      </p>
-                    </div>
+                  <div
+                    className={`absolute top-5 left-5 py-1 px-3 text-mdfont-semibold rounded-lg ${
+                      data.type == 'Live' ? 'bg-red-700' : 'bg-purple-700'
+                    }`}
+                  >
+                    {data.type}
                   </div>
                 </div>
-              </>
+                <div className="flex gap-5 pt-3">
+                  <div>
+                    <div className="relative w-14 h-14">
+                      <Image
+                        className="absolute rounded-full"
+                        layout="fill"
+                        objectFit="cover"
+                        src={data.imageUrl || ImgForEmpty}
+                        alt="avatar"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-start justify-center w-full truncate">
+                    <Tooltip placement="topLeft" title={data.content} arrow={false}>
+                      <p className="text-lg">{data.content}</p>
+                    </Tooltip>
+                    <p className="text-xl font-semibold opacity-30">
+                      {data.name} - {data.view}viewers
+                    </p>
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
         </div>

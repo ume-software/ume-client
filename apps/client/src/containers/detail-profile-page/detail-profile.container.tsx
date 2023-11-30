@@ -1,22 +1,37 @@
 import { Menu, Transition } from '@headlessui/react'
-import { CopyOne, Dot, Female, Lock, Male, More, PaperMoneyTwo, ShareTwo } from '@icon-park/react'
-import TestImage4 from 'public/cover.png'
+import { Alarm, CopyOne, Dot, Female, Lock, Male, More, PaperMoneyTwo, ShareTwo, Stopwatch } from '@icon-park/react'
 import detailBackground from 'public/detail-cover-background.png'
 import ImgForEmpty from 'public/img-for-empty.png'
 import lgbtIcon from 'public/rainbow-flag-11151.svg'
+import { useAuth } from '~/contexts/auth'
 
-import { Fragment, ReactElement, ReactNode, useState } from 'react'
+import { Fragment, ReactElement, useEffect, useState } from 'react'
 
-import { ConfigProvider, message, theme } from 'antd'
-import Image, { StaticImageData } from 'next/legacy/image'
+import { ConfigProvider, Tooltip, message, theme } from 'antd'
+import { parse } from 'cookie'
+import Image from 'next/legacy/image'
 import { useRouter } from 'next/router'
-import { UserInformationResponse } from 'ume-service-openapi'
+import {
+  BookingHistoryPagingResponse,
+  ProviderConfigResponseStatusEnum,
+  UserInformationResponse,
+  UserInformationResponseGenderEnum,
+} from 'ume-service-openapi'
 
 import AlbumTab from './album-tab/album-tab'
-import FeedsTab from './feeds-tab'
+import {
+  BookingCountdown,
+  getCurrentBookingForProviderData,
+  getCurrentBookingForUserData,
+} from './components/booking-countdown'
+import DonateModal from './components/donate-modal'
+import EndSoonModal from './components/end-soon-modal'
+import { ReportModal } from './components/report-modal'
 import InformationTab from './information-tab/information-tab'
+import PostTab from './post-tab'
 
-import { BGFullGridSkeleton } from '~/components/skeleton-load'
+import { LoginModal } from '~/components/header/login-modal.component'
+import { SkeletonDetailProvider } from '~/components/skeleton-load'
 
 import { trpc } from '~/utils/trpc'
 
@@ -27,46 +42,22 @@ interface TabDataProps {
   [key: string]: any
 }
 
-interface FeedProps {
-  feedLink: string
-  imgSrc: string | StaticImageData
-  numberLike?: number
-  numberCom?: number
-}
-
-interface ValueGenderProps {
-  value: string
-  icon: ReactNode
-}
-
-const feedData: FeedProps[] = [
-  {
-    feedLink: '/1',
-    imgSrc: ImgForEmpty,
-    numberLike: 2,
-    numberCom: 1,
-  },
-  {
-    feedLink: '/1',
-    imgSrc: ImgForEmpty,
-    numberLike: 25,
-    numberCom: 1,
-  },
-  {
-    feedLink: '/1',
-    imgSrc: ImgForEmpty,
-  },
-  {
-    feedLink: '/1',
-    imgSrc: TestImage4,
-    numberCom: 8,
-  },
-]
-
 const moreButtonDatas: TabDataProps[] = [
   {
+    key: 'Report',
+    label: 'Tố cáo',
+    icon: (
+      <Alarm
+        className={`transition-opacity opacity-0 group-hover:opacity-100 group-hover:translate-x-3 duration-300`}
+        theme="outline"
+        size="20"
+        fill="#fff"
+      />
+    ),
+  },
+  {
     key: 'Donate',
-    label: 'Donate',
+    label: 'Tặng quà',
     icon: (
       <PaperMoneyTwo
         className={`transition-opacity opacity-0 group-hover:opacity-100 group-hover:translate-x-3 duration-300`}
@@ -102,22 +93,6 @@ const moreButtonDatas: TabDataProps[] = [
   },
 ]
 
-const valueGenders: ValueGenderProps[] = [
-  {
-    value: 'MALE',
-    icon: <Male theme="outline" size="20" fill="#3463f9" />,
-  },
-  { value: 'FEMALE', icon: <Female theme="outline" size="20" fill="#f70a34" /> },
-  {
-    value: 'ORTHER',
-    icon: (
-      <div className="flex items-center">
-        <Image width={30} height={20} alt="lgbt-icon" src={lgbtIcon} layout="fixed" />
-      </div>
-    ),
-  },
-  { value: 'PRIVATE', icon: <Lock theme="outline" size="20" fill="#f7761c" /> },
-]
 const tabDatas: TabDataProps[] = [
   {
     key: 'Service',
@@ -138,9 +113,23 @@ const DetailProfileContainer = () => {
   const basePath = router.asPath.split('?')[0]
   const slug = router.query
 
+  const accessToken = parse(document.cookie).accessToken
+
+  const { isAuthenticated, user } = useAuth()
+  const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
+
   const [messageApi, contextHolder] = message.useMessage()
   const [providerDetail, setProviderDetail] = useState<UserInformationResponse | undefined>(undefined)
+
+  const [isModalReportVisible, setIsModalReportVisible] = useState<boolean>(false)
+  const [isModalDonationVisible, setIsModalDonationVisible] = useState<boolean>(false)
+  const [isEndSoonModalVisible, setIsEndSoonModalVisible] = useState<boolean>(false)
+
   const { isLoading: isProviderDetailLoading } = trpc.useQuery(['booking.getUserBySlug', slug.profileId!.toString()], {
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: 'always',
+    cacheTime: 0,
+    refetchOnMount: true,
     onSuccess(data) {
       if (data.data.id) {
         setProviderDetail(data.data)
@@ -151,13 +140,26 @@ const DetailProfileContainer = () => {
     onError() {
       router.replace('/404')
     },
+    enabled: !!slug.profileId!.toString(),
   })
+
+  const currentBookingForProviderData: BookingHistoryPagingResponse['row'] | undefined =
+    getCurrentBookingForProviderData()
+  const currentBookingForUserData: BookingHistoryPagingResponse['row'] | undefined = getCurrentBookingForUserData()
 
   const [selectedTab, setSelectedTab] = useState<TabDataProps>(
     tabDatas.find((tab) => {
       return tab.key.toString() == slug.tab?.toString()
     }) ?? tabDatas[0],
   )
+
+  useEffect(() => {
+    if (!providerDetail?.isProvider) {
+      setSelectedTab(tabDatas[1])
+    } else {
+      setSelectedTab(tabDatas[0])
+    }
+  }, [providerDetail])
 
   const handleChangeTab = (item: TabDataProps) => {
     router.replace(
@@ -199,6 +201,18 @@ const DetailProfileContainer = () => {
         content: 'Mở facebook thành công',
         duration: 2,
       })
+    } else if (item.key == 'Donate') {
+      if (providerDetail && (isAuthenticated || user || accessToken)) {
+        setIsModalDonationVisible(true)
+      } else {
+        setIsModalLoginVisible(true)
+      }
+    } else if (item.key == 'Report') {
+      if (providerDetail && (isAuthenticated || user || accessToken)) {
+        setIsModalReportVisible(true)
+      } else {
+        setIsModalLoginVisible(true)
+      }
     }
   }
 
@@ -211,35 +225,34 @@ const DetailProfileContainer = () => {
       >
         {contextHolder}
       </ConfigProvider>
+      <LoginModal isModalLoginVisible={isModalLoginVisible} setIsModalLoginVisible={setIsModalLoginVisible} />
+      <ReportModal
+        isModalReportVisible={isModalReportVisible}
+        setIsModalReportVisible={setIsModalReportVisible}
+        providerId={providerDetail?.id ?? ''}
+      />
+      <DonateModal
+        isModalDonationVisible={isModalDonationVisible}
+        setIsModalDonationVisible={setIsModalDonationVisible}
+        providerId={providerDetail?.id ?? ''}
+      />
+      <EndSoonModal
+        isEndSoonModalVisible={isEndSoonModalVisible}
+        setIsEndSoonModalVisible={setIsEndSoonModalVisible}
+        bookingHistoryId={currentBookingForProviderData?.[0]?.id ?? currentBookingForUserData?.[0]?.id ?? ''}
+      />
 
       {!providerDetail && isProviderDetailLoading ? (
-        <>
-          <div style={{ height: '380px', margin: '0 70px' }}>
-            <div className="absolute top-16 left-0" style={{ width: '100%', height: '416px' }}>
-              <Image layout="fill" src={detailBackground} alt="background" />
-            </div>
-          </div>
-          <div className="grid mt-10 w-full h-screen grid-cols-10 gap-10 px-10">
-            <div className="col-span-2">
-              <BGFullGridSkeleton />
-            </div>
-            <div className="col-span-5">
-              <BGFullGridSkeleton />
-            </div>
-            <div className="col-span-3">
-              <BGFullGridSkeleton />
-            </div>
-          </div>
-        </>
+        <SkeletonDetailProvider />
       ) : (
         <>
           <div style={{ height: '380px', margin: '0 70px' }}>
-            <div className="absolute top-16 left-0" style={{ width: '100%', height: '416px' }}>
+            <div className="absolute left-0 top-16" style={{ width: '100%', height: '416px' }}>
               <Image layout="fill" src={detailBackground} alt="background" />
             </div>
-            <div className="h-full flex flex-col justify-end gap-5">
-              <div className="flex flex-row justify-between md:items-center items-baseline px-7 pb-5">
-                <div className="flex md:flex-row md:gap-x-8 flex-col gap-y-2" style={{ zIndex: 2 }}>
+            <div className="flex flex-col justify-end h-full gap-5">
+              <div className="flex flex-row items-baseline justify-between pb-5 md:items-center px-7">
+                <div className="flex flex-col md:flex-row md:gap-x-8 gap-y-2" style={{ zIndex: 2 }}>
                   <div style={{ width: 194, height: 182, position: 'relative' }}>
                     <Image
                       className="absolute rounded-full"
@@ -249,21 +262,93 @@ const DetailProfileContainer = () => {
                       alt="avatar"
                     />
                   </div>
-                  <div className="text-white flex flex-col gap-y-2 my-5">
-                    <p className="text-white text-3xl font-medium">{providerDetail?.name}</p>
+                  <div className="flex flex-col my-5 text-white gap-y-2">
+                    <p className="text-3xl font-medium text-white">{providerDetail?.name}</p>
                     <div className="flex flex-row items-center gap-3">
-                      <div className="bg-gray-700 p-2 rounded-full flex items-center gap-2">
+                      <div className="flex items-center gap-2 p-2 bg-gray-700 rounded-full">
                         <div>
-                          {valueGenders.map((gender) => (
-                            <div key={gender.value}>{gender.value == providerDetail?.gender && gender.icon}</div>
-                          ))}
+                          {providerDetail?.gender == UserInformationResponseGenderEnum.Male && (
+                            <Male theme="outline" size="20" fill="#3463f9" />
+                          )}
+                          {providerDetail?.gender == UserInformationResponseGenderEnum.Female && (
+                            <Female theme="outline" size="20" fill="#f70a34" />
+                          )}
+                          {providerDetail?.gender == UserInformationResponseGenderEnum.Other && (
+                            <div className="flex items-center">
+                              <Image width={30} height={20} alt="lgbt-icon" src={lgbtIcon} layout="fixed" />
+                            </div>
+                          )}
+                          {providerDetail?.gender == UserInformationResponseGenderEnum.Private && (
+                            <Lock theme="outline" size="20" fill="#f7761c" />
+                          )}
                         </div>
                         <p>{caculateAge(providerDetail?.dob)}</p>
                       </div>
-                      <div className="bg-gray-700 p-2 rounded-full flex items-center gap-1">
-                        <Dot theme="multi-color" size="24" fill={providerDetail?.isOnline ? '#008000' : '#FF0000'} />
-                        <p>{providerDetail?.providerConfig?.status}</p>
-                      </div>
+                      <Tooltip placement="bottomLeft" title={`${providerDetail?.isOnline ? 'Online' : 'Offline'}`}>
+                        <div className="flex items-center gap-1 p-2 bg-gray-700 rounded-full">
+                          <Dot theme="multi-color" size="24" fill={providerDetail?.isOnline ? '#008000' : '#FF0000'} />
+                          {/* {providerDetail?.isOnline ? ( */}
+                          <>
+                            <p>
+                              {providerDetail?.providerConfig?.status == ProviderConfigResponseStatusEnum.Activated &&
+                                'Sẵn sàng'}
+                            </p>
+                            <p>
+                              {providerDetail?.providerConfig?.status == ProviderConfigResponseStatusEnum.Busy && 'Bận'}
+                            </p>
+                            <p>
+                              {providerDetail?.providerConfig?.status ==
+                                ProviderConfigResponseStatusEnum.StoppedAcceptingBooking && 'Ngừng nhận đơn'}
+                            </p>
+                          </>
+                          {/* ) : (
+                            'Offline'
+                          )} */}
+                        </div>
+                      </Tooltip>
+                    </div>
+                    <div className="mt-2 flex items-center gap-2">
+                      <>
+                        {currentBookingForProviderData &&
+                          ((currentBookingForProviderData[0]?.providerService?.provider as any)?.slug ==
+                            slug.profileId ||
+                            currentBookingForProviderData[0]?.booker?.slug == slug.profileId) &&
+                          (currentBookingForProviderData?.length ?? 0) > 0 && (
+                            <div className="text-center bg-gray-700 rounded-full">
+                              <BookingCountdown />
+                            </div>
+                          )}
+                      </>
+                      <>
+                        {currentBookingForUserData &&
+                          ((currentBookingForUserData[0]?.providerService?.provider as any)?.slug == slug.profileId ||
+                            currentBookingForUserData[0]?.booker?.slug == slug.profileId) &&
+                          (currentBookingForUserData?.length ?? 0) > 0 && (
+                            <div className="text-center bg-gray-700 rounded-full">
+                              <BookingCountdown />
+                            </div>
+                          )}
+                      </>
+
+                      {currentBookingForProviderData &&
+                        ((currentBookingForProviderData?.length ?? 0) > 0 ||
+                          (currentBookingForUserData?.length ?? 0) > 0) &&
+                        ((currentBookingForProviderData[0]?.providerService?.provider as any)?.slug == slug.profileId ||
+                          currentBookingForProviderData[0]?.booker?.slug == slug.profileId) && (
+                          <>
+                            <Tooltip placement="right" title={`Kết thúc sớm`}>
+                              <div
+                                className="p-2 bg-red-500 rounded-full cursor-pointer"
+                                onClick={() => {
+                                  setIsEndSoonModalVisible(true)
+                                }}
+                                onKeyDown={() => {}}
+                              >
+                                <Stopwatch theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
+                              </div>
+                            </Tooltip>
+                          </>
+                        )}
                     </div>
                   </div>
                 </div>
@@ -290,25 +375,41 @@ const DetailProfileContainer = () => {
                       leaveFrom="transform opacity-100 scale-100"
                       leaveTo="transform opacity-0 scale-95"
                     >
-                      <Menu.Items className="absolute w-fit right-0 py-3 top-7 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                        <div className="w-max flex flex-col gap-2">
-                          {moreButtonDatas.map((item, index) => (
-                            <div
-                              key={index}
-                              className="hover:bg-purple-600 hover:text-white group rounded-md px-2 py-1"
-                            >
-                              <div className="scale-x-100 group-hover:scale-x-95 flex items-center justify-between gap-2 group-hover:-translate-x-2 duration-300">
+                      <Menu.Items className="absolute right-0 p-2 origin-top-right bg-umeHeader divide-y divide-gray-200 rounded-md shadow-lg w-fit top-7 ring-1 ring-black ring-opacity-30 focus:outline-none">
+                        <div className="flex flex-col gap-2 w-max">
+                          {moreButtonDatas.map((item) => (
+                            <Fragment key={item.key}>
+                              {user?.id == providerDetail?.id ? (
+                                item.key != 'Donate' &&
+                                item.key != 'Report' && (
+                                  <div
+                                    className="p-2 cursor-pointer rounded-t-md hover:bg-gray-700 text-white group border-b-2 border-white last:border-none last:rounded-md"
+                                    onClick={() => {
+                                      handleMenuButtonAction(item)
+                                    }}
+                                    onKeyDown={() => {}}
+                                  >
+                                    <div className="flex items-center justify-between gap-2 rounded-md duration-300 scale-x-100 group-hover:scale-x-95 group-hover:-translate-x-2">
+                                      <div>{item.label}</div>
+                                      {item.icon}
+                                    </div>
+                                  </div>
+                                )
+                              ) : (
                                 <div
-                                  className="cursor-pointer"
+                                  className="p-2 cursor-pointer rounded-t-md hover:bg-gray-700 text-white group border-b-2 border-white last:border-none last:rounded--md"
                                   onClick={() => {
                                     handleMenuButtonAction(item)
                                   }}
+                                  onKeyDown={() => {}}
                                 >
-                                  {item.label}
+                                  <div className="flex items-center justify-between gap-2 rounded-md duration-300 scale-x-100 group-hover:scale-x-95 group-hover:-translate-x-2">
+                                    <div>{item.label}</div>
+                                    {item.icon}
+                                  </div>
                                 </div>
-                                {item.icon}
-                              </div>
-                            </div>
+                              )}
+                            </Fragment>
                           ))}
                         </div>
                       </Menu.Items>
@@ -319,16 +420,33 @@ const DetailProfileContainer = () => {
 
               <div className="flex flex-row gap-10" style={{ zIndex: 2 }}>
                 {tabDatas.map((item) => (
-                  <span
-                    className={`text-white xl:text-2xl text-xl font-medium p-4 cursor-pointer ${
-                      item.key == selectedTab.key ? 'border-b-4 border-purple-700' : ''
-                    }`}
-                    key={item.key}
-                    onClick={() => handleChangeTab(item)}
-                    data-tab={item.label}
-                  >
-                    {item.label}
-                  </span>
+                  <Fragment key={item.key}>
+                    {providerDetail?.isProvider ? (
+                      <span
+                        className={`text-white xl:text-2xl text-xl font-medium p-4 cursor-pointer ${
+                          item.key == selectedTab.key ? 'border-b-4 border-purple-700' : ''
+                        }`}
+                        onClick={() => handleChangeTab(item)}
+                        data-tab={item.label}
+                        onKeyDown={() => {}}
+                      >
+                        {item.label}
+                      </span>
+                    ) : (
+                      item.key != 'Service' && (
+                        <span
+                          className={`text-white xl:text-2xl text-xl font-medium p-4 cursor-pointer ${
+                            item.key == selectedTab.key ? 'border-b-4 border-purple-700' : ''
+                          }`}
+                          onClick={() => handleChangeTab(item)}
+                          data-tab={item.label}
+                          onKeyDown={() => {}}
+                        >
+                          {item.label}
+                        </span>
+                      )
+                    )}
+                  </Fragment>
                 ))}
               </div>
             </div>
@@ -336,9 +454,9 @@ const DetailProfileContainer = () => {
           <div className="p-5">
             <span className="text-white">
               <div className="flex justify-center my-10">
-                {selectedTab.key == 'Service' && <InformationTab data={providerDetail!} />}
+                {providerDetail?.isProvider && selectedTab.key == 'Service' && <InformationTab data={providerDetail} />}
                 {selectedTab.key == 'Album' && <AlbumTab data={providerDetail!} />}
-                {selectedTab.key == 'Post' && <FeedsTab datas={feedData} />}
+                {selectedTab.key == 'Post' && <PostTab providerId={providerDetail!.slug} />}
               </div>
             </span>
           </div>

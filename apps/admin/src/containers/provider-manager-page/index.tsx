@@ -160,7 +160,7 @@ const ProviderManager = () => {
   return (
     <div>
       <Head>
-        <title>Admin | Provider Manager</title>
+        <title>UME | Provider Manager</title>
       </Head>
       <div className="pb-80">
         <span className="content-title">Quản lý nhà cung cấp</span>
@@ -209,17 +209,21 @@ const ProviderManager = () => {
         </div>
         <div className="flex justify-end mb-5 text-gray-500">
           {10 * (page - 1) + 1}-{page * 10 > providerList?.count!! ? providerList?.count : page * 10} trên{' '}
-          {providerList?.count} user
+          {providerList?.count} nhà cung cấp
         </div>
         <TableProviders data={data} isLoading={isUserListLoading} />
         <div className="flex w-full justify-center pb-[200px] mt-5">
           <Pagination
             itemRender={(page, type) => (
-              <div className="text-white">
+              <div className="text-white flex items-center justify-center">
                 {type == 'prev' ? (
-                  <Left theme="outline" size="24" fill="#fff" />
+                  <div className="mt-1.5 ml-1">
+                    <Left theme="outline" size="24" fill="#fff" />
+                  </div>
                 ) : type == 'next' ? (
-                  <Right theme="outline" size="24" fill="#fff" />
+                  <div className="mt-1.5">
+                    <Right theme="outline" size="24" fill="#fff" />
+                  </div>
                 ) : (
                   page
                 )}

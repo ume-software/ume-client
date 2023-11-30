@@ -1,9 +1,10 @@
-import { Button, FieldLabel, FormInput } from '@ume/ui'
+import { FieldLabel, FormInput } from '@ume/ui'
 import { useAuth } from '~/contexts/auth'
-import { getItem } from '~/hooks/localHooks'
+import { getItem, setItem } from '~/hooks/localHooks'
 
 import { useEffect, useState } from 'react'
 
+import { Button } from 'antd'
 import { FormikErrors, useFormik } from 'formik'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
@@ -37,7 +38,8 @@ const SigninPage = () => {
       setSubmiting(true)
       signin.mutate(values, {
         onSuccess: (response) => {
-          login(response.data.admin as any)
+          login(response.data.admin)
+          setItem('user', response.data.admin)
           setSubmiting(false)
           router.push('/dashboard')
         },
@@ -54,12 +56,12 @@ const SigninPage = () => {
     if (adminInfo) {
       router.push('/dashboard')
     }
-  }, [adminInfo])
+  }, [adminInfo, router])
 
   return (
     <>
       <Head>
-        <title>Admin | LOGIN</title>
+        <title>UME | Admin Login</title>
       </Head>
       <div className="flex flex-col justify-center w-full h-screen">
         <div className="mx-auto mb-48 w-96">
@@ -94,16 +96,16 @@ const SigninPage = () => {
                 />
               </div>
               {errorMessage && <p className="text-xs text-ume-error">{errorMessage}</p>}
-              <div className="w-full flex justify-center">
+              <div className="flex justify-center max-w-full">
                 <Button
                   name="submit"
-                  type="submit"
-                  customCSS="bg-blue-500 hover:opacoty-90 px-2 py-1
-            hover:bg-ume-primary focus:bg-ume-primary active:bg-ume-primary/90"
-                  isActive={!(form.values.username || form.values.password) || isSubmiting}
-                  isLoading={isSubmiting}
+                  type="primary"
+                  className="w-full bg-blue-300"
+                  loading={isSubmiting}
+                  disabled={!form.values.username || !form.values.password}
+                  onClick={() => form.handleSubmit()}
                 >
-                  Đăng nhập
+                  <span className={`${form.values.username || form.values.password} ?? text-white `}>Đăng nhập</span>
                 </Button>
               </div>
             </form>

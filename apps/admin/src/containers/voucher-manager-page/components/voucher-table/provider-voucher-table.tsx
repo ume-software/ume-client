@@ -34,9 +34,9 @@ const mappingRecipientType = {
   TOP_10_BOOKER: ' Top 10 người thuê',
 }
 const mappingStatus = {
-  APPROVED: <Tag className="bg-green-600 rounded-lg text-white px-2 py-1 m-0">Đã duyệt</Tag>,
-  PENDING: <Tag className="bg-yellow-600 rounded-lg text-white px-2 py-1 m-0">Chờ duyệt</Tag>,
-  REJECTED: <Tag className="bg-red-600 rounded-lg text-white px-2 py-1 m-0">Bị từ chối</Tag>,
+  APPROVED: <Tag className="px-2 py-1 m-0 text-white bg-green-600 rounded-lg">Đã duyệt</Tag>,
+  PENDING: <Tag className="px-2 py-1 m-0 text-white bg-yellow-600 rounded-lg">Chờ duyệt</Tag>,
+  REJECTED: <Tag className="px-2 py-1 m-0 text-white bg-red-600 rounded-lg">Bị từ chối</Tag>,
 }
 
 const mappingType = {
@@ -85,10 +85,15 @@ const ProviderVoucherTable = ({ data, isLoading }) => {
               notification.success({
                 message: 'Thành công!',
                 description: 'Khuyến mãi đã được kiểm duyệt',
-                placement: 'bottomLeft',
               })
               utils.invalidateQueries('voucher.getAllVoucher')
             }
+          },
+          onError: (err) => {
+            notification.error({
+              message: 'Hành Động không thành công!',
+              description: err.message,
+            })
           },
         },
       )
@@ -109,49 +114,44 @@ const ProviderVoucherTable = ({ data, isLoading }) => {
       ),
     },
     {
-      title: 'Mô tả',
-      dataIndex: 'description',
-      key: 'description',
-    },
-    {
-      title: <div className="w-full flex justify-center">Loại</div>,
+      title: <div className="flex justify-center w-full">Loại</div>,
       dataIndex: 'type',
       key: 'type',
-      render: (type) => <div className="w-full flex justify-center ">{mappingType[type]}</div>,
+      render: (type) => <div className="flex justify-center w-full ">{mappingType[type]}</div>,
     },
     {
-      title: <div className="w-full flex justify-center">Giá trị</div>,
+      title: <div className="flex justify-center w-full">Giá trị</div>,
       key: 'discountValue',
       render: (record) => {
         if (record.discountUnit == 'PERCENT')
-          return <div className="w-full flex justify-center">{record.discountValue + '%'}</div>
+          return <div className="flex justify-center w-full">{record.discountValue + '%'}</div>
         else if (record.discountUnit == 'CASH')
-          return <div className="w-full flex justify-center">{record.discountValue + ' xu'}</div>
+          return <div className="flex justify-center w-full">{record.discountValue + ' xu'}</div>
       },
     },
     {
-      title: <div className="w-full flex justify-center">Bắt đầu</div>,
+      title: <div className="flex justify-center w-full">Bắt đầu</div>,
       key: 'startDate',
       dataIndex: 'startDate',
-      render: (date) => <div className="w-full flex justify-center">{new Date(date).toLocaleDateString('en-GB')}</div>,
+      render: (date) => <div className="flex justify-center w-full">{new Date(date).toLocaleDateString('en-GB')}</div>,
     },
     {
-      title: <div className="w-full flex justify-center">Kết thúc</div>,
+      title: <div className="flex justify-center w-full">Kết thúc</div>,
       key: 'endDate',
       dataIndex: 'endDate',
-      render: (date) => <div className="w-full flex justify-center">{new Date(date).toLocaleDateString('en-GB')}</div>,
+      render: (date) => <div className="flex justify-center w-full">{new Date(date).toLocaleDateString('en-GB')}</div>,
     },
     {
-      title: <div className="w-full flex justify-center">Trạng thái</div>,
+      title: <div className="flex justify-center w-full">Trạng thái</div>,
       key: 'status',
       dataIndex: 'status',
-      render: (text) => <div className="w-full flex justify-center">{mappingStatus[text]}</div>,
+      render: (text) => <div className="flex justify-center w-full">{mappingStatus[text]}</div>,
     },
     {
-      title: <div className="w-full flex justify-center">Đối tượng</div>,
+      title: <div className="flex justify-center w-full">Đối tượng</div>,
       key: 'recipientType',
       dataIndex: 'recipientType',
-      render: (text) => <div className="w-full flex justify-center">{mappingRecipientType[text]}</div>,
+      render: (text) => <div className="flex justify-center w-full">{mappingRecipientType[text]}</div>,
     },
     {
       title: '',
@@ -208,7 +208,7 @@ const ProviderVoucherTable = ({ data, isLoading }) => {
 
   const locale = {
     emptyText: (
-      <div className="flex flex-col items-center justify-center w-full h-full font-bold text-2xl text-white">
+      <div className="flex flex-col items-center justify-center w-full h-full text-2xl font-bold text-white">
         <Image height={600} alt="empty data" src={EmptyErrorPic} />
         Không có data
       </div>
@@ -231,7 +231,7 @@ const ProviderVoucherTable = ({ data, isLoading }) => {
         isComfirmFunction={handleApproval}
         titleValue={`Xác nhận ${approveItem.status == 'APPROVED' ? 'duyệt' : 'từ chối'}`}
       >
-        <div className="text-white p-4 text-center">
+        <div className="p-4 text-center text-white">
           Bạn có chắc chắn muốn {approveItem.status == 'APPROVED' ? 'duyệt' : 'từ chối'} mã khuyến mãi này không?
         </div>
       </ComfirmModal>

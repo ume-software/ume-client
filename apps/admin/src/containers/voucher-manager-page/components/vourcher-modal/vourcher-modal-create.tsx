@@ -1,6 +1,7 @@
 import { Plus } from '@icon-park/react'
 import { Button, FormInput, TextArea } from '@ume/ui'
 import { uploadImageVoucher } from '~/api/upload-media'
+import useDebounce from '~/hooks/adminDebounce'
 
 import * as React from 'react'
 import { useRef, useState } from 'react'
@@ -9,6 +10,7 @@ import { Select, Space, notification } from 'antd'
 import { FormikErrors, useFormik } from 'formik'
 import Image from 'next/legacy/image'
 import {
+  CheckExistedResponse,
   CreateVoucherRequestDiscountUnitEnum,
   CreateVoucherRequestRecipientTypeEnum,
   CreateVoucherRequestTypeEnum,
@@ -31,7 +33,8 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
   const titleValue = 'Thông Tin Khuyến Mãi'
   const issuer = 'ADMIN'
   const MAX_NUMBER = '100000'
-  const [createAt] = useState<any>(new Date().toLocaleDateString('en-GB'))
+  const MAX_NUMBER_DISCOUNT = '100000000'
+  const [startDate, setstartDate] = useState<any>(new Date().toLocaleDateString('en-GB'))
   const [isSubmiting, setSubmiting] = useState(false)
   interface IFormValues {
     vourcherCode: string
@@ -58,10 +61,11 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
       vourcherCode: '',
       imageSource: '',
       description: '',
-      numVoucher: 0,
-      numVoucherInDay: 0,
-      minimize: 0,
+      numVoucher: 1,
+      numVoucherInDay: 1,
+      minimize: 1,
       endDate: new Date().toISOString().split('T')[0],
+      startDate: new Date().toISOString().split('T')[0],
       applyTime: [],
       name: '',
       typeVoucher: CreateVoucherRequestTypeEnum.Discount,
@@ -70,11 +74,14 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
       content: '',
       selectedImage: null,
       status: '',
-      numUserCanUse: 0,
-      numUserCanUseInDay: 0,
+      numUserCanUse: 1,
+      numUserCanUseInDay: 1,
+      minimumBookingDurationForUsage: 0,
+      minimumBookingTotalPriceForUsage: 0,
+      maximumDiscountValue: 0,
     },
     validationSchema: Yup.object({
-      name: Yup.string().required('Name là bắt buộc'),
+      name: Yup.string().required('Tên là bắt buộc'),
       typeVoucher: Yup.string().required('Loại là bắt buộc'),
       discountUnit: Yup.string().required('discountUnit là bắt buộc'),
       audience: Yup.string().required('Đối tượng là bắt buộc'),
@@ -103,7 +110,8 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
   const [openConfirm, setOpenConfirm] = React.useState(false)
   const [isCreate, setIsCreate] = useState<boolean>(false)
   const createNewVoucherAdmin = trpc.useMutation(['voucher.createNewVoucherAdmin'])
-
+  const debouncedValue = useDebounce<string>(form.values.vourcherCode, 500)
+  const [adminCheckVoucherCodeExisted, setAdminCheckVoucherCodeExisted] = useState<CheckExistedResponse>()
   function clearData() {
     form.resetForm()
   }
@@ -143,6 +151,23 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
   function filterOptionTypeVoucher(input, option) {
     return (option?.label ?? '').toUpperCase().includes(input.toUpperCase())
   }
+  trpc.useQuery(
+    [
+      'voucher.adminCheckVoucherCodeExisted',
+      {
+        code: debouncedValue + '',
+      },
+    ],
+    {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: 'always',
+      cacheTime: 0,
+      refetchOnMount: true,
+      onSuccess(data) {
+        setAdminCheckVoucherCodeExisted(data.data)
+      },
+    },
+  )
 
   function handleRecipientType(value) {
     form.setFieldValue('audience', value)
@@ -153,6 +178,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
   }
 
   function handleDisCountUnit(value) {
+    form.setFieldValue('minimize', '0')
     form.setFieldValue('discountUnit', value)
   }
 
@@ -168,15 +194,38 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
     setOpenConfirm(true)
   }
 
-  function checkFieldRequỉed() {
+  function checkFieldRequired() {
     if (form.values.name && form.values.typeVoucher && form.values.discountUnit && form.values.audience) {
       return true
     } else {
       return false
     }
   }
+  function convertToIsoDate(inputDate) {
+    if (inputDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      return inputDate
+    }
+    const parts = inputDate.split('-')
+    if (parts.length === 3) {
+      const year = parts[0]
+      const month = parts[1]
+      const day = parts[2]
+      const isoDate = `${year}-${month}-${day}`
+      return isoDate
+    } else {
+      throw new Error('Invalid date format')
+    }
+  }
+  function convertToDate(inputDate) {
+    const parts = inputDate.split('/')
+    const reversedDate = parts[2] + '-' + parts[1] + '-' + parts[0]
+    const newDate = new Date(reversedDate)
+    return newDate
+  }
   async function submitHandle() {
-    if (await checkFieldRequỉed()) {
+    setOpenConfirm(false)
+    setIsCreate(false)
+    if (await checkFieldRequired()) {
       const imgURL = await uploadImage()
       try {
         const req = {
@@ -188,10 +237,15 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
           dailyNumberIssued: form.values.numVoucherInDay,
           numberUsablePerBooker: form.values.numUserCanUse,
           dailyUsageLimitPerBooker: form.values.numUserCanUseInDay,
-          maximumDiscountValue: form.values.minimize,
-          startDate: new Date(createAt).toISOString(),
-          endDate: new Date(form.values.endDate).toISOString(),
+          discountValue: parseFloat(form.values.minimize.toString().replace(/,/g, '')),
+          startDate: convertToIsoDate(form.values.startDate),
+          endDate: convertToIsoDate(form.values.endDate),
           applyISODayOfWeek: form.values.applyTime,
+          minimumBookingDurationForUsage: form.values.minimumBookingDurationForUsage,
+          minimumBookingTotalPriceForUsage: parseFloat(
+            form.values.minimumBookingTotalPriceForUsage.toString().replace(/,/g, ''),
+          ),
+          maximumDiscountValue: parseFloat(form.values.maximumDiscountValue.toString().replace(/,/g, '')),
         }
         let reqWithValuesNotNull = {
           name: form.values.name,
@@ -205,7 +259,6 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
             reqWithValuesNotNull[key] = req[key]
           }
         }
-        console.log(reqWithValuesNotNull)
 
         createNewVoucherAdmin.mutate(reqWithValuesNotNull, {
           onSuccess: (data) => {
@@ -213,7 +266,6 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
               notification.success({
                 message: 'Tạo thành công!',
                 description: 'đã được tạo thành công.',
-                placement: 'bottomLeft',
               })
               closeHandle()
             }
@@ -222,7 +274,6 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
             notification.error({
               message: 'Tạo thất bại!',
               description: 'Tạo không thành công.',
-              placement: 'bottomLeft',
             })
           },
         })
@@ -252,6 +303,14 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
       console.error('Error uploading image:', error)
     }
     return { imageUrl }
+  }
+  function isDisableButton() {
+    return !form.isValid || form.values.name == '' || (adminCheckVoucherCodeExisted?.isExisted ? true : false)
+  }
+  function formatNumberWithCommas(number) {
+    return number.toLocaleString('en-US', {
+      currency: 'VND',
+    })
   }
 
   return (
@@ -306,12 +365,12 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                 </div>
               </div>
               <div className="flex flex-col justify-end w-2/5 ">
-                <div className="w-full h-12 text-white">
-                  Tên:
-                  <div className="inline-block w-2/3 ">
+                <div className="flex w-full h-12 text-white">
+                  <span className="w-8">*Tên:</span>
+                  <div className="inline-block w-2/3 ml-4">
                     <FormInput
                       name="name"
-                      className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 ml-4 border-opacity-30 ${
+                      className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8  border-opacity-30 ${
                         form.errors.name && form.touched.name ? 'placeholder:text-red-500' : ''
                       }`}
                       placeholder={!!form.errors.name && form.touched.name ? form.errors.name : 'Nhập Tên '}
@@ -324,12 +383,12 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                     />
                   </div>
                 </div>
-                <div className="h-12 text-white">
-                  Mã:
-                  <div className="inline-block w-2/3 ">
+                <div className="flex h-12 text-white ">
+                  <span className="w-8"> Mã:</span>
+                  <div className="inline-block w-2/3 h-12 ml-4">
                     <FormInput
                       name="vourcherCode"
-                      className="bg-[#413F4D] border-2 border-[#FFFFFF] h-8 ml-4 border-opacity-30"
+                      className="bg-[#413F4D] border-2 border-[#FFFFFF] h-8  border-opacity-30"
                       placeholder="Mã: SUPPERSALE"
                       disabled={false}
                       onChange={(e) => {
@@ -342,6 +401,9 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                       errorMessage={form.errors.vourcherCode}
                       type="text"
                     />
+                    {adminCheckVoucherCodeExisted?.isExisted && (
+                      <div className="w-full ml-4 text-xs text-red-500">Mã đã tồn tại</div>
+                    )}
                   </div>
                 </div>
                 <div className="h-12 text-white">
@@ -350,7 +412,27 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
               </div>
               <div className="flex flex-col justify-end w-2/5 ">
                 <div className="h-12 text-white">
-                  Ngày phát hành: <span className="font-bold">{createAt}</span>
+                  Ngày phát hành:
+                  <div className="inline-block w-1/3 ">
+                    <FormInput
+                      name="startDate"
+                      className="bg-[#413F4D] border-2 border-[#FFFFFF] h-8 ml-4 border-opacity-30"
+                      type="date"
+                      pattern="\d{2}/\d{2}/\d{4}"
+                      onChange={(e) => {
+                        if (e.target.value > form.values.endDate) {
+                          form.setFieldValue('endDate', e.target.value)
+                        }
+                        form.handleChange(e)
+                      }}
+                      onBlur={form.handleBlur}
+                      value={form.values.startDate}
+                      error={!!form.errors.startDate && form.touched.startDate}
+                      errorMessage={form.errors.startDate}
+                      min={new Date().toISOString().split('T')[0]}
+                      required
+                    />
+                  </div>
                 </div>
                 <div className="h-12 text-white">
                   Ngày kết thúc:
@@ -365,7 +447,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                       value={form.values.endDate}
                       error={!!form.errors.endDate && form.touched.endDate}
                       errorMessage={form.errors.endDate}
-                      min={new Date().toISOString().split('T')[0]}
+                      min={form.values.startDate}
                       required
                     />
                   </div>
@@ -390,19 +472,25 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                       disabled={false}
                       onChange={(e) => {
                         const newValue = parseInt(e.target.value)
-                        if (!isNaN(newValue) && newValue >= 0) {
+                        if (!isNaN(newValue) && newValue >= 1) {
                           if (newValue > parseInt(MAX_NUMBER)) {
                             e.target.value = MAX_NUMBER
                           } else {
                             e.target.value = newValue.toString()
+                            if (form.values.numUserCanUse > newValue) {
+                              form.setFieldValue('numUserCanUse', newValue)
+                            }
+                            if (form.values.numVoucherInDay > newValue) {
+                              form.setFieldValue('numVoucherInDay', newValue)
+                            }
                           }
                         } else {
-                          e.target.value = '0'
+                          e.target.value = '1'
                         }
                         form.handleChange(e)
                       }}
                       type="number"
-                      min={0}
+                      min={1}
                       max={100000}
                     />
                   </div>
@@ -421,14 +509,14 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                       errorMessage={form.errors.numUserCanUse}
                       onChange={(e) => {
                         const newValue = parseInt(e.target.value)
-                        if (!isNaN(newValue) && newValue >= 0) {
-                          if (newValue > parseInt(MAX_NUMBER)) {
-                            e.target.value = MAX_NUMBER
+                        if (!isNaN(newValue) && newValue >= 1) {
+                          if (newValue > parseInt(form.values.numVoucher + '')) {
+                            e.target.value = form.values.numVoucher + ''
                           } else {
                             e.target.value = newValue.toString()
                           }
                         } else {
-                          e.target.value = '0'
+                          e.target.value = '1'
                         }
                         form.handleChange(e)
                       }}
@@ -534,6 +622,36 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                     </Option>
                   </Select>
                 </div>
+                <div className="h-12 text-white">
+                  Khuyến mãi dùng cho hóa đơn tối thiểu:
+                  <div className="inline-block w-1/5 ">
+                    <FormInput
+                      name="minimumBookingTotalPriceForUsage"
+                      className="bg-[#413F4D] border-2 border-[#FFFFFF] h-8 ml-4 border-opacity-30"
+                      placeholder="Số Lượng"
+                      value={form.values.minimumBookingTotalPriceForUsage}
+                      onBlur={form.handleBlur}
+                      error={
+                        !!form.errors.minimumBookingTotalPriceForUsage && form.touched.minimumBookingTotalPriceForUsage
+                      }
+                      errorMessage={form.errors.minimumBookingTotalPriceForUsage}
+                      onChange={(e) => {
+                        const rawValue = e.target.value
+                        const newValue = parseFloat(rawValue.replace(/,/g, ''))
+                        if (!isNaN(newValue) && newValue >= 0) {
+                          if (newValue > parseFloat(MAX_NUMBER_DISCOUNT)) {
+                            e.target.value = formatNumberWithCommas(parseFloat(MAX_NUMBER_DISCOUNT))
+                          } else {
+                            e.target.value = formatNumberWithCommas(newValue)
+                          }
+                        } else {
+                          e.target.value = '0'
+                        }
+                        form.handleChange(e)
+                      }}
+                    />
+                  </div>
+                </div>
               </div>
               <div className="flex flex-col justify-end w-2/5 ">
                 <div className="h-12 text-white">
@@ -549,14 +667,24 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                       errorMessage={form.errors.numVoucherInDay}
                       onChange={(e) => {
                         const newValue = parseInt(e.target.value)
-                        if (!isNaN(newValue) && newValue >= 0) {
-                          if (newValue > parseInt(MAX_NUMBER)) {
-                            e.target.value = MAX_NUMBER
+
+                        if (!isNaN(newValue) && newValue >= 1) {
+                          if (
+                            newValue >
+                            parseInt(
+                              // Math.floor(form.values.numVoucher / caculateDailyNumberIssued()) + ''
+                              form.values.numVoucher + '',
+                            )
+                          ) {
+                            e.target.value = form.values.numVoucher + ''
                           } else {
                             e.target.value = newValue.toString()
+                            if (parseInt(form.values.numUserCanUseInDay + '') > newValue) {
+                              form.setFieldValue('numUserCanUseInDay', newValue)
+                            }
                           }
                         } else {
-                          e.target.value = '0'
+                          e.target.value = '1'
                         }
                         form.handleChange(e)
                       }}
@@ -579,14 +707,14 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                       errorMessage={form.errors.numUserCanUseInDay}
                       onChange={(e) => {
                         const newValue = parseInt(e.target.value)
-                        if (!isNaN(newValue) && newValue >= 0) {
-                          if (newValue > parseInt(MAX_NUMBER)) {
-                            e.target.value = MAX_NUMBER
+                        if (!isNaN(newValue) && newValue >= 1) {
+                          if (newValue > parseInt(form.values.numVoucherInDay + '')) {
+                            e.target.value = form.values.numVoucherInDay + ''
                           } else {
                             e.target.value = newValue.toString()
                           }
                         } else {
-                          e.target.value = '0'
+                          e.target.value = '1'
                         }
                         form.handleChange(e)
                       }}
@@ -596,36 +724,53 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                     />
                   </div>
                 </div>
-                <div className="h-12 text-white">
-                  Giảm tối đa:
-                  <div className="inline-block w-1/4 ">
+                <div className="flex items-baseline w-full h-12 text-white">
+                  <span className="h-8">Giảm:</span>
+                  <div
+                    className={`inline-block  ml-1 ${
+                      form.values.discountUnit == CreateVoucherRequestDiscountUnitEnum.Percent ? 'w-2/12' : 'w-3/12'
+                    }`}
+                  >
                     <FormInput
                       name="minimize"
-                      className="bg-[#413F4D]  border-2 border-[#FFFFFF] h-8 ml-4 border-opacity-30"
+                      className="bg-[#413F4D]  border-2 border-[#FFFFFF] h-8 border-opacity-30 "
                       placeholder="Số Lượng"
                       value={form.values.minimize}
                       onBlur={form.handleBlur}
                       error={!!form.errors.minimize && form.touched.minimize}
                       errorMessage={form.errors.minimize}
                       onChange={(e) => {
-                        const newValue = parseInt(e.target.value)
-                        if (!isNaN(newValue) && newValue >= 0) {
-                          if (newValue > parseInt(MAX_NUMBER)) {
-                            e.target.value = MAX_NUMBER
+                        if (form.values.discountUnit == CreateVoucherRequestDiscountUnitEnum.Percent) {
+                          const newValue = parseInt(e.target.value)
+                          if (!isNaN(newValue) && newValue >= 1) {
+                            if (newValue > parseInt('100')) {
+                              e.target.value = '100'
+                            } else {
+                              e.target.value = newValue.toString()
+                            }
                           } else {
-                            e.target.value = newValue.toString()
+                            e.target.value = '1'
                           }
+                          form.handleChange(e)
                         } else {
-                          e.target.value = '0'
+                          const rawValue = e.target.value
+                          const newValue = parseFloat(rawValue.replace(/,/g, ''))
+                          if (!isNaN(newValue) && newValue >= 0) {
+                            if (newValue > parseFloat(MAX_NUMBER_DISCOUNT)) {
+                              e.target.value = formatNumberWithCommas(parseFloat(MAX_NUMBER_DISCOUNT))
+                            } else {
+                              e.target.value = formatNumberWithCommas(newValue)
+                            }
+                          } else {
+                            e.target.value = '0'
+                          }
+                          form.handleChange(e)
                         }
-                        form.handleChange(e)
                       }}
-                      type="number"
-                      min={0}
-                      max={100}
+                      type="text"
                     />
                   </div>
-                  <div className="inline-block w-1/4 ml-1 ">
+                  <div className="inline-block w-2/12 ml-1">
                     <Select
                       showSearch
                       placeholder="Loại"
@@ -634,8 +779,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                       filterOption={filterOptionDisCountUnit}
                       defaultValue={form.values.discountUnit}
                       style={{
-                        minWidth: '4rem',
-                        marginLeft: '1rem',
+                        minWidth: '2rem',
                       }}
                       options={[
                         {
@@ -644,11 +788,43 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                         },
                         {
                           value: CreateVoucherRequestDiscountUnitEnum.Cash,
-                          label: 'k/VND',
+                          label: 'VND',
                         },
                       ]}
                     />
                   </div>
+                  {form.values.discountUnit == CreateVoucherRequestDiscountUnitEnum.Percent && (
+                    <div className="flex items-center justify-end w-6/12">
+                      <span className="">Giảm Tối Đa:</span>
+                      <div className="inline-block w-6/12 ml-1 mr-1">
+                        <FormInput
+                          name="maximumDiscountValue"
+                          className="bg-[#413F4D]  border-2 border-[#FFFFFF] h-8 border-opacity-30"
+                          placeholder=""
+                          value={formatNumberWithCommas(form.values.maximumDiscountValue)}
+                          onBlur={form.handleBlur}
+                          error={!!form.errors.maximumDiscountValue && form.touched.maximumDiscountValue}
+                          errorMessage={form.errors.maximumDiscountValue}
+                          onChange={(e) => {
+                            const rawValue = e.target.value
+                            const newValue = parseFloat(rawValue.replace(/,/g, ''))
+                            if (!isNaN(newValue) && newValue >= 0) {
+                              if (newValue > parseFloat(MAX_NUMBER_DISCOUNT)) {
+                                e.target.value = formatNumberWithCommas(parseFloat(MAX_NUMBER_DISCOUNT))
+                              } else {
+                                e.target.value = formatNumberWithCommas(newValue)
+                              }
+                            } else {
+                              e.target.value = '0'
+                            }
+                            form.handleChange(e)
+                          }}
+                          type="text"
+                        />
+                      </div>
+                      <span className="text-xs italic"> đ</span>
+                    </div>
+                  )}
                 </div>
                 <div className="h-12 text-white">
                   Đối tượng:
@@ -691,6 +867,38 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                     ]}
                   />
                 </div>
+                <div className="h-12 text-white">
+                  Khuyến mãi dùng cho hóa đơn có giờ tối thiểu:
+                  <div className="inline-block w-1/5 ">
+                    <FormInput
+                      name="minimumBookingDurationForUsage"
+                      className="bg-[#413F4D] border-2 border-[#FFFFFF] h-8 ml-4 border-opacity-30"
+                      placeholder="Số Lượng"
+                      value={form.values.minimumBookingDurationForUsage}
+                      onBlur={form.handleBlur}
+                      error={
+                        !!form.errors.minimumBookingDurationForUsage && form.touched.minimumBookingDurationForUsage
+                      }
+                      errorMessage={form.errors.minimumBookingDurationForUsage}
+                      onChange={(e) => {
+                        const newValue = parseInt(e.target.value)
+                        if (!isNaN(newValue) && newValue >= 0) {
+                          if (newValue > parseInt('24')) {
+                            e.target.value = '24'
+                          } else {
+                            e.target.value = newValue.toString()
+                          }
+                        } else {
+                          e.target.value = '0'
+                        }
+                        form.handleChange(e)
+                      }}
+                      type="number"
+                      min={0}
+                      max={100000}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
             <div className="w-auto px-4 border-b-2 border-[#FFFFFF80] pb-5">
@@ -699,7 +907,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                   <span className="w-16 mr-4">Mô tả: </span>
                   <TextArea
                     name="description"
-                    className="bg-[#413F4D] w-4/5"
+                    className="bg-[#413F4D] w-4/5 max-h-[140px]"
                     rows={5}
                     value={form.values.description}
                     onChange={form.handleChange}
@@ -714,13 +922,17 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
             </Button>
             <Button
               customCSS={`mx-6 px-4 py-1 border-2  ${
-                form.isValid && form.values.name != '' && 'hover:scale-110 bg-[#7463F0] border-[#7463F0]'
+                !isDisableButton() && 'hover:scale-110 bg-[#7463F0] border-[#7463F0]'
               }`}
               onClick={(e) => {
-                e.preventDefault()
-                openConfirmModal()
+                if (createNewVoucherAdmin.isLoading) {
+                  return
+                } else {
+                  e.preventDefault()
+                  openConfirmModal()
+                }
               }}
-              isDisable={!form.isValid || form.values.name === ''}
+              isDisable={isDisableButton()}
             >
               {'Tạo'}
             </Button>

@@ -119,7 +119,7 @@ const ApproveProviderVoucher = () => {
   return (
     <div>
       <div className="flex justify-between">
-        <span className="content-title">Kiểm duyệt khuyến mãi từ quản trị viên</span>
+        <span className="content-title">Kiểm duyệt khuyến mãi từ nhà cung cấp</span>
         <div></div>
       </div>
 
@@ -172,9 +172,13 @@ const ApproveProviderVoucher = () => {
           itemRender={(page, type) => (
             <div className="text-white">
               {type == 'prev' ? (
-                <Left theme="outline" size="24" fill="#fff" />
+                <div className="mt-1.5 ml-1">
+                  <Left theme="outline" size="24" fill="#fff" />
+                </div>
               ) : type == 'next' ? (
-                <Right theme="outline" size="24" fill="#fff" />
+                <div className="mt-1.5">
+                  <Right theme="outline" size="24" fill="#fff" />
+                </div>
               ) : (
                 page
               )}

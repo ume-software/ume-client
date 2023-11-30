@@ -18,7 +18,6 @@ export const getAllVoucher = async (ctx, query: { page: string; where?: string; 
     return {
       data: response.data,
       success: true,
-      message: 'Success',
     }
   } catch (error) {
     throw new TRPCError({
@@ -39,7 +38,6 @@ export const getVoucherDetails = async (ctx, query: { id; select }) => {
     return {
       data: response.data,
       success: true,
-      message: 'Success',
     }
   } catch (error) {
     throw new TRPCError({
@@ -83,7 +81,28 @@ export const updateVoucherAdmin = async (input: { id: string; voucherUpdate: Upd
   } catch (error) {
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
-      message: error.message || 'Failed to create voucher',
+      message: error.response.data.data.message || 'Failed to update voucher',
+    })
+  }
+}
+
+export const adminCheckVoucherCodeExisted = async (ctx, query: { code }) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie ?? '')
+    const response = await new AdminManageVoucherApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).adminCheckVoucherCodeExisted(query.code)
+
+    return {
+      data: response.data,
+      success: true,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.message || 'Authentication failed',
     })
   }
 }

@@ -11,7 +11,32 @@ export const uploadImageVoucher = async (formData) => {
     return {
       data: response,
     }
+  } catch (error) {}
+}
+export const uploadImageServices = async (formData) => {
+  try {
+    const response = await new ImageApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+    }).uploadImage(undefined, formData)
+    return {
+      data: response,
+    }
   } catch (error) {
     console.log('error at catch', error)
+  }
+}
+
+export const uploadImageAdminAccount = async (formData) => {
+  try {
+    const response = await new ImageApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+    }).uploadImage(undefined, formData)
+    return {
+      data: response,
+    }
+  } catch (error) {
+    throw error
   }
 }
