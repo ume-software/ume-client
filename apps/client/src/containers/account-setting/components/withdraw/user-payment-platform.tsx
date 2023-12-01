@@ -115,6 +115,7 @@ const UserPaymentPlatform = (props: {
         title="Thay đổi thông tin cá nhân"
         description="Bạn có chấp nhận thay đổi thông tin cá nhân hay không?"
         onClose={handleClose}
+        isLoading={createUserPaymentSystem.isLoading}
         onOk={() => {
           actionModal == ActionEnum.CREATE ? handleCreateUserPaymentSystem() : handleUpdateUserPaymentSystem()
         }}

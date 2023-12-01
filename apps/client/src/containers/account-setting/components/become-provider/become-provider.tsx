@@ -132,6 +132,7 @@ const BecomeProvider = () => {
       <ConfirmForm
         title="Thay đổi giới thiệu"
         description="Bạn có chấp nhận thay đổi giới thiệu hay không?"
+        isLoading={updateIntroduceProvider.isLoading}
         onClose={() => setIsModalConfirmationVisible(false)}
         onOk={async () => {
           if (updateIntroduceForProviderFormRef.current) {

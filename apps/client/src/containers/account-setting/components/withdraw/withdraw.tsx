@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { CloseSmall, Plus } from '@icon-park/react'
+import { CloseSmall, DeleteFive, Plus } from '@icon-park/react'
 import { Button, Modal } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
 import 'swiper/swiper-bundle.css'
@@ -51,9 +51,10 @@ const Withdraw = () => {
   const [withdrawRequestIds, setWithdrawRequestIds] = useState<string[]>([])
   const [windrawRequest, setWindrawRequest] = useState<any>(undefined)
   const [withdrawRequestPage, setWithdrawRequestPage] = useState<string>('1')
+  const [actionConfirmModal, setActionConfirmModal] = useState(ActionEnum.CANCEL_WITHDRAW_REQ)
   const [isModalConfirmationVisible, setIsModalConfirmationVisible] = useState(false)
 
-  const [idWithdrawReq, setIdWithdrawReq] = useState<string>('')
+  const [idWithdraw, setIdWithdraw] = useState<string>('')
   const [withdrawDetail, setWithdrawDetail] = useState<any>(undefined)
   const [isModalWithdrawReqDetailVisible, setIsModalWithdrawReqDetailVisible] = useState(false)
   const limit = '10'
@@ -68,6 +69,7 @@ const Withdraw = () => {
   )
 
   const cancelWithdrawRequests = trpc.useMutation(['identity.cancelWithdrawRequests'])
+  const deletePaymentAcc = trpc.useMutation(['identity.deleteUserPaymentSystem'])
   const utils = trpc.useContext()
 
   const handleClose = () => {
@@ -109,6 +111,11 @@ const Withdraw = () => {
   const handleViewPaymentAccount = (paymentAcc: UserPaymentSystemResponse) => {
     setPaymentAccount(paymentAcc)
     setIsModalVisible(true)
+  }
+  const handleDeletePaymentAccount = (paymentAcc: UserPaymentSystemResponse) => {
+    setPaymentAccount(paymentAcc)
+    setActionConfirmModal(ActionEnum.DELETE_WITHDRAW_ACC)
+    setIsModalConfirmationVisible(true)
   }
 
   useEffect(() => {
@@ -158,7 +165,8 @@ const Withdraw = () => {
   }
   const handleCancelWithdrawDetail = (id: string) => {
     if (windrawRequest?.row?.find((itemWithdraw) => itemWithdraw.id == id)?.status == 'PENDING') {
-      setIdWithdrawReq(id)
+      setActionConfirmModal(ActionEnum.CANCEL_WITHDRAW_REQ)
+      setIdWithdraw(id)
       setIsModalConfirmationVisible(true)
     } else {
       notification.warning({
@@ -175,29 +183,56 @@ const Withdraw = () => {
     show: isModalConfirmationVisible,
     form: (
       <ConfirmForm
-        title="Hủy yêu cầu rút tiền"
-        description="Bạn có chấp nhận hủy yêu cầu rút tiền này hay không?"
+        title={`${
+          actionConfirmModal === ActionEnum.CANCEL_WITHDRAW_REQ ? 'Hủy yêu cầu rút tiền' : 'Xóa tài khoản này'
+        }`}
+        description={`${
+          actionConfirmModal === ActionEnum.CANCEL_WITHDRAW_REQ
+            ? 'Bạn có chấp nhận hủy yêu cầu rút tiền này hay không?'
+            : `Bạn có đồng ý xóa tài khoản: <<${paymentAccount?.platformAccount} - ${paymentAccount?.platform} - ${paymentAccount?.beneficiary}>> không?`
+        }`}
         onClose={handleClose}
+        isLoading={cancelWithdrawRequests.isLoading}
         onOk={() => {
-          cancelWithdrawRequests.mutate(idWithdrawReq, {
-            onSuccess() {
-              setIsModalConfirmationVisible(false)
-              setIsModalWithdrawReqDetailVisible(false)
-              utils.invalidateQueries(['identity.getWithdrawRequests'])
-              notification.success({
-                message: 'Hủy yêu cầu rút tiền thành công',
-                description: 'Yêu cầu rút tiền của bạn đã được hủy',
-                placement: 'bottomLeft',
+          actionConfirmModal === ActionEnum.CANCEL_WITHDRAW_REQ
+            ? cancelWithdrawRequests.mutate(idWithdraw, {
+                onSuccess() {
+                  setIsModalConfirmationVisible(false)
+                  setIsModalWithdrawReqDetailVisible(false)
+                  utils.invalidateQueries(['identity.getWithdrawRequests'])
+                  notification.success({
+                    message: 'Hủy yêu cầu rút tiền thành công',
+                    description: 'Yêu cầu rút tiền của bạn đã được hủy',
+                    placement: 'bottomLeft',
+                  })
+                },
+                onError() {
+                  notification.error({
+                    message: 'Hủy yêu cầu rút tiền thất bại',
+                    description: 'Hủy yêu cầu rút tiền thất bại. Vui lòng thử lại sau!',
+                    placement: 'bottomLeft',
+                  })
+                },
               })
-            },
-            onError() {
-              notification.error({
-                message: 'Hủy yêu cầu rút tiền thất bại',
-                description: 'Hủy yêu cầu rút tiền thất bại. Vui lòng thử lại sau!',
-                placement: 'bottomLeft',
+            : deletePaymentAcc.mutate(paymentAccount?.id ?? '', {
+                onSuccess() {
+                  setIsModalConfirmationVisible(false)
+                  setIsModalWithdrawReqDetailVisible(false)
+                  utils.invalidateQueries(['identity.getUserPaymentSystems'])
+                  notification.success({
+                    message: 'Xóa tài khoản rút tiền thành công',
+                    description: 'Tài khoản rút tiền của bạn đã được xóa',
+                    placement: 'bottomLeft',
+                  })
+                },
+                onError() {
+                  notification.error({
+                    message: 'Xóa tài khoản rút tiền thất bại',
+                    description: 'Xóa tài khoản rút tiền thất bại. Vui lòng thử lại sau!',
+                    placement: 'bottomLeft',
+                  })
+                },
               })
-            },
-          })
         }}
       />
     ),
@@ -408,34 +443,46 @@ const Withdraw = () => {
                       <SwiperSlide
                         className="max-w-fit duration-500 ease-in-out cursor-pointer hover:scale-105"
                         key={paymentPlatform.id}
-                        onClick={() => handleViewPaymentAccount(paymentPlatform)}
                       >
-                        <div
-                          className={`flex items-center gap-5 border-2 border-white border-opacity-30 rounded-2xl p-3`}
-                        >
-                          <div className="relative w-[130px] h-[130px]">
-                            <Image
-                              key={paymentPlatform.id}
-                              className="absolute rounded-xl pointer-events-none object-cover"
-                              layout="fill"
-                              src={
-                                paymentPlat.find((paymentPlat) => paymentPlat.key == paymentPlatform.platform)
-                                  ?.imgSrc ?? ImgForEmpty
-                              }
-                              alt={paymentPlatform.platform}
-                            />
+                        <div className="flex justify-between items-start border-2 border-white border-opacity-30 rounded-2xl p-3">
+                          <div
+                            className={`flex items-center gap-5`}
+                            onClick={() => handleViewPaymentAccount(paymentPlatform)}
+                          >
+                            <div className="relative w-[130px] h-[130px]">
+                              <Image
+                                key={paymentPlatform.id}
+                                className="absolute rounded-xl pointer-events-none object-cover"
+                                layout="fill"
+                                src={
+                                  paymentPlat.find((paymentPlat) => paymentPlat.key == paymentPlatform.platform)
+                                    ?.imgSrc ?? ImgForEmpty
+                                }
+                                alt={paymentPlatform.platform}
+                              />
+                            </div>
+                            <div className="">
+                              <span className="flex gap-3">
+                                <p className="text-white opacity-30">Nền tảng:</p> {paymentPlatform.platform}
+                              </span>
+                              <span className="flex gap-3">
+                                <p className="text-white opacity-30">Số tài khoản:</p> {paymentPlatform.platformAccount}
+                              </span>
+                              <span className="flex gap-3">
+                                <p className="text-white opacity-30">Người nhận:</p> {paymentPlatform.beneficiary}
+                              </span>
+                            </div>
                           </div>
-                          <div className="">
-                            <span className="flex gap-3">
-                              <p className="text-white opacity-30">Nền tảng:</p> {paymentPlatform.platform}
-                            </span>
-                            <span className="flex gap-3">
-                              <p className="text-white opacity-30">Số tài khoản:</p> {paymentPlatform.platformAccount}
-                            </span>
-                            <span className="flex gap-3">
-                              <p className="text-white opacity-30">Người nhận:</p> {paymentPlatform.beneficiary}
-                            </span>
-                          </div>
+                          <DeleteFive
+                            theme="outline"
+                            size="20"
+                            fill="#FFF"
+                            strokeLinejoin="bevel"
+                            className="p-2 rounded-full hover:bg-gray-700"
+                            onClick={() => {
+                              handleDeletePaymentAccount(paymentPlatform)
+                            }}
+                          />
                         </div>
                       </SwiperSlide>
                     ))}

@@ -521,7 +521,28 @@ export const createUserPaymentSystem = async (
   } catch (error) {
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
-      message: error.message || 'Fail to get payment system',
+      message: error.message || 'Fail to create payment system',
+    })
+  }
+}
+
+export const deleteUserPaymentSystem = async (paymentSystemId: string, ctx) => {
+  const cookies = parse(ctx.req.headers.cookie ?? '')
+  try {
+    const reponse = await new UserPaymentSystemApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).deleteUserPaymentSystem(paymentSystemId)
+    return {
+      data: reponse.data,
+      success: true,
+      message: '',
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to delete payment system',
     })
   }
 }

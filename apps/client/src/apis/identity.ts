@@ -16,6 +16,7 @@ import {
   createServiceProvider,
   createUserPaymentSystem,
   createWithdrawRequests,
+  deleteUserPaymentSystem,
   getAccountBalance,
   getHistoryTransaction,
   getIdentityInfo,
@@ -265,6 +266,12 @@ export const identityRouter = createRouter()
     }),
     resolve: async ({ input, ctx }) => {
       return await createUserPaymentSystem(input, ctx)
+    },
+  })
+  .mutation('deleteUserPaymentSystem', {
+    input: z.string(),
+    resolve: async ({ input, ctx }) => {
+      return await deleteUserPaymentSystem(input, ctx)
     },
   })
   .query('getWithdrawRequests', {
