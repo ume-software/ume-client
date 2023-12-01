@@ -192,7 +192,7 @@ const Withdraw = () => {
             : `Bạn có đồng ý xóa tài khoản: <<${paymentAccount?.platformAccount} - ${paymentAccount?.platform} - ${paymentAccount?.beneficiary}>> không?`
         }`}
         onClose={handleClose}
-        isLoading={cancelWithdrawRequests.isLoading}
+        isLoading={cancelWithdrawRequests.isLoading || deletePaymentAcc.isLoading}
         onOk={() => {
           actionConfirmModal === ActionEnum.CANCEL_WITHDRAW_REQ
             ? cancelWithdrawRequests.mutate(idWithdraw, {
@@ -448,6 +448,7 @@ const Withdraw = () => {
                           <div
                             className={`flex items-center gap-5`}
                             onClick={() => handleViewPaymentAccount(paymentPlatform)}
+                            onKeyDown={() => {}}
                           >
                             <div className="relative w-[130px] h-[130px]">
                               <Image

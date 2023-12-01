@@ -298,7 +298,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                     {childrenDrawer}
                   </CustomDrawer>
 
-                  {!props.data?.isBanned && (
+                  {!props.data?.isBanned && props.data.providerConfig?.status == 'ACTIVATED' && (
                     <CustomDrawer
                       drawerTitle="Xác nhận đặt"
                       customOpenBtn="rounded-full text-white bg-purple-700 font-semibold text-2xl cursor-pointer hover:scale-105 text-center"

@@ -158,6 +158,7 @@ const AddSkillForm = () => {
 
   const createProvicerService = trpc.useMutation('identity.createServiceProvider')
   const updateProvicerService = trpc.useMutation('identity.updateServiceProvider')
+  const deleteProviderService = trpc.useMutation('identity.deleteServiceProvider')
 
   const [displaySearchBox, setDisplaySearchBox] = useState<MenuDisplayProps>({
     parent: 0,
@@ -269,17 +270,24 @@ const AddSkillForm = () => {
   }
 
   const handleRemoveAttribute = (index: number) => {
-    const updatedAttributes = [...attributes]
-    updatedAttributes.splice(index, 1)
-    setAttributes(updatedAttributes)
-
-    const updatedAttributesDisplay = [...attributesDisplay]
-    updatedAttributesDisplay.splice(index, 1)
-    setAttributesDisplay(updatedAttributesDisplay)
-
-    setListServiceFilter(
-      listService?.filter((service) => service.name?.toLocaleLowerCase().includes(''.toLocaleLowerCase())),
-    )
+    deleteProviderService.mutate(attributes[index].service?.id ?? '', {
+      onSuccess() {
+        utils.invalidateQueries('identity.providerGetServiceHaveNotRegistered')
+        utils.invalidateQueries('identity.providerGetOwnServices')
+        notification.success({
+          message: `Xóa dịch vụ thành công`,
+          description: `Dịch vụ đã được xóa`,
+          placement: 'bottomLeft',
+        })
+      },
+      onError() {
+        notification.error({
+          message: `Xóa dịch vụ thất bại`,
+          description: `Có lỗi trong quá trình xóa. Vui lòng thử lại sau!`,
+          placement: 'bottomLeft',
+        })
+      },
+    })
     setIsModalConfirmationVisible(false)
   }
 
@@ -773,6 +781,7 @@ const AddSkillForm = () => {
           title={`${serviceForm.title}`}
           description={`${serviceForm.description}`}
           onClose={closeConfirmModal}
+          isLoading={updateProvicerService.isLoading || deleteProviderService.isLoading}
           onOk={() => {
             switch (serviceForm.form) {
               case 'UPDATE':
@@ -820,7 +829,10 @@ const AddSkillForm = () => {
               listService?.length > 0 &&
               attributes.map((attr, index) => (
                 <>
-                  {(createProvicerService.isLoading || updateProvicerService.isLoading) && indexServiceForm == index ? (
+                  {(createProvicerService.isLoading ||
+                    updateProvicerService.isLoading ||
+                    deleteProviderService.isLoading) &&
+                  indexServiceForm == index ? (
                     <div key={index} className="col-span-2 border border-white border-opacity-30 p-5 rounded-3xl">
                       <div className="w-full h-full flex justify-center items-center">
                         <span

@@ -457,6 +457,27 @@ export const updateServiceProvider = async (
   }
 }
 
+export const deleteServiceProvider = async (serviceId: string, ctx) => {
+  const cookies = parse(ctx.req.headers.cookie ?? '')
+  try {
+    const reponse = await new ProviderServiceApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).deleteProviderService(serviceId)
+    return {
+      data: reponse.data,
+      success: true,
+      message: '',
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to get data recharge',
+    })
+  }
+}
+
 export const getHistoryTransaction = async (
   query: { limit: string; page: string; where?: string; order?: string },
   ctx,
