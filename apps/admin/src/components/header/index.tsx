@@ -52,7 +52,6 @@ export const Header = ({ handleOpen, openSideBar, setOpenPopupSideBar, openPopup
     if (!user && !adminInfo) {
       handleLogOut()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleItemSelected = (e) => {
