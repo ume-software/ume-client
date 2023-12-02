@@ -71,10 +71,8 @@ const PromoteCard = (props: { data: FilterProviderResponse }) => {
           <p className="text-md font-semibold">{props?.data?.serviceName}</p>
           {props?.data?.star ? (
             <div className="flex items-center gap-1 text-lg font-bold">
-              <>
-                <Star theme="filled" size="15" fill="#FFBB00" strokeLinejoin="bevel" />
-                {Number(props?.data?.star ?? 0).toFixed(1)}
-              </>
+              <Star theme="filled" size="15" fill="#FFBB00" strokeLinejoin="bevel" />
+              {Number(props?.data?.star ?? 0).toFixed(1)}
             </div>
           ) : (
             ''

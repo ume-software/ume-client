@@ -9,8 +9,6 @@ import ConfirmForm from '~/components/confirm-form/confirm-form'
 import { trpc } from '~/utils/trpc'
 
 const EndSoonModal = ({ isEndSoonModalVisible, setIsEndSoonModalVisible, bookingHistoryId }) => {
-  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
-
   const responeBooking = trpc.useMutation(['booking.putProviderResponeBooking'])
   const utils = trpc.useContext()
 
@@ -29,9 +27,7 @@ const EndSoonModal = ({ isEndSoonModalVisible, setIsEndSoonModalVisible, booking
               responeBooking.mutate(
                 {
                   bookingHistoryId: bookingHistoryId,
-                  status: userInfo?.isProvider
-                    ? BookingHandleRequestStatusEnum.ProviderFinishSoon
-                    : BookingHandleRequestStatusEnum.UserFinishSoon,
+                  status: BookingHandleRequestStatusEnum.UserFinishSoon,
                 },
                 {
                   onSuccess: (data) => {
@@ -43,7 +39,6 @@ const EndSoonModal = ({ isEndSoonModalVisible, setIsEndSoonModalVisible, booking
                         placement: 'bottomLeft',
                       })
                       utils.invalidateQueries('booking.getCurrentBookingForUser')
-                      utils.invalidateQueries('booking.getCurrentBookingForProvider')
                     }
                   },
                   onError: () => {

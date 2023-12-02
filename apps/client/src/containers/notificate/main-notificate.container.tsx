@@ -1,22 +1,73 @@
-import ImgForEmpty from 'public/img-for-empty.png'
+import SystemImg from 'public/32x32/ume-logo-white.png'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { parse } from 'cookie'
-import Image from 'next/image'
+import Image from 'next/legacy/image'
+import Link from 'next/link'
+import { NoticePagingResponse, NoticeResponseTypeEnum } from 'ume-service-openapi'
 
 import { NotificateSkeletonLoader } from '~/components/skeleton-load'
 import { TimeFormat } from '~/components/time-format'
 
 import { trpc } from '~/utils/trpc'
 
+interface NotificateTypeProps {
+  key: string
+  label: string
+  [key: string]: any
+}
+
+const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
+
+const notificate: NotificateTypeProps[] = [
+  {
+    key: NoticeResponseTypeEnum.AdminHasApprovedKycRequest,
+    label: 'KYC của bạn đã được chấp nhận',
+    link: `/account-setting?user=${userInfo?.name}&tab=settingInformation`,
+  },
+  { key: NoticeResponseTypeEnum.AdminHasBannedProvider, label: 'Tài khoản nhà cung cấp của bạn đã bị chặn' },
+  {
+    key: NoticeResponseTypeEnum.AdminHasCompletedWithdrawalRequest,
+    label: 'Yêu cầu rút tiền của bạn đã được hoàn thành',
+    link: `/account-setting?user=${userInfo?.name}&tab=withdraw`,
+  },
+  {
+    key: NoticeResponseTypeEnum.AdminHasRejectedKycRequest,
+    label: 'KYC của bạn đã bị từ chối',
+    link: `/account-setting?user=${userInfo?.name}&tab=settingInformation`,
+  },
+  {
+    key: NoticeResponseTypeEnum.AdminHasRejectedWithdrawalRequest,
+    label: 'Yêu cầu rút tiền của bạn đã bị từ chối',
+    link: `/account-setting?user=${userInfo?.name}&tab=withdraw`,
+  },
+  {
+    key: NoticeResponseTypeEnum.AdminHasUnBannedProvider,
+    label: 'Tài khoản nhà cung cấp của bạn đã được mở khóa',
+    link: `/profile/${userInfo?.slug ?? userInfo?.id}?tab=${userInfo?.isProvider ? 'Service' : 'Album'}`,
+  },
+  {
+    key: NoticeResponseTypeEnum.BookingHasBeenDeclined,
+    label: 'Đơn thuê của bạn đã bị từ chối',
+    link: `/profile/`,
+  },
+  {
+    key: NoticeResponseTypeEnum.BookingHasBeenSucceeded,
+    label: 'Đơn thuê của bạn đã được chấp nhận',
+    link: `/profile/`,
+  },
+  { key: NoticeResponseTypeEnum.HaveBooking, label: 'Có yêu cầu thuê mới được gửi tới', link: `/profile/` },
+  { key: NoticeResponseTypeEnum.NewMessage, label: 'Bạn có tin nhắn mới' },
+  { key: NoticeResponseTypeEnum.SomeoneFollowingYou, label: 'đã theo dõi bạn', link: `/profile/` },
+]
+
 const MainNotificate = () => {
   const accessToken = parse(document.cookie).accessToken
-  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
 
   const [page, setPage] = useState<number>(1)
   const limit = '10'
-  const [listNotificated, setListNotificated] = useState<any>([])
+  const [listNotificated, setListNotificated] = useState<NoticePagingResponse['row']>([])
   const [scrollPosition, setScrollPosition] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -66,7 +117,7 @@ const MainNotificate = () => {
 
   return (
     <>
-      {Boolean(userInfo.id) ? (
+      {!!accessToken ? (
         <>
           {loadingNotificated ? (
             <NotificateSkeletonLoader />
@@ -78,35 +129,41 @@ const MainNotificate = () => {
                     key={item.id}
                     className="px-2 py-3 border-b-2 border-gray-200 border-opacity-30 rounded-t-lg hover:bg-gray-700 cursor-pointer"
                   >
-                    <div className="grid grid-cols-10">
-                      <div className="col-span-3">
-                        <div className="w-[90%] h-full relative rounded-lg">
-                          <Image
-                            className="rounded-lg"
-                            src={item?.booker?.avatarUrl || item?.providerService?.service?.imageUrl || ImgForEmpty}
-                            alt="Game Image"
-                            layout="fill"
-                            objectFit="contain"
-                          />
-                        </div>
-                      </div>
-                      <div className="col-span-7">
-                        <div className="flex flex-col gap-2">
-                          <div className="font-bold truncate">{item?.booker?.name || item?.data?.booker?.name}</div>
-                          <div>
-                            Đã gửi yêu cầu chơi game{' '}
-                            <p className="inline font-bold">
-                              {item?.providerService?.service?.name || item?.data?.providerService?.service?.name}
-                            </p>{' '}
-                            cùng bạn thời gian là:{' '}
-                            <p className="inline font-bold">{item?.bookingPeriod || item?.data?.bookingPeriod}h</p>
+                    <Link
+                      href={`${notificate.find((notiTitle) => notiTitle.key == item.type)?.link}${
+                        (item?.data as any)?.booker?.slug ?? (item?.data as any)?.providerService?.provider?.slug ?? ''
+                      } `}
+                    >
+                      <div className="grid grid-cols-10">
+                        <div className="col-span-3">
+                          <div className="w-[75px] h-[75px] relative rounded-full">
+                            <Image
+                              className="rounded-lg"
+                              src={
+                                (item?.data as any)?.booker?.avatarUrl ??
+                                (item?.data as any)?.providerService?.provider?.avatarUrl ??
+                                SystemImg
+                              }
+                              alt="Game Image"
+                              layout="fill"
+                            />
                           </div>
                         </div>
-                        <p className="text-end text-md font-bold opacity-30 space-y-2">
-                          {TimeFormat({ date: item?.createdAt })}
-                        </p>
+                        <div className="col-span-7">
+                          <div className="flex flex-col">
+                            <div className="font-bold truncate">
+                              {userInfo?.id == item.userId
+                                ? (item?.data as any)?.booker?.name
+                                : (item?.data as any)?.providerService?.provider?.name}
+                            </div>
+                            <div>{notificate.find((notiTitle) => notiTitle.key == item.type)?.label}</div>
+                          </div>
+                          <p className="text-end text-md font-bold opacity-30">
+                            {TimeFormat({ date: item?.createdAt })}
+                          </p>
+                        </div>
                       </div>
-                    </div>
+                    </Link>
                   </div>
                 ))
               ) : (

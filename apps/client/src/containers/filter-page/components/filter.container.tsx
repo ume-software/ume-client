@@ -373,8 +373,8 @@ const FilterContainer = ({ service, listSubAttributeService }) => {
                         <Menu>
                           <Menu.Button>
                             <button className="flex justify-between items-center text-lg font-semibold p-2 bg-[#292734] hover:bg-gray-700 rounded-xl">
-                              <p className="text-lg font-semibold px-5">
-                                {(attrFilter?.subAttr?.map((itemAttrFilter) => itemAttrFilter.subAttrValue) ?? [])
+                              <p className="max-w-[250px] text-lg font-semibold px-5 truncate">
+                                {(attrFilter?.subAttr?.map((itemAttrFilter) => itemAttrFilter.subAttrViValue) ?? [])
                                   ?.slice()
                                   .sort()
                                   .join(', ')}
@@ -431,7 +431,7 @@ const FilterContainer = ({ service, listSubAttributeService }) => {
                                       }}
                                       onKeyDown={() => {}}
                                     >
-                                      <p className="font-semibold text-mg">{subAttrFilter.subAttrValue}</p>
+                                      <p className="font-semibold text-mg">{subAttrFilter.subAttrViValue}</p>
                                       <div>
                                         {attributeFilter.find((item) =>
                                           item?.subAttr?.find(

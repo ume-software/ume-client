@@ -1,3 +1,5 @@
+import { Button } from '@ume/ui'
+
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { notification } from 'antd'
@@ -172,20 +174,27 @@ const OrderNotificationForProvider = () => {
                       </div>
                     </div>
                     <div className="flex justify-around gap-5 px-3 pt-3">
-                      <div
-                        className="w-full py-1 font-normal text-center text-white bg-purple-700 rounded-lg cursor-pointer text-md hover:scale-105"
+                      <Button
+                        type="button"
+                        customCSS="w-[130px] py-2 px-3 font-normal text-center text-white rounded-lg cursor-pointer text-md hover:scale-105"
+                        isActive={true}
+                        isOutlinedButton={true}
                         onClick={() => handleAcceptBooking(item?.id, item?.booker?.name)}
                         onKeyDown={() => {}}
+                        isLoading={responeBooking.isLoading}
                       >
                         Chấp nhận
-                      </div>
-                      <div
-                        className="w-full py-1 font-normal text-center text-purple-700 border-2 border-purple-700 rounded-lg cursor-pointer text-md hover:scale-105"
+                      </Button>
+                      <Button
+                        type="button"
+                        isActive={false}
+                        isOutlinedButton={true}
+                        customCSS="w-[130px] py-2 px-3 font-normal text-center text-purple-700 border-2 border-purple-700 rounded-lg cursor-pointer text-md hover:scale-105"
                         onClick={() => handleUnacceptBooking(item?.id, item?.booker?.name)}
                         onKeyDown={() => {}}
                       >
                         Từ chối
-                      </div>
+                      </Button>
                     </div>
                   </div>
                 ))

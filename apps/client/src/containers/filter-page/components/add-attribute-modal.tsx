@@ -77,7 +77,7 @@ const AddAttributeModal = (props: {
                       />
                     )}
                   </div>
-                  <p className="text-md font-normal px-2 inline-block">{subAttr.subAttrValue}</p>
+                  <p className="text-md font-normal px-2 inline-block">{subAttr.subAttrViValue}</p>
                 </div>
               ))}
             </div>

@@ -95,7 +95,7 @@ const AccountSettingContainer = () => {
   }
 
   useEffect(() => {
-    if (accessToken) {
+    if (accessToken && userInfo?.name == slug.user) {
       return
     } else {
       router.replace({ pathname: '/home' })
@@ -122,9 +122,9 @@ const AccountSettingContainer = () => {
                     onClick={() => {
                       if (
                         !(
-                          (item.key == 'becomeProvider' && !userInfo.isVerified) ||
-                          (item.key == 'vouchers' && !userInfo.isProvider) ||
-                          (item.key == 'withdraw' && !userInfo.isProvider)
+                          (item.key == 'becomeProvider' && !userInfo?.isVerified) ||
+                          (item.key == 'vouchers' && !userInfo?.isProvider) ||
+                          (item.key == 'withdraw' && !userInfo?.isProvider)
                         )
                       ) {
                         handleChangeTab(item.key)
@@ -134,12 +134,12 @@ const AccountSettingContainer = () => {
                   >
                     {item.key == 'becomeProvider' ? (
                       <>
-                        <div className={`${!userInfo.isVerified && 'opacity-30'}`}>{item.icon}</div>
-                        {!userInfo.isVerified ? (
+                        <div className={`${!userInfo?.isVerified && 'opacity-30'}`}>{item.icon}</div>
+                        {!userInfo?.isVerified ? (
                           <Tooltip placement="right" title={'Xác minh danh tính để mở khoá tính năng này'} arrow={true}>
                             <span
                               className={`w-full flex justify-between items-center 2xl:text-lg xl:text-sm text-xs font-semibold truncate ${
-                                !userInfo.isVerified && 'opacity-30'
+                                !userInfo?.isVerified && 'opacity-30'
                               }`}
                             >
                               {item.label}
@@ -163,8 +163,8 @@ const AccountSettingContainer = () => {
                       </>
                     ) : item.key == 'vouchers' ? (
                       <>
-                        <div className={`${!userInfo.isProvider && 'opacity-30'}`}>{item.icon}</div>{' '}
-                        {!userInfo.isProvider ? (
+                        <div className={`${!userInfo?.isProvider && 'opacity-30'}`}>{item.icon}</div>{' '}
+                        {!userInfo?.isProvider ? (
                           <Tooltip
                             placement="right"
                             title={'Trở thành nhà cung cấp để mở khóa tính năng này'}
@@ -172,7 +172,7 @@ const AccountSettingContainer = () => {
                           >
                             <span
                               className={`w-full flex justify-between items-center 2xl:text-lg xl:text-sm text-xs font-semibold truncate ${
-                                !userInfo.isProvider && 'opacity-30'
+                                !userInfo?.isProvider && 'opacity-30'
                               }`}
                             >
                               {item.label}
@@ -196,8 +196,8 @@ const AccountSettingContainer = () => {
                       </>
                     ) : item.key == 'withdraw' ? (
                       <>
-                        <div className={`${!userInfo.isProvider && 'opacity-30'}`}>{item.icon}</div>{' '}
-                        {!userInfo.isProvider ? (
+                        <div className={`${!userInfo?.isProvider && 'opacity-30'}`}>{item.icon}</div>{' '}
+                        {!userInfo?.isProvider ? (
                           <Tooltip
                             placement="right"
                             title={'Trở thành nhà cung cấp để mở khóa tính năng này'}
@@ -205,7 +205,7 @@ const AccountSettingContainer = () => {
                           >
                             <span
                               className={`w-full flex justify-between items-center 2xl:text-lg xl:text-sm text-xs font-semibold truncate ${
-                                !userInfo.isProvider && 'opacity-30'
+                                !userInfo?.isProvider && 'opacity-30'
                               }`}
                             >
                               {item.label}
@@ -256,9 +256,9 @@ const AccountSettingContainer = () => {
                     onClick={() => {
                       if (
                         !(
-                          (item.key == 'becomeProvider' && !userInfo.slug) ||
-                          (item.key == 'vouchers' && !userInfo.isProvider) ||
-                          (item.key == 'withdraw' && !userInfo.isProvider)
+                          (item.key == 'becomeProvider' && !userInfo?.slug) ||
+                          (item.key == 'vouchers' && !userInfo?.isProvider) ||
+                          (item.key == 'withdraw' && !userInfo?.isProvider)
                         )
                       ) {
                         handleChangeTab(item.key)
@@ -269,8 +269,8 @@ const AccountSettingContainer = () => {
                     <div className="w-fit flex items-center gap-2">
                       {item.key == 'becomeProvider' ? (
                         <>
-                          <div className={`${!userInfo.isVerified && 'opacity-30'}`}>{item.icon}</div>
-                          {!userInfo.isVerified ? (
+                          <div className={`${!userInfo?.isVerified && 'opacity-30'}`}>{item.icon}</div>
+                          {!userInfo?.isVerified ? (
                             <Tooltip
                               placement="right"
                               title={'Xác minh danh tính để mở kháo tính năng này'}
@@ -278,7 +278,7 @@ const AccountSettingContainer = () => {
                             >
                               <span
                                 className={`w-full flex justify-between items-center text-lg font-semibold truncate ${
-                                  !userInfo.isVerified && 'opacity-30'
+                                  !userInfo?.isVerified && 'opacity-30'
                                 }`}
                               >
                                 {item.label}
@@ -300,8 +300,8 @@ const AccountSettingContainer = () => {
                         </>
                       ) : item.key == 'vouchers' ? (
                         <>
-                          <div className={`${!userInfo.isProvider && 'opacity-30'}`}>{item.icon}</div>{' '}
-                          {!userInfo.isProvider ? (
+                          <div className={`${!userInfo?.isProvider && 'opacity-30'}`}>{item.icon}</div>{' '}
+                          {!userInfo?.isProvider ? (
                             <Tooltip
                               placement="right"
                               title={'Trở thành nhà cung cấp để mở khóa tính năng này'}
@@ -309,7 +309,7 @@ const AccountSettingContainer = () => {
                             >
                               <span
                                 className={`w-full flex justify-between items-center text-lg lg:text-md font-semibold truncate ${
-                                  !userInfo.isProvider && 'opacity-30'
+                                  !userInfo?.isProvider && 'opacity-30'
                                 }`}
                               >
                                 {item.label}
@@ -333,8 +333,8 @@ const AccountSettingContainer = () => {
                         </>
                       ) : item.key == 'withdraw' ? (
                         <>
-                          <div className={`${!userInfo.isProvider && 'opacity-30'}`}>{item.icon}</div>{' '}
-                          {!userInfo.isProvider ? (
+                          <div className={`${!userInfo?.isProvider && 'opacity-30'}`}>{item.icon}</div>{' '}
+                          {!userInfo?.isProvider ? (
                             <Tooltip
                               placement="right"
                               title={'Trở thành nhà cung cấp để mở khóa tính năng này'}
@@ -342,7 +342,7 @@ const AccountSettingContainer = () => {
                             >
                               <span
                                 className={`w-full flex justify-between items-center text-lg lg:text-md font-semibold truncate ${
-                                  !userInfo.isProvider && 'opacity-30'
+                                  !userInfo?.isProvider && 'opacity-30'
                                 }`}
                               >
                                 {item.label}

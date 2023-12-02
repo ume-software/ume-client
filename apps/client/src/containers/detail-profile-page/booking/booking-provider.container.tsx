@@ -28,11 +28,17 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
   const voucherLimit = '10'
   const voucherPage = '1'
   const [myVoucher, setMyVoucher] = useState<VoucherPagingResponse | undefined>(undefined)
-  trpc.useQuery(['identity.getMyVoucher', { limit: voucherLimit, page: voucherPage }], {
-    onSuccess(data) {
-      setMyVoucher(data.data)
+  trpc.useQuery(
+    [
+      'booking.getMyVoucherForBooking',
+      { providerSlug: String(slug.profileId ?? ''), limit: voucherLimit, page: voucherPage },
+    ],
+    {
+      onSuccess(data) {
+        setMyVoucher(data.data)
+      },
     },
-  })
+  )
 
   const [menuShow, setMenuShow] = useState<string>('')
   const accountBalance = trpc.useQuery(['identity.account-balance'])
