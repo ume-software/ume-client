@@ -3,13 +3,15 @@ import { Button } from '@ume/ui'
 
 import { Dispatch, SetStateAction, useState } from 'react'
 
+import { FilterProviderResponse } from 'ume-service-openapi'
+
 import { AttrbuteProps, SubAttributeProps } from './iFilter'
 
 const AddAttributeModal = (props: {
-  setIsModalFilterVisible: Dispatch<SetStateAction<boolean>>
   attributeData: AttrbuteProps[]
   attributeFilter: AttrbuteProps[]
   setAttributeFilter: Dispatch<SetStateAction<AttrbuteProps[]>>
+  setListProviderFilter: Dispatch<SetStateAction<FilterProviderResponse[] | undefined>>
 }) => {
   const [displayAttrFilter, setDisplayAttrFilter] = useState<AttrbuteProps[]>(props.attributeFilter)
 
@@ -36,11 +38,11 @@ const AddAttributeModal = (props: {
 
   return (
     <>
-      <div className="max-h-[55vh] p-5 text-white overflow-y-auto custom-scrollbar">
+      <div className="h-[80vh] p-7 text-white overflow-y-auto custom-scrollbar">
         {props.attributeData.map((attrData) => (
-          <div className="py-2" key={attrData.id}>
+          <div className="py-2 border-b border-white border-opacity-30" key={attrData.id}>
             <p className="text-lg font-bold">{attrData.name}: </p>
-            <div className="grid grid-cols-3 justify-items-center py-5">
+            <div className="grid grid-cols-3 p-10 space-y-3">
               {attrData?.subAttr?.map((subAttr, index) => (
                 <div
                   className="col-span-1 cursor-pointer"
@@ -84,15 +86,15 @@ const AddAttributeModal = (props: {
           </div>
         ))}
       </div>
-      <div className="text-center py-5 border-t border-3 border-white border-opacity-30 drop-shadow-md">
+      <div className="text-center py-5 border-t-2 border-white border-opacity-30 drop-shadow-md">
         <Button
           isActive={true}
           isOutlinedButton={true}
           customCSS="py-2 px-7 rounded-xl hover:scale-105"
           type="button"
           onClick={() => {
+            props.setListProviderFilter(undefined)
             props.setAttributeFilter(displayAttrFilter)
-            props.setIsModalFilterVisible(false)
           }}
         >
           Áp dụng
