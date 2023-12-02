@@ -3,6 +3,7 @@ import useChatScroll from '~/hooks/useChatScroll'
 
 import { ReactNode, useContext, useEffect, useRef, useState } from 'react'
 
+import { parse } from 'cookie'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
 import { ChattingChannelResponse, MemberChatChannelResponse } from 'ume-chatting-service-openapi'
@@ -33,11 +34,11 @@ const convertArrayObjectToObject = (input: Array<any>, key: string = '_id') => {
   }, {})
 }
 const ChatContent = (props: { channel: ChattingChannelResponse }) => {
-  // const index = useId()
   const [messageInput, setMessageInput] = useState('')
   const { socketClientEmit } = useContext(SocketClientEmit)
   const { socketContext } = useContext(SocketContext)
   const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
+  const accessToken = parse(document.cookie).accessToken
   const utils = trpc.useContext()
   const { data: chattingMessageChannel, isLoading: loadingChattingMessageChannel } = trpc.useQuery([
     'chatting.getMessagesByChannelId',
@@ -48,10 +49,11 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
 
   useEffect(() => {
     if (socketContext?.socketChattingContext) {
+      utils.invalidateQueries('chatting.getListChattingChannels')
       utils.invalidateQueries('chatting.getMessagesByChannelId')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socketContext?.socketChattingContext, !!userInfo])
+  }, [socketContext?.socketChattingContext, !!accessToken])
 
   const mappingMember: { [key: string]: MemberChatChannelResponse } = convertArrayObjectToObject(
     chattingMessageChannel?.data.members ?? [],
@@ -63,7 +65,7 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
   })!
 
   const handleSentMessage = () => {
-    if (!!userInfo.id && messageInput != '') {
+    if (!!accessToken && messageInput != '') {
       socketClientEmit?.socketInstanceChatting?.emit(getSocket().SOCKER_CHATTING_SERVER_ON.SENT_MESSAGE_TO_CHANNEL, {
         channelId: props.channel._id,
         content: messageInput,
