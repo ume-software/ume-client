@@ -891,6 +891,7 @@ const AddSkillForm = () => {
 
                         <div className="flex justify-end items-center gap-2">
                           <Button
+                            type="button"
                             customCSS="text-xl p-2 rounded-xl hover:scale-105"
                             isActive={true}
                             isOutlinedButton={true}
