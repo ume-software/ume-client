@@ -17,7 +17,7 @@ const AdvanceFilterModal = ({
     title: <p className="text-white">Thuộc tính</p>,
     form: (
       <AddAttributeModal
-        setIsModalFilterVisible={setIsModalFilterVisible}
+        // setIsModalFilterVisible={setIsModalFilterVisible}
         attributeData={attrbuteData}
         attributeFilter={attributeFilter}
         setAttributeFilter={setAttributeFilter}

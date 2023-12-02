@@ -452,7 +452,7 @@ const DetailProfileContainer = () => {
           </div>
           <div className="p-5">
             <span className="text-white">
-              <div className="h-screen flex justify-center my-10">
+              <div className="min-h-screen flex justify-center my-10">
                 {providerDetail?.isProvider && selectedTab.key == 'Service' && <InformationTab data={providerDetail} />}
                 {selectedTab.key == 'Album' && <AlbumTab data={providerDetail!} />}
                 {selectedTab.key == 'Post' && <PostTab providerId={providerDetail!.slug} />}
