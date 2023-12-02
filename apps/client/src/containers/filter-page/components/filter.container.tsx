@@ -62,7 +62,6 @@ const FilterContainer = ({ service, listSubAttributeService }) => {
   )
   const [order, setOrder] = useState<OrderByProps>(orderBy[0])
   const [attributeFilter, setAttributeFilter] = useState<AttrbuteProps[]>([])
-  const [isModalFilterVisible, setIsModalFilterVisible] = useState<boolean>(false)
   const [listSkils, setListSkils] = useState<any>([])
   const [priceRange, setPriceRange] = useState<[number, number]>(
     [Number(slug.minPrice ?? min), Number(slug.maxPrice ?? max)] ?? [min, max],
