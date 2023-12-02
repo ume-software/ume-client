@@ -5,7 +5,7 @@ import { AudioApi, FileApi, ImageApi } from 'ume-upload-service-openapi'
 export const uploadImage = async (formData) => {
   try {
     const response = await new ImageApi({
-      basePath: getEnv().baseUploadServiceURL,
+      basePath: getEnv().baseUploadFileURL,
       isJsonMime: () => true,
     }).uploadImage(formData)
     return {
@@ -19,7 +19,7 @@ export const uploadImage = async (formData) => {
 export const uploadAudio = async (formData) => {
   try {
     const response = await new AudioApi({
-      basePath: getEnv().baseUploadServiceURL,
+      basePath: getEnv().baseUploadFileURL,
       isJsonMime: () => true,
     }).uploadAudio(undefined, formData)
     return {
@@ -33,7 +33,7 @@ export const uploadAudio = async (formData) => {
 export const uploadFile = async (formData) => {
   try {
     const response = await new FileApi({
-      basePath: getEnv().baseUploadServiceURL,
+      basePath: getEnv().baseUploadFileURL,
       isJsonMime: () => true,
     }).uploadFile(undefined, formData)
     return {
