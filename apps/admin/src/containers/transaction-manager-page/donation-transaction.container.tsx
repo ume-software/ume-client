@@ -28,7 +28,6 @@ const DonationTransactionContainer = () => {
   const [count, setCount] = useState(0)
   const [page, setPage] = useState(1)
   const [filter, setFilter] = useState({
-    platform: 'all',
     search: '',
   })
   const [searchChange, setSearchChange] = useState('')
@@ -84,15 +83,6 @@ const DonationTransactionContainer = () => {
       },
     },
   )
-  const handleFilter = (title, key) => {
-    setPage(1)
-    if (title == 'platform') {
-      setFilter({
-        ...filter,
-        platform: key,
-      })
-    }
-  }
 
   const handleSearchChange = (e) => {
     if (e.target.value == '') {

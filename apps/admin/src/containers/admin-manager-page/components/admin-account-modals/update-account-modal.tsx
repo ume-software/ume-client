@@ -142,12 +142,10 @@ const UpdateAccountModal = ({ id, openValue, closeFunction }: IUpdateAdminProps)
       name: Yup.string().required('Tên là bắt buộc'),
       userName: Yup.string().required('Tên đăng nhập là bắt buộc'),
       roles: Yup.array().of(Yup.string().required('Vai trò là bắt buộc')).required('Vai trò là bắt buộc'),
-      email: Yup.string().required('Email là bắt buộc'),
       phone: Yup.string().matches(regexPhoneNumber, 'Số điện thoại không hợp lệ'),
     }),
-    onSubmit: (values, { resetForm }) => {
+    onSubmit: () => {
       openConfirmModal()
-      resetForm()
     },
   })
 
@@ -249,11 +247,17 @@ const UpdateAccountModal = ({ id, openValue, closeFunction }: IUpdateAdminProps)
       className="w-auto bg-black"
     >
       <div className="m-7">
-        <form autoComplete="off" onSubmit={form.handleSubmit} className="grid grid-cols-5 text-white">
-          <div className="col-span-2">
+        <form
+          autoComplete="off"
+          onSubmit={(e) => {
+            e.preventDefault()
+          }}
+          className="grid grid-cols-5 text-white"
+        >
+          <div className="col-span-2 pl-5">
             <div
               className={`
-                w-36 h-52 overflow-hidden rounded-2xl bg-[#413F4D]
+                w-36 h-36 overflow-hidden rounded-full bg-[#413F4D]
                 ${
                   !form.values.avatarUrl &&
                   ' flex items-center justify-center border-dashed border-2 border-[#FFFFFF80]'
@@ -263,9 +267,9 @@ const UpdateAccountModal = ({ id, openValue, closeFunction }: IUpdateAdminProps)
             >
               {form.values.avatarUrl && (
                 <Image
-                  className="overflow-hidden rounded-2xl"
-                  width={144}
-                  height={208}
+                  className="overflow-hidden rounded-full"
+                  width={150}
+                  height={150}
                   src={form.values.avatarUrl || emptyPic}
                   alt=""
                   objectFit="cover"
@@ -367,7 +371,6 @@ const UpdateAccountModal = ({ id, openValue, closeFunction }: IUpdateAdminProps)
                 *Role
               </label>
               <Select
-                // mode="multiple"
                 placeholder="Chọn role"
                 defaultValue={form.values.roles}
                 value={form.values.roles}
@@ -440,6 +443,12 @@ const UpdateAccountModal = ({ id, openValue, closeFunction }: IUpdateAdminProps)
             </div>
           </div>
           <div className="flex justify-center col-span-5 pb-4 mt-10">
+            <Button
+              onClick={openCancelConfirmHandle}
+              customCSS={`mx-6 px-4 py-1 border-2 hover:scale-110 bg-red-500 border-red-500`}
+            >
+              Hủy
+            </Button>
             <Button
               customCSS={`mx-6 px-4 py-1 border-2  ${
                 !isDisableButton() && 'hover:scale-110 bg-[#7463F0] border-[#7463F0]'
