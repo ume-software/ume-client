@@ -1,3 +1,4 @@
+yarn run v1.22.19
 $ npx next build
 info  - Loaded env from /Users/huyqtrieu/Desktop/Personal/ume-client/apps/client/.env.local
 info  - Loaded env from /Users/huyqtrieu/Desktop/Personal/ume-client/apps/client/.env.production
@@ -34,9 +35,10 @@ Route (pages)                              Size     First Load JS
   ├ chunks/framework-22108eb722d84e59.js   45.4 kB
   ├ chunks/main-1549b305685c3af3.js        26.7 kB
   ├ chunks/pages/_app-fa5e663c716608af.js  25.4 kB
-  ├ chunks/webpack-7d509705ff4cf890.js     2.64 kB
+  ├ chunks/webpack-23504cbba4ea65f4.js     2.63 kB
   └ css/63cc694f9d76f9f5.css               8.33 kB
 
 λ  (Server)  server-side renders at runtime (uses getInitialProps or getServerSideProps)
 ○  (Static)  automatically rendered as static HTML (uses no initial props)
 
+Done in 16.29s.
