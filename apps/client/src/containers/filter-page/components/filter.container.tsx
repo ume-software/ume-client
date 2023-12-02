@@ -14,7 +14,6 @@ import { useRouter } from 'next/router'
 import { FilterProviderPagingResponse } from 'ume-service-openapi'
 
 import AddAttributeModal from './add-attribute-modal'
-import { AdvanceFilterModal } from './advance-filter-modal'
 import { AttrbuteProps, GenderProps, OrderByProps } from './iFilter'
 
 import { DrawerContext } from '~/components/layouts/app-layout/app-layout'
