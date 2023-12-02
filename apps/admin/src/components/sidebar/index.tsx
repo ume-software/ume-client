@@ -27,21 +27,31 @@ const Sidebar = ({ handleOpen, openSideBar, openPopupSideBar, setOpenPopupSideBa
       )
     } else {
       return (
-        <div onClick={handleOpen} className="fixed top-0 w-[7%] z-40 h-[100%] bg-umeHeader">
-          <div className="pt-3 w-full flex justify-center px-4 mb-4">
-            <Image width={50} height={50} src={WhiteLogo} alt="logo" />
-          </div>
-          <div className="h-full overflow-auto pt-2 pb-28 side-bar cursor-pointer">
-            {SidebarNavigation.map((item) => {
-              return (
-                <div key={item.key} className="mb-14 mt-5 flex justify-center items-center">
-                  <div className="relative inline-block">
-                    <div className="w-fit rounded-full p-3 hover:bg-[#7463f0] ">{item.icon}</div>
+        <div className="fixed top-0 w-[7%] z-40 h-[100%] bg-umeHeader">
+          <div onClick={handleOpen}>
+            <div className="pt-3 w-full flex justify-center px-4 mb-4">
+              <Image width={50} height={50} src={WhiteLogo} alt="logo" />
+            </div>
+            <div className="h-full overflow-auto pt-2 pb-28 side-bar cursor-pointer">
+              {SidebarNavigation.map((item) => {
+                return (
+                  <div key={item.key} className="mb-14 mt-5 flex justify-center items-center">
+                    <div className="relative inline-block">
+                      <div className="w-fit rounded-full p-3 hover:bg-[#7463f0] ">{item.icon}</div>
+                    </div>
                   </div>
-                </div>
-              )
-            })}
+                )
+              })}
+            </div>
           </div>
+          {openSideBar && (
+            <div className="fixed top-0 w-[19rem] z-50 h-[100%] bg-umeHeader px-2">
+              <div onClick={handleOpen} className="pt-3 w-full flex justify-center px-4 mb-4">
+                <Image width={150} height={50} src={WhiteTextLogo} alt="logo" />
+              </div>
+              <SideBarDropdown />
+            </div>
+          )}
         </div>
       )
     }

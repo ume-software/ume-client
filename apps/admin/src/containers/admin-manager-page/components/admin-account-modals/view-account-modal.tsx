@@ -48,17 +48,17 @@ const ViewAccountModal = ({ id, openValue, closeFunction }: IViewAdminProps) => 
         <div className="m-4 grid grid-cols-6 gap-2 text-white">
           <div className="col-span-2 flex justify-center">
             <Image
-              className="rounded-lg"
+              className="rounded-full"
               src={adminDetails.avatarUrl || emptyPic}
               objectFit="cover"
-              width={144}
-              height={208}
+              width={150}
+              height={150}
               alt="avatar"
             />
           </div>
           <div className="col-span-2 mt-5">
             <p className="my-2">
-              <span className="font-bold">Tên: </span> {adminDetails.name}
+              <span className="font-bold">Họ và tên: </span> {adminDetails.name}
             </p>
             <p className="my-2">
               <span className="font-bold">Ngày sinh: </span> {new Date(adminDetails.dob).toLocaleDateString('en-GB')}
