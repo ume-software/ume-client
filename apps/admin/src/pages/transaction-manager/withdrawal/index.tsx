@@ -6,8 +6,8 @@ const TransactionManagerRender = dynamic(() => import('~/containers/transaction-
   ssr: false,
 })
 
-const WithdrawTransactionManager = () => {
-  return <TransactionManagerRender task={'withdraw'} />
+const WithdrawalTransactionManager = () => {
+  return <TransactionManagerRender task={'withdrawal'} />
 }
 
-export default WithdrawTransactionManager
+export default WithdrawalTransactionManager
