@@ -290,27 +290,6 @@ export const providerUpdateVoucher = async (query: { id: string; body: UpdateVou
   }
 }
 
-export const getMyVoucher = async (input: { limit: string; page: string; where?: string; order?: string }, ctx) => {
-  const cookies = parse(ctx.req.headers.cookie ?? '')
-  try {
-    const reponse = await new VoucherApi({
-      basePath: getEnv().baseUmeServiceURL,
-      isJsonMime: () => true,
-      accessToken: cookies['accessToken'],
-    }).getMyVoucher(input.limit, input.page, '["$all"]', input.where, input.order)
-    return {
-      data: reponse.data,
-      success: true,
-      message: '',
-    }
-  } catch (error) {
-    throw new TRPCError({
-      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
-      message: error.message || 'Fail to get data recharge',
-    })
-  }
-}
-
 export const registerBecomeProvider = async (ctx) => {
   const cookies = parse(ctx.req.headers.cookie ?? '')
   try {
@@ -478,6 +457,27 @@ export const updateServiceProvider = async (
   }
 }
 
+export const deleteServiceProvider = async (serviceId: string, ctx) => {
+  const cookies = parse(ctx.req.headers.cookie ?? '')
+  try {
+    const reponse = await new ProviderServiceApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).deleteProviderService(serviceId)
+    return {
+      data: reponse.data,
+      success: true,
+      message: '',
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to get data recharge',
+    })
+  }
+}
+
 export const getHistoryTransaction = async (
   query: { limit: string; page: string; where?: string; order?: string },
   ctx,
@@ -542,7 +542,28 @@ export const createUserPaymentSystem = async (
   } catch (error) {
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
-      message: error.message || 'Fail to get payment system',
+      message: error.message || 'Fail to create payment system',
+    })
+  }
+}
+
+export const deleteUserPaymentSystem = async (paymentSystemId: string, ctx) => {
+  const cookies = parse(ctx.req.headers.cookie ?? '')
+  try {
+    const reponse = await new UserPaymentSystemApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).deleteUserPaymentSystem(paymentSystemId)
+    return {
+      data: reponse.data,
+      success: true,
+      message: '',
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to delete payment system',
     })
   }
 }

@@ -1,21 +1,22 @@
 import { Menu, Transition } from '@headlessui/react'
 import { Check, DownOne, Plus, Search } from '@icon-park/react'
-import { Button, InputWithAffix } from '@ume/ui'
+import { Button, CustomDrawer, InputWithAffix } from '@ume/ui'
 import CategoryDrawer from '~/containers/home-page/components/category-drawer'
 import PromoteCard from '~/containers/home-page/components/promoteCard'
 import { GenderEnum } from '~/enumVariable/enumVariable'
 import useDebounce from '~/hooks/useDebounce'
 
-import { Fragment, useCallback, useEffect, useRef, useState } from 'react'
+import { Fragment, useCallback, useContext, useEffect, useRef, useState } from 'react'
 
 import { Slider, Tooltip } from 'antd'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FilterProviderPagingResponse } from 'ume-service-openapi'
 
-import { AdvanceFilterModal } from './advance-filter-modal'
+import AddAttributeModal from './add-attribute-modal'
 import { AttrbuteProps, GenderProps, OrderByProps } from './iFilter'
 
+import { DrawerContext } from '~/components/layouts/app-layout/app-layout'
 import { PlayerSkeletonLoader } from '~/components/skeleton-load'
 
 import { trpc } from '~/utils/trpc'
@@ -51,6 +52,7 @@ const FilterContainer = ({ service, listSubAttributeService }) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [scrollPosition, setScrollPosition] = useState(0)
   const [listProviderFilter, setListProviderFilter] = useState<FilterProviderPagingResponse['row']>([])
+  const { childrenDrawer, setChildrenDrawer } = useContext(DrawerContext)
 
   const [page, setPage] = useState<string>('1')
   const [searchText, setSearchText] = useState<string>(String(slug.name ?? ''))
@@ -60,7 +62,6 @@ const FilterContainer = ({ service, listSubAttributeService }) => {
   )
   const [order, setOrder] = useState<OrderByProps>(orderBy[0])
   const [attributeFilter, setAttributeFilter] = useState<AttrbuteProps[]>([])
-  const [isModalFilterVisible, setIsModalFilterVisible] = useState<boolean>(false)
   const [listSkils, setListSkils] = useState<any>([])
   const [priceRange, setPriceRange] = useState<[number, number]>(
     [Number(slug.minPrice ?? min), Number(slug.maxPrice ?? max)] ?? [min, max],
@@ -135,6 +136,17 @@ const FilterContainer = ({ service, listSubAttributeService }) => {
     />
   )
 
+  const handleFilterOpen = () => {
+    setChildrenDrawer(
+      <AddAttributeModal
+        attributeData={listSubAttributeService}
+        attributeFilter={attributeFilter}
+        setAttributeFilter={setAttributeFilter}
+        setListProviderFilter={setListProviderFilter}
+      />,
+    )
+  }
+
   useEffect(() => {
     window.addEventListener('scroll', onScroll)
     return () => {
@@ -193,13 +205,6 @@ const FilterContainer = ({ service, listSubAttributeService }) => {
 
   return (
     <div className="min-h-screen mx-10 text-white">
-      <AdvanceFilterModal
-        isModalFilterVisible={isModalFilterVisible}
-        setIsModalFilterVisible={setIsModalFilterVisible}
-        attrbuteData={listSubAttributeService}
-        attributeFilter={attributeFilter}
-        setAttributeFilter={setAttributeFilter}
-      />
       <div className="flex items-center justify-between mx-5 my-5">
         <p className="text-5xl font-bold">{serviceName}</p>
         <CategoryDrawer data={listSkils} loadingService={loadingService} />
@@ -297,17 +302,25 @@ const FilterContainer = ({ service, listSubAttributeService }) => {
           <div className="flex items-center gap-2">
             {(listSubAttributeService.length ?? 0) > 0 && (
               <div className="mr-10 mt-2">
-                <Button
-                  isActive={false}
-                  isOutlinedButton={true}
-                  customCSS="w-fit text-md p-2 rounded-xl hover:scale-105"
-                  onClick={() => {
-                    setIsModalFilterVisible(true)
-                  }}
+                <CustomDrawer
+                  customOpenBtn={`text-md p-2 rounded-xl hover:scale-105`}
+                  openBtn={
+                    <Button
+                      type="button"
+                      isActive={false}
+                      isOutlinedButton={true}
+                      customCSS="w-fit text-md p-2 rounded-xl hover:scale-105"
+                      onClick={() => {
+                        handleFilterOpen()
+                      }}
+                    >
+                      <Plus theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
+                      Thêm thuộc tính
+                    </Button>
+                  }
                 >
-                  <Plus theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
-                  Thêm thuộc tính
-                </Button>
+                  {childrenDrawer}
+                </CustomDrawer>
               </div>
             )}
             <div className="flex items-center gap-2">
@@ -373,8 +386,8 @@ const FilterContainer = ({ service, listSubAttributeService }) => {
                         <Menu>
                           <Menu.Button>
                             <button className="flex justify-between items-center text-lg font-semibold p-2 bg-[#292734] hover:bg-gray-700 rounded-xl">
-                              <p className="text-lg font-semibold px-5">
-                                {(attrFilter?.subAttr?.map((itemAttrFilter) => itemAttrFilter.subAttrValue) ?? [])
+                              <p className="max-w-[250px] text-lg font-semibold px-5 truncate">
+                                {(attrFilter?.subAttr?.map((itemAttrFilter) => itemAttrFilter.subAttrViValue) ?? [])
                                   ?.slice()
                                   .sort()
                                   .join(', ')}
@@ -431,7 +444,7 @@ const FilterContainer = ({ service, listSubAttributeService }) => {
                                       }}
                                       onKeyDown={() => {}}
                                     >
-                                      <p className="font-semibold text-mg">{subAttrFilter.subAttrValue}</p>
+                                      <p className="font-semibold text-mg">{subAttrFilter.subAttrViValue}</p>
                                       <div>
                                         {attributeFilter.find((item) =>
                                           item?.subAttr?.find(

@@ -59,7 +59,7 @@ export const Sidebar = () => {
       return () => clearTimeout(timeout)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socketContext?.socketChattingContext, socketContext?.socketChattingContext[0]?.channelId, !!accessToken])
+  }, [socketContext?.socketChattingContext[0]?.channelId, !!accessToken])
 
   return (
     <>

@@ -105,6 +105,11 @@ const BecomeProvider = () => {
     !userInfo?.isProvider &&
       registerBecomeProvider.mutate(undefined, {
         onSuccess() {
+          const updatedUserInfor = {
+            ...userInfo,
+            isProvider: true,
+          }
+          sessionStorage.setItem('user', JSON.stringify(updatedUserInfor))
           setChecked(true)
         },
       })
@@ -127,6 +132,7 @@ const BecomeProvider = () => {
       <ConfirmForm
         title="Thay đổi giới thiệu"
         description="Bạn có chấp nhận thay đổi giới thiệu hay không?"
+        isLoading={updateIntroduceProvider.isLoading}
         onClose={() => setIsModalConfirmationVisible(false)}
         onOk={async () => {
           if (updateIntroduceForProviderFormRef.current) {
@@ -250,7 +256,7 @@ const BecomeProvider = () => {
                         <label className="font-semibold">Trạng thái:</label>
                         <div className="relative">
                           <Menu>
-                            <Menu.Button>
+                            <Menu.Button type="button">
                               <button
                                 className="min-w-[200px] text-xl font-semibold px-8 py-2 bg-[#292734] hover:bg-gray-700 rounded-xl"
                                 type="button"
@@ -281,6 +287,7 @@ const BecomeProvider = () => {
                                       }`}
                                     >
                                       <button
+                                        type="button"
                                         className={`text-white text-md font-semibold group flex w-full items-center rounded-md px-2 py-2`}
                                         name="status"
                                         onClick={() => form.setFieldValue('status', itemStatus.key)}

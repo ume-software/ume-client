@@ -73,8 +73,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   })
 
   useEffect(() => {
-    if (!!accessToken && isAuthenticated) {
-      const socketInstance = Boolean(userInfo.id) ? socket(accessToken) : null
+    if (!!accessToken || isAuthenticated) {
+      const socketInstance = Boolean(userInfo?.id) ? socket(accessToken) : null
 
       setSocketClientEmit({ socketInstanceChatting: socketInstance?.socketInstanceChatting })
 

@@ -13,6 +13,7 @@ import {
   getFeedbackServiceById,
   getHotProviders,
   getListService,
+  getMyVoucherForBooking,
   getNoticeAmount,
   getPendingBookingForProvider,
   getPendingBookingForUser,
@@ -74,6 +75,18 @@ export const bookingRouter = createRouter()
   .query('getCurrentBookingForUser', {
     resolve: async ({ ctx }) => {
       return await getCurrentBookingForUser(ctx)
+    },
+  })
+  .query('getMyVoucherForBooking', {
+    input: z.object({
+      providerSlug: z.string(),
+      limit: z.string(),
+      page: z.string(),
+      where: z.optional(z.string()),
+      order: z.optional(z.string()),
+    }),
+    resolve: async ({ input, ctx }) => {
+      return await getMyVoucherForBooking(input, ctx)
     },
   })
   .mutation('createBooking', {
