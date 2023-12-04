@@ -11,6 +11,7 @@ import {
   getCurrentBookingForProvider,
   getCurrentBookingForUser,
   getFeedbackServiceById,
+  getFeedbackServiceByUserSlug,
   getHotProviders,
   getListService,
   getMyVoucherForBooking,
@@ -106,6 +107,12 @@ export const bookingRouter = createRouter()
     }),
     resolve: async ({ ctx, input }) => {
       return await putProviderResponeBooking(input, ctx)
+    },
+  })
+  .query('getFeedbackServiceByUserSlug', {
+    input: z.string(),
+    resolve: async ({ input }) => {
+      return await getFeedbackServiceByUserSlug(input)
     },
   })
   .query('getFeedbackServiceById', {

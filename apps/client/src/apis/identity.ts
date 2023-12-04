@@ -11,6 +11,8 @@ import { z } from 'zod'
 
 import { createRouter } from './configurations'
 import {
+  FollowProvider,
+  UnFollowProvider,
   cancelWithdrawRequests,
   checkSlugUser,
   createServiceProvider,
@@ -314,5 +316,17 @@ export const identityRouter = createRouter()
     }),
     resolve: async ({ input, ctx }) => {
       return await userUpdateProviderProfile(input, ctx)
+    },
+  })
+  .mutation('FollowProvider', {
+    input: z.string(),
+    resolve: async ({ input, ctx }) => {
+      return await FollowProvider(input, ctx)
+    },
+  })
+  .mutation('UnFollowProvider', {
+    input: z.string(),
+    resolve: async ({ input, ctx }) => {
+      return await UnFollowProvider(input, ctx)
     },
   })
