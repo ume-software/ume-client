@@ -175,8 +175,8 @@ export default function VourcherModal(
       audience: Yup.string().required('Đối tượng là bắt buộc'),
       discountValue: Yup.string().required('Giá trị là bắt buộc'),
       minimize: Yup.string().max(6, 'Số tiền không vượt quá 6 chữ số'),
-      minimumBookingTotalPriceForUsage: Yup.string().max(6, 'Số tiền không vượt quá 6 chữ số'),
-      minimumBookingDurationForUsage: Yup.number().lessThan(12, 'Số giờ không vượt quá 12h'),
+      minimumBookingTotalPriceForUsage: Yup.string().max(8, 'Số tiền không vượt quá 10,000,000 chữ số'),
+      minimumBookingDurationForUsage: Yup.number().lessThan(13, 'Số giờ không vượt quá 12h'),
     }),
     onSubmit: (values, { resetForm }) => {
       openConfirmModal()

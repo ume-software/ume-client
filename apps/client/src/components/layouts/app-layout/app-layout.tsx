@@ -82,6 +82,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         socketInstance.socketInstanceBooking.on(getSocket().SOCKET_SERVER_EMIT.USER_BOOKING_PROVIDER, (...args) => {
           setSocketContext((prev) => ({ ...prev, socketNotificateContext: args }))
         })
+        socketInstance.socketInstanceBooking.on(getSocket().SOCKET_SERVER_EMIT.PROVIDER_HANDLED_BOOKING, (...args) => {
+          setSocketContext((prev) => ({ ...prev, socketNotificateContext: args }))
+        })
       }
       if (socketInstance?.socketInstanceChatting) {
         socketInstance.socketInstanceChatting.on(

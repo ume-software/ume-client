@@ -16,7 +16,6 @@ import {
 import detailBackground from 'public/detail-cover-background.png'
 import ImgForEmpty from 'public/img-for-empty.png'
 import lgbtIcon from 'public/rainbow-flag-11151.svg'
-import { useAuth } from '~/contexts/auth'
 
 import { Fragment, ReactElement, useEffect, useState } from 'react'
 
@@ -153,7 +152,6 @@ const DetailProfileContainer = () => {
   const accessToken = parse(document.cookie).accessToken
   const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
 
-  const { user } = useAuth()
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
 
   const [messageApi, contextHolder] = message.useMessage()
@@ -348,23 +346,24 @@ const DetailProfileContainer = () => {
                       <Tooltip placement="bottomLeft" title={`${providerDetail?.isOnline ? 'Online' : 'Offline'}`}>
                         <div className="flex items-center gap-1 p-2 bg-gray-700 rounded-full">
                           <Dot theme="multi-color" size="24" fill={providerDetail?.isOnline ? '#008000' : '#FF0000'} />
-                          {/* {providerDetail?.isOnline ? ( */}
-                          <>
-                            <p>
-                              {providerDetail?.providerConfig?.status == ProviderConfigResponseStatusEnum.Activated &&
-                                'Sẵn sàng'}
-                            </p>
-                            <p>
-                              {providerDetail?.providerConfig?.status == ProviderConfigResponseStatusEnum.Busy && 'Bận'}
-                            </p>
-                            <p>
-                              {providerDetail?.providerConfig?.status ==
-                                ProviderConfigResponseStatusEnum.StoppedAcceptingBooking && 'Ngừng nhận đơn'}
-                            </p>
-                          </>
-                          {/* ) : (
+                          {providerDetail?.isOnline ? (
+                            <>
+                              <p>
+                                {providerDetail?.providerConfig?.status == ProviderConfigResponseStatusEnum.Activated &&
+                                  'Sẵn sàng'}
+                              </p>
+                              <p>
+                                {providerDetail?.providerConfig?.status == ProviderConfigResponseStatusEnum.Busy &&
+                                  'Bận'}
+                              </p>
+                              <p>
+                                {providerDetail?.providerConfig?.status ==
+                                  ProviderConfigResponseStatusEnum.StoppedAcceptingBooking && 'Ngừng nhận đơn'}
+                              </p>
+                            </>
+                          ) : (
                             'Offline'
-                          )} */}
+                          )}
                         </div>
                       </Tooltip>
                     </div>
@@ -439,7 +438,7 @@ const DetailProfileContainer = () => {
                         <div className="flex flex-col gap-2 w-max">
                           {moreButtonDatas.map((item) => (
                             <Fragment key={item.key}>
-                              {user?.id == providerDetail?.id && providerDetail?.isProvider ? (
+                              {userInfo?.id == providerDetail?.id && providerDetail?.isProvider ? (
                                 item.key != 'Follow' &&
                                 item.key != 'Donate' &&
                                 item.key != 'Report' &&

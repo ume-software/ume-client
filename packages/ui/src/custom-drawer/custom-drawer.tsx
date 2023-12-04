@@ -27,9 +27,9 @@ const CustomDrawer = ({
   drawerTitle,
   ...props
 }: DrawerProps) => {
-  const [searchTex, setSearchText] = useState('')
+  const [searchText, setSearchText] = useState('')
   const [drawerOpen, setDrawerOpen] = useState(false)
-  const onSearch = () => console.log(searchTex)
+  const onSearch = () => console.log(searchText)
   const showDrawer = () => {
     if (token == undefined) {
       setDrawerOpen(true)
@@ -72,8 +72,12 @@ const CustomDrawer = ({
     return (
       <div className="flex flex-col gap-5 pt-3 pl-3 text-white">
         <div className="flex items-center space-x-5">
-          <div className="inline-block p-2 bg-gray-700 rounded-full cursor-pointer hover:bg-gray-500 active:bg-gray-400">
-            <ArrowRight onClick={onClose} theme="outline" size="30" fill="#fff" />
+          <div
+            className="inline-block p-2 bg-gray-700 rounded-full cursor-pointer hover:bg-gray-500 active:bg-gray-400"
+            onClick={onClose}
+            onKeyDown={() => {}}
+          >
+            <ArrowRight theme="outline" size="30" fill="#fff" />
           </div>
           <span className="my-auto text-2xl font-bold">{drawerTitle}</span>
         </div>
@@ -82,7 +86,7 @@ const CustomDrawer = ({
           <div className="flex items-center">
             <InputWithAffix
               placeholder="Tìm kiếm..."
-              value={searchTex}
+              value={searchText}
               type="text"
               name="categorySearch"
               onChange={(e: any) => setSearchText(e.target.value)}
@@ -104,7 +108,7 @@ const CustomDrawer = ({
   }
   return (
     <>
-      <div onClick={showDrawer} className={`cursor-pointer hover:opacity-60 ${customOpenBtn}`}>
+      <div onClick={showDrawer} className={`cursor-pointer hover:opacity-60 ${customOpenBtn}`} onKeyDown={() => {}}>
         {openBtn}
       </div>
       <Drawer
