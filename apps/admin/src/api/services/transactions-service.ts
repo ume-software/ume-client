@@ -3,6 +3,7 @@ import { getEnv } from '~/env'
 
 import { parse } from 'cookie'
 import {
+  AdminHandleWithdrawalRequestStatusEnum,
   AdminManageBookingApi,
   AdminManageDepositRequestApi,
   AdminManageDonationApi,
@@ -153,15 +154,38 @@ export const getWaitingTransactions = async (
     })
   }
 }
+export const getWithdrawalDetails = async (
+  ctx,
+  input: { id: string; limit?: string; page?: string; select?: string; where?: string; order?: string },
+) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie ?? '')
+    const response = await new AdminManageWithdrawalRequestApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).adminGetOneWithdrawalRequest(input.id, input.limit, input.page, input.select, input.where, input.order)
 
-export const approveWithdrawal = async (id: string, action: 'COMPLETED' | 'REJECTED', ctx) => {
+    return {
+      data: response.data,
+      success: true,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.message || 'Authentication failed',
+    })
+  }
+}
+
+export const approveWithdrawal = async (id: string, action: any, ctx) => {
   const cookies = parse(ctx.req.headers.cookie ?? '')
   try {
     const response = await new AdminManageWithdrawalRequestApi({
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).adminHandleWithdrawalRequest(id, { status: action })
+    }).adminHandleWithdrawalRequest(id, action)
 
     return {
       data: response.data,
