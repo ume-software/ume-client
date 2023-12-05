@@ -108,10 +108,10 @@ const AccountSettingContainer = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-umeBackground grid grid-cols-10 mr-10 text-white">
+      <div className="grid min-h-screen grid-cols-10 mr-10 text-white bg-umeBackground">
         <div className="col-span-10 xl:col-span-2 w-full sticky xl:top-20 top-16 z-[5]">
           <div className="min-w-[150px] xl:min-h-[85%] xl:max-h-[85%] xl:p-10 py-5 xl:bg-zinc-800 bg-umeBackground xl:rounded-3xl sticky top-20 bottom-20 overflow-y-auto hide-scrollbar">
-            <div className="hidden xl:flex flex-col gap-5">
+            <div className="flex-col hidden gap-5 xl:flex">
               {settingType.map((item) => (
                 <>
                   <div
@@ -230,7 +230,7 @@ const AccountSettingContainer = () => {
                     ) : (
                       <>
                         <div>{item.icon}</div>
-                        <p className="2xl:text-lg xl:text-sm lg:text-md md:text-xs font-semibold truncate">
+                        <p className="font-semibold truncate 2xl:text-lg xl:text-sm lg:text-md md:text-xs">
                           {item.label}
                         </p>
                       </>
@@ -266,7 +266,7 @@ const AccountSettingContainer = () => {
                     }}
                     onKeyDown={() => {}}
                   >
-                    <div className="w-fit flex items-center gap-2">
+                    <div className="flex items-center gap-2 w-fit">
                       {item.key == 'becomeProvider' ? (
                         <>
                           <div className={`${!userInfo?.isVerified && 'opacity-30'}`}>{item.icon}</div>
@@ -367,7 +367,7 @@ const AccountSettingContainer = () => {
                       ) : (
                         <>
                           <div>{item.icon}</div>
-                          <p className="xl:text-lg lg:text-md font-semibold truncate">{item.label}</p>
+                          <p className="font-semibold truncate xl:text-lg lg:text-md">{item.label}</p>
                         </>
                       )}
                     </div>

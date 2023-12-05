@@ -5,7 +5,10 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { notification } from 'antd'
 import { parse } from 'cookie'
 import Image from 'next/image'
+import Link from 'next/link'
 import { BookingHandleRequestStatusEnum } from 'ume-service-openapi'
+
+import { getCurrentBookingForProviderData } from '../detail-profile-page/components/booking-countdown'
 
 import { NotificateSkeletonLoader } from '~/components/skeleton-load'
 import { TimeFormat } from '~/components/time-format'
@@ -22,6 +25,14 @@ const OrderNotificationForProvider = () => {
   const [scrollPosition, setScrollPosition] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)
   const utils = trpc.useContext()
+
+  const { data: getCurrentBookingForProviderData } = trpc.useQuery(['booking.getCurrentBookingForProvider'], {
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: 'always',
+    cacheTime: 0,
+    refetchOnMount: true,
+    enabled: !!accessToken,
+  })
 
   const {
     data: notificatedData,
@@ -42,33 +53,45 @@ const OrderNotificationForProvider = () => {
   const responeBooking = trpc.useMutation(['booking.putProviderResponeBooking'])
 
   const handleAcceptBooking = (bookingHistoryId: string, bookerName: string) => {
-    try {
-      responeBooking.mutate(
-        { bookingHistoryId: bookingHistoryId, status: BookingHandleRequestStatusEnum.ProviderAccept },
-        {
-          onSuccess: (data) => {
-            if (data.success) {
-              notification.success({
-                message: 'Yêu cầu đã được chấp nhận!',
-                description: `Bạn đã chấp nhận yêu cầu từ ${bookerName}`,
+    if ((getCurrentBookingForProviderData?.data.row?.length ?? 0) > 0 && getCurrentBookingForProviderData?.data?.row) {
+      notification.warning({
+        message: `Bạn đang trong thời gian phục vụ ${getCurrentBookingForProviderData?.data?.row[0]?.booker?.name}`,
+        description: (
+          <Link href={`/profile/${getCurrentBookingForProviderData?.data?.row[0]?.booker?.slug}`}>
+            Bấm vào đây để tới trang của người thuê
+          </Link>
+        ),
+        placement: 'bottomLeft',
+      })
+    } else {
+      try {
+        responeBooking.mutate(
+          { bookingHistoryId: bookingHistoryId, status: BookingHandleRequestStatusEnum.ProviderAccept },
+          {
+            onSuccess: (data) => {
+              if (data.success) {
+                notification.success({
+                  message: 'Yêu cầu đã được chấp nhận!',
+                  description: `Bạn đã chấp nhận yêu cầu từ ${bookerName}`,
+                  placement: 'bottomLeft',
+                })
+                utils.invalidateQueries('booking.getPendingBookingForProvider')
+                utils.invalidateQueries('booking.getCurrentBookingForProvider')
+              }
+            },
+            onError: (error, data) => {
+              console.error(error)
+              notification.error({
+                message: 'Có lỗi!',
+                description: 'Có lỗi trong quá trình chấp nhận. Vui lòng thử lại!',
                 placement: 'bottomLeft',
               })
-              utils.invalidateQueries('booking.getPendingBookingForProvider')
-              utils.invalidateQueries('booking.getCurrentBookingForProvider')
-            }
+            },
           },
-          onError: (error, data) => {
-            console.error(error)
-            notification.error({
-              message: 'Có lỗi!',
-              description: 'Có lỗi trong quá trình chấp nhận. Vui lòng thử lại!',
-              placement: 'bottomLeft',
-            })
-          },
-        },
-      )
-    } catch (error) {
-      console.error('Failed to accept booking:', error)
+        )
+      } catch (error) {
+        console.error('Failed to accept booking:', error)
+      }
     }
   }
 
