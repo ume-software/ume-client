@@ -31,7 +31,6 @@ const UpdateAccountModal = ({ id, openValue, closeFunction }: IUpdateAdminProps)
   const imageInputRef = useRef<HTMLInputElement>(null)
   const utils = trpc.useContext()
   const [isCreate, setIsCreate] = useState<boolean>(false)
-  const [isChanged, setIsChanged] = useState(false)
   const [openConfirm, setOpenConfirm] = useState(false)
   const updateAdminAccount = trpc.useMutation(['admin.updateAdminAccount'])
   const [adminDetails, setAdminDetails] = useState<any>()
@@ -168,6 +167,7 @@ const UpdateAccountModal = ({ id, openValue, closeFunction }: IUpdateAdminProps)
         description: 'Lưu ảnh tài khoản không thành công.',
       })
       console.error('Error uploading image:', error)
+      return null
     }
     return { imageUrl }
   }
@@ -175,28 +175,30 @@ const UpdateAccountModal = ({ id, openValue, closeFunction }: IUpdateAdminProps)
   async function submitHandle() {
     const imgURL = await uploadImage()
     try {
-      const updateDetails = changedObjects(adminDetails, form.values)
-      updateAdminAccount.mutate(
-        { id, updateDetails },
-        {
-          onSuccess: (data) => {
-            if (data.success) {
-              notification.success({
-                message: 'Cập nhật thành công!',
-                description: 'Tài khoản đã được cập nhật thành công.',
+      if (imgURL) {
+        const updateDetails = changedObjects(adminDetails, form.values)
+        updateAdminAccount.mutate(
+          { id, updateDetails },
+          {
+            onSuccess: (data) => {
+              if (data.success) {
+                notification.success({
+                  message: 'Cập nhật thành công!',
+                  description: 'Tài khoản đã được cập nhật thành công.',
+                })
+                utils.invalidateQueries('admin.getAdminAccountList')
+                cancelConfirmHandle()
+              }
+            },
+            onError: () => {
+              notification.error({
+                message: 'Cập nhật thất bại!',
+                description: 'Cập nhật tài khoản không thành công.',
               })
-              cancelConfirmHandle()
-            }
+            },
           },
-          onError: () => {
-            notification.error({
-              message: 'Cập nhật thất bại!',
-              description: 'Cập nhật tài khoản không thành công.',
-            })
-          },
-        },
-      )
-      utils.invalidateQueries('admin.getAdminAccountList')
+        )
+      }
     } catch (error) {
       console.error('Failed to patch voucher:', error)
     }
@@ -444,12 +446,14 @@ const UpdateAccountModal = ({ id, openValue, closeFunction }: IUpdateAdminProps)
           </div>
           <div className="flex justify-center col-span-5 pb-4 mt-10">
             <Button
+              isActive={false}
               onClick={openCancelConfirmHandle}
               customCSS={`mx-6 px-4 py-1 border-2 hover:scale-110 bg-red-500 border-red-500`}
             >
               Hủy
             </Button>
             <Button
+              isActive={false}
               customCSS={`mx-6 px-4 py-1 border-2  ${
                 !isDisableButton() && 'hover:scale-110 bg-[#7463F0] border-[#7463F0]'
               }`}

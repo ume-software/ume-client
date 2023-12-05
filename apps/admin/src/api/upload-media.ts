@@ -1,6 +1,6 @@
 import { getEnv } from '~/env'
 
-import { ImageApi } from 'ume-service-openapi'
+import { ImageApi } from 'ume-upload-service-openapi'
 
 export const uploadImageVoucher = async (formData) => {
   try {
@@ -35,7 +35,7 @@ export const uploadImageAdminAccount = async (formData) => {
     const response = await new ImageApi({
       basePath: getEnv().baseUploadFileURL,
       isJsonMime: () => true,
-    }).uploadImage(undefined, formData)
+    }).uploadImage(undefined, formData, undefined, undefined)
     return {
       data: response,
     }
@@ -44,7 +44,7 @@ export const uploadImageAdminAccount = async (formData) => {
   }
 }
 
-export const uploadBannerImage = async (formData) => {
+export const uploadWithdrawalImage = async (formData) => {
   try {
     const response = await new ImageApi({
       basePath: getEnv().baseUploadFileURL,

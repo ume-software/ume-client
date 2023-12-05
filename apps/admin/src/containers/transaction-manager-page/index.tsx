@@ -5,13 +5,13 @@ import Head from 'next/head'
 import BookingTransactionContainer from './booking-transaction.container'
 import DepositTransactionContainer from './deposit-transaction.container'
 import DonationTransactionContainer from './donation-transaction.container'
-import WithdrawTransactionPage from './withdraw-transaction.container'
+import WithdrawalTransactionPage from './withdrawal-transaction.container'
 
 const SwitchTransactionManager = ({ selectedTask }) => {
   const id = useId()
   switch (selectedTask) {
-    case 'withdraw':
-      return <WithdrawTransactionPage key={id} />
+    case 'withdrawal':
+      return <WithdrawalTransactionPage key={id} />
     case 'deposit':
       return <DepositTransactionContainer />
     case 'booking':

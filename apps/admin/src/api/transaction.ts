@@ -8,6 +8,7 @@ import {
   getDepositTransactions,
   getDonationTransactions,
   getWaitingTransactions,
+  getWithdrawalDetails,
   statisticTransasction,
 } from './services/transactions-service'
 
@@ -70,10 +71,27 @@ export const transactionRouter = createRouter()
       return await getWaitingTransactions(ctx, input)
     },
   })
+  .query('getWithdrawalDetails', {
+    input: z.object({
+      id: z.string(),
+      limit: z.optional(z.string()),
+      page: z.optional(z.string()),
+      select: z.optional(z.string()),
+      where: z.optional(z.string()),
+      order: z.optional(z.string()),
+    }),
+    resolve: async ({ ctx, input }) => {
+      return await getWithdrawalDetails(ctx, input)
+    },
+  })
   .mutation('approveWithdrawRequest', {
     input: z.object({
       id: z.string(),
-      action: z.any(),
+      action: z.object({
+        billImageUrl: z.string(),
+        feedback: z.string(),
+        status: z.string(),
+      }),
     }),
     resolve: async ({ ctx, input }) => {
       return await approveWithdrawal(input.id, input.action, ctx)
