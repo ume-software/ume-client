@@ -1,4 +1,5 @@
 import { TRPCError } from '@trpc/server'
+import { GenderEnum } from '~/enumVariable/enumVariable'
 import { getEnv } from '~/env'
 
 import { parse } from 'cookie'
@@ -175,6 +176,10 @@ export const userKYC = async (
     frontSideCitizenIdImageUrl: string
     backSideCitizenIdImageUrl: string
     portraitImageUrl: string
+    citizenId: string
+    citizenName: string
+    citizenDob: string
+    citizenGender: GenderEnum
   },
   ctx,
 ) => {
@@ -185,6 +190,7 @@ export const userKYC = async (
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
     }).userSendKYCRequest(query)
+
     return {
       data: reponse.data,
       success: true,

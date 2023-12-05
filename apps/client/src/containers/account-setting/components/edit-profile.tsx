@@ -1,5 +1,5 @@
 import { Menu, Transition } from '@headlessui/react'
-import { Check, CheckOne, CloseSmall, Pencil } from '@icon-park/react'
+import { Check, CheckOne, CloseSmall, Info, Pencil } from '@icon-park/react'
 import { Button, FormInput, Input, Modal } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
 import { uploadImage } from '~/apis/upload-media'
@@ -8,10 +8,12 @@ import useDebounce from '~/hooks/useDebounce'
 
 import { FormEvent, Fragment, useEffect, useRef, useState } from 'react'
 
-import { notification } from 'antd'
+import { Tooltip, notification } from 'antd'
 import { useFormik } from 'formik'
 import Image from 'next/legacy/image'
 import * as Yup from 'yup'
+
+import { KYCFormStep } from './kyc-form'
 
 import ConfirmForm from '~/components/confirm-form/confirm-form'
 import { SkeletonForAccountSetting } from '~/components/skeleton-load'
@@ -49,7 +51,6 @@ const EditProfile = () => {
   const utils = trpc.useContext()
 
   const updateInformation = trpc.useMutation(['identity.updateUserProfile'])
-  const userKYC = trpc.useMutation(['identity.userKYC'])
 
   const [selectedImage, setSelectedImage] = useState<SelectedImageProps>({
     avatarURL: undefined,
@@ -82,55 +83,12 @@ const EditProfile = () => {
       name: Yup.string().required('Tên là yêu cầu'),
       dob: Yup.date().required('Ngày sinh là yêu cầu'),
       slug: Yup.string().required('Đường dẫn là yêu cầu'),
-      phone: Yup.string()
-        .required('Số điện thoại là yêu cầu')
-        .matches(vietnamesePhoneNumberRegExp, 'Định dạng không hợp lệ'),
+      phone: Yup.string().matches(vietnamesePhoneNumberRegExp, 'Định dạng không hợp lệ'),
     }),
     onSubmit(values) {
       setIsModalConfirmationVisible(true)
     },
   })
-
-  const handleResetForm = () => {
-    if (!isLoadingUserSettingData && userSettingData) {
-      form.setValues({
-        avatarUrl: userSettingData?.data?.avatarUrl ?? '',
-        dob: userSettingData?.data?.dob?.split('T')[0] ?? '',
-        email: userSettingData?.data?.email ?? '',
-        gender: genderData.find((gender) => gender.key == userSettingData?.data?.gender) ?? genderData[0],
-        isVerified: userSettingData?.data?.isVerified,
-        latestOnline: null,
-        name: userSettingData?.data?.name ?? '',
-        phone: userSettingData?.data?.phone ?? '',
-        slug: userSettingData?.data?.slug ?? '',
-        username: userSettingData?.data?.username ?? '',
-      })
-    }
-  }
-
-  useEffect(() => {
-    handleResetForm()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userSettingData])
-
-  const debouncedValue = useDebounce<string>(form.values.slug, 500)
-  const { data: checkSlugUserData } = trpc.useQuery(['identity.checkSlugUser', debouncedValue], {
-    enabled: !!form.values.slug,
-  })
-
-  const inforChange: boolean =
-    (userSettingData?.data?.name ?? '') == form.values.name &&
-    (userSettingData?.data?.avatarUrl ?? '') == form.values.avatarUrl &&
-    (userSettingData?.data?.dob?.split('T')[0] ?? '') == form.values.dob &&
-    (userSettingData?.data?.gender ?? '') == form.values.gender.key &&
-    (userSettingData?.data?.phone ?? '') == form.values.phone &&
-    (userSettingData?.data?.slug ?? '') == form.values.slug
-
-  const handleClose = () => {
-    setIsModalConfirmationVisible(false)
-    setIsModalVertificationVisible(false)
-  }
-
   const handleImageChange = (event, index: number) => {
     const file = event.target.files[0]
 
@@ -173,67 +131,44 @@ const EditProfile = () => {
     }
   }
 
-  const handleUploadImage = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-
-    const formData = new FormData(e.currentTarget)
-
-    if (selectedImage.frontVertificationImage && selectedImage.backVertificationImage && selectedImage.faceImage) {
-      try {
-        const responseData = await uploadImage(formData)
-        if (responseData?.data?.data?.results) {
-          userKYC.mutate(
-            {
-              frontSideCitizenIdImageUrl: responseData.data.data.results[0],
-              backSideCitizenIdImageUrl: responseData.data.data.results[1],
-              portraitImageUrl: responseData.data.data.results[2],
-            },
-            {
-              onSuccess() {
-                setSelectedImage((image) => ({
-                  ...image,
-                  frontVertificationImage: undefined,
-                  backVertificationImage: undefined,
-                  faceImage: undefined,
-                }))
-                setIsModalVertificationVisible(false)
-                utils.invalidateQueries('identity.identityInfo')
-                notification.success({
-                  message: 'Cập nhật thông tin thành công',
-                  description: 'Thông tin vừa được cập nhật',
-                  placement: 'bottomLeft',
-                })
-              },
-              onError() {
-                notification.error({
-                  message: 'Cập nhật thông tin thất bại',
-                  description: 'Có lỗi trong quá trình cập nhật thông tin. Vui lòng thử lại sau!',
-                  placement: 'bottomLeft',
-                })
-              },
-            },
-          )
-        } else {
-          notification.error({
-            message: 'Cập nhật thông tin thất bại',
-            description: 'Có lỗi trong quá trình cập nhật thông tin. Vui lòng thử lại sau!',
-            placement: 'bottomLeft',
-          })
-        }
-      } catch (error) {
-        notification.error({
-          message: 'Cập nhật thông tin thất bại',
-          description: 'Có lỗi trong quá trình cập nhật thông tin. Vui lòng thử lại sau!',
-          placement: 'bottomLeft',
-        })
-      }
-    } else {
-      notification.warning({
-        message: 'Thiếu ảnh',
-        description: 'Vui lòng cung cấp đủ hình ảnh!',
-        placement: 'bottomLeft',
+  const handleResetForm = () => {
+    if (!isLoadingUserSettingData && userSettingData) {
+      form.setValues({
+        avatarUrl: userSettingData?.data?.avatarUrl ?? '',
+        dob: userSettingData?.data?.dob?.split('T')[0] ?? '',
+        email: userSettingData?.data?.email ?? '',
+        gender: genderData.find((gender) => gender.key == userSettingData?.data?.gender) ?? genderData[0],
+        isVerified: userSettingData?.data?.isVerified,
+        latestOnline: null,
+        name: userSettingData?.data?.name ?? '',
+        phone: userSettingData?.data?.phone ?? '',
+        slug: userSettingData?.data?.slug ?? '',
+        username: userSettingData?.data?.username ?? '',
       })
     }
+  }
+
+  useEffect(() => {
+    handleResetForm()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userSettingData])
+
+  const debouncedValue = useDebounce<string>(form.values.slug, 500)
+  const { data: checkSlugUserData } = trpc.useQuery(['identity.checkSlugUser', debouncedValue], {
+    enabled: !!form.values.slug,
+  })
+
+  const inforChange: boolean =
+    (userSettingData?.data?.name ?? '') == form.values.name &&
+    (userSettingData?.data?.avatarUrl ?? '') == form.values.avatarUrl &&
+    (userSettingData?.data?.dob?.split('T')[0] ?? '') == form.values.dob &&
+    (userSettingData?.data?.gender ?? '') == form.values.gender.key &&
+    (userSettingData?.data?.phone ?? '') == form.values.phone &&
+    (userSettingData?.data?.slug ?? '') == form.values.slug
+
+  const handleClose = () => {
+    setIsModalConfirmationVisible(false)
+    setIsModalVertificationVisible(false)
   }
 
   const handleUpdateInformation = async () => {
@@ -357,106 +292,13 @@ const EditProfile = () => {
     customModalCSS: 'top-0 overflow-y-auto custom-scrollbar',
     closeWhenClickOutSide: true,
     form: (
-      <form
-        className="min-h-[75%] max-h-[95%] flex flex-col justify-between px-5 pb-5 gap-5 overflow-y-auto custom-scrollbar"
-        onSubmit={handleUploadImage}
-      >
-        <div className="pb-3 text-xl font-bold text-white border-b border-opacity-30">Xác minh danh tính</div>
-        <p className="text-white opacity-50">*Dùng ảnh CCCD hoặc Passport</p>
-        <div className="min-h-[75%] max-h-full flex flex-col gap-10 text-md text-white overflow-y-auto custom-scrollbar">
-          <div>
-            <label>Ảnh mặt trước</label>
-            <div className="relative">
-              <div className="relative w-full h-[300px] bg-white bg-opacity-30 rounded-xl">
-                {!selectedImage.frontVertificationImage && (
-                  <div className="absolute top-0 bottom-0 left-0 right-0 z-10 flex items-center justify-center w-full h-full border-2 border-white border-dashed rounded-xl">
-                    <p className="text-4xl font-bold text-white">+</p>
-                  </div>
-                )}
-                <Image
-                  className="rounded-lg"
-                  layout="fill"
-                  objectFit="scale-down"
-                  src={selectedImage.frontVertificationImage ? selectedImage.frontVertificationImage : ImgForEmpty}
-                  alt="Personal Image"
-                />
-              </div>
-              <input
-                className="absolute top-0 left-0 z-20 w-full h-full opacity-0 cursor-pointer"
-                type="file"
-                name="files"
-                onChange={(e) => handleImageChange(e, 1)}
-              />
-            </div>
-          </div>
-          <div>
-            <label>Ảnh mặt sau</label>
-            <div className="relative">
-              <div className="relative w-full h-[300px] bg-white bg-opacity-30 rounded-xl">
-                <div className="absolute top-0 bottom-0 left-0 right-0 z-10 flex items-center justify-center w-full h-full border-2 border-white border-dashed rounded-xl">
-                  <p className="text-4xl font-bold text-white">+</p>
-                </div>
-                <Image
-                  className="rounded-lg"
-                  layout="fill"
-                  objectFit="scale-down"
-                  src={selectedImage.backVertificationImage ? selectedImage.backVertificationImage : ImgForEmpty}
-                  alt="Personal Image"
-                />
-              </div>
-              <input
-                className="absolute top-0 left-0 z-20 w-full h-full opacity-0 cursor-pointer"
-                type="file"
-                name="files"
-                onChange={(e) => handleImageChange(e, 2)}
-              />
-            </div>
-          </div>
-          <div>
-            <label>Ảnh khuôn mặt</label>
-            <div className="relative">
-              <div className="relative w-full h-[300px] bg-white bg-opacity-30 rounded-xl">
-                <div className="absolute top-0 bottom-0 left-0 right-0 z-10 flex items-center justify-center w-full h-full border-2 border-white border-dashed rounded-xl">
-                  <p className="text-4xl font-bold text-white">+</p>
-                </div>
-                <Image
-                  className="rounded-lg"
-                  layout="fill"
-                  objectFit="scale-down"
-                  src={selectedImage.faceImage ? selectedImage.faceImage : ImgForEmpty}
-                  alt="Personal Image"
-                />
-              </div>
-              <input
-                className="absolute top-0 left-0 z-20 w-full h-full opacity-0 cursor-pointer"
-                type="file"
-                name="files"
-                onChange={(e) => handleImageChange(e, 3)}
-              />
-            </div>
-          </div>
-        </div>
-        <div className="min-h-[50px] flex justify-around items-start">
-          <Button
-            type="button"
-            isActive={false}
-            isOutlinedButton={true}
-            customCSS="w-[100px] text-xl p-2 rounded-xl hover:scale-105"
-            onClick={() => handleClose()}
-          >
-            Hủy
-          </Button>
-
-          <Button
-            customCSS="w-[150px] text-xl p-2 rounded-xl hover:scale-105"
-            type="submit"
-            isActive={true}
-            isOutlinedButton={true}
-          >
-            Xác minh
-          </Button>
-        </div>
-      </form>
+      <KYCFormStep
+        handleClose={handleClose}
+        setIsModalVertificationVisible={setIsModalVertificationVisible}
+        setSelectedImage={setSelectedImage}
+        handleImageChange={handleImageChange}
+        selectedImage={selectedImage}
+      />
     ),
     backgroundColor: '#15151b',
     closeButtonOnConner: (
@@ -534,7 +376,7 @@ const EditProfile = () => {
                     <label className="flex items-end gap-3">
                       Đường dẫn của bạn{' '}
                       {!userSettingData.data?.slug && (
-                        <p className="text-xs text-red-600 font-semibold opacity-80">
+                        <p className="text-xs font-semibold text-red-600 opacity-80">
                           *( Chỉ được cập nhật một lần duy nhất )
                         </p>
                       )}
@@ -573,8 +415,9 @@ const EditProfile = () => {
                       <label>Email</label>
                       <Input
                         name="email"
-                        className="bg-zinc-800 focus:outline-none"
+                        className="bg-zinc-800 focus:outline-none text-slate-200"
                         value={form.values.email}
+                        disabled
                         readOnly
                       />
                     </div>
@@ -680,14 +523,27 @@ const EditProfile = () => {
                     <label>Xác minh danh tính</label>
                     <div>
                       {userSettingData.data?.isVerified ? (
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2 px-4 py-2 text-white bg-green-600 rounded-md w-fit">
-                            <CheckOne theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" /> Đã xác minh
-                          </div>
+                        <div className="flex items-center gap-2 px-4 py-2 text-white bg-green-600 rounded-3xl w-fit">
+                          Đã xác minh
+                          <CheckOne theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
                         </div>
                       ) : (
                         <div className="flex items-center justify-between">
-                          <div className="p-2 px-5 text-white bg-red-600 rounded-md w-fit">Chưa xác minh</div>
+                          <div className="flex p-2 px-5 text-white bg-red-600 rounded-3xl w-fit">
+                            Chưa xác minh
+                            <Tooltip
+                              title={
+                                <div className="text-black">
+                                  Bạn cần xác minh danh tính
+                                  <br />
+                                  để mở chế độ nhà cung cấp
+                                </div>
+                              }
+                              color="#fff"
+                            >
+                              <Info theme="outline" size="24" fill="#fff" className="mb-1 ml-2" />
+                            </Tooltip>
+                          </div>
                           <Button
                             isActive={true}
                             isOutlinedButton={true}
