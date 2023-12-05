@@ -107,7 +107,7 @@ export const KYCFormStep = ({
               frontSideCitizenIdImageUrl: responseData.data.data.results[0],
               backSideCitizenIdImageUrl: responseData.data.data.results[1],
               portraitImageUrl: responseData.data.data.results[2],
-              citizenDob: form.values.citizenDob,
+              citizenDob: new Date(form.values.citizenDob).toISOString(),
               citizenGender: form.values.citizenGender as any,
               citizenId: form.values.citizenId,
               citizenName: form.values.citizenName,
@@ -161,12 +161,12 @@ export const KYCFormStep = ({
   }
 
   return (
-    <div className="max-h-[95%] flex flex-col px-5 pb-5 gap-5 overflow-y-auto custom-scrollbar">
+    <div className="mt-10 max-h-full flex flex-col px-5 pb-5 gap-5 overflow-y-auto custom-scrollbar">
       <Steps current={current} className="mb-4" items={steps} />
       <div>
         <form onSubmit={handleUploadImage}>
           {current === 0 && (
-            <div>
+            <div className="mt-5 flex flex-col max-h-full gap-10 overflow-y-auto text-white text-md custom-scrollbar">
               <div className="flex flex-col gap-10">
                 <div className="flex flex-col">
                   <div className="text-white">Số CCCD/Passport</div>
@@ -212,7 +212,7 @@ export const KYCFormStep = ({
                   />
                 </div>
               </div>
-              <div className="flex justify-around mt-5">
+              <div className="flex justify-around mt-[20%]">
                 <Button
                   type="button"
                   isActive={false}
