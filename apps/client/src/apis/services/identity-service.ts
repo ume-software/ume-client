@@ -1,4 +1,5 @@
 import { TRPCError } from '@trpc/server'
+import { GenderEnum } from '~/enumVariable/enumVariable'
 import { getEnv } from '~/env'
 
 import { parse } from 'cookie'
@@ -175,6 +176,10 @@ export const userKYC = async (
     frontSideCitizenIdImageUrl: string
     backSideCitizenIdImageUrl: string
     portraitImageUrl: string
+    citizenId: string
+    citizenName: string
+    citizenDob: string
+    citizenGender: GenderEnum
   },
   ctx,
 ) => {
@@ -185,6 +190,7 @@ export const userKYC = async (
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
     }).userSendKYCRequest(query)
+
     return {
       data: reponse.data,
       success: true,
@@ -654,6 +660,44 @@ export const userUpdateProviderProfile = async (
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
       message: error.message || 'Fail to update provider profile',
+    })
+  }
+}
+
+export const FollowProvider = async (slug: string, ctx) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie)
+    const respone = await new UserApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).followUserBySlug(slug)
+    return {
+      data: respone.data,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to create new booking',
+    })
+  }
+}
+
+export const UnFollowProvider = async (slug: string, ctx) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie)
+    const respone = await new UserApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).unFollowUserBySlug(slug)
+    return {
+      data: respone.data,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to create new booking',
     })
   }
 }

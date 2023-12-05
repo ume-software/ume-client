@@ -1,3 +1,5 @@
+import { GenderEnum } from '~/enumVariable/enumVariable'
+
 import {
   CreateVoucherRequestDiscountUnitEnum,
   CreateVoucherRequestRecipientTypeEnum,
@@ -11,6 +13,8 @@ import { z } from 'zod'
 
 import { createRouter } from './configurations'
 import {
+  FollowProvider,
+  UnFollowProvider,
   cancelWithdrawRequests,
   checkSlugUser,
   createServiceProvider,
@@ -90,6 +94,10 @@ export const identityRouter = createRouter()
       frontSideCitizenIdImageUrl: z.string(),
       backSideCitizenIdImageUrl: z.string(),
       portraitImageUrl: z.string(),
+      citizenId: z.string(),
+      citizenName: z.string(),
+      citizenDob: z.string(),
+      citizenGender: z.enum([GenderEnum.FEMALE, GenderEnum.MALE]),
     }),
     resolve: async ({ input, ctx }) => {
       return await userKYC(input, ctx)
@@ -314,5 +322,17 @@ export const identityRouter = createRouter()
     }),
     resolve: async ({ input, ctx }) => {
       return await userUpdateProviderProfile(input, ctx)
+    },
+  })
+  .mutation('FollowProvider', {
+    input: z.string(),
+    resolve: async ({ input, ctx }) => {
+      return await FollowProvider(input, ctx)
+    },
+  })
+  .mutation('UnFollowProvider', {
+    input: z.string(),
+    resolve: async ({ input, ctx }) => {
+      return await UnFollowProvider(input, ctx)
     },
   })

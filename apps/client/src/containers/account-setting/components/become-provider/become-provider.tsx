@@ -200,25 +200,29 @@ const BecomeProvider = () => {
     <>
       {isModalConfirmationVisible && confirmModal}
       <div className="w-full px-10">
-        <p className="text-4xl font-bold">Trở thành nhà cung cấp</p>
+        <p className="text-4xl font-bold">Nhà cung cấp</p>
 
         <div className="w-full mt-10 px-5 space-y-10">
-          <div className="flex items-center justify-between gap-5 py-10 border-b border-white border-opacity-30">
-            <div className="flex flex-col gap-2">
-              <p className="text-lg">Trở thành nhà cung cấp dịch vụ của chúng tôi</p>
-              <span className="w-4/5 text-sm opacity-50">
-                Trở thành nhà cung cấp để có thể mang lại nhiều lợi ích cho bạn như là kiếm tiền, gia tăng độ nổi
-                tiếng,...
-              </span>
-            </div>
-            <Switch
-              className="bg-red-600"
-              checkedChildren={<CheckSmall theme="outline" size="23" fill="#fff" strokeLinejoin="bevel" />}
-              unCheckedChildren={<CloseSmall theme="outline" size="23" fill="#fff" strokeLinejoin="bevel" />}
-              checked={checked}
-              onChange={handleBecomeProvider}
-            />
-          </div>
+          {!checked && (
+            <>
+              <div className="flex items-center justify-between gap-5 py-10 border-b border-white border-opacity-30">
+                <div className="flex flex-col gap-2">
+                  <p className="text-lg">Trở thành nhà cung cấp dịch vụ của chúng tôi</p>
+                  <span className="w-4/5 text-sm opacity-50">
+                    Trở thành nhà cung cấp để có thể mang lại nhiều lợi ích cho bạn như là kiếm tiền, gia tăng độ nổi
+                    tiếng,...
+                  </span>
+                </div>
+                <Switch
+                  className="bg-red-600"
+                  checkedChildren={<CheckSmall theme="outline" size="23" fill="#fff" strokeLinejoin="bevel" />}
+                  unCheckedChildren={<CloseSmall theme="outline" size="23" fill="#fff" strokeLinejoin="bevel" />}
+                  checked={checked}
+                  onChange={handleBecomeProvider}
+                />
+              </div>
+            </>
+          )}
           {checked && (
             <>
               {!isLoadingUserSettingData ? (

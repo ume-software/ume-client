@@ -1,3 +1,4 @@
+import NotiSound from 'public/sounds/notification.mp3'
 import { socket } from '~/apis/socket/socket-connect'
 import { useAuth } from '~/contexts/auth'
 
@@ -9,6 +10,7 @@ import {
   createContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react'
 
@@ -61,6 +63,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
   const accessToken = parse(document.cookie).accessToken
   const { isAuthenticated } = useAuth()
+  const audioRef = useRef<HTMLAudioElement | null>(null)
 
   const [childrenDrawer, setChildrenDrawer] = useState<ReactNode>()
 
@@ -80,6 +83,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
       if (socketInstance?.socketInstanceBooking) {
         socketInstance.socketInstanceBooking.on(getSocket().SOCKET_SERVER_EMIT.USER_BOOKING_PROVIDER, (...args) => {
+          audioRef.current?.play()
+          setSocketContext((prev) => ({ ...prev, socketNotificateContext: args }))
+        })
+        socketInstance.socketInstanceBooking.on(getSocket().SOCKET_SERVER_EMIT.PROVIDER_HANDLED_BOOKING, (...args) => {
+          audioRef.current?.play()
           setSocketContext((prev) => ({ ...prev, socketNotificateContext: args }))
         })
       }
@@ -87,6 +95,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         socketInstance.socketInstanceChatting.on(
           getSocket().SOCKER_CHATTING_SERVER_EMIT.MESSAGE_FROM_CHANNEL,
           (...args) => {
+            args[0]?.senderId != userInfo.id && audioRef.current?.play()
             setSocketContext((prev) => ({ ...prev, socketChattingContext: args }))
           },
         )
@@ -111,6 +120,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   return (
     <SocketClientEmit.Provider value={socketClientEmitValue}>
       <SocketContext.Provider value={socketClientEmitValue}>
+        <audio ref={audioRef} src={NotiSound} />
         <div className="flex flex-col">
           <div className="fixed z-10 flex flex-col w-full ">
             <Header />

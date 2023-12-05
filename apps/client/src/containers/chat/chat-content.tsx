@@ -49,11 +49,10 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
 
   useEffect(() => {
     if (socketContext?.socketChattingContext) {
-      utils.invalidateQueries('chatting.getListChattingChannels')
       utils.invalidateQueries('chatting.getMessagesByChannelId')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socketContext?.socketChattingContext, !!accessToken])
+  }, [socketContext?.socketChattingContext, !!accessToken, !!userInfo])
 
   const mappingMember: { [key: string]: MemberChatChannelResponse } = convertArrayObjectToObject(
     chattingMessageChannel?.data.members ?? [],

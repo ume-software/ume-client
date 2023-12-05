@@ -213,6 +213,24 @@ export const putProviderResponeBooking = async ({ bookingHistoryId, status }, ct
   }
 }
 
+export const getFeedbackServiceByUserSlug = async (slug: string) => {
+  try {
+    const respone = await new UserApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+    }).getFeedbackByUserSlug(slug, 'unlimited', '1', '["$all"]')
+    return {
+      data: respone.data,
+      success: true,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to create new booking',
+    })
+  }
+}
+
 export const getFeedbackServiceById = async (feedbackServiceId) => {
   try {
     const respone = await new ProviderServiceApi({
@@ -258,7 +276,7 @@ export const getAllNotice = async (query: { page: string; limit: string }, ctx) 
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).getNotice(query.limit, query.page, '["$all"]')
+    }).getNotice(query.limit, query.page, '["$all"]', '{}', '[{"updatedAt":"asc"}]')
     return {
       data: respone.data,
       success: true,

@@ -1,9 +1,21 @@
 import { Menu, Transition } from '@headlessui/react'
-import { Alarm, CopyOne, Dot, Female, Lock, Male, More, PaperMoneyTwo, ShareTwo, Stopwatch } from '@icon-park/react'
+import {
+  Alarm,
+  Check,
+  CopyOne,
+  Dot,
+  Female,
+  Lock,
+  Male,
+  More,
+  PaperMoneyTwo,
+  Plus,
+  ShareTwo,
+  Stopwatch,
+} from '@icon-park/react'
 import detailBackground from 'public/detail-cover-background.png'
 import ImgForEmpty from 'public/img-for-empty.png'
 import lgbtIcon from 'public/rainbow-flag-11151.svg'
-import { useAuth } from '~/contexts/auth'
 
 import { Fragment, ReactElement, useEffect, useState } from 'react'
 
@@ -43,6 +55,30 @@ interface TabDataProps {
 }
 
 const moreButtonDatas: TabDataProps[] = [
+  {
+    key: 'Follow',
+    label: 'Theo dõi',
+    icon: (
+      <Plus
+        className={`transition-opacity opacity-0 group-hover:opacity-100 group-hover:translate-x-3 duration-300`}
+        theme="outline"
+        size="20"
+        fill="#fff"
+      />
+    ),
+  },
+  {
+    key: 'UnFollow',
+    label: 'Đang theo dõi',
+    icon: (
+      <Check
+        className={`transition-opacity opacity-0 group-hover:opacity-100 group-hover:translate-x-3 duration-300`}
+        theme="outline"
+        size="20"
+        fill="#7e22ce"
+      />
+    ),
+  },
   {
     key: 'Report',
     label: 'Tố cáo',
@@ -114,8 +150,8 @@ const DetailProfileContainer = () => {
   const slug = router.query
 
   const accessToken = parse(document.cookie).accessToken
+  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
 
-  const { isAuthenticated, user } = useAuth()
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
 
   const [messageApi, contextHolder] = message.useMessage()
@@ -142,6 +178,9 @@ const DetailProfileContainer = () => {
     },
     enabled: !!slug.profileId!.toString(),
   })
+  const followProvider = trpc.useMutation(['identity.FollowProvider'])
+  const unFollowProvider = trpc.useMutation(['identity.UnFollowProvider'])
+  const utils = trpc.useContext()
 
   const currentBookingForProviderData: BookingHistoryPagingResponse['row'] | undefined =
     getCurrentBookingForProviderData()
@@ -201,14 +240,34 @@ const DetailProfileContainer = () => {
         content: 'Mở facebook thành công',
         duration: 2,
       })
+    } else if (item.key == 'Follow') {
+      if (providerDetail && (userInfo || accessToken)) {
+        followProvider.mutate(providerDetail.slug, {
+          onSuccess() {
+            utils.invalidateQueries('booking.getUserBySlug')
+          },
+        })
+      } else {
+        setIsModalLoginVisible(true)
+      }
+    } else if (item.key == 'UnFollow') {
+      if (providerDetail && (userInfo || accessToken)) {
+        unFollowProvider.mutate(providerDetail.slug, {
+          onSuccess() {
+            utils.invalidateQueries('booking.getUserBySlug')
+          },
+        })
+      } else {
+        setIsModalLoginVisible(true)
+      }
     } else if (item.key == 'Donate') {
-      if (providerDetail && (isAuthenticated || user || accessToken)) {
+      if (providerDetail && (userInfo || accessToken)) {
         setIsModalDonationVisible(true)
       } else {
         setIsModalLoginVisible(true)
       }
     } else if (item.key == 'Report') {
-      if (providerDetail && (isAuthenticated || user || accessToken)) {
+      if (providerDetail && (userInfo || accessToken)) {
         setIsModalReportVisible(true)
       } else {
         setIsModalLoginVisible(true)
@@ -287,23 +346,24 @@ const DetailProfileContainer = () => {
                       <Tooltip placement="bottomLeft" title={`${providerDetail?.isOnline ? 'Online' : 'Offline'}`}>
                         <div className="flex items-center gap-1 p-2 bg-gray-700 rounded-full">
                           <Dot theme="multi-color" size="24" fill={providerDetail?.isOnline ? '#008000' : '#FF0000'} />
-                          {/* {providerDetail?.isOnline ? ( */}
-                          <>
-                            <p>
-                              {providerDetail?.providerConfig?.status == ProviderConfigResponseStatusEnum.Activated &&
-                                'Sẵn sàng'}
-                            </p>
-                            <p>
-                              {providerDetail?.providerConfig?.status == ProviderConfigResponseStatusEnum.Busy && 'Bận'}
-                            </p>
-                            <p>
-                              {providerDetail?.providerConfig?.status ==
-                                ProviderConfigResponseStatusEnum.StoppedAcceptingBooking && 'Ngừng nhận đơn'}
-                            </p>
-                          </>
-                          {/* ) : (
+                          {providerDetail?.isOnline ? (
+                            <>
+                              <p>
+                                {providerDetail?.providerConfig?.status == ProviderConfigResponseStatusEnum.Activated &&
+                                  'Sẵn sàng'}
+                              </p>
+                              <p>
+                                {providerDetail?.providerConfig?.status == ProviderConfigResponseStatusEnum.Busy &&
+                                  'Bận'}
+                              </p>
+                              <p>
+                                {providerDetail?.providerConfig?.status ==
+                                  ProviderConfigResponseStatusEnum.StoppedAcceptingBooking && 'Ngừng nhận đơn'}
+                              </p>
+                            </>
+                          ) : (
                             'Offline'
-                          )} */}
+                          )}
                         </div>
                       </Tooltip>
                     </div>
@@ -378,11 +438,13 @@ const DetailProfileContainer = () => {
                         <div className="flex flex-col gap-2 w-max">
                           {moreButtonDatas.map((item) => (
                             <Fragment key={item.key}>
-                              {user?.id == providerDetail?.id ? (
+                              {userInfo?.id == providerDetail?.id && providerDetail?.isProvider ? (
+                                item.key != 'Follow' &&
                                 item.key != 'Donate' &&
-                                item.key != 'Report' && (
+                                item.key != 'Report' &&
+                                item.key != 'UnFollow' && (
                                   <div
-                                    className="p-2 cursor-pointer rounded-t-md hover:bg-gray-700 text-white group border-b-2 border-white border-opacity-30 last:border-none last:rounded-md"
+                                    className={`p-2 cursor-pointer rounded-t-md hover:bg-gray-700 text-white group border-b-2 border-white border-opacity-30 last:border-none last:rounded-md`}
                                     onClick={() => {
                                       handleMenuButtonAction(item)
                                     }}
@@ -396,7 +458,9 @@ const DetailProfileContainer = () => {
                                 )
                               ) : (
                                 <div
-                                  className="p-2 cursor-pointer rounded-t-md hover:bg-gray-700 text-white group border-b-2 border-white last:border-none last:rounded--md"
+                                  className={`p-2 cursor-pointer rounded-t-md hover:bg-gray-700 ${
+                                    item.key == 'UnFollow' ? 'text-purple-600 font-semibold' : 'text-white font-normal'
+                                  } group border-b-2 border-white last:border-none last:rounded-md`}
                                   onClick={() => {
                                     handleMenuButtonAction(item)
                                   }}
@@ -404,7 +468,18 @@ const DetailProfileContainer = () => {
                                 >
                                   <div className="flex items-center justify-between gap-2 rounded-md duration-300 scale-x-100 group-hover:scale-x-95 group-hover:-translate-x-2">
                                     <div>{item.label}</div>
-                                    {item.icon}
+                                    {item.key == 'Follow' || item.key == 'UnFollow' ? (
+                                      (item.key == 'Follow' && !followProvider.isLoading) ||
+                                      (item.key == 'UnFollow' && !unFollowProvider.isLoading) ? (
+                                        <>{item.icon}</>
+                                      ) : (
+                                        <span
+                                          className={`spinner h-5 w-5 animate-spin rounded-full border-[3px] border-r-transparent border-white`}
+                                        />
+                                      )
+                                    ) : (
+                                      <>{item.icon}</>
+                                    )}
                                   </div>
                                 </div>
                               )}

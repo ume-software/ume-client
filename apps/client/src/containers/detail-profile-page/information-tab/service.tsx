@@ -44,6 +44,7 @@ const Service = (props: { data: ProviderServiceResponse }) => {
       enabled: !!slug.profileId && !!accessToken,
     },
   )
+
   const postFeedback = trpc.useMutation(['booking.postFeedback'])
   const utils = trpc.useContext()
 
@@ -58,7 +59,10 @@ const Service = (props: { data: ProviderServiceResponse }) => {
   const handleSendFeedback = () => {
     if (feedback.rate) {
       postFeedback.mutate(
-        { id: props.data.id!.toString(), feedback: { amountStar: feedback.rate, content: feedback.content } },
+        {
+          id: userCanFeedBackProvider?.data.id ?? '',
+          feedback: { amountStar: feedback.rate, content: feedback.content },
+        },
         {
           onSuccess(data) {
             utils.invalidateQueries('booking.getFeedbackServiceById')

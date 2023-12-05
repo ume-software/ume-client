@@ -40,6 +40,8 @@ export const Header: React.FC = () => {
   const accessToken = parse(document.cookie).accessToken
   const { login } = useAuth()
 
+  const utils = trpc.useContext()
+
   trpc.useQuery(['identity.identityInfo'], {
     onSuccess(data) {
       login({ ...data.data })
@@ -78,7 +80,9 @@ export const Header: React.FC = () => {
   }
 
   useEffect(() => {
-    if (socketContext.socketNotificateContext[0]) {
+    if (socketContext.socketNotificateContext[0]?.status == 'PROVIDER_ACCEPT') {
+      utils.invalidateQueries('booking.getCurrentBookingForUser')
+    } else if (socketContext.socketNotificateContext[0]) {
       setNotificatedAmount(notificatedAmount + 1)
     }
   }, [socketContext.socketNotificateContext[0]])

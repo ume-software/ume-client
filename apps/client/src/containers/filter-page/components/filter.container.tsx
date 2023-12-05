@@ -296,6 +296,13 @@ const FilterContainer = ({ service, listSubAttributeService }) => {
                 </Transition>
               </Menu>
             </div>
+            {isFetchingProviderFilter && (
+              <div className="flex justify-center items-center">
+                <span
+                  className={`spinner h-5 w-5 animate-spin rounded-full border-[3px] border-r-transparent border-white}`}
+                />
+              </div>
+            )}
           </div>
         </div>
         <div className="xl:col-span-2 col-span-5 justify-self-end">
