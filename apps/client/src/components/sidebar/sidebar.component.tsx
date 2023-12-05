@@ -62,6 +62,8 @@ export const Sidebar = () => {
       }, 2000)
       return () => clearTimeout(timeout)
     }
+    console.log(socketContext?.socketChattingContext)
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socketContext?.socketChattingContext[0]?.channelId, !!accessToken])
 
