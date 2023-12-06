@@ -91,11 +91,13 @@ export const getHotProviders = async () => {
   }
 }
 
-export const getUserBySlug = async (providerId: string) => {
+export const getUserBySlug = async (providerId: string, ctx) => {
   try {
+    const cookies = parse(ctx.req.headers.cookie ?? '')
     const respone = await new UserApi({
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
     }).getUserBySlug(providerId)
     return {
       data: respone.data,
@@ -457,6 +459,40 @@ export const getPendingBookingForUser = async (ctx) => {
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
     }).getPendingBookingForUser()
+    return {
+      data: respone.data,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to create new booking',
+    })
+  }
+}
+
+export const getFollowerByUserSlug = async (query: { slug: string; page: string }) => {
+  try {
+    const respone = await new UserApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+    }).getFollowerByUserSlug(query.slug, '10', query.page)
+    return {
+      data: respone.data,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to create new booking',
+    })
+  }
+}
+
+export const getFollowingByUserSlug = async (query: { slug: string; page: string }) => {
+  try {
+    const respone = await new UserApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+    }).getFollowingByUserSlug(query.slug, '10', query.page)
     return {
       data: respone.data,
     }

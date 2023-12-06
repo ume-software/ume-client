@@ -42,6 +42,25 @@ export const getSuggestPost = async (ctx) => {
   }
 }
 
+export const getSuggestPostFollowing = async (ctx) => {
+  const cookies = parse(ctx.req.headers.cookie)
+  try {
+    const response = await new PostApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).suggestPostFollowing('10', '1', '["$all"]')
+    return {
+      data: response.data,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.message || 'Failed to get list post',
+    })
+  }
+}
+
 export const watchedPost = async (ctx, input: string) => {
   const cookies = parse(ctx.req.headers.cookie)
   try {

@@ -13,14 +13,17 @@ import { trpc } from '~/utils/trpc'
 const GeneralPost = () => {
   const [suggestPostData, setSuggestPostData] = useState<PostResponse[] | undefined>(undefined)
   const [scrollPosition, setScrollPosition] = useState(0)
+
+  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
   const { isAuthenticated } = useAuth()
+
   const containerRef = useRef<HTMLDivElement>(null)
   const [idPostArray, setIdPostArray] = useState<string[]>([])
   const {
     isLoading: loadingSuggestPost,
     isFetching: fetchingSuggestPost,
     refetch: refetchSuggestPost,
-  } = isAuthenticated
+  } = !!userInfo
     ? trpc.useQuery(['community.getSuggestPost'], {
         refetchOnWindowFocus: false,
         refetchOnReconnect: 'always',

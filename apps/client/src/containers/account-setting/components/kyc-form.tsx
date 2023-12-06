@@ -66,7 +66,6 @@ export const KYCFormStep = ({
   setSelectedImage,
   setIsModalVertificationVisible,
 }: KYCFormStepProps) => {
-  const { token } = theme.useToken()
   const [current, setCurrent] = useState(0)
   const utils = trpc.useContext()
   const userKYC = trpc.useMutation(['identity.userKYC'])
@@ -161,12 +160,12 @@ export const KYCFormStep = ({
   }
 
   return (
-    <div className="mt-10 max-h-full flex flex-col px-5 pb-5 gap-5 overflow-y-auto custom-scrollbar">
+    <div className="mt-10 max-h-[95%] flex flex-col px-5 pb-5 gap-5 overflow-y-auto custom-scrollbar">
       <Steps current={current} className="mb-4" items={steps} />
       <div>
         <form onSubmit={handleUploadImage}>
           {current === 0 && (
-            <div className="mt-5 flex flex-col max-h-full gap-10 overflow-y-auto text-white text-md custom-scrollbar">
+            <div className="mt-5 flex flex-col max-h-full gap-10 overflow-y-auto text-md custom-scrollbar">
               <div className="flex flex-col gap-10">
                 <div className="flex flex-col">
                   <div className="text-white">Số CCCD/Passport</div>
@@ -270,7 +269,7 @@ export const KYCFormStep = ({
           )}
           {current === 1 && (
             <div>
-              <div className="flex flex-col max-h-full gap-10 overflow-y-auto text-white text-md custom-scrollbar">
+              <div className="flex flex-col gap-10 overflow-y-auto text-white text-md custom-scrollbar">
                 <div>
                   <label>Ảnh mặt trước</label>
                   <div className="relative">
@@ -345,7 +344,7 @@ export const KYCFormStep = ({
                   </div>
                 </div>
               </div>
-              <div className="min-h-[50px] flex justify-around items-start">
+              <div className="min-h-[100px] flex justify-around items-start mt-9">
                 <Button
                   type="button"
                   isActive={false}

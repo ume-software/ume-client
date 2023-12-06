@@ -12,6 +12,8 @@ import {
   getCurrentBookingForUser,
   getFeedbackServiceById,
   getFeedbackServiceByUserSlug,
+  getFollowerByUserSlug,
+  getFollowingByUserSlug,
   getHotProviders,
   getListService,
   getMyVoucherForBooking,
@@ -65,7 +67,7 @@ export const bookingRouter = createRouter()
   .query('getUserBySlug', {
     input: z.string(),
     resolve: async ({ ctx, input }) => {
-      return await getUserBySlug(input)
+      return await getUserBySlug(input, ctx)
     },
   })
   .query('getCurrentBookingForProvider', {
@@ -193,5 +195,23 @@ export const bookingRouter = createRouter()
   .query('getPendingBookingForUser', {
     resolve: async ({ ctx }) => {
       return await getPendingBookingForUser(ctx)
+    },
+  })
+  .query('getFollowerByUserSlug', {
+    input: z.object({
+      slug: z.string(),
+      page: z.string(),
+    }),
+    resolve: async ({ input }) => {
+      return await getFollowerByUserSlug(input)
+    },
+  })
+  .query('getFollowingByUserSlug', {
+    input: z.object({
+      slug: z.string(),
+      page: z.string(),
+    }),
+    resolve: async ({ input }) => {
+      return await getFollowingByUserSlug(input)
     },
   })

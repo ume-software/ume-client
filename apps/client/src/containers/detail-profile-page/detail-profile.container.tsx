@@ -13,6 +13,7 @@ import {
   ShareTwo,
   Stopwatch,
 } from '@icon-park/react'
+import { Button } from '@ume/ui'
 import detailBackground from 'public/detail-cover-background.png'
 import ImgForEmpty from 'public/img-for-empty.png'
 import lgbtIcon from 'public/rainbow-flag-11151.svg'
@@ -38,6 +39,8 @@ import {
 } from './components/booking-countdown'
 import DonateModal from './components/donate-modal'
 import EndSoonModal from './components/end-soon-modal'
+import FollowerModal from './components/follower-modal'
+import FollowingModal from './components/following-modal'
 import { ReportModal } from './components/report-modal'
 import InformationTab from './information-tab/information-tab'
 import PostTab from './post-tab'
@@ -55,30 +58,6 @@ interface TabDataProps {
 }
 
 const moreButtonDatas: TabDataProps[] = [
-  {
-    key: 'Follow',
-    label: 'Theo dõi',
-    icon: (
-      <Plus
-        className={`transition-opacity opacity-0 group-hover:opacity-100 group-hover:translate-x-3 duration-300`}
-        theme="outline"
-        size="20"
-        fill="#fff"
-      />
-    ),
-  },
-  {
-    key: 'UnFollow',
-    label: 'Đang theo dõi',
-    icon: (
-      <Check
-        className={`transition-opacity opacity-0 group-hover:opacity-100 group-hover:translate-x-3 duration-300`}
-        theme="outline"
-        size="20"
-        fill="#7e22ce"
-      />
-    ),
-  },
   {
     key: 'Report',
     label: 'Tố cáo',
@@ -160,6 +139,8 @@ const DetailProfileContainer = () => {
   const [isModalReportVisible, setIsModalReportVisible] = useState<boolean>(false)
   const [isModalDonationVisible, setIsModalDonationVisible] = useState<boolean>(false)
   const [isEndSoonModalVisible, setIsEndSoonModalVisible] = useState<boolean>(false)
+  const [isFollowerModalVisible, setIsFollowerModalVisible] = useState<boolean>(false)
+  const [isFollowingModalVisible, setIsFollowingModalVisible] = useState<boolean>(false)
 
   const { isLoading: isProviderDetailLoading } = trpc.useQuery(['booking.getUserBySlug', slug.profileId!.toString()], {
     refetchOnWindowFocus: false,
@@ -178,6 +159,7 @@ const DetailProfileContainer = () => {
     },
     enabled: !!slug.profileId!.toString(),
   })
+
   const followProvider = trpc.useMutation(['identity.FollowProvider'])
   const unFollowProvider = trpc.useMutation(['identity.UnFollowProvider'])
   const utils = trpc.useContext()
@@ -240,26 +222,6 @@ const DetailProfileContainer = () => {
         content: 'Mở facebook thành công',
         duration: 2,
       })
-    } else if (item.key == 'Follow') {
-      if (providerDetail && (userInfo || accessToken)) {
-        followProvider.mutate(providerDetail.slug, {
-          onSuccess() {
-            utils.invalidateQueries('booking.getUserBySlug')
-          },
-        })
-      } else {
-        setIsModalLoginVisible(true)
-      }
-    } else if (item.key == 'UnFollow') {
-      if (providerDetail && (userInfo || accessToken)) {
-        unFollowProvider.mutate(providerDetail.slug, {
-          onSuccess() {
-            utils.invalidateQueries('booking.getUserBySlug')
-          },
-        })
-      } else {
-        setIsModalLoginVisible(true)
-      }
     } else if (item.key == 'Donate') {
       if (providerDetail && (userInfo || accessToken)) {
         setIsModalDonationVisible(true)
@@ -300,6 +262,14 @@ const DetailProfileContainer = () => {
         setIsEndSoonModalVisible={setIsEndSoonModalVisible}
         bookingHistoryId={currentBookingForProviderData?.[0]?.id ?? currentBookingForUserData?.[0]?.id ?? ''}
       />
+      <FollowerModal
+        isFollowerModalVisible={isFollowerModalVisible}
+        setIsFollowerModalVisible={setIsFollowerModalVisible}
+      />
+      <FollowingModal
+        isFollowingModalVisible={isFollowingModalVisible}
+        setIsFollowingModalVisible={setIsFollowingModalVisible}
+      />
 
       {!providerDetail && isProviderDetailLoading ? (
         <SkeletonDetailProvider />
@@ -321,7 +291,7 @@ const DetailProfileContainer = () => {
                       alt="avatar"
                     />
                   </div>
-                  <div className="flex flex-col my-5 text-white gap-y-2">
+                  <div className="flex flex-col my-2 text-white gap-y-2">
                     <p className="text-3xl font-medium text-white">{providerDetail?.name}</p>
                     <div className="flex flex-row items-center gap-3">
                       <div className="flex items-center gap-2 p-2 bg-gray-700 rounded-full">
@@ -366,6 +336,22 @@ const DetailProfileContainer = () => {
                           )}
                         </div>
                       </Tooltip>
+                    </div>
+                    <div className="flex flex-row items-center gap-3">
+                      <div
+                        className="flex items-center gap-2 p-2 bg-gray-700 rounded-full cursor-pointer hover:underline decoration-solid decoration-2"
+                        onClick={() => setIsFollowerModalVisible(true)}
+                        onKeyDown={() => {}}
+                      >
+                        Người theo dõi: {providerDetail?.followerAmount}
+                      </div>
+                      <div
+                        className="flex items-center gap-2 p-2 bg-gray-700 rounded-full cursor-pointer hover:underline decoration-solid decoration-2"
+                        onClick={() => setIsFollowingModalVisible(true)}
+                        onKeyDown={() => {}}
+                      >
+                        <div>Đang theo dõi: {providerDetail?.followingAmount}</div>
+                      </div>
                     </div>
                     <div className="mt-2 flex items-center gap-2">
                       <>
@@ -412,7 +398,78 @@ const DetailProfileContainer = () => {
                   </div>
                 </div>
 
-                <div className="relative flex flex-col items-center justify-start" style={{ zIndex: 5 }}>
+                <div className="relative flex items-center justify-start gap-10" style={{ zIndex: 5 }}>
+                  <div
+                    className={`${
+                      providerDetail?.isFollowing ? 'bg-transparent text-purple-600' : 'bg-purple-600'
+                    } rounded-xl mr-10`}
+                  >
+                    {providerDetail?.isFollowing ? (
+                      <Button
+                        isActive={true}
+                        isOutlinedButton={true}
+                        customCSS="p-2 rounded-xl hover:scale-105"
+                        type="button"
+                        onClick={() => {
+                          if (
+                            providerDetail &&
+                            (userInfo || accessToken) &&
+                            !unFollowProvider.isLoading &&
+                            !followProvider.isLoading
+                          ) {
+                            unFollowProvider.mutate(providerDetail.slug, {
+                              onSuccess() {
+                                utils.invalidateQueries('booking.getUserBySlug')
+                              },
+                            })
+                          } else {
+                            setIsModalLoginVisible(true)
+                          }
+                        }}
+                      >
+                        {unFollowProvider.isLoading ? (
+                          <span
+                            className={`spinner h-5 w-5 animate-spin rounded-full border-[3px] border-r-transparent border-white`}
+                          />
+                        ) : (
+                          <Check className="px-3" theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
+                        )}
+                        Đang theo dõi
+                      </Button>
+                    ) : (
+                      <Button
+                        isActive={true}
+                        isOutlinedButton={true}
+                        customCSS="p-2 rounded-xl hover:scale-105 outline-purple-600"
+                        type="button"
+                        onClick={() => {
+                          if (
+                            providerDetail &&
+                            (userInfo || accessToken) &&
+                            !unFollowProvider.isLoading &&
+                            !followProvider.isLoading
+                          ) {
+                            followProvider.mutate(providerDetail.slug, {
+                              onSuccess() {
+                                utils.invalidateQueries('booking.getUserBySlug')
+                              },
+                            })
+                          } else {
+                            setIsModalLoginVisible(true)
+                          }
+                        }}
+                      >
+                        {unFollowProvider.isLoading ? (
+                          <span
+                            className={`spinner h-5 w-5 animate-spin rounded-full border-[3px] border-r-transparent border-white`}
+                          />
+                        ) : (
+                          <Plus className="px-3" theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
+                        )}
+                        Theo dõi
+                      </Button>
+                    )}
+                  </div>
                   <Menu>
                     <div>
                       <Menu.Button>
@@ -439,10 +496,8 @@ const DetailProfileContainer = () => {
                           {moreButtonDatas.map((item) => (
                             <Fragment key={item.key}>
                               {userInfo?.id == providerDetail?.id && providerDetail?.isProvider ? (
-                                item.key != 'Follow' &&
                                 item.key != 'Donate' &&
-                                item.key != 'Report' &&
-                                item.key != 'UnFollow' && (
+                                item.key != 'Report' && (
                                   <div
                                     className={`p-2 cursor-pointer rounded-t-md hover:bg-gray-700 text-white group border-b-2 border-white border-opacity-30 last:border-none last:rounded-md`}
                                     onClick={() => {
@@ -468,18 +523,7 @@ const DetailProfileContainer = () => {
                                 >
                                   <div className="flex items-center justify-between gap-2 rounded-md duration-300 scale-x-100 group-hover:scale-x-95 group-hover:-translate-x-2">
                                     <div>{item.label}</div>
-                                    {item.key == 'Follow' || item.key == 'UnFollow' ? (
-                                      (item.key == 'Follow' && !followProvider.isLoading) ||
-                                      (item.key == 'UnFollow' && !unFollowProvider.isLoading) ? (
-                                        <>{item.icon}</>
-                                      ) : (
-                                        <span
-                                          className={`spinner h-5 w-5 animate-spin rounded-full border-[3px] border-r-transparent border-white`}
-                                        />
-                                      )
-                                    ) : (
-                                      <>{item.icon}</>
-                                    )}
+                                    {item.icon}
                                   </div>
                                 </div>
                               )}
