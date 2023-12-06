@@ -3,11 +3,11 @@ import { Button, Modal } from '@ume/ui'
 
 import { useState } from 'react'
 
-import ReportTicketModal from './report-ticket-modal'
+import ComplainTicketModal from './complain-ticket-modal'
 
 import Table from '~/components/table/table'
 
-const ReportTicket = () => {
+const ComplainTicket = () => {
   const [page, setPage] = useState<string>('1')
   const [isModalReportVisible, setIsModalReportVisible] = useState<boolean>(false)
 
@@ -18,8 +18,8 @@ const ReportTicket = () => {
     onOK: () => {},
     onClose: handleClose,
     show: isModalReportVisible,
-    title: <p className="text-white">Tố cáo</p>,
-    form: <ReportTicketModal />,
+    title: <p className="text-white">Khiếu nại</p>,
+    form: <ComplainTicketModal />,
     backgroundColor: '#15151b',
     closeWhenClickOutSide: true,
     closeButtonOnConner: (
@@ -38,12 +38,12 @@ const ReportTicket = () => {
     <>
       {isModalReportVisible && createReportModal}
       <div className="w-full px-10">
-        <p className="text-4xl font-bold">Tố cáo</p>
+        <p className="text-4xl font-bold">Khiếu nại</p>
 
         <div className="flex flex-col gap-5 mt-10 space-y-10">
           <div className="flex flex-col gap-3">
             <div className="flex items-end justify-between">
-              <p className="text-xl font-bold">Chi tiết tố cáo</p>
+              <p className="text-xl font-bold">Chi tiết khiếu nại</p>
               <Button
                 isActive={true}
                 isOutlinedButton={true}
@@ -51,7 +51,7 @@ const ReportTicket = () => {
                 type="button"
                 onClick={() => setIsModalReportVisible(true)}
               >
-                Tạo tố cáo
+                Tạo khiếu nại
               </Button>
             </div>
             <Table
@@ -63,8 +63,8 @@ const ReportTicket = () => {
               ]}
               page={page}
               setPage={setPage}
-              limit={'5'}
-              totalItem={50}
+              limit={'10'}
+              totalItem={57}
               contentItem={'tố cáo'}
               watchAction={true}
               onWatch={() => {}}
@@ -79,4 +79,4 @@ const ReportTicket = () => {
     </>
   )
 }
-export default ReportTicket
+export default ComplainTicket

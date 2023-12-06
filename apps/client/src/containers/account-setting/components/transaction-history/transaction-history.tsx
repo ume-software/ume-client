@@ -41,7 +41,7 @@ const TransactionHistory = () => {
   const [transactionHistoryArray, setTransactionHistoryArray] = useState<any[] | undefined>(undefined)
   const [seriesCharts, setSeriesCharts] = useState<any[] | undefined>(undefined)
   const { isLoading: isTransactionHistoryLoading } = trpc.useQuery(
-    ['identity.getHistoryTransaction', { page: transactionPage, limit }],
+    ['identity.getHistoryTransaction', { page: transactionPage, limit, order: '{"updatedAt":"desc"}' }],
     {
       onSuccess(data) {
         setTransactionHistory(data.data)
@@ -77,7 +77,7 @@ const TransactionHistory = () => {
       const newTransactionArray = [
         TransactionContent.find((transContent) => transContent.key == transactionArray[5])?.label,
         <div className="flex items-center justify-center gap-2" key={transactionHistory[0]}>
-          {transactionArray[6]} <span className="text-xs italic"> đ</span>
+          {(transactionArray[6] ?? 0).toLocaleString()} <span className="text-xs italic"> đ</span>
         </div>,
         transactionArray[12]?.recipient?.name ?? user?.name,
         new Date(transactionArray[1]).toLocaleDateString('en-GB'),

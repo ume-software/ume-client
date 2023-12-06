@@ -12,6 +12,7 @@ import { useRouter } from 'next/router'
 import { Swiper, SwiperSlide } from 'swiper/react'
 
 import BecomeProvider from './components/become-provider/become-provider'
+import ComplainTicket from './components/complain-ticket/complain-ticket'
 import EditNotificated from './components/edit-notificated'
 import EditProfile from './components/edit-profile'
 import Privacy from './components/privacy'
@@ -68,6 +69,12 @@ const settingType: SettingTypeProps[] = [
     label: 'Lịch sử giao dịch',
     icon: <Transaction theme="outline" size="20" fill="#FFFFFF" strokeLinejoin="bevel" />,
     children: <TransactionHistory />,
+  },
+  {
+    key: 'complain',
+    label: 'Khiếu nại',
+    icon: <Transaction theme="outline" size="20" fill="#FFFFFF" strokeLinejoin="bevel" />,
+    children: <ComplainTicket />,
   },
 ]
 

@@ -208,58 +208,67 @@ const OrderNotificationForProvider = () => {
                     key={item.id}
                     className="px-2 py-3 border-b-2 border-gray-200 border-opacity-30 rounded-t-lg hover:bg-gray-700 cursor-pointer"
                   >
-                    <div className="grid grid-cols-10">
-                      <div className="col-span-3">
-                        <div className="w-[90%] h-full relative rounded-lg">
-                          <Image
-                            className="rounded-lg"
-                            src={item?.booker?.avatarUrl || item?.providerService?.service?.imageUrl}
-                            alt="Game Image"
-                            layout="fill"
-                            objectFit="contain"
-                          />
-                        </div>
-                      </div>
-                      <div className="col-span-7">
-                        <div className="flex flex-col gap-2">
-                          <div className="font-bold truncate">{item?.booker?.name || item?.data?.booker?.name}</div>
-                          <div>
-                            Đã gửi yêu cầu chơi game{' '}
-                            <p className="inline font-bold">
-                              {item?.providerService?.service?.name || item?.data?.providerService?.service?.name}
-                            </p>{' '}
-                            cùng bạn thời gian là:{' '}
-                            <p className="inline font-bold">{item?.bookingPeriod || item?.data?.bookingPeriod}h</p>
+                    {!responeBooking.isLoading ? (
+                      <>
+                        <div className="grid grid-cols-10">
+                          <div className="col-span-3">
+                            <div className="w-[90%] h-full relative rounded-lg">
+                              <Image
+                                className="rounded-lg"
+                                src={item?.booker?.avatarUrl || item?.providerService?.service?.imageUrl}
+                                alt="Game Image"
+                                layout="fill"
+                                objectFit="contain"
+                              />
+                            </div>
+                          </div>
+                          <div className="col-span-7">
+                            <div className="flex flex-col gap-2">
+                              <div className="font-bold truncate">{item?.booker?.name || item?.data?.booker?.name}</div>
+                              <div>
+                                Đã gửi yêu cầu chơi game{' '}
+                                <p className="inline font-bold">
+                                  {item?.providerService?.service?.name || item?.data?.providerService?.service?.name}
+                                </p>{' '}
+                                cùng bạn thời gian là:{' '}
+                                <p className="inline font-bold">{item?.bookingPeriod || item?.data?.bookingPeriod}h</p>
+                              </div>
+                            </div>
+                            <p className="text-end text-md font-bold opacity-30 space-y-2">
+                              {TimeFormat({ date: item?.createdAt })}
+                            </p>
                           </div>
                         </div>
-                        <p className="text-end text-md font-bold opacity-30 space-y-2">
-                          {TimeFormat({ date: item?.createdAt })}
-                        </p>
+                        <div className="flex justify-around gap-5 px-3 pt-3">
+                          <Button
+                            type="button"
+                            customCSS="w-[130px] py-2 px-3 font-normal text-center text-white rounded-lg cursor-pointer text-md hover:scale-105"
+                            isActive={true}
+                            isOutlinedButton={true}
+                            onClick={() => handleAcceptBooking(item?.id, item?.booker?.name)}
+                            onKeyDown={() => {}}
+                          >
+                            Chấp nhận
+                          </Button>
+                          <Button
+                            type="button"
+                            isActive={false}
+                            isOutlinedButton={true}
+                            customCSS="w-[130px] py-2 px-3 font-normal text-center text-purple-700 border-2 border-purple-700 rounded-lg cursor-pointer text-md hover:scale-105"
+                            onClick={() => handleUnacceptBooking(item?.id, item?.booker?.name)}
+                            onKeyDown={() => {}}
+                          >
+                            Từ chối
+                          </Button>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="h-full w-full flex justify-center items-center border-2 border-white border-opacity-30 rounded-xl">
+                        <span
+                          className={`h-40 w-40 spinner animate-spin rounded-full border-[3px] border-r-transparent border-white`}
+                        />
                       </div>
-                    </div>
-                    <div className="flex justify-around gap-5 px-3 pt-3">
-                      <Button
-                        type="button"
-                        customCSS="w-[130px] py-2 px-3 font-normal text-center text-white rounded-lg cursor-pointer text-md hover:scale-105"
-                        isActive={true}
-                        isOutlinedButton={true}
-                        onClick={() => handleAcceptBooking(item?.id, item?.booker?.name)}
-                        onKeyDown={() => {}}
-                        isLoading={responeBooking.isLoading}
-                      >
-                        Chấp nhận
-                      </Button>
-                      <Button
-                        type="button"
-                        isActive={false}
-                        isOutlinedButton={true}
-                        customCSS="w-[130px] py-2 px-3 font-normal text-center text-purple-700 border-2 border-purple-700 rounded-lg cursor-pointer text-md hover:scale-105"
-                        onClick={() => handleUnacceptBooking(item?.id, item?.booker?.name)}
-                        onKeyDown={() => {}}
-                      >
-                        Từ chối
-                      </Button>
-                    </div>
+                    )}
                   </div>
                 ))
               ) : socketContext.socketNotificateContext[0]?.status == 'USER_FINISH_SOON' ? (

@@ -6,7 +6,7 @@ import { uploadImage } from '~/apis/upload-media'
 import { GenderEnum } from '~/enumVariable/enumVariable'
 import useDebounce from '~/hooks/useDebounce'
 
-import { FormEvent, Fragment, useEffect, useRef, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 
 import { Tooltip, notification } from 'antd'
 import { useFormik } from 'formik'

@@ -5,7 +5,7 @@ import { useState } from 'react'
 
 import ConfirmForm from '~/components/confirm-form/confirm-form'
 
-const ReportTicketModal = () => {
+const ComplainTicketModal = () => {
   const [isModalConfirmationVisible, setIsModalConfirmationVisible] = useState<boolean>(false)
 
   const handleClose = () => {
@@ -17,8 +17,8 @@ const ReportTicketModal = () => {
     show: isModalConfirmationVisible,
     form: (
       <ConfirmForm
-        title="Tạo khuyến mãi mới"
-        description="Bạn có chấp nhận tạo khuyến mãi mới hay không?"
+        title="Gửi khiếu nại"
+        description="Bạn có chấp nhận gửi khiếu nại này hay không?"
         onClose={handleClose}
         onOk={() => {}}
       />
@@ -43,10 +43,10 @@ const ReportTicketModal = () => {
       <form>
         <div className="flex flex-col gap-5 p-5 text-white">
           <div>
-            <label>Người bị tố cáo:</label>
+            <label>Người bị khiếu nại:</label>
             <div>
               <InputWithAffix
-                placeholder={`Tên người bị tố cáo`}
+                placeholder={`Tên người bị khiếu nại`}
                 value={''}
                 type="text"
                 onChange={() => {}}
@@ -74,4 +74,4 @@ const ReportTicketModal = () => {
     </>
   )
 }
-export default ReportTicketModal
+export default ComplainTicketModal

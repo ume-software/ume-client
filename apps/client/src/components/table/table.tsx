@@ -61,6 +61,8 @@ const Table = ({
     }
   }
 
+  console.log(Number((Number(totalItem) / Number(limit) + (Number(totalItem) % Number(limit) > 0 ? 1 : 0)).toFixed(0)))
+
   return (
     <>
       <div className="text-lg font-semibold opacity-50 text-end">
@@ -141,8 +143,9 @@ const Table = ({
       </table>
       <div className="flex items-center justify-center gap-3">
         <div className="w-[46px] h-[46px]">
-          {Number((Number(totalItem) / Number(limit)).toFixed(0)) > 1 &&
-            Number((Number(totalItem) / Number(limit)).toFixed(0)) / 5 <= position && (
+          {Number((Number(totalItem) / Number(limit) + (Number(totalItem) % Number(limit) > 0 ? 1 : 0)).toFixed(0)) >
+            1 &&
+            Number((Number(totalItem) / Number(limit)).toFixed(0)) % Number(limit) <= position && (
               <div
                 className={`w-full h-full flex justify-center items-center rounded-full border-2 border-white opacity-50 cursor-pointer hover:bg-white hover:bg-opacity-50`}
                 onClick={handleSlideLeft}
@@ -175,7 +178,7 @@ const Table = ({
                     Number(page) == index + 1 ? 'bg-white text-black' : 'opacity-50'
                   }`}
                   onClick={() => handleChangePage(index + 1)}
-                  onKeyDown={(event) => {}}
+                  onKeyDown={() => {}}
                 >
                   {index + 1}
                 </div>
@@ -190,7 +193,7 @@ const Table = ({
           )}
         </div>
         <div className="w-[46px] h-[46px]">
-          {Number((Number(totalItem) / Number(limit)).toFixed(0)) / 5 >= position && (
+          {Number((Number(totalItem) / Number(limit)).toFixed(0)) / Number(limit) >= position && (
             <div
               className={`w-full h-full flex justify-center items-center rounded-full border-2 border-white opacity-50 cursor-pointer hover:bg-white hover:bg-opacity-50`}
               onClick={handleSlideRight}

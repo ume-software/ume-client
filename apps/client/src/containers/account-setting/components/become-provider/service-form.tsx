@@ -270,25 +270,40 @@ const AddSkillForm = () => {
   }
 
   const handleRemoveAttribute = (index: number) => {
-    deleteProviderService.mutate(attributes[index].service?.id ?? '', {
-      onSuccess() {
-        utils.invalidateQueries('identity.providerGetServiceHaveNotRegistered')
-        utils.invalidateQueries('identity.providerGetOwnServices')
-        notification.success({
-          message: `Xóa dịch vụ thành công`,
-          description: `Dịch vụ đã được xóa`,
-          placement: 'bottomLeft',
-        })
-      },
-      onError() {
-        notification.error({
-          message: `Xóa dịch vụ thất bại`,
-          description: `Có lỗi trong quá trình xóa. Vui lòng thử lại sau!`,
-          placement: 'bottomLeft',
-        })
-      },
-    })
-    setIsModalConfirmationVisible(false)
+    if (attributes[index].service?.id) {
+      deleteProviderService.mutate(attributes[index].service?.id ?? '', {
+        onSuccess() {
+          utils.invalidateQueries('identity.providerGetServiceHaveNotRegistered')
+          utils.invalidateQueries('identity.providerGetOwnServices')
+          notification.success({
+            message: `Xóa dịch vụ thành công`,
+            description: `Dịch vụ đã được xóa`,
+            placement: 'bottomLeft',
+          })
+        },
+        onError() {
+          notification.error({
+            message: `Xóa dịch vụ thất bại`,
+            description: `Có lỗi trong quá trình xóa. Vui lòng thử lại sau!`,
+            placement: 'bottomLeft',
+          })
+        },
+      })
+      setIsModalConfirmationVisible(false)
+    } else {
+      const updatedAttributes = [...attributes]
+      updatedAttributes.splice(index, 1)
+      setAttributes(updatedAttributes)
+
+      const updatedAttributesDisplay = [...attributesDisplay]
+      updatedAttributesDisplay.splice(index, 1)
+      setAttributesDisplay(updatedAttributesDisplay)
+
+      setListServiceFilter(
+        listService?.filter((service) => service.name?.toLocaleLowerCase().includes(''.toLocaleLowerCase())),
+      )
+      setIsModalConfirmationVisible(false)
+    }
   }
 
   const handleServiceInputChange = (
