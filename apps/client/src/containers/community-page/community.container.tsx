@@ -1,5 +1,6 @@
-import { CloseSmall, Earth, EveryUser, Plus } from '@icon-park/react'
+import { CloseSmall, Earth, EveryUser, Lock, Plus } from '@icon-park/react'
 import { Modal } from '@ume/ui'
+import { useAuth } from '~/contexts/auth'
 
 import { ReactNode, useId, useState } from 'react'
 
@@ -11,6 +12,7 @@ import TopDonation from './components/top-donate'
 import { LoginModal } from '~/components/header/login-modal.component'
 
 interface CommunityProps {
+  key: string
   postTypeName: string
   icon: ReactNode
   postTypeChildren: ReactNode
@@ -18,11 +20,13 @@ interface CommunityProps {
 
 const postTypeData: CommunityProps[] = [
   {
+    key: 'General',
     postTypeName: 'Chung',
     icon: <Earth theme="outline" size="18" fill="#FFFFFF" strokeLinejoin="bevel" />,
     postTypeChildren: <GeneralPost />,
   },
   {
+    key: 'Following',
     postTypeName: 'Đang theo dõi',
     icon: <EveryUser theme="outline" size="18" fill="#FFFFFF" strokeLinejoin="bevel" />,
     postTypeChildren: <FollowingPost />,
@@ -32,9 +36,12 @@ const postTypeData: CommunityProps[] = [
 const CommunityContainer = () => {
   const index = useId()
   const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
+  const { isAuthenticated } = useAuth()
+
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [socialSelected, setSocialSelected] = useState<CommunityProps>({
+    key: 'General',
     postTypeName: 'Chung',
     icon: <Earth theme="outline" size="18" fill="#FFFFFF" strokeLinejoin="bevel" />,
     postTypeChildren: <GeneralPost />,
@@ -66,8 +73,8 @@ const CommunityContainer = () => {
   })
 
   const handleCreatePost = () => {
-    setIsModalVisible(!!userInfo)
-    setIsModalLoginVisible(!userInfo)
+    setIsModalVisible(!!userInfo || isAuthenticated)
+    setIsModalLoginVisible(!(userInfo || isAuthenticated))
   }
 
   return (
@@ -85,15 +92,27 @@ const CommunityContainer = () => {
                   {postTypeData.map((item) => (
                     <div
                       key={index}
-                      className={`flex items-center p-3 rounded-xl gap-2 cursor-pointer hover:bg-gray-700
-                      ${socialSelected.postTypeName === item.postTypeName ? 'bg-gray-700' : ''}`}
-                      onClick={() => setSocialSelected(item)}
+                      className={`flex items-center p-3 rounded-xl cursor-pointer hover:bg-gray-700
+                      ${item.key == 'Following' && !userInfo && 'justify-between opacity-30'}
+                      ${socialSelected.key === item.key ? 'bg-gray-700' : ''}`}
+                      onClick={() => {
+                        if (item.key == 'Following' && !(!!userInfo || isAuthenticated)) {
+                          setIsModalLoginVisible(true)
+                        } else {
+                          setSocialSelected(item)
+                        }
+                      }}
                       onKeyDown={() => {}}
                     >
-                      {item.icon}
-                      <p className="xl:text-lg lg:text-sm text-xs lg:font-semibold font-normal truncate">
-                        {item.postTypeName}
-                      </p>
+                      <div className="flex items-center gap-2">
+                        {item.icon}
+                        <p className="xl:text-lg lg:text-sm text-xs lg:font-semibold font-normal truncate">
+                          {item.postTypeName}
+                        </p>
+                      </div>
+                      {item.key == 'Following' && !(!!userInfo || isAuthenticated) && (
+                        <Lock className="justify-items-end" theme="outline" size="20" fill="#fff" />
+                      )}
                     </div>
                   ))}
                 </div>

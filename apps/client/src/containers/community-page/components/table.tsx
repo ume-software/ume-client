@@ -52,7 +52,7 @@ const Table = (props: {
                             alt="Donationr Image"
                           />
                         </div>
-                        <p className="truncate">{data?.donor?.name || data?.recipient?.name}</p>
+                        <p className="max-w-[150px] truncate">{data?.donor?.name || data?.recipient?.name}</p>
                       </div>
                     </td>
                     <td className="py-2">

@@ -20,6 +20,7 @@ import { Header } from '~/components/header/header.component'
 import { Sidebar } from '~/components/sidebar'
 
 import { getSocket } from '~/utils/constants'
+import { trpc } from '~/utils/trpc'
 
 type AppLayoutProps = PropsWithChildren
 
@@ -64,6 +65,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const accessToken = parse(document.cookie).accessToken
   const { isAuthenticated } = useAuth()
   const audioRef = useRef<HTMLAudioElement | null>(null)
+  const utils = trpc.useContext()
 
   const [childrenDrawer, setChildrenDrawer] = useState<ReactNode>()
 
@@ -77,6 +79,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
   useEffect(() => {
     if (!!accessToken || isAuthenticated) {
+      utils.invalidateQueries(['booking.getUserBySlug'])
+
       const socketInstance = Boolean(userInfo?.id) ? socket(accessToken) : null
 
       setSocketClientEmit({ socketInstanceChatting: socketInstance?.socketInstanceChatting })

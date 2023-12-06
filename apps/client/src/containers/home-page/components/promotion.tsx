@@ -325,16 +325,24 @@ export const Promotion = () => {
               </div>
             </div>
             <div className="grid gap-6 mt-2 2xl:grid-cols-4 xl:grid-cols-3 md:grid-cols-2 sm:grid-cols-1">
-              {listProvider?.map((provider) => (
-                <Link
-                  key={provider?.id}
-                  href={`/profile/${provider?.slug ?? provider?.id}?tab=service&service=${
-                    provider.serviceSlug ?? provider.serviceId
-                  }`}
-                >
-                  <PromoteCard data={provider} />
-                </Link>
-              ))}
+              {(listProvider?.length ?? 0) > 0 ? (
+                listProvider?.map((provider) => (
+                  <Link
+                    key={provider?.id}
+                    href={`/profile/${provider?.slug ?? provider?.id}?tab=service&service=${
+                      provider.serviceSlug ?? provider.serviceId
+                    }`}
+                  >
+                    <PromoteCard data={provider} />
+                  </Link>
+                ))
+              ) : (
+                <div className="mt-10 text-center col-span-full text-white pb-28">
+                  <p className="text-3xl font-bold">
+                    Chưa có người chơi nào phù hợp với tìm kiếm của bạn. Xin hãy thử lại
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>
