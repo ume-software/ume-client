@@ -80,8 +80,12 @@ export const Header: React.FC = () => {
   }
 
   useEffect(() => {
+    console.log(socketContext.socketNotificateContext)
+
     if (socketContext.socketNotificateContext[0]?.status == 'PROVIDER_ACCEPT') {
       utils.invalidateQueries('booking.getCurrentBookingForUser')
+    } else if (socketContext.socketNotificateContext[0]?.status == 'USER_FINISH_SOON') {
+      utils.invalidateQueries('booking.getCurrentBookingForProvider')
     } else if (socketContext.socketNotificateContext[0]) {
       setNotificatedAmount(notificatedAmount + 1)
     }

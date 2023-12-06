@@ -9,11 +9,13 @@ import { useContext, useEffect, useState } from 'react'
 import { notification } from 'antd'
 import { parse } from 'cookie'
 import Image from 'next/legacy/image'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { Swiper, SwiperSlide } from 'swiper/react'
-import { UserInformationResponse } from 'ume-service-openapi'
+import { BookingHistoryPagingResponse, UserInformationResponse } from 'ume-service-openapi'
 
 import BookingProvider from '../booking/booking-provider.container'
+import { BookingCountdown, getCurrentBookingForUserData } from '../components/booking-countdown'
 import PersonalIntroduce from './personal-introduce'
 import Service from './service'
 
@@ -38,6 +40,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
   const [gameSelected, setGameSelected] = useState<string | undefined>(slug.service?.toString() ?? undefined)
 
   const createNewChatChannel = trpc.useMutation(['chatting.createNewChatChannel'])
+  const currentBookingForUserData: BookingHistoryPagingResponse['row'] | undefined = getCurrentBookingForUserData()
 
   const selectedService =
     props.data?.providerServices!.find(
@@ -275,50 +278,71 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                   alt="Empty Image"
                 />
               </div>
-              {userInfo?.id != props.data?.id ? (
-                <div className="flex flex-col gap-5 my-10">
-                  <CustomDrawer
-                    customOpenBtn={`rounded-full text-purple-700 border-2 border-purple-700 font-semibold text-2xl cursor-pointer hover:scale-105 text-center`}
-                    openBtn={
-                      <button
-                        className="bg-transparent w-full h-full py-2 focus:outline-none"
-                        type="button"
-                        onClick={handleChatOpen}
-                      >
-                        {createNewChatChannel.isLoading && (
-                          <span
-                            className={`spinner h-5 w-5 animate-spin rounded-full border-[3px] border-r-transparent dark:border-navy-300 dark:border-r-transparent border-white`}
-                          />
-                        )}
-                        Chat
-                      </button>
-                    }
-                    token={!!accessToken}
-                  >
-                    {childrenDrawer}
-                  </CustomDrawer>
-
-                  {!props.data?.isBanned && props.data.providerConfig?.status == 'ACTIVATED' && (
-                    <CustomDrawer
-                      drawerTitle="Xác nhận đặt"
-                      customOpenBtn="rounded-full text-white bg-purple-700 font-semibold text-2xl cursor-pointer hover:scale-105 text-center"
-                      openBtn={
-                        <button
-                          className="w-full h-full py-2 bg-transparent focus:outline-none"
-                          type="button"
-                          onClick={handleOrderOpen}
-                        >
-                          Thuê
-                        </button>
-                      }
-                      token={!!accessToken}
+              {currentBookingForUserData && (currentBookingForUserData?.length ?? 0) > 0 ? (
+                <div className="p-5 rounded-2xl border border-white border-opacity-30 mt-5 space-y-5">
+                  <span className="flex justify-center items-center gap-3">
+                    Bạn đang trong phiên với:
+                    <Link
+                      href={`/profile/${
+                        (currentBookingForUserData[0].providerService?.provider as any)?.slug
+                      }?tab=service`}
+                      className="text-lg font-bold hover:underline decoration-solid decoration-2"
                     >
-                      {childrenDrawer}
-                    </CustomDrawer>
-                  )}
+                      {(currentBookingForUserData[0].providerService?.provider as any)?.name}
+                    </Link>
+                  </span>
+                  <div className="text-center bg-gray-700 rounded-full">
+                    <BookingCountdown />
+                  </div>
                 </div>
               ) : (
-                <></>
+                <>
+                  {userInfo?.id != props.data?.id ? (
+                    <div className="flex flex-col gap-5 my-10">
+                      <CustomDrawer
+                        customOpenBtn={`rounded-full text-purple-700 border-2 border-purple-700 font-semibold text-2xl cursor-pointer hover:scale-105 text-center`}
+                        openBtn={
+                          <button
+                            className="bg-transparent w-full h-full py-2 focus:outline-none"
+                            type="button"
+                            onClick={handleChatOpen}
+                          >
+                            {createNewChatChannel.isLoading && (
+                              <span
+                                className={`spinner h-5 w-5 animate-spin rounded-full border-[3px] border-r-transparent dark:border-navy-300 dark:border-r-transparent border-white`}
+                              />
+                            )}
+                            Chat
+                          </button>
+                        }
+                        token={!!accessToken}
+                      >
+                        {childrenDrawer}
+                      </CustomDrawer>
+
+                      {!props.data?.isBanned && props.data.providerConfig?.status == 'ACTIVATED' && (
+                        <CustomDrawer
+                          drawerTitle="Xác nhận đặt"
+                          customOpenBtn="rounded-full text-white bg-purple-700 font-semibold text-2xl cursor-pointer hover:scale-105 text-center"
+                          openBtn={
+                            <button
+                              className="w-full h-full py-2 bg-transparent focus:outline-none"
+                              type="button"
+                              onClick={handleOrderOpen}
+                            >
+                              Thuê
+                            </button>
+                          }
+                          token={!!accessToken}
+                        >
+                          {childrenDrawer}
+                        </CustomDrawer>
+                      )}
+                    </div>
+                  ) : (
+                    <></>
+                  )}
+                </>
               )}
             </div>
           </div>
