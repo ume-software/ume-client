@@ -330,6 +330,11 @@ const DetailProfileContainer = () => {
                                 {providerDetail?.providerConfig?.status ==
                                   ProviderConfigResponseStatusEnum.StoppedAcceptingBooking && 'Ngừng nhận đơn'}
                               </p>
+                              <p>
+                                {providerDetail?.providerConfig?.status ==
+                                  ProviderConfigResponseStatusEnum.UnActivated && 'Không kích hoạt'}
+                              </p>
+                              <p>{!providerDetail?.isProvider && 'Hoạt động'}</p>
                             </>
                           ) : (
                             'Offline'
@@ -337,7 +342,7 @@ const DetailProfileContainer = () => {
                         </div>
                       </Tooltip>
                     </div>
-                    <div className="flex flex-row items-center gap-3">
+                    <div className="lg:flex lg:space-y-0 space-y-2 items-center gap-3">
                       <div
                         className="flex items-center gap-2 p-2 bg-gray-700 rounded-full cursor-pointer hover:underline decoration-solid decoration-2"
                         onClick={() => setIsFollowerModalVisible(true)}
@@ -402,72 +407,76 @@ const DetailProfileContainer = () => {
                   <div
                     className={`${
                       providerDetail?.isFollowing ? 'bg-transparent text-purple-600' : 'bg-purple-600'
-                    } rounded-xl mr-10`}
+                    } rounded-xl 2xl:mr-10 xl:mr-5 lg:mr-2 mr-0`}
                   >
-                    {providerDetail?.isFollowing ? (
-                      <Button
-                        isActive={true}
-                        isOutlinedButton={true}
-                        customCSS="p-2 rounded-xl hover:scale-105"
-                        type="button"
-                        onClick={() => {
-                          if (
-                            providerDetail &&
-                            (userInfo || accessToken) &&
-                            !unFollowProvider.isLoading &&
-                            !followProvider.isLoading
-                          ) {
-                            unFollowProvider.mutate(providerDetail.slug, {
-                              onSuccess() {
-                                utils.invalidateQueries('booking.getUserBySlug')
-                              },
-                            })
-                          } else {
-                            setIsModalLoginVisible(true)
-                          }
-                        }}
-                      >
-                        {unFollowProvider.isLoading ? (
-                          <span
-                            className={`spinner h-5 w-5 animate-spin rounded-full border-[3px] border-r-transparent border-white`}
-                          />
+                    {userInfo?.id != providerDetail?.id && (
+                      <>
+                        {providerDetail?.isFollowing ? (
+                          <Button
+                            isActive={true}
+                            isOutlinedButton={true}
+                            customCSS="p-2 rounded-xl hover:scale-105"
+                            type="button"
+                            onClick={() => {
+                              if (
+                                providerDetail &&
+                                (userInfo || accessToken) &&
+                                !unFollowProvider.isLoading &&
+                                !followProvider.isLoading
+                              ) {
+                                unFollowProvider.mutate(providerDetail.slug, {
+                                  onSuccess() {
+                                    utils.invalidateQueries('booking.getUserBySlug')
+                                  },
+                                })
+                              } else {
+                                setIsModalLoginVisible(true)
+                              }
+                            }}
+                          >
+                            {unFollowProvider.isLoading ? (
+                              <span
+                                className={`spinner h-5 w-5 animate-spin rounded-full border-[3px] border-r-transparent border-white`}
+                              />
+                            ) : (
+                              <Check className="px-3" theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
+                            )}
+                            Đang theo dõi
+                          </Button>
                         ) : (
-                          <Check className="px-3" theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
+                          <Button
+                            isActive={true}
+                            isOutlinedButton={true}
+                            customCSS="p-2 rounded-xl hover:scale-105 outline-purple-600"
+                            type="button"
+                            onClick={() => {
+                              if (
+                                providerDetail &&
+                                (userInfo || accessToken) &&
+                                !unFollowProvider.isLoading &&
+                                !followProvider.isLoading
+                              ) {
+                                followProvider.mutate(providerDetail.slug, {
+                                  onSuccess() {
+                                    utils.invalidateQueries('booking.getUserBySlug')
+                                  },
+                                })
+                              } else {
+                                setIsModalLoginVisible(true)
+                              }
+                            }}
+                          >
+                            {unFollowProvider.isLoading ? (
+                              <span
+                                className={`spinner h-5 w-5 animate-spin rounded-full border-[3px] border-r-transparent border-white`}
+                              />
+                            ) : (
+                              <Plus className="px-3" theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
+                            )}
+                            Theo dõi
+                          </Button>
                         )}
-                        Đang theo dõi
-                      </Button>
-                    ) : (
-                      <Button
-                        isActive={true}
-                        isOutlinedButton={true}
-                        customCSS="p-2 rounded-xl hover:scale-105 outline-purple-600"
-                        type="button"
-                        onClick={() => {
-                          if (
-                            providerDetail &&
-                            (userInfo || accessToken) &&
-                            !unFollowProvider.isLoading &&
-                            !followProvider.isLoading
-                          ) {
-                            followProvider.mutate(providerDetail.slug, {
-                              onSuccess() {
-                                utils.invalidateQueries('booking.getUserBySlug')
-                              },
-                            })
-                          } else {
-                            setIsModalLoginVisible(true)
-                          }
-                        }}
-                      >
-                        {unFollowProvider.isLoading ? (
-                          <span
-                            className={`spinner h-5 w-5 animate-spin rounded-full border-[3px] border-r-transparent border-white`}
-                          />
-                        ) : (
-                          <Plus className="px-3" theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
-                        )}
-                        Theo dõi
-                      </Button>
+                      </>
                     )}
                   </div>
                   <Menu>

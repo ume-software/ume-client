@@ -97,7 +97,7 @@ const OrderNotificationForUser = () => {
                               {' '}
                               {socketContext.socketNotificateContext[0]?.providerService?.provider?.name}
                             </p>{' '}
-                            đã chấp nhận yêu cầu chơi game với bạn với thời gian là:{' '}
+                            đã chấp nhận yêu cầu thuê của bạn với thời gian là:{' '}
                             <p className="inline font-bold">
                               {socketContext.socketNotificateContext[0]?.bookingPeriod ||
                                 socketContext.socketNotificateContext[0]?.data?.bookingPeriod}

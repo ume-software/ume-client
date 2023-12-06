@@ -1,11 +1,13 @@
 import { CloseSmall } from '@icon-park/react'
 import { Modal } from '@ume/ui'
+import ImgForEmpty from 'public/img-for-empty.png'
 
 import { useEffect, useRef, useState } from 'react'
 
 import Image from 'next/legacy/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { UserInformationPagingResponse } from 'ume-service-openapi'
 
 import { CommentSkeletonLoader } from '~/components/skeleton-load'
 
@@ -15,7 +17,7 @@ const FollowerModal = ({ isFollowerModalVisible, setIsFollowerModalVisible }) =>
   const router = useRouter()
   const slug = router.query
 
-  const [follwerData, setFollwerData] = useState<any>([])
+  const [follwerData, setFollwerData] = useState<UserInformationPagingResponse['row']>(undefined)
   const [page, setPage] = useState<string>('1')
 
   const containerRef = useRef<HTMLDivElement>(null)
@@ -30,7 +32,7 @@ const FollowerModal = ({ isFollowerModalVisible, setIsFollowerModalVisible }) =>
     cacheTime: 0,
     refetchOnMount: true,
     onSuccess(data) {
-      setFollwerData((prevData) => [...(prevData || []), ...(data?.data?.row ?? [])])
+      setFollwerData((prevData) => [...(prevData ?? []), ...(data?.data?.row ?? [])])
     },
   })
 
@@ -70,9 +72,9 @@ const FollowerModal = ({ isFollowerModalVisible, setIsFollowerModalVisible }) =>
           <CommentSkeletonLoader />
         ) : (
           <>
-            {(follwerData.length ?? 0) > 0 ? (
-              follwerData.map((data) => (
-                <Link key={data?.id} href={`profile/${data?.user?.slug ?? data?.userId}`}>
+            {(follwerData?.length ?? 0) > 0 ? (
+              follwerData?.map((data) => (
+                <Link key={data?.id} href={`profile/${data?.slug ?? data?.id}`}>
                   <div className="flex items-center justify-between p-2 m-5 rounded-xl hover:bg-gray-700">
                     <div className="flex items-center gap-2">
                       <div className="relative w-[50px] h-[50px]">
@@ -80,11 +82,11 @@ const FollowerModal = ({ isFollowerModalVisible, setIsFollowerModalVisible }) =>
                           className="absolute rounded-full"
                           layout="fill"
                           objectFit="cover"
-                          src={data?.user?.avatarUrl}
+                          src={data?.avatarUrl ?? ImgForEmpty}
                           alt="Provider Image"
                         />
                       </div>
-                      <p className="text-lg font-semibold">{data?.user?.name}</p>
+                      <p className="text-lg font-semibold">{data?.name}</p>
                     </div>
                   </div>
                 </Link>

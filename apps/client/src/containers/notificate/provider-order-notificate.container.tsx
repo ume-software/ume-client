@@ -1,6 +1,6 @@
 import { Button } from '@ume/ui'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 
 import { notification } from 'antd'
 import { parse } from 'cookie'
@@ -10,6 +10,7 @@ import { BookingHandleRequestStatusEnum } from 'ume-service-openapi'
 
 import { getCurrentBookingForProviderData } from '../detail-profile-page/components/booking-countdown'
 
+import { SocketContext } from '~/components/layouts/app-layout/app-layout'
 import { NotificateSkeletonLoader } from '~/components/skeleton-load'
 import { TimeFormat } from '~/components/time-format'
 
@@ -19,6 +20,7 @@ const OrderNotificationForProvider = () => {
   const accessToken = parse(document.cookie).accessToken
   const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
 
+  const { socketContext } = useContext(SocketContext)
   const [page, setPage] = useState<number>(1)
   const limit = '10'
   const [listNotificated, setListNotificated] = useState<any>([])
@@ -107,6 +109,7 @@ const OrderNotificationForProvider = () => {
                 description: `Bạn đã từ chối yêu cầu từ ${bookerName}`,
                 placement: 'bottomLeft',
               })
+              utils.invalidateQueries('booking.getPendingBookingForProvider')
               utils.invalidateQueries('booking.getCurrentBookingForProvider')
             }
           },
@@ -161,6 +164,44 @@ const OrderNotificationForProvider = () => {
             <NotificateSkeletonLoader />
           ) : (
             <>
+              {socketContext.socketNotificateContext[0]?.status == 'USER_FINISH_SOON' && (
+                <Link
+                  href={`/profile/${
+                    socketContext.socketNotificateContext[0]?.booker?.slug ??
+                    socketContext.socketNotificateContext[0]?.booker?.id
+                  }`}
+                >
+                  <div className="px-2 py-3 border-b-2 border-gray-200 border-opacity-30 rounded-t-lg hover:bg-gray-700 cursor-pointer">
+                    <div className="grid grid-cols-10">
+                      <div className="col-span-3">
+                        <div className="w-[90%] h-full relative rounded-lg">
+                          <Image
+                            className="rounded-lg"
+                            src={socketContext.socketNotificateContext[0]?.booker?.avatarUrl}
+                            alt="Game Image"
+                            layout="fill"
+                            objectFit="contain"
+                          />
+                        </div>
+                      </div>
+                      <div className="col-span-7">
+                        <div className="flex flex-col gap-2">
+                          <div>
+                            <p className="inline font-bold">
+                              {' '}
+                              {socketContext.socketNotificateContext[0]?.booker?.name}
+                            </p>{' '}
+                            đã kết thúc sớm phiên thuê
+                          </div>
+                        </div>
+                        <p className="text-end text-md font-bold opacity-30 space-y-2">
+                          {TimeFormat({ date: socketContext.socketNotificateContext[0]?.createdAt })}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              )}
               {listNotificated && listNotificated?.length != 0 ? (
                 listNotificated.map((item) => (
                   <div
@@ -221,6 +262,8 @@ const OrderNotificationForProvider = () => {
                     </div>
                   </div>
                 ))
+              ) : socketContext.socketNotificateContext[0]?.status == 'USER_FINISH_SOON' ? (
+                <></>
               ) : (
                 <div>Chưa có thông báo mới!</div>
               )}
