@@ -261,6 +261,10 @@ export const getListKYC = async (
       portraitImageUrl: data.portraitImageUrl,
       status: data?.userKYCStatus,
       requestId: data.id,
+      citizenId: data.citizenId,
+      citizenDod: data.citizenDob,
+      citizenName: data.citizenName,
+      citizenGender: data.citizenGender,
     }))
 
     return {
