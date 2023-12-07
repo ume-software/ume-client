@@ -99,19 +99,19 @@ const kycForm = (record: KYCFormType, handleAction: (action: KYCAction) => void,
             <div>Avatar: </div>
             <div className="flex justify-center">
               {record?.avatarUrl && (
-                <Image src={record?.avatarUrl} className="rounded-xl" width={150} height={150} alt={'avata'} />
+                <Image src={record?.avatarUrl} className="rounded-xl" width={100} height={100} alt={'avata'} />
               )}
             </div>
           </div>
           <div>
-            <div>Ảnh mặt sau CCCD/Passport</div>
+            <div>Ảnh mặt sau</div>
             <div className="flex justify-center">
               {record?.backSideCitizenIdImageUrl && (
                 <Image
                   src={record?.backSideCitizenIdImageUrl}
                   className="rounded-xl"
-                  width={150}
-                  height={150}
+                  width={100}
+                  height={100}
                   alt={'back side citizen id'}
                 />
               )}
@@ -124,22 +124,22 @@ const kycForm = (record: KYCFormType, handleAction: (action: KYCAction) => void,
                 <Image
                   src={record?.portraitImageUrl}
                   className="rounded-xl"
-                  width={150}
-                  height={150}
+                  width={100}
+                  height={100}
                   alt={'back side citizen id'}
                 />
               )}
             </div>
           </div>
           <div>
-            <div>Ảnh mặt sau CCCD/Passport</div>
+            <div>Ảnh mặt trước</div>
             <div className="flex justify-center">
               {record?.frontSideCitizenIdImageUrl && (
                 <Image
                   src={record?.frontSideCitizenIdImageUrl}
                   className="rounded-xl"
-                  width={150}
-                  height={150}
+                  width={100}
+                  height={100}
                   alt={'front side citizen id'}
                 />
               )}

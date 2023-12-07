@@ -151,7 +151,7 @@ export const PendingKYCTable = () => {
     },
     {
       title: '',
-      width: '10%',
+      width: '20%',
       render(record) {
         return (
           <div className="flex">

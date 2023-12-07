@@ -25,7 +25,7 @@ interface IFormValues extends UserSendKYCRequest {}
 
 const steps = [
   {
-    title: <div className="text-white">Thông tin ngừoi xác thực</div>,
+    title: <div className="text-white">Thông tin người xác thực</div>,
     description: <div className="text-xs text-slate-300">Nhập thông tin trên CCCD/Passport</div>,
   },
   {
@@ -165,7 +165,7 @@ export const KYCFormStep = ({
       <div>
         <form onSubmit={handleUploadImage}>
           {current === 0 && (
-            <div className="mt-5 flex flex-col max-h-full gap-10 overflow-y-auto text-md custom-scrollbar">
+            <div className="flex flex-col max-h-full gap-10 mt-5 overflow-y-auto text-md custom-scrollbar">
               <div className="flex flex-col gap-10">
                 <div className="flex flex-col">
                   <div className="text-white">Số CCCD/Passport</div>
@@ -272,7 +272,7 @@ export const KYCFormStep = ({
               <div className="flex flex-col gap-10 overflow-y-auto text-white text-md custom-scrollbar">
                 <div>
                   <label>Ảnh mặt trước</label>
-                  <p className="text-red-500 text-sm opacity-70 text-end">*Ảnh trên 2Mb có thể bị lỗi</p>
+                  <p className="text-sm text-red-500 opacity-70 text-end">*Ảnh trên 2Mb có thể bị lỗi</p>
                   <div className="relative">
                     <div className="relative w-full h-[300px] bg-white bg-opacity-30 rounded-xl">
                       {!selectedImage.frontVertificationImage && (
@@ -300,7 +300,7 @@ export const KYCFormStep = ({
                 </div>
                 <div>
                   <label>Ảnh mặt sau</label>
-                  <p className="text-red-500 text-sm opacity-70 text-end">*Ảnh trên 2Mb có thể bị lỗi</p>
+                  <p className="text-sm text-red-500 opacity-70 text-end">*Ảnh trên 2Mb có thể bị lỗi</p>
                   <div className="relative">
                     <div className="relative w-full h-[300px] bg-white bg-opacity-30 rounded-xl">
                       <div className="absolute top-0 bottom-0 left-0 right-0 z-10 flex items-center justify-center w-full h-full border-2 border-white border-dashed rounded-xl">
@@ -324,7 +324,7 @@ export const KYCFormStep = ({
                 </div>
                 <div>
                   <label>Ảnh khuôn mặt</label>
-                  <p className="text-red-500 text-sm opacity-70 text-end">*Ảnh trên 2Mb có thể bị lỗi</p>
+                  <p className="text-sm text-red-500 opacity-70 text-end">*Ảnh trên 2Mb có thể bị lỗi</p>
                   <div className="relative">
                     <div className="relative w-full h-[300px] bg-white bg-opacity-30 rounded-xl">
                       <div className="absolute top-0 bottom-0 left-0 right-0 z-10 flex items-center justify-center w-full h-full border-2 border-white border-dashed rounded-xl">
