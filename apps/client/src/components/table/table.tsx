@@ -1,4 +1,4 @@
-import { DeleteFive, Eyes, Left, Right, Write } from '@icon-park/react'
+import { DeleteFive, Eyes, FileStaffOne, Left, Right, Write } from '@icon-park/react'
 import ImgForEmpty from 'public/img-for-empty.png'
 
 import { ReactNode, useState } from 'react'
@@ -19,6 +19,8 @@ interface ITable {
   onEdit: (id?: number) => void
   deleteAction: boolean
   onDelete: (id?: number) => void
+  complainAction: boolean
+  onComplain: (id?: number) => void
 }
 
 const Table = ({
@@ -35,6 +37,8 @@ const Table = ({
   editAction,
   deleteAction,
   onDelete,
+  complainAction,
+  onComplain,
 }: ITable) => {
   const [position, setPosition] = useState<number>(1)
 
@@ -128,6 +132,16 @@ const Table = ({
                             strokeLinejoin="bevel"
                             className="cursor-pointer"
                             onClick={() => onDelete(Number(page) * indexRow)}
+                          />
+                        )}
+                        {complainAction && (
+                          <FileStaffOne
+                            theme="outline"
+                            size="20"
+                            fill="#fff"
+                            strokeLinejoin="bevel"
+                            className="cursor-pointer"
+                            onClick={() => onComplain(Number(page) * indexRow)}
                           />
                         )}
                       </div>

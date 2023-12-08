@@ -31,6 +31,8 @@ const BookingHistory = () => {
               onEdit={() => {}}
               deleteAction={false}
               onDelete={() => {}}
+              complainAction={true}
+              onComplain={() => {}}
             />
           </div>
         </div>

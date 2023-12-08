@@ -127,6 +127,8 @@ const TransactionHistory = () => {
                 onEdit={() => {}}
                 deleteAction={false}
                 onDelete={() => {}}
+                complainAction={false}
+                onComplain={() => {}}
               />
             </div>
           ) : (

@@ -27,10 +27,12 @@ const ComplainTableHistory = (props: { typeTable }) => {
               contentItem={'khiếu nại'}
               watchAction={true}
               onWatch={() => {}}
-              editAction={props.typeTable == ComplainEnum.COMPLAIN_TO_ME}
+              editAction={false}
               onEdit={() => {}}
               deleteAction={false}
               onDelete={() => {}}
+              complainAction={props.typeTable == ComplainEnum.COMPLAIN_TO_ME}
+              onComplain={() => {}}
             />
           </div>
         </div>

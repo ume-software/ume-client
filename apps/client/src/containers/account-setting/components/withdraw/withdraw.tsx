@@ -533,6 +533,8 @@ const Withdraw = () => {
                     onDelete={(index) => {
                       handleCancelWithdrawDetail(withdrawRequestIds[index ?? 0] ?? '')
                     }}
+                    complainAction={false}
+                    onComplain={() => {}}
                   />
                 </div>
               )}
