@@ -27,3 +27,8 @@ export enum ActionEnum {
   DONATE = 'DONATE',
   END_SOON = 'END_SOON',
 }
+
+export enum ComplainEnum {
+  COMPLAIN_TO_ME = 'COMPLAIN_TO_ME',
+  COMPLAIN_OF_ME = 'COMPLAIN_OF_ME',
+}

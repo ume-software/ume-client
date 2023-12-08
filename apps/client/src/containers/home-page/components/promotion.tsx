@@ -168,7 +168,7 @@ export const Promotion = () => {
             <div className="grid gap-6 mt-2 2xl:grid-cols-4 xl:grid-cols-3 md:grid-cols-2 sm:grid-cols-1">
               {listHotProvider?.map((provider) => (
                 <Link
-                  key={provider?.id}
+                  key={provider?.id + '_hot_player'}
                   href={`/profile/${provider?.slug ?? provider?.id}?tab=service&service=${
                     provider.serviceSlug ?? provider.serviceId
                   }`}
@@ -328,7 +328,7 @@ export const Promotion = () => {
               {(listProvider?.length ?? 0) > 0 ? (
                 listProvider?.map((provider) => (
                   <Link
-                    key={provider?.id}
+                    key={provider?.id + '_ume_player'}
                     href={`/profile/${provider?.slug ?? provider?.id}?tab=service&service=${
                       provider.serviceSlug ?? provider.serviceId
                     }`}

@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { BalanceHistoryPagingResponse, BalanceHistoryResponseBalanceTypeEnum } from 'ume-service-openapi'
 
 import ColumnChart from './column-chart'
+import ComplainTicketModal from './complain-ticket-modal'
 
 import { TableSkeletonLoader } from '~/components/skeleton-load'
 import Table from '~/components/table/table'
@@ -37,6 +38,7 @@ const TransactionHistory = () => {
 
   const { user } = useAuth()
 
+  const [isModalComplainVisible, setIsModalComplainVisible] = useState<boolean>(false)
   const [transactionHistory, setTransactionHistory] = useState<BalanceHistoryPagingResponse | undefined>(undefined)
   const [transactionHistoryArray, setTransactionHistoryArray] = useState<any[] | undefined>(undefined)
   const [seriesCharts, setSeriesCharts] = useState<any[] | undefined>(undefined)
@@ -90,6 +92,10 @@ const TransactionHistory = () => {
 
   return (
     <>
+      <ComplainTicketModal
+        isModalComplainVisible={isModalComplainVisible}
+        setIsModalComplainVisible={setIsModalComplainVisible}
+      />
       <div className="w-full px-10">
         <p className="text-4xl font-bold">Lịch sử giao dịch</p>
 

@@ -344,14 +344,14 @@ const DetailProfileContainer = () => {
                     </div>
                     <div className="lg:flex lg:space-y-0 space-y-2 items-center gap-3">
                       <div
-                        className="flex items-center gap-2 p-2 bg-gray-700 rounded-full cursor-pointer hover:underline decoration-solid decoration-2"
+                        className="w-fit flex items-center gap-2 p-2 bg-gray-700 rounded-full cursor-pointer hover:underline decoration-solid decoration-2"
                         onClick={() => setIsFollowerModalVisible(true)}
                         onKeyDown={() => {}}
                       >
                         Người theo dõi: {providerDetail?.followerAmount}
                       </div>
                       <div
-                        className="flex items-center gap-2 p-2 bg-gray-700 rounded-full cursor-pointer hover:underline decoration-solid decoration-2"
+                        className="w-fit flex items-center gap-2 p-2 bg-gray-700 rounded-full cursor-pointer hover:underline decoration-solid decoration-2"
                         onClick={() => setIsFollowingModalVisible(true)}
                         onKeyDown={() => {}}
                       >

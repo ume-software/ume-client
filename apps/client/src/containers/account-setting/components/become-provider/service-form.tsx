@@ -1,5 +1,5 @@
 import { Menu, Transition } from '@headlessui/react'
-import { CloseSmall, DeleteFive, Down, More, Plus, Save, Write } from '@icon-park/react'
+import { CloseSmall, DeleteFive, Down, Plus, Save, Write } from '@icon-park/react'
 import { Button, FormInputWithAffix, Input, InputWithAffix, Modal, TextArea } from '@ume/ui'
 import { MenuModalEnum } from '~/enumVariable/enumVariable'
 
@@ -1517,7 +1517,7 @@ const AddSkillForm = () => {
                   )}
                 </>
               ))}
-            <div className="col-span-2 min-h-[300px] flex justify-center items-center">
+            <div className="col-span-2 min-h-[500px] flex justify-center items-center">
               <Button
                 customCSS={`text-lg p-2 hover:scale-105 rounded-xl`}
                 type="button"

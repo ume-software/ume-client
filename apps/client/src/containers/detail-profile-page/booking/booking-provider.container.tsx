@@ -57,7 +57,6 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
   const handleTotal = () => {
     const selectedItem = props.data.providerServices?.find((item) => booking.providerServiceId == item.id)
     const voucher = myVoucher?.row?.find((voucher) => voucher.code == booking?.voucherIds)
-    console.log((selectedItem?.defaultCost ?? 0) * booking.bookingPeriod)
     const voucherValue =
       voucher?.discountUnit == VoucherResponseDiscountUnitEnum.Cash
         ? voucher.discountValue
