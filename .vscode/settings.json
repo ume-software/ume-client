@@ -5,8 +5,8 @@
   //
   "javascript.validate.enable": false,
   "editor.codeActionsOnSave": {
-    "eslint.autoFixOnSave": true,
-    "source.fixAll.eslint": true
+    "eslint.autoFixOnSave": "explicit",
+    "source.fixAll.eslint": "explicit"
   },
   "css.validate": false,
   "cSpell.words": ["Formik", "trpc"],
