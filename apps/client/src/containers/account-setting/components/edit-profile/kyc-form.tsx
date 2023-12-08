@@ -25,7 +25,7 @@ interface IFormValues extends UserSendKYCRequest {}
 
 const steps = [
   {
-    title: <div className="text-white">Thông tin ngừoi xác thực</div>,
+    title: <div className="text-white">Thông tin người xác thực</div>,
     description: <div className="text-xs text-slate-300">Nhập thông tin trên CCCD/Passport</div>,
   },
   {
@@ -165,7 +165,7 @@ export const KYCFormStep = ({
       <div>
         <form onSubmit={handleUploadImage}>
           {current === 0 && (
-            <div className="mt-5 flex flex-col max-h-full gap-10 overflow-y-auto text-md custom-scrollbar">
+            <div className="mt-5 flex flex-col max-h-[70%] gap-10 overflow-y-auto text-md custom-scrollbar">
               <div className="flex flex-col gap-10">
                 <div className="flex flex-col">
                   <div className="text-white">Số CCCD/Passport</div>
@@ -211,7 +211,7 @@ export const KYCFormStep = ({
                   />
                 </div>
               </div>
-              <div className="flex justify-around mt-[20%]">
+              <div className="flex justify-around mt-0 mb-[15%]">
                 <Button
                   type="button"
                   isActive={false}
@@ -352,18 +352,24 @@ export const KYCFormStep = ({
                   type="button"
                   isActive={false}
                   isOutlinedButton={true}
-                  customCSS="w-[100px] text-xl p-2 rounded-xl hover:scale-105"
+                  customCSS="w-[100px] text-xl py-2 px-7 rounded-xl hover:scale-105"
                   onClick={() => handleClose()}
                 >
                   Hủy
                 </Button>
 
                 <Button
-                  customCSS="w-[150px] text-xl p-2 rounded-xl hover:scale-105"
+                  customCSS={`"w-[150px] text-xl py-2 px-7 rounded-xl ${
+                    selectedImage.frontVertificationImage &&
+                    selectedImage.backVertificationImage &&
+                    selectedImage.faceImage
+                      ? 'hover:scale-105'
+                      : 'opacity-20 cursor-not-allowed hover:scale-100 '
+                  }"`}
                   // type="submit"
-                  onClick={() => {
-                    console.log(form.values)
-                  }}
+                  // onClick={() => {
+                  //   console.log(form.values)
+                  // }}
                   isActive={true}
                   isOutlinedButton={true}
                 >

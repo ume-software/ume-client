@@ -27,7 +27,10 @@ const AlbumTab = (props: { data: UserInformationResponse }) => {
     isLoading: isLoadingAlbum,
     isFetching: isAlbumFetching,
   } = trpc.useQuery(
-    ['booking.getAlbumByUserSlug', { slug: slug.profileId?.toString() ?? props.data.slug, limit: '8', page: page }],
+    [
+      'booking.getAlbumByUserSlug',
+      { slug: props.data.slug ?? props.data.id ?? slug.profileId?.toString(), limit: '8', page: page },
+    ],
     {
       refetchOnWindowFocus: false,
       refetchOnReconnect: 'always',
@@ -36,6 +39,7 @@ const AlbumTab = (props: { data: UserInformationResponse }) => {
       onSuccess(data) {
         setAlbum((prevData) => [...(prevData ?? []), ...(data?.data?.row ?? [])])
       },
+      enabled: !!props.data.slug || !!props.data.id || !!slug.profileId?.toString(),
     },
   )
   const [isPostModal, setIsPostModal] = useState<boolean>(false)

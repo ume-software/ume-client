@@ -61,14 +61,16 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
       voucher?.discountUnit == VoucherResponseDiscountUnitEnum.Cash
         ? voucher.discountValue
         : VoucherResponseDiscountUnitEnum.Percent
-        ? (voucher?.discountValue ?? 0) / 100
+        ? ((selectedItem?.defaultCost ?? 0) * booking.bookingPeriod * (voucher?.discountValue ?? 0)) / 100
         : 0
 
     setTotal((selectedItem?.defaultCost ?? 0) * booking.bookingPeriod)
 
     setTotalAfterDiscount(
       voucher?.discountUnit == VoucherResponseDiscountUnitEnum.Cash
-        ? (selectedItem?.defaultCost ?? 0) * booking.bookingPeriod * (voucherValue ?? 1)
+        ? (selectedItem?.defaultCost ?? 0) * booking.bookingPeriod > (voucherValue ?? 1)
+          ? (selectedItem?.defaultCost ?? 0) * booking.bookingPeriod - (voucherValue ?? 1)
+          : 0
         : VoucherResponseDiscountUnitEnum.Percent
         ? (selectedItem?.defaultCost ?? 0) * booking.bookingPeriod - (voucherValue ?? 0)
         : (selectedItem?.defaultCost ?? 0) * booking.bookingPeriod,

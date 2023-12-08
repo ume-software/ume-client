@@ -58,7 +58,7 @@ const DonateModal = ({ isModalDonationVisible, setIsModalDonationVisible, provid
       <>
         <Formik
           initialValues={{
-            donateValue: '1,000',
+            donateValue: '10,000',
             donateContent: undefined,
           }}
           onSubmit={(values) => {

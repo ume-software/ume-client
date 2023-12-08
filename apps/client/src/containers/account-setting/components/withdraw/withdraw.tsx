@@ -420,20 +420,22 @@ const Withdraw = () => {
           <div className="flex flex-col gap-10">
             <div className="space-y-5">
               <div className="w-full flex justify-between items-end">
-                <p className="text-md font-semibold">Tài khoản rút tiền</p>
                 {(userPaymentPlatformData?.data?.row?.length ?? 0) > 0 && (
-                  <Button
-                    customCSS="text-md py-2 px-5 rounded-xl hover:scale-105"
-                    isActive={true}
-                    isOutlinedButton={true}
-                    onClick={() => {
-                      setActionModal(ActionEnum.WITHDRAW)
-                      setPaymentAccount(undefined)
-                      setIsModalVisible(true)
-                    }}
-                  >
-                    Yêu cầu rút tiền
-                  </Button>
+                  <>
+                    <p className="text-md font-semibold">Tài khoản rút tiền</p>
+                    <Button
+                      customCSS="text-md py-2 px-5 rounded-xl hover:scale-105"
+                      isActive={true}
+                      isOutlinedButton={true}
+                      onClick={() => {
+                        setActionModal(ActionEnum.WITHDRAW)
+                        setPaymentAccount(undefined)
+                        setIsModalVisible(true)
+                      }}
+                    >
+                      Yêu cầu rút tiền
+                    </Button>
+                  </>
                 )}
               </div>
               {!isUserPaymentPlatformLoading ? (
@@ -510,7 +512,7 @@ const Withdraw = () => {
               )}
             </div>
           </div>
-          {!isWithdrawRequestLoading && (withdrawRequestArray?.length ?? 0) > 0 ? (
+          {!isWithdrawRequestLoading ? (
             <div className="mt-5">
               {userInfo?.isVerified && (
                 <div className="flex flex-col gap-1">
@@ -531,6 +533,8 @@ const Withdraw = () => {
                     onDelete={(index) => {
                       handleCancelWithdrawDetail(withdrawRequestIds[index ?? 0] ?? '')
                     }}
+                    complainAction={false}
+                    onComplain={() => {}}
                   />
                 </div>
               )}

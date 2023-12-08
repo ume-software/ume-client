@@ -344,14 +344,14 @@ const DetailProfileContainer = () => {
                     </div>
                     <div className="lg:flex lg:space-y-0 space-y-2 items-center gap-3">
                       <div
-                        className="flex items-center gap-2 p-2 bg-gray-700 rounded-full cursor-pointer hover:underline decoration-solid decoration-2"
+                        className="w-fit flex items-center gap-2 p-2 bg-gray-700 rounded-full cursor-pointer hover:underline decoration-solid decoration-2"
                         onClick={() => setIsFollowerModalVisible(true)}
                         onKeyDown={() => {}}
                       >
                         Người theo dõi: {providerDetail?.followerAmount}
                       </div>
                       <div
-                        className="flex items-center gap-2 p-2 bg-gray-700 rounded-full cursor-pointer hover:underline decoration-solid decoration-2"
+                        className="w-fit flex items-center gap-2 p-2 bg-gray-700 rounded-full cursor-pointer hover:underline decoration-solid decoration-2"
                         onClick={() => setIsFollowingModalVisible(true)}
                         onKeyDown={() => {}}
                       >
@@ -424,7 +424,7 @@ const DetailProfileContainer = () => {
                                 !unFollowProvider.isLoading &&
                                 !followProvider.isLoading
                               ) {
-                                unFollowProvider.mutate(providerDetail.slug, {
+                                unFollowProvider.mutate(providerDetail.slug ?? providerDetail.id, {
                                   onSuccess() {
                                     utils.invalidateQueries('booking.getUserBySlug')
                                   },
@@ -456,7 +456,7 @@ const DetailProfileContainer = () => {
                                 !unFollowProvider.isLoading &&
                                 !followProvider.isLoading
                               ) {
-                                followProvider.mutate(providerDetail.slug, {
+                                followProvider.mutate(providerDetail.slug ?? providerDetail.id, {
                                   onSuccess() {
                                     utils.invalidateQueries('booking.getUserBySlug')
                                   },
@@ -466,7 +466,7 @@ const DetailProfileContainer = () => {
                               }
                             }}
                           >
-                            {unFollowProvider.isLoading ? (
+                            {followProvider.isLoading ? (
                               <span
                                 className={`spinner h-5 w-5 animate-spin rounded-full border-[3px] border-r-transparent border-white`}
                               />
@@ -583,7 +583,7 @@ const DetailProfileContainer = () => {
               <div className="min-h-screen flex justify-center my-10">
                 {providerDetail?.isProvider && selectedTab.key == 'Service' && <InformationTab data={providerDetail} />}
                 {selectedTab.key == 'Album' && <AlbumTab data={providerDetail!} />}
-                {selectedTab.key == 'Post' && <PostTab providerId={providerDetail!.slug} />}
+                {selectedTab.key == 'Post' && <PostTab providerId={providerDetail?.slug ?? providerDetail?.id ?? ''} />}
               </div>
             </span>
           </div>

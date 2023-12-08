@@ -1,5 +1,5 @@
 import { Menu, Transition } from '@headlessui/react'
-import { CloseSmall, DeleteFive, Down, More, Plus, Save, Write } from '@icon-park/react'
+import { CloseSmall, DeleteFive, Down, Plus, Save, Write } from '@icon-park/react'
 import { Button, FormInputWithAffix, Input, InputWithAffix, Modal, TextArea } from '@ume/ui'
 import { MenuModalEnum } from '~/enumVariable/enumVariable'
 
@@ -270,25 +270,40 @@ const AddSkillForm = () => {
   }
 
   const handleRemoveAttribute = (index: number) => {
-    deleteProviderService.mutate(attributes[index].service?.id ?? '', {
-      onSuccess() {
-        utils.invalidateQueries('identity.providerGetServiceHaveNotRegistered')
-        utils.invalidateQueries('identity.providerGetOwnServices')
-        notification.success({
-          message: `Xóa dịch vụ thành công`,
-          description: `Dịch vụ đã được xóa`,
-          placement: 'bottomLeft',
-        })
-      },
-      onError() {
-        notification.error({
-          message: `Xóa dịch vụ thất bại`,
-          description: `Có lỗi trong quá trình xóa. Vui lòng thử lại sau!`,
-          placement: 'bottomLeft',
-        })
-      },
-    })
-    setIsModalConfirmationVisible(false)
+    if (attributes[index].service?.id) {
+      deleteProviderService.mutate(attributes[index].service?.id ?? '', {
+        onSuccess() {
+          utils.invalidateQueries('identity.providerGetServiceHaveNotRegistered')
+          utils.invalidateQueries('identity.providerGetOwnServices')
+          notification.success({
+            message: `Xóa dịch vụ thành công`,
+            description: `Dịch vụ đã được xóa`,
+            placement: 'bottomLeft',
+          })
+        },
+        onError() {
+          notification.error({
+            message: `Xóa dịch vụ thất bại`,
+            description: `Có lỗi trong quá trình xóa. Vui lòng thử lại sau!`,
+            placement: 'bottomLeft',
+          })
+        },
+      })
+      setIsModalConfirmationVisible(false)
+    } else {
+      const updatedAttributes = [...attributes]
+      updatedAttributes.splice(index, 1)
+      setAttributes(updatedAttributes)
+
+      const updatedAttributesDisplay = [...attributesDisplay]
+      updatedAttributesDisplay.splice(index, 1)
+      setAttributesDisplay(updatedAttributesDisplay)
+
+      setListServiceFilter(
+        listService?.filter((service) => service.name?.toLocaleLowerCase().includes(''.toLocaleLowerCase())),
+      )
+      setIsModalConfirmationVisible(false)
+    }
   }
 
   const handleServiceInputChange = (
@@ -1502,7 +1517,7 @@ const AddSkillForm = () => {
                   )}
                 </>
               ))}
-            <div className="col-span-2 min-h-[300px] flex justify-center items-center">
+            <div className="col-span-2 min-h-[500px] flex justify-center items-center">
               <Button
                 customCSS={`text-lg p-2 hover:scale-105 rounded-xl`}
                 type="button"

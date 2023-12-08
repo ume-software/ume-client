@@ -1,4 +1,4 @@
-import { DeleteFive, Eyes, Left, Right, Write } from '@icon-park/react'
+import { DeleteFive, Eyes, FileStaffOne, Left, Right, Write } from '@icon-park/react'
 import ImgForEmpty from 'public/img-for-empty.png'
 
 import { ReactNode, useState } from 'react'
@@ -19,6 +19,8 @@ interface ITable {
   onEdit: (id?: number) => void
   deleteAction: boolean
   onDelete: (id?: number) => void
+  complainAction: boolean
+  onComplain: (id?: number) => void
 }
 
 const Table = ({
@@ -35,6 +37,8 @@ const Table = ({
   editAction,
   deleteAction,
   onDelete,
+  complainAction,
+  onComplain,
 }: ITable) => {
   const [position, setPosition] = useState<number>(1)
 
@@ -130,6 +134,16 @@ const Table = ({
                             onClick={() => onDelete(Number(page) * indexRow)}
                           />
                         )}
+                        {complainAction && (
+                          <FileStaffOne
+                            theme="outline"
+                            size="20"
+                            fill="#fff"
+                            strokeLinejoin="bevel"
+                            className="cursor-pointer"
+                            onClick={() => onComplain(Number(page) * indexRow)}
+                          />
+                        )}
                       </div>
                     </td>
                   )}
@@ -142,7 +156,7 @@ const Table = ({
       <div className="flex items-center justify-center gap-3">
         <div className="w-[46px] h-[46px]">
           {Number((Number(totalItem) / Number(limit)).toFixed(0)) > 1 &&
-            Number((Number(totalItem) / Number(limit)).toFixed(0)) / 5 <= position && (
+            Number((Number(totalItem) / Number(limit)).toFixed(0)) / 5 < position && (
               <div
                 className={`w-full h-full flex justify-center items-center rounded-full border-2 border-white opacity-50 cursor-pointer hover:bg-white hover:bg-opacity-50`}
                 onClick={handleSlideLeft}
@@ -160,12 +174,19 @@ const Table = ({
           id="slider"
           className="max-w-[230px] overflow-hidden flex justify-start items-center gap-3 mt-5 overflow-x-scroll scroll scroll-smooth hide-scrollbar"
         >
-          {Number((Number(totalItem) / Number(limit) + (Number(totalItem) % Number(limit) > 0 ? 1 : 0)).toFixed(0)) >
-          1 ? (
+          {Number(
+            (
+              Number(totalItem) / Number(limit) +
+              (Number(totalItem) % Number(limit) > 0 && Number(totalItem) % Number(limit) < 5 ? 1 : 0)
+            ).toFixed(0),
+          ) > 1 ? (
             [
               ...Array(
                 Number(
-                  (Number(totalItem) / Number(limit) + (Number(totalItem) % Number(limit) > 0 ? 1 : 0)).toFixed(0),
+                  (
+                    Number(totalItem) / Number(limit) +
+                    (Number(totalItem) % Number(limit) > 0 && Number(totalItem) % Number(limit) < 5 ? 1 : 0)
+                  ).toFixed(0),
                 ),
               ),
             ].map((_, index) => (
@@ -175,7 +196,7 @@ const Table = ({
                     Number(page) == index + 1 ? 'bg-white text-black' : 'opacity-50'
                   }`}
                   onClick={() => handleChangePage(index + 1)}
-                  onKeyDown={(event) => {}}
+                  onKeyDown={() => {}}
                 >
                   {index + 1}
                 </div>
@@ -190,7 +211,12 @@ const Table = ({
           )}
         </div>
         <div className="w-[46px] h-[46px]">
-          {Number((Number(totalItem) / Number(limit)).toFixed(0)) / 5 >= position && (
+          {Number(
+            (
+              Number(totalItem) / Number(limit) +
+              (Number(totalItem) % Number(limit) > 0 && Number(totalItem) % Number(limit) < 5 ? 1 : 0)
+            ).toFixed(0),
+          ) > position && (
             <div
               className={`w-full h-full flex justify-center items-center rounded-full border-2 border-white opacity-50 cursor-pointer hover:bg-white hover:bg-opacity-50`}
               onClick={handleSlideRight}

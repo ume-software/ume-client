@@ -131,7 +131,10 @@ const MainNotificate = () => {
                   >
                     <Link
                       href={`${notificate.find((notiTitle) => notiTitle.key == item.type)?.link}${
-                        (item?.data as any)?.booker?.slug ?? (item?.data as any)?.providerService?.provider?.slug ?? ''
+                        !(userInfo?.id == (item?.data as any)?.booker?.id)
+                          ? (item?.data as any)?.booker?.slug ?? (item?.data as any)?.booker?.id
+                          : (item?.data as any)?.providerService?.provider?.slug ??
+                            (item?.data as any)?.providerService?.provider?.id
                       } `}
                     >
                       <div className="grid grid-cols-10">

@@ -278,7 +278,7 @@ export const getAllNotice = async (query: { page: string; limit: string }, ctx) 
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).getNotice(query.limit, query.page, '["$all"]', '{}', '[{"updatedAt":"asc"}]')
+    }).getNotice(query.limit, query.page, '["$all"]', '{}', '[{"updatedAt":"desc"}]')
     return {
       data: respone.data,
       success: true,

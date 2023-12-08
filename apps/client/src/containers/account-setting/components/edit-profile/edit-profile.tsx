@@ -6,7 +6,7 @@ import { uploadImage } from '~/apis/upload-media'
 import { GenderEnum } from '~/enumVariable/enumVariable'
 import useDebounce from '~/hooks/useDebounce'
 
-import { FormEvent, Fragment, useEffect, useRef, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 
 import { Tooltip, notification } from 'antd'
 import { useFormik } from 'formik'
@@ -64,7 +64,7 @@ const EditProfile = () => {
 
   const editAccountInforFormRef = useRef<HTMLFormElement>(null)
 
-  const vietnamesePhoneNumberRegExp = /^(03|05|07|08|09)\d{8}$/
+  const vietnamesePhoneNumberRegExp = /^(0)\d{9}$/
 
   const form = useFormik({
     initialValues: {
@@ -80,9 +80,6 @@ const EditProfile = () => {
       username: '',
     },
     validationSchema: Yup.object({
-      name: Yup.string().required('Tên là yêu cầu'),
-      dob: Yup.date().required('Ngày sinh là yêu cầu'),
-      slug: Yup.string().required('Đường dẫn là yêu cầu'),
       phone: Yup.string().matches(vietnamesePhoneNumberRegExp, 'Định dạng không hợp lệ'),
     }),
     onSubmit(values) {
@@ -580,22 +577,8 @@ const EditProfile = () => {
                     isActive={true}
                     isOutlinedButton={true}
                     onClick={() => {
-                      if (form.values.dob != '' && form.values.phone != '') {
+                      if (vietnamesePhoneNumberRegExp.test(form.values.phone)) {
                         setIsModalConfirmationVisible(true)
-                      } else {
-                        if (form.values.dob == '') {
-                          form.setFieldError('dob', 'Ngày sinh là yêu cầu')
-                          form.setFieldTouched('dob', true)
-                        }
-                        if (form.values.phone == '') {
-                          form.setFieldError('phone', 'Số điện thoại là yêu cầu')
-                          form.setFieldTouched('phone', true)
-                        }
-                        notification.warning({
-                          message: 'Thiếu thông tin',
-                          description: 'Vui lòng kiểm tra lại số điện thoại và ngày sinh!',
-                          placement: 'bottomLeft',
-                        })
                       }
                     }}
                   >

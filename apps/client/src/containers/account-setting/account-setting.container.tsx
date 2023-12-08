@@ -1,5 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Coupon, EditName, Expenses, Lock, Remind, Setting, Transaction } from '@icon-park/react'
+import {
+  Coupon,
+  EditName,
+  Expenses,
+  FileStaffOne,
+  Lock,
+  Remind,
+  Setting,
+  Transaction,
+  TransactionOrder,
+} from '@icon-park/react'
 import logo from 'public/logo.png'
 import 'swiper/swiper-bundle.css'
 
@@ -12,8 +22,10 @@ import { useRouter } from 'next/router'
 import { Swiper, SwiperSlide } from 'swiper/react'
 
 import BecomeProvider from './components/become-provider/become-provider'
+import BookingHistory from './components/booking-history/booking-history'
+import Complain from './components/complain/complain'
 import EditNotificated from './components/edit-notificated'
-import EditProfile from './components/edit-profile'
+import EditProfile from './components/edit-profile/edit-profile'
 import Privacy from './components/privacy'
 import TransactionHistory from './components/transaction-history/transaction-history'
 import Voucher from './components/voucher/voucher'
@@ -65,9 +77,21 @@ const settingType: SettingTypeProps[] = [
   },
   {
     key: 'transactionHistory',
-    label: 'Lịch sử giao dịch',
+    label: 'Biến động số dư',
     icon: <Transaction theme="outline" size="20" fill="#FFFFFF" strokeLinejoin="bevel" />,
     children: <TransactionHistory />,
+  },
+  {
+    key: 'bookingHistory',
+    label: 'Lịch sử thuê',
+    icon: <TransactionOrder theme="outline" size="20" fill="#FFFFFF" strokeLinejoin="bevel" />,
+    children: <BookingHistory />,
+  },
+  {
+    key: 'complain',
+    label: 'Khiếu nại',
+    icon: <FileStaffOne theme="outline" size="20" fill="#FFFFFF" strokeLinejoin="bevel" />,
+    children: <Complain />,
   },
 ]
 
@@ -256,7 +280,7 @@ const AccountSettingContainer = () => {
                     onClick={() => {
                       if (
                         !(
-                          (item.key == 'becomeProvider' && !userInfo?.slug) ||
+                          (item.key == 'becomeProvider' && !userInfo?.isVerified) ||
                           (item.key == 'vouchers' && !userInfo?.isProvider) ||
                           (item.key == 'withdraw' && !userInfo?.isProvider)
                         )

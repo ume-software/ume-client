@@ -100,8 +100,8 @@ const UserRequestWithdraw = (props: {
     form: (
       <>
         <ConfirmForm
-          title="Thay đổi thông tin cá nhân"
-          description="Bạn có chấp nhận thay đổi thông tin cá nhân hay không?"
+          title="Tạo yêu cầu nạp tiền"
+          description="Bạn có chấp nhận tạo yêu cầu nạp tiền hay không?"
           onClose={handleClose}
           isLoading={createWithdrawRequest.isLoading}
           onOk={() => {

@@ -10,12 +10,12 @@ import { trpc } from '~/utils/trpc'
 
 const PersonalIntroduce = (props: { data: UserInformationResponse }) => {
   const feedbackByUserSlug =
-    trpc.useQuery(['booking.getFeedbackServiceByUserSlug', props.data.slug], {
+    trpc.useQuery(['booking.getFeedbackServiceByUserSlug', props.data.slug ?? props.data.id], {
       refetchOnWindowFocus: false,
       refetchOnReconnect: 'always',
       cacheTime: 0,
       refetchOnMount: true,
-      enabled: !!props.data.slug,
+      enabled: !!props.data.slug || !!props.data.id,
     }) ?? undefined
   return (
     <>
@@ -24,7 +24,7 @@ const PersonalIntroduce = (props: { data: UserInformationResponse }) => {
           <span className="text-lg font-normal leading-9 font-roboto">{props.data?.providerConfig?.description}</span>
         </div>
       </div>
-      {feedbackByUserSlug.data?.success ? (
+      {!feedbackByUserSlug.isLoading && feedbackByUserSlug.data?.success ? (
         <div className="relative p-5 bg-zinc-800 rounded-3xl">
           <div className="h-[600px] flex flex-col gap-5 p-3 overflow-y-auto">
             <p className="text-2xl font-bold font-inter">Đánh giá</p>

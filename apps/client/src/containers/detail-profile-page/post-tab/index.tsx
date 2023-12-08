@@ -64,9 +64,18 @@ const PostTab = (props: { providerId: string }) => {
         </div>
       ) : (
         <div className="grid w-full grid-cols-8 gap-10">
-          {postByUserSlug?.map((data, index) => (
-            <PostItem key={index} data={data} />
-          ))}
+          {(postByUserSlug?.length ?? 0) > 0 ? (
+            <>
+              {postByUserSlug?.map((data, index) => (
+                <PostItem key={index} data={data} />
+              ))}
+            </>
+          ) : (
+            <div className="col-span-8">
+              <Image src={ImgForEmpty} alt="EmptyImage" />
+              <p className="text-xl font-semibold text-center">Chưa có bài viết</p>
+            </div>
+          )}
         </div>
       )}
     </div>
