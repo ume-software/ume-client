@@ -361,9 +361,11 @@ const DetailProfileContainer = () => {
                     <div className="mt-2 flex items-center gap-2">
                       <>
                         {currentBookingForProviderData &&
-                          ((currentBookingForProviderData[0]?.providerService?.provider as any)?.slug ==
+                          (((currentBookingForProviderData[0]?.providerService?.provider as any)?.slug ??
+                            (currentBookingForProviderData[0]?.providerService?.provider as any)?.id) ==
                             slug.profileId ||
-                            currentBookingForProviderData[0]?.booker?.slug == slug.profileId) &&
+                            (currentBookingForProviderData[0]?.booker?.slug ??
+                              currentBookingForProviderData[0]?.booker?.id) == slug.profileId) &&
                           (currentBookingForProviderData?.length ?? 0) > 0 && (
                             <div className="text-center bg-gray-700 rounded-full">
                               <BookingCountdown />
@@ -372,8 +374,10 @@ const DetailProfileContainer = () => {
                       </>
                       <>
                         {currentBookingForUserData &&
-                          ((currentBookingForUserData[0]?.providerService?.provider as any)?.slug == slug.profileId ||
-                            currentBookingForUserData[0]?.booker?.slug == slug.profileId) &&
+                          (((currentBookingForUserData[0]?.providerService?.provider as any)?.slug ??
+                            (currentBookingForUserData[0]?.providerService?.provider as any)?.id) == slug.profileId ||
+                            (currentBookingForUserData[0]?.booker?.slug ?? currentBookingForUserData[0]?.booker?.id) ==
+                              slug.profileId) &&
                           (currentBookingForUserData?.length ?? 0) > 0 && (
                             <div className="text-center bg-gray-700 rounded-full">
                               <BookingCountdown />
@@ -383,8 +387,10 @@ const DetailProfileContainer = () => {
 
                       {currentBookingForUserData &&
                         (currentBookingForUserData?.length ?? 0) > 0 &&
-                        ((currentBookingForUserData[0]?.providerService?.provider as any)?.slug == slug.profileId ||
-                          currentBookingForUserData[0]?.booker?.slug == slug.profileId) && (
+                        (((currentBookingForUserData[0]?.providerService?.provider as any)?.slug ??
+                          (currentBookingForUserData[0]?.providerService?.provider as any)?.id) == slug.profileId ||
+                          (currentBookingForUserData[0]?.booker?.slug ?? currentBookingForUserData[0]?.booker?.id) ==
+                            slug.profileId) && (
                           <>
                             <Tooltip placement="right" title={`Kết thúc sớm`}>
                               <div
