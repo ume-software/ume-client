@@ -16,6 +16,7 @@ import { trpc } from '~/utils/trpc'
 
 const PostItem = (props: { data: PostResponse }) => {
   const { isAuthenticated } = useAuth()
+  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
 
   const [formPost, setFormPost] = useState<ReactNode>(<></>)
   const [titleForm, setTitleForm] = useState<ReactNode>(<></>)
@@ -31,8 +32,6 @@ const PostItem = (props: { data: PostResponse }) => {
   const handleClose = () => {
     setIsModalVisible(false)
   }
-
-  console.log(props.data)
 
   const InforPostModal = Modal.useEditableForm({
     onOK: () => {},
@@ -96,7 +95,7 @@ const PostItem = (props: { data: PostResponse }) => {
   }
 
   const handleLikePost = () => {
-    if (isAuthenticated) {
+    if (isAuthenticated || !!userInfo) {
       if (isLikePost) {
         unLikeForPostId.mutate(props?.data?.id, {
           onSuccess: () => {

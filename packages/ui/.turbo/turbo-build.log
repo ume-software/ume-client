@@ -5,16 +5,16 @@ $ npx tsup-node src/index.tsx --format esm,cjs --dts --external react --treeshak
 [34mCLI[39m Target: es6
 [34mESM[39m Build start
 [34mCJS[39m Build start
-[32mESM[39m [1mdist\index.css [22m[32m73.00 B[39m
-[32mESM[39m [1mdist\index.mjs [22m[32m12.87 KB[39m
-[32mESM[39m ⚡️ Build success in 228ms
 [32mCJS[39m [1mdist\index.css [22m[32m73.00 B[39m
 [32mCJS[39m [1mdist\index.js  [22m[32m14.08 KB[39m
-[32mCJS[39m ⚡️ Build success in 301ms
+[32mCJS[39m ⚡️ Build success in 762ms
+[32mESM[39m [1mdist\index.css [22m[32m73.00 B[39m
+[32mESM[39m [1mdist\index.mjs [22m[32m12.87 KB[39m
+[32mESM[39m ⚡️ Build success in 763ms
 [34mDTS[39m Build start
-[32mDTS[39m ⚡️ Build success in 9098ms
+[32mDTS[39m ⚡️ Build success in 7913ms
 [32mDTS[39m [1mdist\index.d.ts [22m[32m5.39 KB[39m
 
 Rebuilding...
 
-Done in 266ms.
+Done in 340ms.

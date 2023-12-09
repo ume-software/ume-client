@@ -344,14 +344,14 @@ const DetailProfileContainer = () => {
                     </div>
                     <div className="lg:flex lg:space-y-0 space-y-2 items-center gap-3">
                       <div
-                        className="flex items-center gap-2 p-2 bg-gray-700 rounded-full cursor-pointer hover:underline decoration-solid decoration-2"
+                        className="w-fit flex items-center gap-2 p-2 bg-gray-700 rounded-full cursor-pointer hover:underline decoration-solid decoration-2"
                         onClick={() => setIsFollowerModalVisible(true)}
                         onKeyDown={() => {}}
                       >
                         Người theo dõi: {providerDetail?.followerAmount}
                       </div>
                       <div
-                        className="flex items-center gap-2 p-2 bg-gray-700 rounded-full cursor-pointer hover:underline decoration-solid decoration-2"
+                        className="w-fit flex items-center gap-2 p-2 bg-gray-700 rounded-full cursor-pointer hover:underline decoration-solid decoration-2"
                         onClick={() => setIsFollowingModalVisible(true)}
                         onKeyDown={() => {}}
                       >
@@ -361,9 +361,11 @@ const DetailProfileContainer = () => {
                     <div className="mt-2 flex items-center gap-2">
                       <>
                         {currentBookingForProviderData &&
-                          ((currentBookingForProviderData[0]?.providerService?.provider as any)?.slug ==
+                          (((currentBookingForProviderData[0]?.providerService?.provider as any)?.slug ??
+                            (currentBookingForProviderData[0]?.providerService?.provider as any)?.id) ==
                             slug.profileId ||
-                            currentBookingForProviderData[0]?.booker?.slug == slug.profileId) &&
+                            (currentBookingForProviderData[0]?.booker?.slug ??
+                              currentBookingForProviderData[0]?.booker?.id) == slug.profileId) &&
                           (currentBookingForProviderData?.length ?? 0) > 0 && (
                             <div className="text-center bg-gray-700 rounded-full">
                               <BookingCountdown />
@@ -372,8 +374,10 @@ const DetailProfileContainer = () => {
                       </>
                       <>
                         {currentBookingForUserData &&
-                          ((currentBookingForUserData[0]?.providerService?.provider as any)?.slug == slug.profileId ||
-                            currentBookingForUserData[0]?.booker?.slug == slug.profileId) &&
+                          (((currentBookingForUserData[0]?.providerService?.provider as any)?.slug ??
+                            (currentBookingForUserData[0]?.providerService?.provider as any)?.id) == slug.profileId ||
+                            (currentBookingForUserData[0]?.booker?.slug ?? currentBookingForUserData[0]?.booker?.id) ==
+                              slug.profileId) &&
                           (currentBookingForUserData?.length ?? 0) > 0 && (
                             <div className="text-center bg-gray-700 rounded-full">
                               <BookingCountdown />
@@ -383,8 +387,10 @@ const DetailProfileContainer = () => {
 
                       {currentBookingForUserData &&
                         (currentBookingForUserData?.length ?? 0) > 0 &&
-                        ((currentBookingForUserData[0]?.providerService?.provider as any)?.slug == slug.profileId ||
-                          currentBookingForUserData[0]?.booker?.slug == slug.profileId) && (
+                        (((currentBookingForUserData[0]?.providerService?.provider as any)?.slug ??
+                          (currentBookingForUserData[0]?.providerService?.provider as any)?.id) == slug.profileId ||
+                          (currentBookingForUserData[0]?.booker?.slug ?? currentBookingForUserData[0]?.booker?.id) ==
+                            slug.profileId) && (
                           <>
                             <Tooltip placement="right" title={`Kết thúc sớm`}>
                               <div
@@ -424,7 +430,7 @@ const DetailProfileContainer = () => {
                                 !unFollowProvider.isLoading &&
                                 !followProvider.isLoading
                               ) {
-                                unFollowProvider.mutate(providerDetail.slug, {
+                                unFollowProvider.mutate(providerDetail.slug ?? providerDetail.id, {
                                   onSuccess() {
                                     utils.invalidateQueries('booking.getUserBySlug')
                                   },
@@ -456,7 +462,7 @@ const DetailProfileContainer = () => {
                                 !unFollowProvider.isLoading &&
                                 !followProvider.isLoading
                               ) {
-                                followProvider.mutate(providerDetail.slug, {
+                                followProvider.mutate(providerDetail.slug ?? providerDetail.id, {
                                   onSuccess() {
                                     utils.invalidateQueries('booking.getUserBySlug')
                                   },
@@ -466,7 +472,7 @@ const DetailProfileContainer = () => {
                               }
                             }}
                           >
-                            {unFollowProvider.isLoading ? (
+                            {followProvider.isLoading ? (
                               <span
                                 className={`spinner h-5 w-5 animate-spin rounded-full border-[3px] border-r-transparent border-white`}
                               />
@@ -583,7 +589,7 @@ const DetailProfileContainer = () => {
               <div className="min-h-screen flex justify-center my-10">
                 {providerDetail?.isProvider && selectedTab.key == 'Service' && <InformationTab data={providerDetail} />}
                 {selectedTab.key == 'Album' && <AlbumTab data={providerDetail!} />}
-                {selectedTab.key == 'Post' && <PostTab providerId={providerDetail!.slug} />}
+                {selectedTab.key == 'Post' && <PostTab providerId={providerDetail?.slug ?? providerDetail?.id ?? ''} />}
               </div>
             </span>
           </div>

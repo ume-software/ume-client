@@ -255,6 +255,8 @@ const Voucher = () => {
                 }}
                 deleteAction={false}
                 onDelete={() => {}}
+                complainAction={false}
+                onComplain={() => {}}
               />
             ) : (
               <TableSkeletonLoader />
