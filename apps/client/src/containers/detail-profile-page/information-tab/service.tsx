@@ -80,6 +80,8 @@ const Service = (props: { data: ProviderServiceResponse }) => {
     }
   }
 
+  console.log(props.data)
+
   return (
     <>
       <div className="p-10 bg-zinc-800 rounded-3xl">

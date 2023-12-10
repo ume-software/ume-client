@@ -26,7 +26,7 @@ const getCurrentBookingForProviderData = (): BookingHistoryPagingResponse['row']
     refetchOnReconnect: 'always',
     cacheTime: 0,
     refetchOnMount: true,
-    enabled: !!accessToken && userInfo.isProvider,
+    enabled: !!accessToken && userInfo?.isProvider,
   })
 
   return getCurrentBookingForProviderData?.data.row

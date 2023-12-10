@@ -7,6 +7,11 @@ export interface GenderProps {
   name: string
 }
 
+export interface OnlineProps {
+  key: boolean | undefined
+  name: string
+}
+
 export interface SubAttributeProps {
   subAttrId: string
   subAttrValue: string

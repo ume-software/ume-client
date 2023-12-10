@@ -43,6 +43,7 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
   const [menuShow, setMenuShow] = useState<string>('')
   const accountBalance = trpc.useQuery(['identity.account-balance'])
   const createBooking = trpc.useMutation(['booking.createBooking'])
+  const utils = trpc.useContext()
 
   const [booking, setBooking] = useState<BookingProviderRequest>({
     providerServiceId:
@@ -96,6 +97,7 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
           onSuccess: (data) => {
             if (data.success) {
               setBooking({ providerServiceId: '', bookingPeriod: 1, voucherIds: [] })
+              utils.invalidateQueries('identity.account-balance')
               notification.success({
                 message: 'Tạo đơn thành công',
                 description: 'Đơn của bạn đã được tạo thành công.',

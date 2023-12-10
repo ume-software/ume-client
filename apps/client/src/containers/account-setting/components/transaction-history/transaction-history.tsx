@@ -97,7 +97,7 @@ const TransactionHistory = () => {
         setIsModalComplainVisible={setIsModalComplainVisible}
       />
       <div className="w-full px-10">
-        <p className="text-4xl font-bold">Lịch sử giao dịch</p>
+        <p className="text-4xl font-bold">Biến động số dư</p>
 
         <div className="flex flex-col gap-5 mt-10 space-y-10">
           {!isTransactionHistoryLoading && seriesCharts ? (
