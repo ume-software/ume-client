@@ -92,7 +92,7 @@ const Table = ({
             </thead>
 
             <tbody>
-              {dataBody.map((row, indexRow) => (
+              {dataBody?.map((row, indexRow) => (
                 <tr key={`row-${indexRow}`}>
                   {row.map((content, indexContent) => (
                     <td

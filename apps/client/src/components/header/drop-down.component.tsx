@@ -59,7 +59,7 @@ export const DropDownMenu = ({ user }: MenuProps) => {
                 } group flex w-full items-center rounded-md  text-white px-2 py-2 text-sm`}
               >
                 <WalletOne theme="outline" size="20" fill="#ffffff" className="mr-3" />
-                Lich sử giao dịch
+                Biến động số dư
               </Link>
             )}
           </Menu.Item>

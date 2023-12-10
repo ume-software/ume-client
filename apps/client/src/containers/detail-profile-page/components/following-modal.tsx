@@ -32,7 +32,12 @@ const FollowingModal = ({ isFollowingModalVisible, setIsFollowingModalVisible })
     cacheTime: 0,
     refetchOnMount: true,
     onSuccess(data) {
-      setFollwingData((prevData) => [...(prevData ?? []), ...(data?.data?.row ?? [])])
+      setFollwingData((prevData) => [
+        ...(prevData?.filter((newProviderFilter) =>
+          prevData?.find((itemPrevData) => itemPrevData.id != newProviderFilter.id),
+        ) ?? []),
+        ...(data?.data?.row ?? []),
+      ])
     },
   })
 
@@ -74,7 +79,14 @@ const FollowingModal = ({ isFollowingModalVisible, setIsFollowingModalVisible })
           <>
             {(follwingData?.length ?? 0) > 0 ? (
               follwingData?.map((data) => (
-                <Link key={data?.id} href={`profile/${data?.slug ?? data?.id}`}>
+                <Link
+                  key={data?.id}
+                  href={`/profile/${data?.slug ?? data?.id}`}
+                  onClick={() => {
+                    setIsFollowingModalVisible(false)
+                    setFollwingData(undefined)
+                  }}
+                >
                   <div className="flex items-center justify-between p-2 m-5 rounded-xl hover:bg-gray-700">
                     <div className="flex items-center gap-2">
                       <div className="relative w-[50px] h-[50px]">

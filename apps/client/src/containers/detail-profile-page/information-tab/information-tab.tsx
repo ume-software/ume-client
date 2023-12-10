@@ -140,7 +140,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
       {props.data ? (
         <div className="grid w-full grid-cols-10 gap-10 px-10">
           <div className="2xl:col-span-2 col-span-10">
-            <div className="sticky p-10 bg-zinc-800 rounded-3xl top-20">
+            <div className="sticky px-7 py-10 bg-zinc-800 rounded-3xl top-20">
               <div className="flex flex-col gap-5">
                 <div
                   className={`hidden 2xl:flex items-center p-3 rounded-xl gap-2 cursor-pointer hover:bg-gray-700 ${
@@ -153,23 +153,26 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                   <p className="xl:text-lg lg:text-sm text-xs lg:font-semibold font-normal truncate">Đôi chút về tui</p>
                 </div>
                 <div className="hidden 2xl:flex flex-col gap-5 cursor-pointer">
-                  <div
-                    className="flex flex-row items-center gap-2 p-3"
-                    onClick={handleGamesToggle}
-                    onKeyDown={() => {}}
-                  >
-                    <Gamepad theme="outline" size="18" fill="#fff" />
-                    <p className="xl:text-lg lg:text-sm text-xs lg:font-semibold font-normal truncate">Game tui chơi</p>
-                    {gamesToggle ? (
-                      <Down theme="outline" size="20" fill="#fff" />
-                    ) : (
-                      <Right theme="outline" size="20" fill="#fff" />
-                    )}
+                  <div onClick={handleGamesToggle} onKeyDown={() => {}}>
+                    <div className="flex flex-row justify-between items-center">
+                      <div className="flex flex-row items-center gap-2 p-3">
+                        <Gamepad theme="outline" size="18" fill="#fff" />
+                        <p className="xl:text-lg lg:text-sm text-xs lg:font-semibold font-normal truncate">
+                          Game tui chơi
+                        </p>
+                      </div>
+
+                      {gamesToggle ? (
+                        <Down theme="outline" size="20" fill="#fff" />
+                      ) : (
+                        <Right theme="outline" size="20" fill="#fff" />
+                      )}
+                    </div>
                   </div>
                   <div
                     className={`pl-5 gap-3 ${
                       gamesToggle
-                        ? 'flex flex-col items-start h-[500px] overflow-y-scroll overflow-x-hidden hide-scrollbar'
+                        ? 'flex flex-col items-start max-h-[500px] overflow-y-scroll overflow-x-hidden hide-scrollbar'
                         : 'hidden'
                     }`}
                   >

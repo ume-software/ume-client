@@ -7,14 +7,14 @@ $ npx tsup-node src/index.tsx --format esm,cjs --dts --external react --treeshak
 [34mCJS[39m Build start
 [32mCJS[39m [1mdist\index.css [22m[32m73.00 B[39m
 [32mCJS[39m [1mdist\index.js  [22m[32m14.08 KB[39m
-[32mCJS[39m ⚡️ Build success in 762ms
+[32mCJS[39m ⚡️ Build success in 685ms
 [32mESM[39m [1mdist\index.css [22m[32m73.00 B[39m
 [32mESM[39m [1mdist\index.mjs [22m[32m12.87 KB[39m
-[32mESM[39m ⚡️ Build success in 763ms
+[32mESM[39m ⚡️ Build success in 686ms
 [34mDTS[39m Build start
-[32mDTS[39m ⚡️ Build success in 7913ms
+[32mDTS[39m ⚡️ Build success in 8577ms
 [32mDTS[39m [1mdist\index.d.ts [22m[32m5.39 KB[39m
 
 Rebuilding...
 
-Done in 340ms.
+Done in 270ms.
