@@ -192,7 +192,19 @@ export default function VourcherModal(
       minimumBookingTotalPriceForUsage: Yup.string().max(8, 'Số tiền không vượt quá 10,000,000 chữ số'),
       minimumBookingDurationForUsage: Yup.number()
         .moreThan(-1, 'Xin hãy nhập số')
-        .lessThan(13, 'Số giờ không vượt quá 12h'),
+        .lessThan(13, 'Số giờ không vượt quá 12h')
+        .test({
+          name: 'minimumBookingDurationForUsage',
+          test: function (value, { parent }) {
+            if (isNaN(Number(value))) {
+              return this.createError({
+                message: 'Xin hãy nhập số',
+              })
+            } else {
+              return true
+            }
+          },
+        }),
     }),
     onSubmit: (values, { resetForm }) => {
       openConfirmModal()
