@@ -153,7 +153,11 @@ export default function VourcherModal(
         .test({
           name: 'numUserCanUse',
           test: function (value, { parent }) {
-            if (value && value <= parent.numVoucher) {
+            if (isNaN(Number(value))) {
+              return this.createError({
+                message: 'Xin hãy nhập số',
+              })
+            } else if (value && value <= parent.numVoucher) {
               return true
             } else {
               return this.createError({
@@ -167,7 +171,11 @@ export default function VourcherModal(
         .test({
           name: 'numUserCanUseInDay',
           test: function (value, { parent }) {
-            if (value && value <= parent.numUserCanUse && value <= parent.numVoucherInDay) {
+            if (isNaN(Number(value))) {
+              return this.createError({
+                message: 'Xin hãy nhập số',
+              })
+            } else if (value && value <= parent.numUserCanUse && value <= parent.numVoucherInDay) {
               return true
             } else {
               return this.createError({
