@@ -99,7 +99,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         socketInstance.socketInstanceChatting.on(
           getSocket().SOCKER_CHATTING_SERVER_EMIT.MESSAGE_FROM_CHANNEL,
           (...args) => {
-            args[0]?.senderId != userInfo.id && audioRef.current?.play()
+            args[0]?.senderId != userInfo?.id && userInfo?.isAllowNotificationMessage && audioRef.current?.play()
             setSocketContext((prev) => ({ ...prev, socketChattingContext: args }))
           },
         )

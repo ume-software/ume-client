@@ -45,7 +45,6 @@ const mappingStatusOfProvider: IStatus[] = [
 ]
 
 const BecomeProvider = () => {
-  const { user } = useAuth()
   const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
   const [checked, setChecked] = useState<boolean>(userInfo?.isProvider)
 
@@ -53,13 +52,13 @@ const BecomeProvider = () => {
   const [audioSource, setAudioSource] = useState<string | undefined>(undefined)
 
   const { data: userSettingData, isLoading: isLoadingUserSettingData } = trpc.useQuery(
-    ['identity.getUserBySlug', String(user?.slug ?? '')],
+    ['identity.getUserBySlug', String(userInfo?.slug ?? userInfo?.id ?? '')],
     {
       refetchOnWindowFocus: false,
       refetchOnReconnect: 'always',
       cacheTime: 0,
       refetchOnMount: true,
-      enabled: !!user?.slug,
+      enabled: !!userInfo?.slug || !!userInfo?.id,
     },
   )
   const updateIntroduceProvider = trpc.useMutation(['identity.userUpdateProviderProfile'])

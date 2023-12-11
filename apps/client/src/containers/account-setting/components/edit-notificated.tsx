@@ -7,19 +7,23 @@ import { CommentSkeletonLoader } from '~/components/skeleton-load'
 import { trpc } from '~/utils/trpc'
 
 const EditNotificated = () => {
-  const { data: userSettingData, isLoading: isLoadingUserSettingData } = trpc.useQuery(['identity.identityInfo'], {
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: 'always',
-    cacheTime: 0,
-    refetchOnMount: true,
-  })
+  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
 
   const updateInformation = trpc.useMutation(['identity.updateUserProfile'])
 
   return (
     <div className="w-full px-10">
-      <p className="text-4xl font-bold">Cài đặt thông báo</p>
-      {!isLoadingUserSettingData ? (
+      <div className="flex items-center gap-3">
+        <p className="text-4xl font-bold">Cài đặt thông báo</p>
+        {updateInformation.isLoading && (
+          <div className="flex justify-center items-center">
+            <span
+              className={`spinner h-5 w-5 animate-spin rounded-full border-[3px] border-r-transparent border-white}`}
+            />
+          </div>
+        )}
+      </div>
+      {!!userInfo ? (
         <div className="w-[80%] mt-10 px-5 space-y-10">
           <div className="flex items-center justify-between gap-5 py-10 border-b border-white border-opacity-30">
             <div className="flex flex-col gap-2">
@@ -32,7 +36,21 @@ const EditNotificated = () => {
               className="bg-red-600"
               checkedChildren={<CheckSmall theme="outline" size="23" fill="#fff" strokeLinejoin="bevel" />}
               unCheckedChildren={<CloseSmall theme="outline" size="23" fill="#fff" strokeLinejoin="bevel" />}
-              checked={userSettingData?.data?.isAllowNotificationToEmail}
+              checked={userInfo?.isAllowNotificationToEmail}
+              onClick={(value) => {
+                updateInformation.mutate(
+                  { ...userInfo, isAllowNotificationToEmail: value },
+                  {
+                    onSuccess() {
+                      const updatedUserInfor = {
+                        ...userInfo,
+                        isAllowNotificationToEmail: value,
+                      }
+                      sessionStorage.setItem('user', JSON.stringify(updatedUserInfor))
+                    },
+                  },
+                )
+              }}
             />
           </div>
 
@@ -44,7 +62,21 @@ const EditNotificated = () => {
                 className="bg-red-600"
                 checkedChildren={<CheckSmall theme="outline" size="23" fill="#fff" strokeLinejoin="bevel" />}
                 unCheckedChildren={<CloseSmall theme="outline" size="23" fill="#fff" strokeLinejoin="bevel" />}
-                checked={userSettingData?.data?.isAllowNotificationMessage}
+                checked={userInfo?.isAllowNotificationMessage}
+                onClick={(value) => {
+                  updateInformation.mutate(
+                    { ...userInfo, isAllowNotificationMessage: value },
+                    {
+                      onSuccess() {
+                        const updatedUserInfor = {
+                          ...userInfo,
+                          isAllowNotificationMessage: value,
+                        }
+                        sessionStorage.setItem('user', JSON.stringify(updatedUserInfor))
+                      },
+                    },
+                  )
+                }}
               />
             </div>
             {/* <div className="flex items-center justify-between gap-5 py-10 border-b border-white border-opacity-30">

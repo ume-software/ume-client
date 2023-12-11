@@ -15,6 +15,8 @@ import { createRouter } from './configurations'
 import {
   FollowProvider,
   UnFollowProvider,
+  bookingHistoryForProvider,
+  bookingHistoryForUser,
   cancelWithdrawRequests,
   checkSlugUser,
   createServiceProvider,
@@ -85,6 +87,8 @@ export const identityRouter = createRouter()
       dob: z.optional(z.string()),
       phone: z.optional(z.string()),
       avatarUrl: z.optional(z.string()),
+      isAllowNotificationToEmail: z.optional(z.boolean()),
+      isAllowNotificationMessage: z.optional(z.boolean()),
     }),
     resolve: async ({ input, ctx }) => {
       return await updateUserProfile(input, ctx)
@@ -340,5 +344,23 @@ export const identityRouter = createRouter()
   .query('transactionHistoryStatistic', {
     resolve: async ({ ctx }) => {
       return await transactionHistoryStatistic(ctx)
+    },
+  })
+  .query('bookingHistoryForUser', {
+    input: z.object({
+      limit: z.string(),
+      page: z.string(),
+    }),
+    resolve: async ({ input, ctx }) => {
+      return await bookingHistoryForUser(input, ctx)
+    },
+  })
+  .query('bookingHistoryForProvider', {
+    input: z.object({
+      limit: z.string(),
+      page: z.string(),
+    }),
+    resolve: async ({ input, ctx }) => {
+      return await bookingHistoryForProvider(input, ctx)
     },
   })
