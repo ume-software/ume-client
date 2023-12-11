@@ -701,3 +701,22 @@ export const UnFollowProvider = async (slug: string, ctx) => {
     })
   }
 }
+
+export const transactionHistoryStatistic = async (ctx) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie)
+    const respone = await new BalanceApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).getBalanceFluctuationStatistics()
+    return {
+      data: respone.data,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to create new booking',
+    })
+  }
+}

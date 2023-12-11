@@ -5,6 +5,8 @@ import Table from '~/components/table/table'
 const BookingHistory = () => {
   const [page, setPage] = useState<string>('1')
 
+  const handleComplain = (id: string) => {}
+
   return (
     <>
       <div className="w-full px-10">

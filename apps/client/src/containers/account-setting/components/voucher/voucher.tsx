@@ -75,7 +75,9 @@ const Voucher = () => {
           <p>{voucherArray[8]}</p>
           <p className="opacity-30">{voucherArray[6]}</p>
         </span>,
-        voucherArray[9],
+        <span key={voucherArray[0] + 'description'} className="w-96 pl-6 line-clamp-3">
+          {voucherArray[9]}
+        </span>,
         voucherArray[16],
         new Date(voucherArray[22]).toLocaleDateString('en-GB'),
         new Date(voucherArray[23]).toLocaleDateString('en-GB'),

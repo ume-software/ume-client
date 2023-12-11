@@ -38,6 +38,7 @@ import {
   providerUpdateVoucher,
   registerBecomeProvider,
   requestRecharge,
+  transactionHistoryStatistic,
   updateServiceProvider,
   updateUserProfile,
   userKYC,
@@ -334,5 +335,10 @@ export const identityRouter = createRouter()
     input: z.string(),
     resolve: async ({ input, ctx }) => {
       return await UnFollowProvider(input, ctx)
+    },
+  })
+  .query('transactionHistoryStatistic', {
+    resolve: async ({ ctx }) => {
+      return await transactionHistoryStatistic(ctx)
     },
   })
