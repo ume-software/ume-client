@@ -281,7 +281,7 @@ export const getListKYC = async (
   }
 }
 
-export const kcyAction = async (ctx, { id, action }) => {
+export const kcyAction = async (ctx, { id, action, reason }) => {
   const cookies = parse(ctx.req.headers.cookie)
   try {
     let response = new AdminManageUserKYCRequestApi({
@@ -292,7 +292,7 @@ export const kcyAction = async (ctx, { id, action }) => {
     if (action === 'APPROVE') {
       await response.adminApprovedUserKYCRequest(id)
     } else if (action === 'REJECT') {
-      await response.adminRejectedUserKYCRequest(id)
+      await response.adminRejectedUserKYCRequest(id, { content: 'Reject KYC' })
     }
     return {
       data: response,

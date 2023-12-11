@@ -202,33 +202,31 @@ const BecomeProvider = () => {
       <div className="w-full px-10">
         <p className="text-4xl font-bold">Nhà cung cấp</p>
 
-        <div className="w-full mt-10 px-5 space-y-10">
+        <div className="w-full px-5 mt-10 space-y-10">
           {!checked && (
-            <>
-              <div className="flex items-center justify-between gap-5 py-10 border-b border-white border-opacity-30">
-                <div className="flex flex-col gap-2">
-                  <p className="text-lg">Trở thành nhà cung cấp dịch vụ của chúng tôi</p>
-                  <span className="w-4/5 text-sm opacity-50">
-                    Trở thành nhà cung cấp để có thể mang lại nhiều lợi ích cho bạn như là kiếm tiền, gia tăng độ nổi
-                    tiếng,...
-                  </span>
-                </div>
-                <Switch
-                  className="bg-red-600"
-                  checkedChildren={<CheckSmall theme="outline" size="23" fill="#fff" strokeLinejoin="bevel" />}
-                  unCheckedChildren={<CloseSmall theme="outline" size="23" fill="#fff" strokeLinejoin="bevel" />}
-                  checked={checked}
-                  onChange={handleBecomeProvider}
-                />
+            <div className="flex items-center justify-between gap-5 py-10 border-b border-white border-opacity-30">
+              <div className="flex flex-col gap-2">
+                <p className="text-lg">Trở thành nhà cung cấp dịch vụ của chúng tôi</p>
+                <span className="w-4/5 text-sm opacity-50">
+                  Trở thành nhà cung cấp để có thể mang lại nhiều lợi ích cho bạn như là kiếm tiền, gia tăng độ nổi
+                  tiếng,...
+                </span>
               </div>
-            </>
+              <Switch
+                className="bg-red-600"
+                checkedChildren={<CheckSmall theme="outline" size="23" fill="#fff" strokeLinejoin="bevel" />}
+                unCheckedChildren={<CloseSmall theme="outline" size="23" fill="#fff" strokeLinejoin="bevel" />}
+                checked={checked}
+                onChange={handleBecomeProvider}
+              />
+            </div>
           )}
           {checked && (
             <>
               {!isLoadingUserSettingData ? (
                 <form ref={updateIntroduceForProviderFormRef} onSubmit={form.handleSubmit} className="space-y-3">
-                  <p className="text-md font-semibold">Giới thiệu</p>
-                  <div className="py-5 px-7 rounded-2xl space-y-3 border-2 border-white border-opacity-30">
+                  <p className="font-semibold text-md">Giới thiệu</p>
+                  <div className="py-5 space-y-3 border-2 border-white px-7 rounded-2xl border-opacity-30">
                     <div className="flex justify-between">
                       <div className="flex items-center gap-5">
                         <label className="font-semibold">Giọng của bạn:</label>
@@ -248,7 +246,7 @@ const BecomeProvider = () => {
                             </div>
                           )}
                           <input
-                            className="absolute top-0 left-0 z-20 w-full h-full cursor-pointer opacity-0"
+                            className="absolute top-0 left-0 z-20 w-full h-full opacity-0 cursor-pointer"
                             type="file"
                             name="files"
                             onChange={(e) => handleFileChange(e)}
@@ -331,7 +329,7 @@ const BecomeProvider = () => {
                     {(form.values.voice != (userSettingData?.data.providerConfig?.voiceUrl ?? '') ||
                       form.values.status != userSettingData?.data.providerConfig?.status ||
                       form.values.description != (userSettingData?.data.providerConfig?.description ?? '')) && (
-                      <div className="flex justify-end items-center gap-3">
+                      <div className="flex items-center justify-end gap-3">
                         <Button
                           isActive={false}
                           isOutlinedButton={true}
@@ -357,7 +355,7 @@ const BecomeProvider = () => {
                 <SkeletonProviderService />
               )}
               <div className="space-y-3">
-                <p className="text-md font-semibold">Dịch vụ</p>
+                <p className="font-semibold text-md">Dịch vụ</p>
                 <ServiceForm />
               </div>
             </>

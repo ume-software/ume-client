@@ -19,6 +19,7 @@ const SideBarDropdown = () => {
   }
   useEffect(() => {
     setSelectNavigation(router.pathname?.replace(/^\//, ''))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   function handleSelectNavigation(key) {

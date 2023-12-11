@@ -144,27 +144,7 @@ export const KYCTable = () => {
     {
       title: '',
       render(record) {
-        return (
-          <div className="flex justify-start">
-            <div className="flex flex-row justify-center gap-2">
-              <Button
-                customCSS="p-2 bg-green-600 hover:text-blac"
-                type="button"
-                isDisable={!record?.slug}
-                disabled={!record?.slug}
-              >
-                <a
-                  className="hover:text-black"
-                  target="_blank"
-                  href={`https://ume-software.me/home/${record.slug}}`}
-                  rel="noopener noreferrer"
-                >
-                  Xem trang cá nhân
-                </a>
-              </Button>
-            </div>
-          </div>
-        )
+        return <div className="flex justify-start"></div>
       },
     },
   ]

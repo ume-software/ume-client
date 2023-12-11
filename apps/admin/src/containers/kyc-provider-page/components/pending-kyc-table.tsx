@@ -42,6 +42,7 @@ type KYCTableProps = {
   action: string
 }
 export const PendingKYCTable = () => {
+  const [submiting, setSubmiting] = useState(false)
   const [kycListPending, setKYCListPending] = useState<any>([])
   const [pagePendingKYC, setPagePendingKYC] = useState(1)
   const [totalPendingKYC, setTotalPendingKYC] = useState(0)
@@ -166,18 +167,6 @@ export const PendingKYCTable = () => {
               >
                 Xem đơn
               </Button>
-              {record.slug && (
-                <Button customCSS="p-2 bg-green-600 hover:text-black" type="button" isDisable={!record.slug}>
-                  <a
-                    className="hover:text-black"
-                    target="_blank"
-                    href={`https://ume-software.me/home/${record.slug}}`}
-                    rel="noopener noreferrer"
-                  >
-                    Xem trang cá nhân
-                  </a>
-                </Button>
-              )}
             </div>
           </div>
         )
@@ -208,7 +197,13 @@ export const PendingKYCTable = () => {
           pageSize={Number(LIMIT_PAGE_SIZE)}
           total={totalPendingKYC}
         />
-        <KYCModal visible={kycModal} handleClose={handleClose} data={record} />
+        <KYCModal
+          visible={kycModal}
+          handleClose={handleClose}
+          data={record}
+          submiting={submiting}
+          setSubmiting={setSubmiting}
+        />
       </div>
     </>
   )

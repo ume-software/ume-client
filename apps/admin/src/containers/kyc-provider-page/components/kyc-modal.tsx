@@ -3,7 +3,9 @@ import { Button, Modal } from '@ume/ui'
 
 import { useCallback, useState } from 'react'
 
-import { Image, notification } from 'antd'
+import { Image, Select, notification } from 'antd'
+
+import { kycReasons } from './kyc-reason'
 
 import { trpc } from '~/utils/trpc'
 
@@ -11,6 +13,8 @@ export type KYCModalType = {
   visible: boolean
   handleClose: () => void
   data: any
+  submiting?: boolean
+  setSubmiting?: (value: boolean) => void
 }
 enum KYCAction {
   REJECT = 'REJECT',
@@ -41,8 +45,6 @@ export type KYCFormType = {
 }
 
 const kycForm = (record: KYCFormType, handleAction: (action: KYCAction) => void, handleOpenConfimModal: () => void) => {
-  console.log(record)
-
   const mapGender = (englishGender, defaultLabel = 'Unknown') => {
     const genderMap = {
       MALE: 'Nam',
@@ -71,7 +73,7 @@ const kycForm = (record: KYCFormType, handleAction: (action: KYCAction) => void,
   }
 
   return (
-    <div className="flex flex-col w-full p-6 gap-4 bg-[#15151b] text-white border-t border-slate-700 mt-3">
+    <div className="flex flex-col w-full p-6 gap-4  bg-[#15151b] text-white border-t border-slate-700 mt-3">
       <div>
         <div className="flex flex-col justify-start">
           <div className="text-lg font-medium">CCCD/Passport:</div>
@@ -96,54 +98,46 @@ const kycForm = (record: KYCFormType, handleAction: (action: KYCAction) => void,
       <div className="w-full border-t ">
         <div className="grid grid-cols-2 gap-10 mt-4">
           <div>
-            <div>Avatar: </div>
-            <div className="flex justify-center">
-              {record?.avatarUrl && (
-                <Image src={record?.avatarUrl} className="rounded-xl" width={150} height={150} alt={'avata'} />
-              )}
-            </div>
-          </div>
-          <div>
-            <div>Ảnh mặt sau CCCD/Passport</div>
+            <div className="text-lg font-bold">Ảnh mặt sau:</div>
             <div className="flex justify-center">
               {record?.backSideCitizenIdImageUrl && (
                 <Image
                   src={record?.backSideCitizenIdImageUrl}
                   className="rounded-xl"
-                  width={150}
-                  height={150}
+                  width={180}
+                  height={120}
                   alt={'back side citizen id'}
                 />
               )}
             </div>
           </div>
           <div>
-            <div>Ảnh khuôn mặt</div>
-            <div className="flex justify-center">
-              {record?.backSideCitizenIdImageUrl && (
-                <Image
-                  src={record?.portraitImageUrl}
-                  className="rounded-xl"
-                  width={150}
-                  height={150}
-                  alt={'back side citizen id'}
-                />
-              )}
-            </div>
-          </div>
-          <div>
-            <div>Ảnh mặt sau CCCD/Passport</div>
+            <div className="text-lg font-bold">Ảnh mặt trước:</div>
             <div className="flex justify-center">
               {record?.frontSideCitizenIdImageUrl && (
                 <Image
                   src={record?.frontSideCitizenIdImageUrl}
                   className="rounded-xl"
-                  width={150}
-                  height={150}
+                  width={180}
+                  height={120}
                   alt={'front side citizen id'}
                 />
               )}
             </div>
+          </div>
+        </div>
+        <div className="flex flex-col mt-5">
+          <div className="text-lg font-bold">Ảnh khuôn mặt:</div>
+          <div className="ml-8">
+            {record?.backSideCitizenIdImageUrl && (
+              <Image
+                src={record?.portraitImageUrl}
+                className="rounded-xl"
+                width={120}
+                height={120}
+                alt={'back side citizen id'}
+              />
+            )}
           </div>
         </div>
       </div>
@@ -177,16 +171,9 @@ const kycForm = (record: KYCFormType, handleAction: (action: KYCAction) => void,
 export const KYCModal = ({ visible, handleClose, data }: KYCModalType) => {
   const utils = trpc.useContext()
   const actionKYC = trpc.useMutation(['provider.actionKYC'])
-
   const [visibleConfirm, setVisibleConfirm] = useState(false)
   const [action, setAction] = useState<KYCAction>(KYCAction.APPROVE)
-
-  const handleVisibleConfirm = useCallback(() => {
-    setVisibleConfirm(true)
-  }, [setVisibleConfirm])
-  const handelCloseConfirm = useCallback(() => {
-    setVisibleConfirm(false)
-  }, [setVisibleConfirm])
+  const [reasonReject, setReasonReject] = useState(null)
 
   const handleActionConfirm = useCallback(
     (action: KYCAction) => {
@@ -195,33 +182,39 @@ export const KYCModal = ({ visible, handleClose, data }: KYCModalType) => {
     [setAction],
   )
 
-  const handleAction = useCallback(
-    (id: string) => {
-      actionKYC.mutate(
-        { id, action },
-        {
-          onSuccess: (data, success) => {
-            if (success) {
-              notification.success({
-                message: 'Success',
-                description: `${action} KYC Success`,
-              })
-              utils.invalidateQueries(['provider.getListRequestKYC'])
-              handelCloseConfirm()
-              handleClose()
-            }
-          },
-          onError: (error, data) => {
-            notification.error({
-              message: 'Error',
-              description: error.message || `${action} KYC Failed`,
-            })
-          },
-        },
-      )
-    },
-    [action, actionKYC, handelCloseConfirm, handleClose, utils],
-  )
+  const handleVisibleConfirm = () => {
+    setVisibleConfirm(true)
+  }
+
+  const handelCloseConfirm = () => {
+    setVisibleConfirm(false)
+  }
+
+  const handleAction = (id: string) => {
+    console.log(id, action, reasonReject)
+    // actionKYC.mutate(
+    //   { id, action, reason: form.values.reason },
+    //   {
+    //     onSuccess: (data, success) => {
+    //       if (success) {
+    //         notification.success({
+    //           message: 'Success',
+    //           description: `${action} KYC Success`,
+    //         })
+    //         utils.invalidateQueries(['provider.getListRequestKYC'])
+    //         handelCloseConfirm()
+    //         handleClose()
+    //       }
+    //     },
+    //     onError: (error, data) => {
+    //       notification.error({
+    //         message: 'Error',
+    //         description: error.message || `${action} KYC Failed`,
+    //       })
+    //     },
+    //   },
+    // )
+  }
 
   const confirmModal = Modal.useEditableForm({
     onOK: () => {},
@@ -241,18 +234,36 @@ export const KYCModal = ({ visible, handleClose, data }: KYCModalType) => {
                 <span className="p-2 mx-1 font-bold bg-green-700 rounded-2xl">chấp thuận</span>
               ) : (
                 <span className="p-2 mx-1 font-bold bg-red-700 rounded-2xl">từ chối</span>
-              )}{' '}
+              )}
               yêu cầu xác thực của người
+              {action === KYCAction.REJECT && (
+                <div className="flex flex-row mx-8 mt-6 text-left">
+                  <div>Vui lòng chọn từ chối:</div>
+                  <Select
+                    className="w-[250px] ml-6"
+                    placeholder="Vui lòng nhập lí do"
+                    options={kycReasons}
+                    onChange={(value) => {
+                      setReasonReject(value)
+                    }}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>
         <div className="flex flex-row justify-center gap-4 p-5">
           <Button
-            customCSS="px-3 w-24 py-2 hover:bg-green-400 hover:text-black"
+            customCSS={`px-3 w-24 py-2 ${
+              KYCAction.REJECT === action && !reasonReject
+                ? 'opacity-20 cursor-not-allowed hover:scale-100 '
+                : 'hover:bg-green-400 hover:text-black '
+            } `}
             type="button"
             onClick={() => {
-              handleAction(data?.requestId)
+              handleAction(data?.id)
             }}
+            isDisable={KYCAction.REJECT === action && !reasonReject}
           >
             Xác nhận
           </Button>
@@ -305,9 +316,9 @@ export const KYCModal = ({ visible, handleClose, data }: KYCModalType) => {
     ),
   })
   return (
-    <>
+    <div>
       {kycModal}
       {confirmModal}
-    </>
+    </div>
   )
 }
