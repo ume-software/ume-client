@@ -199,30 +199,18 @@ export const approveWithdrawal = async (id: string, action: any, ctx) => {
   }
 }
 
-export const statisticTransasction = async (
-  ctx,
-  type: TransactionType,
-  query: { time: number; unit: UnitQueryTime },
-) => {
+export const statisticTransasction = async (ctx, query: { time: number; unit: UnitQueryTime }) => {
   try {
-    let res
     const cookies = parse(ctx.req.headers.cookie ?? '')
-    if (type === TransactionType.DEPOSIT) {
-      res = await new AdminManageStatisticApi({
-        basePath: getEnv().baseUmeServiceURL,
-        isJsonMime: () => true,
-        accessToken: cookies['accessToken'],
-      }).adminGetAmountMoneyDepositStatistics(query.time, query.unit, UnitQueryTime.MONTH)
-    } else if (type === TransactionType.WITHDRAW) {
-      res = await new AdminManageStatisticApi({
-        basePath: getEnv().baseUmeServiceURL,
-        isJsonMime: () => true,
-        accessToken: cookies['accessToken'],
-      }).adminGetAmountMoneyWithdrawalStatistics(query.time, query.unit, UnitQueryTime.MONTH)
-    }
+
+    const res = await new AdminManageStatisticApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).adminGetTotalDepositWithdrawal()
+
     return {
-      data: res.data || null,
-      success: true,
+      data: res.data,
     }
   } catch (error) {
     throw new TRPCError({
