@@ -3,7 +3,6 @@ import { Check, CheckSmall, CloseSmall, Voice, Write } from '@icon-park/react'
 import { Button, Modal, TextArea } from '@ume/ui'
 import 'swiper/swiper-bundle.css'
 import { uploadAudio } from '~/apis/upload-media'
-import { useAuth } from '~/contexts/auth'
 
 import { Fragment, useEffect, useRef, useState } from 'react'
 

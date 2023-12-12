@@ -4,9 +4,12 @@ import { getEnv } from '~/env'
 
 import { parse } from 'cookie'
 import {
+  AttachmentRequest,
   AuthApi,
   BalanceApi,
   BookingApi,
+  BookingComplaintApi,
+  CreateBookingComplaintRequestComplaintTypeEnum,
   CreateVoucherRequest,
   CreateWithdrawalRequestUnitCurrencyEnum,
   DepositRequestApi,
@@ -753,6 +756,33 @@ export const bookingHistoryForProvider = async (query: { limit: string; page: st
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
     }).providerGetBookingHistory(query.limit, query.page, '["$all"]')
+    return {
+      data: respone.data,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to create new booking',
+    })
+  }
+}
+
+export const createComplain = async (
+  query: {
+    bookingId: string
+    complaintDescription: string
+    complaintType: CreateBookingComplaintRequestComplaintTypeEnum
+    attachments: AttachmentRequest[]
+  },
+  ctx,
+) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie)
+    const respone = await new BookingComplaintApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).createBookingComplaint(query)
     return {
       data: respone.data,
     }

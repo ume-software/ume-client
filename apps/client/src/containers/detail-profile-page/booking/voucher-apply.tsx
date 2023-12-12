@@ -10,6 +10,8 @@ const VoucherApply = (props: {
   voucherSelected: string[] | undefined
   setVoucherSelected: Dispatch<SetStateAction<BookingProviderRequest>>
   data: VoucherPagingResponse | undefined
+  duration: number
+  price: number
 }) => {
   return (
     <>
@@ -20,12 +22,22 @@ const VoucherApply = (props: {
               {props.data?.row?.map((voucher) => (
                 <div
                   key={voucher.id}
-                  className="col-span-3 m-3"
+                  className={`${
+                    !(
+                      props.duration >= (voucher?.minimumBookingDurationForUsage ?? 0) &&
+                      props.price >= (voucher?.minimumBookingTotalPriceForUsage ?? 0)
+                    ) && 'opacity-30'
+                  } col-span-3 m-3`}
                   onClick={() => {
-                    props.setVoucherSelected((prevData) => ({
-                      ...prevData,
-                      voucherIds: [String(voucher.code)] ?? [],
-                    }))
+                    if (
+                      props.duration >= (voucher?.minimumBookingDurationForUsage ?? 0) &&
+                      props.price >= (voucher?.minimumBookingTotalPriceForUsage ?? 0)
+                    ) {
+                      props.setVoucherSelected((prevData) => ({
+                        ...prevData,
+                        voucherIds: [String(voucher.code)] ?? [],
+                      }))
+                    }
                   }}
                   onKeyDown={() => {}}
                 >
@@ -59,7 +71,25 @@ const VoucherApply = (props: {
                         </div>
                       </div>
                       <p className="w-full text-md overflow-hidden line-clamp-2">{voucher.description}</p>
+                      <div className="flex items-center gap-2">
+                        {(Number(voucher?.minimumBookingDurationForUsage ?? 0) > 0 ||
+                          Number(voucher?.minimumBookingTotalPriceForUsage ?? 0) > 0) && (
+                          <p className="text-md font-semibold opacity-30">Tối thiểu: </p>
+                        )}
 
+                        {Number(voucher?.minimumBookingDurationForUsage ?? 0) > 0 && (
+                          <p className="text-md font-semibold">{voucher?.minimumBookingDurationForUsage}h </p>
+                        )}
+                        {Number(voucher?.minimumBookingDurationForUsage ?? 0) > 0 &&
+                          Number(voucher?.minimumBookingTotalPriceForUsage ?? 0) > 0 && (
+                            <p className="text-md font-semibold">&</p>
+                          )}
+                        {Number(voucher?.minimumBookingTotalPriceForUsage ?? 0) > 0 && (
+                          <p className="text-md font-semibold">
+                            {voucher?.minimumBookingTotalPriceForUsage?.toLocaleString()}đ
+                          </p>
+                        )}
+                      </div>
                       <p className="text-md font-semibold opacity-30">Ngày hết hạn: {voucher.endDate?.split('T')[0]}</p>
                     </div>
                   </div>
