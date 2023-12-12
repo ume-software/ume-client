@@ -86,7 +86,18 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
       ...prevData,
       providerServiceId:
         props.data?.providerServices?.find((dataChoose) => dataChoose.service?.slug === slug.service)?.id ?? '',
-      voucherIds: myVoucher?.row && myVoucher?.row?.length > 0 ? [String(myVoucher.row[0].code)] : [],
+      voucherIds:
+        myVoucher?.row && myVoucher?.row?.length > 0
+          ? [
+              String(
+                myVoucher.row?.find(
+                  (voucherDetail) =>
+                    booking.bookingPeriod >= (voucherDetail?.minimumBookingDurationForUsage ?? 0) &&
+                    total >= (voucherDetail?.minimumBookingTotalPriceForUsage ?? 0),
+                )?.code ?? '',
+              ),
+            ]
+          : [],
     }))
   }, [props.data, slug.service, myVoucher?.row])
 
@@ -294,6 +305,8 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
                   voucherSelected={booking.voucherIds}
                   setVoucherSelected={setBooking}
                   data={myVoucher}
+                  duration={booking.bookingPeriod}
+                  price={total}
                 />
               </Drawer>
             </div>
