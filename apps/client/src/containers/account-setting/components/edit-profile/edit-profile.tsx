@@ -577,7 +577,7 @@ const EditProfile = () => {
                     isActive={true}
                     isOutlinedButton={true}
                     onClick={() => {
-                      if (vietnamesePhoneNumberRegExp.test(form.values.phone)) {
+                      if (form.values.phone ? vietnamesePhoneNumberRegExp.test(form.values.phone) : true) {
                         setIsModalConfirmationVisible(true)
                       }
                     }}
