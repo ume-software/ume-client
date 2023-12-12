@@ -201,7 +201,7 @@ const BecomeProvider = () => {
       <div className="w-full px-10">
         <p className="text-4xl font-bold">Nhà cung cấp</p>
 
-        <div className="w-full mt-10 px-5 space-y-10 pb-40">
+        <div className="w-full px-5 pb-40 mt-10 space-y-10">
           {!checked && (
             <div className="flex items-center justify-between gap-5 py-10 border-b border-white border-opacity-30">
               <div className="flex flex-col gap-2">
