@@ -32,7 +32,12 @@ const FollowerModal = ({ isFollowerModalVisible, setIsFollowerModalVisible }) =>
     cacheTime: 0,
     refetchOnMount: true,
     onSuccess(data) {
-      setFollwerData((prevData) => [...(prevData ?? []), ...(data?.data?.row ?? [])])
+      setFollwerData((prevData) => [
+        ...(prevData?.filter((newProviderFilter) =>
+          prevData?.find((itemPrevData) => itemPrevData.id != newProviderFilter.id),
+        ) ?? []),
+        ...(data?.data?.row ?? []),
+      ])
     },
   })
 
@@ -74,7 +79,14 @@ const FollowerModal = ({ isFollowerModalVisible, setIsFollowerModalVisible }) =>
           <>
             {(follwerData?.length ?? 0) > 0 ? (
               follwerData?.map((data) => (
-                <Link key={data?.id} href={`profile/${data?.slug ?? data?.id}`}>
+                <Link
+                  key={data?.id}
+                  href={`/profile/${data?.slug ?? data?.id}`}
+                  onClick={() => {
+                    setIsFollowerModalVisible(false)
+                    setFollwerData(undefined)
+                  }}
+                >
                   <div className="flex items-center justify-between p-2 m-5 rounded-xl hover:bg-gray-700">
                     <div className="flex items-center gap-2">
                       <div className="relative w-[50px] h-[50px]">

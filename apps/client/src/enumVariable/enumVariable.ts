@@ -32,3 +32,8 @@ export enum ComplainEnum {
   COMPLAIN_TO_ME = 'COMPLAIN_TO_ME',
   COMPLAIN_OF_ME = 'COMPLAIN_OF_ME',
 }
+
+export enum BookingHistoryEnum {
+  BOOKING_FOR_USER = 'BOOKING_FOR_USER',
+  BOOKING_FOR_PROVIDER = 'BOOKING_FOR_PROVIDER',
+}

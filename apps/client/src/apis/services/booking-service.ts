@@ -43,6 +43,7 @@ export const getProviders = async (query?: {
   name?: string
   gender?: string
   status?: string
+  isOnline?: boolean
   limit?: string
   page?: string
   order?: string
@@ -59,6 +60,7 @@ export const getProviders = async (query?: {
       query?.name,
       query?.gender as 'MALE' | 'FEMALE' | 'OTHER' | 'PRIVATE',
       query?.status as 'ACTIVATED' | 'UN_ACTIVATED' | 'STOPPED_ACCEPTING_BOOKING' | 'BUSY',
+      query?.isOnline,
       query?.limit,
       query?.page,
       query?.order,
@@ -372,13 +374,11 @@ export const donationForRecipient = async (query: { recipientId: string; amount:
   }
 }
 
-export const getPostByUserSlug = async (query: { userSlug: string; page: string }, ctx) => {
+export const getPostByUserSlug = async (query: { userSlug: string; page: string }) => {
   try {
-    const cookies = parse(ctx.req.headers.cookie)
     const respone = await new UserApi({
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
-      accessToken: cookies['accessToken'],
     }).getPostsByUserSlug(query.userSlug, '8', query.page)
     return {
       data: respone.data,
@@ -408,8 +408,8 @@ export const postReportUser = async (
     }
   } catch (error) {
     throw new TRPCError({
-      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
-      message: error.message || 'Fail to get post report user',
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.data.codeNumber),
+      message: error.response?.data.message || 'Fail to get post report user',
     })
   }
 }
@@ -475,7 +475,7 @@ export const getFollowerByUserSlug = async (query: { slug: string; page: string 
     const respone = await new UserApi({
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
-    }).getFollowerByUserSlug(query.slug, '10', query.page)
+    }).getFollowerByUserSlug(query.slug, '10', query.page, '["$all"]')
     return {
       data: respone.data,
     }
@@ -492,7 +492,7 @@ export const getFollowingByUserSlug = async (query: { slug: string; page: string
     const respone = await new UserApi({
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
-    }).getFollowingByUserSlug(query.slug, '10', query.page)
+    }).getFollowingByUserSlug(query.slug, '10', query.page, '["$all"]')
     return {
       data: respone.data,
     }

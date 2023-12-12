@@ -42,6 +42,11 @@ const TransactionHistory = () => {
   const [transactionHistory, setTransactionHistory] = useState<BalanceHistoryPagingResponse | undefined>(undefined)
   const [transactionHistoryArray, setTransactionHistoryArray] = useState<any[] | undefined>(undefined)
   const [seriesCharts, setSeriesCharts] = useState<any[] | undefined>(undefined)
+
+  const { data: transactionHistoryStatisticData, isLoading: istransactionHistoryStatisticDataLoading } = trpc.useQuery([
+    'identity.transactionHistoryStatistic',
+  ])
+
   const { isLoading: isTransactionHistoryLoading } = trpc.useQuery(
     ['identity.getHistoryTransaction', { page: transactionPage, limit, order: '{"updatedAt":"desc"}' }],
     {
@@ -54,10 +59,10 @@ const TransactionHistory = () => {
   useEffect(() => {
     const monthYearAmountMap = {}
 
-    transactionHistory?.row?.map((transactionHistory) => {
-      const updatedAt = new Date(transactionHistory.updatedAt ?? '')
+    transactionHistoryStatisticData?.data.data?.map((transactionChartHistory) => {
+      const updatedAt = new Date(transactionChartHistory.time ?? '')
       const monthYear = `${updatedAt.getFullYear()}-${(updatedAt.getMonth() + 1).toString().padStart(2, '0')}`
-      const amount = transactionHistory.amount
+      const amount = transactionChartHistory.income
 
       if (monthYearAmountMap[monthYear]) {
         monthYearAmountMap[monthYear].push(amount)
@@ -72,7 +77,9 @@ const TransactionHistory = () => {
     }))
 
     setSeriesCharts(monthYearAmountArray)
+  }, [transactionHistoryStatisticData?.data.data, istransactionHistoryStatisticDataLoading])
 
+  useEffect(() => {
     const transactionHistoryResultArray = transactionHistory?.row?.map((transactionHistory) => {
       const transactionArray = Object.values(transactionHistory)
 
@@ -90,6 +97,8 @@ const TransactionHistory = () => {
     setTransactionHistoryArray(transactionHistoryResultArray)
   }, [transactionHistory])
 
+  console.log(seriesCharts)
+
   return (
     <>
       <ComplainTicketModal
@@ -97,10 +106,10 @@ const TransactionHistory = () => {
         setIsModalComplainVisible={setIsModalComplainVisible}
       />
       <div className="w-full px-10">
-        <p className="text-4xl font-bold">Lịch sử giao dịch</p>
+        <p className="text-4xl font-bold">Biến động số dư</p>
 
         <div className="flex flex-col gap-5 mt-10 space-y-10">
-          {!isTransactionHistoryLoading && seriesCharts ? (
+          {!istransactionHistoryStatisticDataLoading && seriesCharts ? (
             <ColumnChart seriesCharts={seriesCharts} />
           ) : (
             <div className="w-full h-[350px] flex justify-center gap-10 mt-20 mb-10">

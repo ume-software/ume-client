@@ -45,7 +45,6 @@ const mappingStatusOfProvider: IStatus[] = [
 ]
 
 const BecomeProvider = () => {
-  const { user } = useAuth()
   const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
   const [checked, setChecked] = useState<boolean>(userInfo?.isProvider)
 
@@ -53,13 +52,13 @@ const BecomeProvider = () => {
   const [audioSource, setAudioSource] = useState<string | undefined>(undefined)
 
   const { data: userSettingData, isLoading: isLoadingUserSettingData } = trpc.useQuery(
-    ['identity.getUserBySlug', String(user?.slug ?? '')],
+    ['identity.getUserBySlug', String(userInfo?.slug ?? userInfo?.id ?? '')],
     {
       refetchOnWindowFocus: false,
       refetchOnReconnect: 'always',
       cacheTime: 0,
       refetchOnMount: true,
-      enabled: !!user?.slug,
+      enabled: !!userInfo?.slug || !!userInfo?.id,
     },
   )
   const updateIntroduceProvider = trpc.useMutation(['identity.userUpdateProviderProfile'])
@@ -202,7 +201,7 @@ const BecomeProvider = () => {
       <div className="w-full px-10">
         <p className="text-4xl font-bold">Nhà cung cấp</p>
 
-        <div className="w-full px-5 mt-10 space-y-10">
+        <div className="w-full mt-10 px-5 space-y-10 pb-40">
           {!checked && (
             <div className="flex items-center justify-between gap-5 py-10 border-b border-white border-opacity-30">
               <div className="flex flex-col gap-2">

@@ -332,7 +332,7 @@ const DetailProfileContainer = () => {
                               </p>
                               <p>
                                 {providerDetail?.providerConfig?.status ==
-                                  ProviderConfigResponseStatusEnum.UnActivated && 'Không kích hoạt'}
+                                  ProviderConfigResponseStatusEnum.UnActivated && 'Ngừng nhận đơn'}
                               </p>
                               <p>{!providerDetail?.isProvider && 'Hoạt động'}</p>
                             </>
@@ -432,6 +432,8 @@ const DetailProfileContainer = () => {
                               ) {
                                 unFollowProvider.mutate(providerDetail.slug ?? providerDetail.id, {
                                   onSuccess() {
+                                    utils.invalidateQueries('booking.getFollowingByUserSlug')
+                                    utils.invalidateQueries('booking.getFollowerByUserSlug')
                                     utils.invalidateQueries('booking.getUserBySlug')
                                   },
                                 })
@@ -464,6 +466,8 @@ const DetailProfileContainer = () => {
                               ) {
                                 followProvider.mutate(providerDetail.slug ?? providerDetail.id, {
                                   onSuccess() {
+                                    utils.invalidateQueries('booking.getFollowingByUserSlug')
+                                    utils.invalidateQueries('booking.getFollowerByUserSlug')
                                     utils.invalidateQueries('booking.getUserBySlug')
                                   },
                                 })
@@ -510,7 +514,7 @@ const DetailProfileContainer = () => {
                         <div className="flex flex-col gap-2 w-max">
                           {moreButtonDatas.map((item) => (
                             <Fragment key={item.key}>
-                              {userInfo?.id == providerDetail?.id && providerDetail?.isProvider ? (
+                              {userInfo?.id == providerDetail?.id || !providerDetail?.isProvider ? (
                                 item.key != 'Donate' &&
                                 item.key != 'Report' && (
                                   <div

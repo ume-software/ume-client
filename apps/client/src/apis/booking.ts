@@ -50,6 +50,7 @@ export const bookingRouter = createRouter()
         name: z.optional(z.string()),
         gender: z.optional(z.string()),
         status: z.optional(z.string()),
+        isOnline: z.optional(z.boolean()),
         limit: z.optional(z.string()),
         page: z.optional(z.string()),
         order: z.optional(z.string()),
@@ -168,7 +169,7 @@ export const bookingRouter = createRouter()
   .query('getPostByUserSlug', {
     input: z.object({ userSlug: z.string(), page: z.string() }),
     resolve: async ({ ctx, input }) => {
-      return await getPostByUserSlug(input, ctx)
+      return await getPostByUserSlug(input)
     },
   })
   .mutation('postReportUser', {

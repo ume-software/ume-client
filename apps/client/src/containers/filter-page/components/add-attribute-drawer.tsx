@@ -1,13 +1,13 @@
 import { CheckSmall } from '@icon-park/react'
 import { Button } from '@ume/ui'
 
-import { Dispatch, SetStateAction, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 
 import { FilterProviderResponse } from 'ume-service-openapi'
 
 import { AttrbuteProps, SubAttributeProps } from './iFilter'
 
-const AddAttributeModal = (props: {
+const AddAttributeDrawer = (props: {
   attributeData: AttrbuteProps[]
   attributeFilter: AttrbuteProps[]
   setAttributeFilter: Dispatch<SetStateAction<AttrbuteProps[]>>
@@ -36,9 +36,13 @@ const AddAttributeModal = (props: {
     }
   }
 
+  useEffect(() => {
+    setDisplayAttrFilter(props.attributeFilter)
+  }, [props.attributeFilter])
+
   return (
-    <>
-      <div className="h-[80vh] p-7 text-white overflow-y-auto custom-scrollbar">
+    <div className="h-[88vh] max-h-[90vh] overflow-y-auto custom-scrollbar">
+      <div className="h-[78vh] p-7 text-white overflow-y-auto custom-scrollbar">
         {props.attributeData.map((attrData) => (
           <div className="py-2 border-b border-white border-opacity-30" key={attrData.id}>
             <p className="text-lg font-bold">{attrData.name}: </p>
@@ -100,7 +104,7 @@ const AddAttributeModal = (props: {
           Áp dụng
         </Button>
       </div>
-    </>
+    </div>
   )
 }
-export default AddAttributeModal
+export default AddAttributeDrawer

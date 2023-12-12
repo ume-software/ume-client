@@ -105,9 +105,9 @@ export default function VourcherModal(
       description: props.voucherSelected?.description ?? '',
       numVoucher: props.voucherSelected?.numberIssued,
       numVoucherInDay: props.voucherSelected?.dailyNumberIssued,
-      discountValue: props.voucherSelected?.discountValue?.toLocaleString(),
-      minimize: props.voucherSelected?.maximumDiscountValue?.toLocaleString(),
-      minimumBookingTotalPriceForUsage: props.voucherSelected?.minimumBookingTotalPriceForUsage,
+      discountValue: props.voucherSelected?.discountValue?.toLocaleString() ?? '0',
+      minimize: props.voucherSelected?.maximumDiscountValue?.toLocaleString() ?? '0',
+      minimumBookingTotalPriceForUsage: props.voucherSelected?.minimumBookingTotalPriceForUsage ?? 0,
       minimumBookingDurationForUsage: props.voucherSelected?.minimumBookingDurationForUsage?.toLocaleString(),
       startDate: props.voucherSelected?.startDate?.split('T')[0] ?? new Date().toISOString().split('T')[0],
       endDate: props.voucherSelected?.endDate?.split('T')[0] ?? '',
@@ -134,49 +134,77 @@ export default function VourcherModal(
         .required('Số lượng là bắt buộc')
         .moreThan(0, 'Số lượng phải lớn hơn 0')
         .lessThan(10001, 'Số lượng không vượt quá 10.000'),
-      numVoucherInDay: Yup.number().test({
-        name: 'numVoucherInDay',
-        test: function (value, { parent }) {
-          if (value && value <= parent.numVoucher) {
-            return true
-          } else {
-            return this.createError({
-              message: 'Không được lớn hơn số lượng',
-            })
-          }
-        },
-      }),
-      numUserCanUse: Yup.number().test({
-        name: 'numUserCanUse',
-        test: function (value, { parent }) {
-          if (value && value <= parent.numVoucher) {
-            return true
-          } else {
-            return this.createError({
-              message: 'Không được lớn hơn số lượng',
-            })
-          }
-        },
-      }),
-      numUserCanUseInDay: Yup.number().test({
-        name: 'numUserCanUseInDay',
-        test: function (value, { parent }) {
-          if (value && value <= parent.numUserCanUse) {
-            return true
-          } else {
-            return this.createError({
-              message: 'Không được lớn hơn số lượng có thể sử dụng',
-            })
-          }
-        },
-      }),
+      numVoucherInDay: Yup.number()
+        .moreThan(-1, 'Xin hãy nhập số')
+        .test({
+          name: 'numVoucherInDay',
+          test: function (value, { parent }) {
+            if (value && value <= parent.numVoucher) {
+              return true
+            } else {
+              return this.createError({
+                message: 'Không được lớn hơn số lượng',
+              })
+            }
+          },
+        }),
+      numUserCanUse: Yup.number()
+        .moreThan(-1, 'Xin hãy nhập số')
+        .test({
+          name: 'numUserCanUse',
+          test: function (value, { parent }) {
+            if (isNaN(Number(value))) {
+              return this.createError({
+                message: 'Xin hãy nhập số',
+              })
+            } else if (value && value <= parent.numVoucher) {
+              return true
+            } else {
+              return this.createError({
+                message: 'Không được lớn hơn số lượng',
+              })
+            }
+          },
+        }),
+      numUserCanUseInDay: Yup.number()
+        .moreThan(-1, 'Xin hãy nhập số')
+        .test({
+          name: 'numUserCanUseInDay',
+          test: function (value, { parent }) {
+            if (isNaN(Number(value))) {
+              return this.createError({
+                message: 'Xin hãy nhập số',
+              })
+            } else if (value && value <= parent.numUserCanUse && value <= parent.numVoucherInDay) {
+              return true
+            } else {
+              return this.createError({
+                message: 'Không được lớn hơn số lượng có thể sử dụng',
+              })
+            }
+          },
+        }),
       typeVoucher: Yup.string().required('Loại là bắt buộc'),
       discountUnit: Yup.string().required('Đơn vị là bắt buộc'),
       audience: Yup.string().required('Đối tượng là bắt buộc'),
       discountValue: Yup.string().required('Giá trị là bắt buộc'),
       minimize: Yup.string().max(6, 'Số tiền không vượt quá 6 chữ số'),
       minimumBookingTotalPriceForUsage: Yup.string().max(8, 'Số tiền không vượt quá 10,000,000 chữ số'),
-      minimumBookingDurationForUsage: Yup.number().lessThan(13, 'Số giờ không vượt quá 12h'),
+      minimumBookingDurationForUsage: Yup.number()
+        .moreThan(-1, 'Xin hãy nhập số')
+        .lessThan(13, 'Số giờ không vượt quá 12h')
+        .test({
+          name: 'minimumBookingDurationForUsage',
+          test: function (value, { parent }) {
+            if (isNaN(Number(value))) {
+              return this.createError({
+                message: 'Xin hãy nhập số',
+              })
+            } else {
+              return true
+            }
+          },
+        }),
     }),
     onSubmit: (values, { resetForm }) => {
       openConfirmModal()
@@ -709,7 +737,7 @@ export default function VourcherModal(
                     value={form.values.startDate}
                     error={!!form.errors.startDate && form.touched.startDate}
                     errorMessage={form.errors.startDate}
-                    min={form.values.startDate ?? today}
+                    min={today}
                     disabled={!!form.values.startDate}
                     required
                   />
@@ -736,7 +764,7 @@ export default function VourcherModal(
                     required
                   />
                   {!!form.errors.endDate && form.touched.endDate && (
-                    <p className="absolute bottom-0 text-xs text-red-500">{form.errors.endDate}</p>
+                    <p className="absolute bottom-[-2] text-xs text-red-500">{form.errors.endDate}</p>
                   )}
                 </div>
               </div>
@@ -927,7 +955,7 @@ export default function VourcherModal(
                     <FormInput
                       name="discountValue"
                       className={`min-w-[120px] ${
-                        form.values.discountValue == props.voucherSelected?.discountValue
+                        Number(form.values.discountValue) == props.voucherSelected?.discountValue ?? 0
                           ? 'bg-zinc-800'
                           : 'bg-[#413F4D]'
                       } border-2 border-[#FFFFFF] h-8 border-opacity-30`}
@@ -938,12 +966,12 @@ export default function VourcherModal(
                       errorMessage={''}
                       onChange={(e) => {
                         const inputValue = e.target.value.replace(/,/g, '')
-                        const numericValue = parseFloat(inputValue)
+                        const numericValue = parseInt(inputValue)
                         const formattedValue = isNaN(numericValue) ? '0' : numericValue.toLocaleString()
 
                         form.values.discountUnit === CreateVoucherRequestDiscountUnitEnum.Percent
-                          ? numericValue < 100 && form.setFieldValue('discountValue', formattedValue)
-                          : numericValue < 100001 && form.setFieldValue('discountValue', formattedValue)
+                          ? Number(inputValue) < 100 && form.setFieldValue('discountValue', formattedValue)
+                          : Number(inputValue) < 100001 && form.setFieldValue('discountValue', formattedValue)
                       }}
                       type="text"
                     />
@@ -987,9 +1015,9 @@ export default function VourcherModal(
                         errorMessage={''}
                         onChange={(e) => {
                           const inputValue = e.target.value.replace(/,/g, '')
-                          const numericValue = parseFloat(inputValue)
+                          const numericValue = parseInt(inputValue)
                           const formattedValue = isNaN(numericValue) ? '0' : numericValue.toLocaleString()
-                          if (Number(inputValue) < 100001) {
+                          if (Number(inputValue) >= 0 && Number(inputValue) < 100001) {
                             form.setFieldValue('minimize', formattedValue)
                           }
                         }}
@@ -1046,7 +1074,7 @@ export default function VourcherModal(
                         const inputValue = e.target.value.replace(/,/g, '')
                         const numericValue = parseFloat(inputValue)
                         const formattedValue = isNaN(numericValue) ? '0' : numericValue.toLocaleString()
-                        if (Number(inputValue) < 100001) {
+                        if (Number(inputValue) >= 0 && Number(inputValue) < 100001) {
                           form.setFieldValue('minimumBookingTotalPriceForUsage', formattedValue)
                         }
                       }}
