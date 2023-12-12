@@ -31,25 +31,31 @@ export const FinanceStatistic = () => {
   return (
     <div>
       <div className="flex flex-col my-20 md:flex-row justify-evenly">
-        <div className="w-[400px] h-[400px] bg-[#7463f0] rounded-[50px] flex justify-center">
-          <Statistic
-            title={<div className="text-xl font-bold">Tổng số tiền đã nạp</div>}
-            value={deposit}
-            valueStyle={{ color: '#f4f4f3' }}
-            suffix="VND"
-            formatter={formatter}
-            loading={isLoading || isFetching}
-          />
+        <div className="flex flex-col">
+          <div className="mb-4 text-2xl font-bold text-[#f4f4f3]">Tổng số tiền đã nạp</div>
+          <div className="w-[400px] h-[200px] bg-[#7463f0] rounded-[50px] flex justify-center">
+            <Statistic
+              className="my-auto text-2xl font-bold"
+              value={deposit}
+              valueStyle={{ color: '#f4f4f3' }}
+              suffix="VND"
+              formatter={formatter}
+              loading={isLoading || isFetching}
+            />
+          </div>
         </div>
-        <div className="w-[400px] h-[400px] bg-[#7463f0] rounded-[50px] flex justify-center">
-          <Statistic
-            title={<div className="text-xl font-bold">Tổng số tiền đã rút</div>}
-            value={withdraw}
-            valueStyle={{ color: '#f4f4f3' }}
-            suffix="VND"
-            formatter={formatter}
-            loading={isLoading || isFetching}
-          />
+        <div className="flex flex-col">
+          <div className="mb-4 text-2xl font-bold text-[#f4f4f3]">Tổng số tiền đã rút</div>
+          <div className="w-[400px] h-[200px] bg-[#7463f0] rounded-[50px] flex justify-center">
+            <Statistic
+              className="my-auto text-3xl font-bold"
+              value={withdraw}
+              valueStyle={{ color: '#f4f4f3' }}
+              suffix="VND"
+              formatter={formatter}
+              loading={isLoading || isFetching}
+            />
+          </div>
         </div>
       </div>
     </div>
