@@ -71,7 +71,7 @@ const kycForm = (record: KYCFormType, handleAction: (action: KYCAction) => void,
       </div>
     )
   }
-
+  console.log(record)
   return (
     <div className="flex flex-col w-full p-6 gap-4  bg-[#15151b] text-white border-t border-slate-700 mt-3">
       <div>
@@ -191,29 +191,28 @@ export const KYCModal = ({ visible, handleClose, data }: KYCModalType) => {
   }
 
   const handleAction = (id: string) => {
-    console.log(id, action, reasonReject)
-    // actionKYC.mutate(
-    //   { id, action, reason: form.values.reason },
-    //   {
-    //     onSuccess: (data, success) => {
-    //       if (success) {
-    //         notification.success({
-    //           message: 'Success',
-    //           description: `${action} KYC Success`,
-    //         })
-    //         utils.invalidateQueries(['provider.getListRequestKYC'])
-    //         handelCloseConfirm()
-    //         handleClose()
-    //       }
-    //     },
-    //     onError: (error, data) => {
-    //       notification.error({
-    //         message: 'Error',
-    //         description: error.message || `${action} KYC Failed`,
-    //       })
-    //     },
-    //   },
-    // )
+    actionKYC.mutate(
+      { id, action, reason: reasonReject || '' },
+      {
+        onSuccess: (data, success) => {
+          if (success) {
+            notification.success({
+              message: 'Success',
+              description: `${action} KYC Success`,
+            })
+            utils.invalidateQueries(['provider.getListRequestKYC'])
+            handelCloseConfirm()
+            handleClose()
+          }
+        },
+        onError: (error, data) => {
+          notification.error({
+            message: 'Error',
+            description: error.message || `${action} KYC Failed`,
+          })
+        },
+      },
+    )
   }
 
   const confirmModal = Modal.useEditableForm({

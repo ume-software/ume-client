@@ -260,7 +260,8 @@ export const getListKYC = async (
       frontSideCitizenIdImageUrl: data.frontSideCitizenIdImageUrl,
       portraitImageUrl: data.portraitImageUrl,
       status: data?.userKYCStatus,
-      requestId: data.id,
+      requestId: data.userId,
+      id: data.id,
       citizenId: data.citizenId,
       citizenDod: data.citizenDob,
       citizenName: data.citizenName,
@@ -292,7 +293,7 @@ export const kcyAction = async (ctx, { id, action, reason }) => {
     if (action === 'APPROVE') {
       await response.adminApprovedUserKYCRequest(id)
     } else if (action === 'REJECT') {
-      await response.adminRejectedUserKYCRequest(id, { content: 'Reject KYC' })
+      await response.adminRejectedUserKYCRequest(id, { content: reason })
     }
     return {
       data: response,

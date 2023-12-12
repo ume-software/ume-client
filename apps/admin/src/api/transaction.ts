@@ -100,10 +100,9 @@ export const transactionRouter = createRouter()
   .query('statisticTransasction', {
     input: z.object({
       time: z.number(),
-      type: z.enum([TransactionType.DEPOSIT, TransactionType.WITHDRAW]),
       unit: z.enum([UnitQueryTime.MONTH, UnitQueryTime.YEAR]),
     }),
     resolve: async ({ ctx, input }) => {
-      return await statisticTransasction(ctx, input.type, { time: input.time, unit: input.unit })
+      return await statisticTransasction(ctx, { time: input.time, unit: input.unit })
     },
   })

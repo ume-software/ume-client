@@ -1,5 +1,6 @@
 $ npx next build
 info  - Loaded env from /Users/huyqtrieu/Desktop/Personal/ume-client/apps/admin/.env.production
+info  - Loaded env from /Users/huyqtrieu/Desktop/Personal/ume-client/apps/admin/.env
 warn  - Invalid next.config.js options detected: 
   - The root value has an unexpected property, transpilePackages, which is not in the list of allowed properties (amp, analyticsId, assetPrefix, basePath, cleanDistDir, compiler, compress, crossOrigin, devIndicators, distDir, env, eslint, excludeDefaultMomentLocales, experimental, exportPathMap, generateBuildId, generateEtags, headers, httpAgentOptions, i18n, images, onDemandEntries, optimizeFonts, output, outputFileTracing, pageExtensions, poweredByHeader, productionBrowserSourceMaps, publicRuntimeConfig, reactStrictMode, redirects, rewrites, sassOptions, serverRuntimeConfig, staticPageGenerationTimeout, swcMinify, trailingSlash, typescript, useFileSystemPublicRoutes, webpack).
 
@@ -8,9 +9,6 @@ info  - Linting and checking validity of types...
 
 ./src/components/header/index.tsx
 55:6  Warning: React Hook useEffect has missing dependencies: 'adminInfo', 'handleLogOut', 'login', and 'user'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
-
-./src/components/sidebar/SideBarDropdown.tsx
-22:6  Warning: React Hook useEffect has a missing dependency: 'router.pathname'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
 
 ./src/containers/admin-manager-page/components/admin-account-modals/update-account-modal.tsx
 55:6  Warning: React Hook useEffect has a missing dependency: 'form'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
@@ -44,18 +42,18 @@ Route (pages)                              Size     First Load JS
 ├ ○ /report-manager                        1.83 kB         193 kB
 ├ ○ /services-manager                      1.84 kB         193 kB
 ├ ○ /signin                                1.81 kB         193 kB
-├ ○ /transaction-manager/booking           1.85 kB         193 kB
-├ ○ /transaction-manager/deposit           1.85 kB         193 kB
-├ ○ /transaction-manager/donation          1.85 kB         193 kB
-├ ○ /transaction-manager/withdrawal        1.86 kB         193 kB
+├ ○ /transaction-manager/booking           1.85 kB         194 kB
+├ ○ /transaction-manager/deposit           1.85 kB         194 kB
+├ ○ /transaction-manager/donation          1.85 kB         194 kB
+├ ○ /transaction-manager/withdrawal        1.86 kB         194 kB
 ├ ○ /user-manager                          1.84 kB         193 kB
 └ ○ /voucher-manager/[task]                1.9 kB          194 kB
 + First Load JS shared by all              198 kB
   ├ chunks/framework-22108eb722d84e59.js   45.4 kB
   ├ chunks/main-1549b305685c3af3.js        26.7 kB
-  ├ chunks/pages/_app-027e75ef5e5cfa25.js  117 kB
-  ├ chunks/webpack-52dbcc315c52d83a.js     2.23 kB
-  └ css/cea734078a20d42f.css               6.12 kB
+  ├ chunks/pages/_app-4a1a84921a9048f1.js  117 kB
+  ├ chunks/webpack-b252022a61023a69.js     2.23 kB
+  └ css/29370c4d1d3b34fd.css               6.16 kB
 
 λ  (Server)  server-side renders at runtime (uses getInitialProps or getServerSideProps)
 ○  (Static)  automatically rendered as static HTML (uses no initial props)
