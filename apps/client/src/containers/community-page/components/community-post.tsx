@@ -1,10 +1,9 @@
-import { Menu, Transition } from '@headlessui/react'
-import { CloseSmall, Comment, Like, More, ShareTwo, TipsOne } from '@icon-park/react'
+import { CloseSmall, Comment, Like } from '@icon-park/react'
 import { Modal } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
 import { useAuth } from '~/contexts/auth'
 
-import { Dispatch, Fragment, ReactNode, SetStateAction, useEffect, useRef, useState } from 'react'
+import { Dispatch, ReactNode, SetStateAction, useEffect, useRef, useState } from 'react'
 
 import Image from 'next/legacy/image'
 import Link from 'next/link'
@@ -168,53 +167,6 @@ const CommunityPost = (props: CommunityPostProps) => {
               </p>
             </div>
           </div>
-          <div>
-            <div className="relative">
-              <Menu>
-                <div>
-                  <Menu.Button>
-                    <More theme="outline" size="25" fill="#FFFFFF" strokeLinejoin="bevel" />
-                  </Menu.Button>
-                </div>
-                <Transition
-                  as={Fragment}
-                  enter="transition ease-out duration-400"
-                  enterFrom="transform opacity-0 scale-95"
-                  enterTo="transform opacity-100 scale-100"
-                  leave="transition ease-in duration-400"
-                  leaveFrom="transform opacity-100 scale-100"
-                  leaveTo="transform opacity-0 scale-95"
-                >
-                  <Menu.Items className="absolute right-0 z-10 w-56 pt-1 pb-1 origin-top-right bg-white divide-y divide-gray-200 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                    <Menu.Item as={'div'}>
-                      {({ active }) => (
-                        <button
-                          className={`${
-                            active ? 'bg-violet-500 text-white' : 'text-gray-900'
-                          } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                        >
-                          <TipsOne theme="outline" size="20" fill="#333" className="mr-3" strokeLinejoin="bevel" />
-                          Report
-                        </button>
-                      )}
-                    </Menu.Item>
-                    <Menu.Item as={'div'}>
-                      {({ active }) => (
-                        <button
-                          className={`${
-                            active ? 'bg-violet-500 text-white' : 'text-gray-900'
-                          } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                        >
-                          <TipsOne theme="outline" size="20" fill="#333" className="mr-3" strokeLinejoin="bevel" />
-                          Report
-                        </button>
-                      )}
-                    </Menu.Item>
-                  </Menu.Items>
-                </Transition>
-              </Menu>
-            </div>
-          </div>
         </div>
         <div className="flex mt-2">
           <div className="flex flex-col w-full gap-2">
@@ -245,7 +197,7 @@ const CommunityPost = (props: CommunityPostProps) => {
               {props.data?.commentCount + postComment} bình luận
             </div>
           </div>
-          <div className="grid w-full grid-cols-6 p-1 border-gray-700 border-y-2">
+          <div className="grid w-full grid-cols-4 p-1 border-gray-700 border-y-2">
             <div className="col-span-2">
               <div
                 className={`flex justify-center items-center p-1 gap-2 rounded-lg cursor-pointer hover:bg-gray-700 ${
@@ -270,12 +222,6 @@ const CommunityPost = (props: CommunityPostProps) => {
               >
                 <Comment theme="outline" size="20" fill="#FFFFFF" strokeLinejoin="bevel" />
                 Bình luận
-              </div>
-            </div>
-            <div className="col-span-2">
-              <div className="flex items-center justify-center gap-2 p-1 rounded-lg cursor-pointer hover:bg-gray-700">
-                <ShareTwo theme="outline" size="20" fill="#FFFFFF" strokeLinejoin="bevel" />
-                Chia sẻ
               </div>
             </div>
           </div>

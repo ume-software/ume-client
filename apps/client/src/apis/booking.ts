@@ -11,8 +11,12 @@ import {
   getCurrentBookingForProvider,
   getCurrentBookingForUser,
   getFeedbackServiceById,
+  getFeedbackServiceByUserSlug,
+  getFollowerByUserSlug,
+  getFollowingByUserSlug,
   getHotProviders,
   getListService,
+  getMyVoucherForBooking,
   getNoticeAmount,
   getPendingBookingForProvider,
   getPendingBookingForUser,
@@ -46,6 +50,7 @@ export const bookingRouter = createRouter()
         name: z.optional(z.string()),
         gender: z.optional(z.string()),
         status: z.optional(z.string()),
+        isOnline: z.optional(z.boolean()),
         limit: z.optional(z.string()),
         page: z.optional(z.string()),
         order: z.optional(z.string()),
@@ -63,7 +68,7 @@ export const bookingRouter = createRouter()
   .query('getUserBySlug', {
     input: z.string(),
     resolve: async ({ ctx, input }) => {
-      return await getUserBySlug(input)
+      return await getUserBySlug(input, ctx)
     },
   })
   .query('getCurrentBookingForProvider', {
@@ -74,6 +79,18 @@ export const bookingRouter = createRouter()
   .query('getCurrentBookingForUser', {
     resolve: async ({ ctx }) => {
       return await getCurrentBookingForUser(ctx)
+    },
+  })
+  .query('getMyVoucherForBooking', {
+    input: z.object({
+      providerSlug: z.string(),
+      limit: z.string(),
+      page: z.string(),
+      where: z.optional(z.string()),
+      order: z.optional(z.string()),
+    }),
+    resolve: async ({ input, ctx }) => {
+      return await getMyVoucherForBooking(input, ctx)
     },
   })
   .mutation('createBooking', {
@@ -93,6 +110,12 @@ export const bookingRouter = createRouter()
     }),
     resolve: async ({ ctx, input }) => {
       return await putProviderResponeBooking(input, ctx)
+    },
+  })
+  .query('getFeedbackServiceByUserSlug', {
+    input: z.string(),
+    resolve: async ({ input }) => {
+      return await getFeedbackServiceByUserSlug(input)
     },
   })
   .query('getFeedbackServiceById', {
@@ -146,7 +169,7 @@ export const bookingRouter = createRouter()
   .query('getPostByUserSlug', {
     input: z.object({ userSlug: z.string(), page: z.string() }),
     resolve: async ({ ctx, input }) => {
-      return await getPostByUserSlug(input, ctx)
+      return await getPostByUserSlug(input)
     },
   })
   .mutation('postReportUser', {
@@ -173,5 +196,23 @@ export const bookingRouter = createRouter()
   .query('getPendingBookingForUser', {
     resolve: async ({ ctx }) => {
       return await getPendingBookingForUser(ctx)
+    },
+  })
+  .query('getFollowerByUserSlug', {
+    input: z.object({
+      slug: z.string(),
+      page: z.string(),
+    }),
+    resolve: async ({ input }) => {
+      return await getFollowerByUserSlug(input)
+    },
+  })
+  .query('getFollowingByUserSlug', {
+    input: z.object({
+      slug: z.string(),
+      page: z.string(),
+    }),
+    resolve: async ({ input }) => {
+      return await getFollowingByUserSlug(input)
     },
   })

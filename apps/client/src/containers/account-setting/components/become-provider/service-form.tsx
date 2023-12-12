@@ -1,5 +1,5 @@
 import { Menu, Transition } from '@headlessui/react'
-import { CloseSmall, DeleteFive, Down, More, Plus, Save, Write } from '@icon-park/react'
+import { CloseSmall, DeleteFive, Down, Plus, Save, Write } from '@icon-park/react'
 import { Button, FormInputWithAffix, Input, InputWithAffix, Modal, TextArea } from '@ume/ui'
 import { MenuModalEnum } from '~/enumVariable/enumVariable'
 
@@ -158,6 +158,7 @@ const AddSkillForm = () => {
 
   const createProvicerService = trpc.useMutation('identity.createServiceProvider')
   const updateProvicerService = trpc.useMutation('identity.updateServiceProvider')
+  const deleteProviderService = trpc.useMutation('identity.deleteServiceProvider')
 
   const [displaySearchBox, setDisplaySearchBox] = useState<MenuDisplayProps>({
     parent: 0,
@@ -269,18 +270,40 @@ const AddSkillForm = () => {
   }
 
   const handleRemoveAttribute = (index: number) => {
-    const updatedAttributes = [...attributes]
-    updatedAttributes.splice(index, 1)
-    setAttributes(updatedAttributes)
+    if (attributes[index].service?.id) {
+      deleteProviderService.mutate(attributes[index].service?.id ?? '', {
+        onSuccess() {
+          utils.invalidateQueries('identity.providerGetServiceHaveNotRegistered')
+          utils.invalidateQueries('identity.providerGetOwnServices')
+          notification.success({
+            message: `Xóa dịch vụ thành công`,
+            description: `Dịch vụ đã được xóa`,
+            placement: 'bottomLeft',
+          })
+        },
+        onError() {
+          notification.error({
+            message: `Xóa dịch vụ thất bại`,
+            description: `Có lỗi trong quá trình xóa. Vui lòng thử lại sau!`,
+            placement: 'bottomLeft',
+          })
+        },
+      })
+      setIsModalConfirmationVisible(false)
+    } else {
+      const updatedAttributes = [...attributes]
+      updatedAttributes.splice(index, 1)
+      setAttributes(updatedAttributes)
 
-    const updatedAttributesDisplay = [...attributesDisplay]
-    updatedAttributesDisplay.splice(index, 1)
-    setAttributesDisplay(updatedAttributesDisplay)
+      const updatedAttributesDisplay = [...attributesDisplay]
+      updatedAttributesDisplay.splice(index, 1)
+      setAttributesDisplay(updatedAttributesDisplay)
 
-    setListServiceFilter(
-      listService?.filter((service) => service.name?.toLocaleLowerCase().includes(''.toLocaleLowerCase())),
-    )
-    setIsModalConfirmationVisible(false)
+      setListServiceFilter(
+        listService?.filter((service) => service.name?.toLocaleLowerCase().includes(''.toLocaleLowerCase())),
+      )
+      setIsModalConfirmationVisible(false)
+    }
   }
 
   const handleServiceInputChange = (
@@ -727,12 +750,13 @@ const AddSkillForm = () => {
           },
           {
             onSuccess() {
+              utils.invalidateQueries('identity.providerGetServiceHaveNotRegistered')
+              utils.invalidateQueries('identity.providerGetOwnServices')
               notification.success({
                 message: `Tạo mới dịch vụ thành công`,
                 description: `Dịch vụ đã được tạo mới`,
                 placement: 'bottomLeft',
               })
-              utils.invalidateQueries('identity.providerGetServiceHaveNotRegistered')
             },
             onError() {
               notification.error({
@@ -772,6 +796,7 @@ const AddSkillForm = () => {
           title={`${serviceForm.title}`}
           description={`${serviceForm.description}`}
           onClose={closeConfirmModal}
+          isLoading={updateProvicerService.isLoading || deleteProviderService.isLoading}
           onOk={() => {
             switch (serviceForm.form) {
               case 'UPDATE':
@@ -819,7 +844,10 @@ const AddSkillForm = () => {
               listService?.length > 0 &&
               attributes.map((attr, index) => (
                 <>
-                  {(createProvicerService.isLoading || updateProvicerService.isLoading) && indexServiceForm == index ? (
+                  {(createProvicerService.isLoading ||
+                    updateProvicerService.isLoading ||
+                    deleteProviderService.isLoading) &&
+                  indexServiceForm == index ? (
                     <div key={index} className="col-span-2 border border-white border-opacity-30 p-5 rounded-3xl">
                       <div className="w-full h-full flex justify-center items-center">
                         <span
@@ -831,48 +859,54 @@ const AddSkillForm = () => {
                     <div key={index} className="col-span-2 border border-white border-opacity-30 p-5 rounded-3xl">
                       <div className="flex justify-between items-center pb-3">
                         <div className="flex items-center gap-2">
-                          <p>Vị trí: </p>
-                          <div className="relative">
-                            <Menu>
-                              <div>
-                                <Menu.Button>
-                                  <div className="min-w-[80px] flex justify-between items-center px-3 py-1 rounded-lg bg-zinc-800 border border-white border-opacity-30">
-                                    <p>{attributesDisplay[index].position}</p>
-                                    <Down theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
-                                  </div>
-                                </Menu.Button>
-                              </div>
-                              <Transition
-                                as={Fragment}
-                                enter="transition ease-out duration-400"
-                                enterFrom="transform opacity-0 scale-95"
-                                enterTo="transform opacity-100 scale-100"
-                                leave="transition ease-in duration-400"
-                                leaveFrom="transform opacity-100 scale-100"
-                                leaveTo="transform opacity-0 scale-95"
-                              >
-                                <Menu.Items className="min-w-full max-h-[200px] absolute right-0 p-2 origin-top-right bg-umeHeader divide-y divide-gray-200 rounded-md shadow-lg w-fit top-9 ring-1 ring-black ring-opacity-30 focus:outline-none overflow-y-auto hide-scrollbar">
-                                  <div className="flex flex-col gap-2 w-full">
-                                    {attributes?.map((_, position_index) => (
-                                      <div
-                                        key={position_index}
-                                        className="w-full p-2 text-md font-medium rounded-md cursor-pointer hover:bg-gray-700"
-                                        onClick={() => {
-                                          handleServiceChange('Position', index, undefined, position_index + 1)
-                                        }}
-                                        onKeyDown={() => {}}
-                                      >
-                                        {position_index + 1}
+                          {attr.id && (
+                            <>
+                              <p>Vị trí: </p>
+                              <div className="relative">
+                                <Menu>
+                                  <div>
+                                    <Menu.Button>
+                                      <div className="min-w-[80px] flex justify-between items-center px-3 py-1 rounded-lg bg-zinc-800 border border-white border-opacity-30">
+                                        <p>{attributesDisplay[index].position}</p>
+                                        <Down theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
                                       </div>
-                                    ))}
+                                    </Menu.Button>
                                   </div>
-                                </Menu.Items>
-                              </Transition>
-                            </Menu>
-                          </div>
+                                  <Transition
+                                    as={Fragment}
+                                    enter="transition ease-out duration-400"
+                                    enterFrom="transform opacity-0 scale-95"
+                                    enterTo="transform opacity-100 scale-100"
+                                    leave="transition ease-in duration-400"
+                                    leaveFrom="transform opacity-100 scale-100"
+                                    leaveTo="transform opacity-0 scale-95"
+                                  >
+                                    <Menu.Items className="min-w-full max-h-[200px] absolute right-0 p-2 origin-top-right bg-umeHeader divide-y divide-gray-200 rounded-md shadow-lg w-fit top-9 ring-1 ring-black ring-opacity-30 focus:outline-none overflow-y-auto hide-scrollbar">
+                                      <div className="flex flex-col gap-2 w-full">
+                                        {attributes?.map((_, position_index) => (
+                                          <div
+                                            key={position_index}
+                                            className="w-full p-2 text-md font-medium rounded-md cursor-pointer hover:bg-gray-700"
+                                            onClick={() => {
+                                              handleServiceChange('Position', index, undefined, position_index + 1)
+                                            }}
+                                            onKeyDown={() => {}}
+                                          >
+                                            {position_index + 1}
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </Menu.Items>
+                                  </Transition>
+                                </Menu>
+                              </div>
+                            </>
+                          )}
                         </div>
+
                         <div className="flex justify-end items-center gap-2">
                           <Button
+                            type="button"
                             customCSS="text-xl p-2 rounded-xl hover:scale-105"
                             isActive={true}
                             isOutlinedButton={true}
@@ -1238,7 +1272,7 @@ const AddSkillForm = () => {
                                             listServiceAttributeFilter && listServiceAttributeFilter.length > 0 ? (
                                               listServiceAttributeFilter?.map((value_attr, sub_attr_index) => (
                                                 <div
-                                                  className={`flex gap-5 items-center bg-gray-700 hover:bg-gray-700 cursor-pointer p-3 rounded-lg`}
+                                                  className={`flex gap-5 items-center hover:bg-gray-700 cursor-pointer p-3 rounded-lg`}
                                                   key={sub_attr_index}
                                                   onClick={() =>
                                                     handleServiceChange(
@@ -1384,7 +1418,7 @@ const AddSkillForm = () => {
                                                           serviceAttributeValueFilter?.map(
                                                             (value_attr, sub_attr_index) => (
                                                               <div
-                                                                className={`flex gap-5 items-center bg-gray-700 hover:bg-gray-700 cursor-pointer p-3 rounded-lg`}
+                                                                className={`flex gap-5 items-center  hover:bg-gray-700 cursor-pointer p-3 rounded-lg`}
                                                                 key={sub_attr_index}
                                                                 onClick={() =>
                                                                   handleServiceChange(
@@ -1483,7 +1517,7 @@ const AddSkillForm = () => {
                   )}
                 </>
               ))}
-            <div className="col-span-2 min-h-[300px] flex justify-center items-center">
+            <div className="col-span-2 min-h-[500px] flex justify-center items-center">
               <Button
                 customCSS={`text-lg p-2 hover:scale-105 rounded-xl`}
                 type="button"

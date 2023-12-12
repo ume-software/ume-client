@@ -53,6 +53,18 @@ export const PendingKYCTable = () => {
     setRecord(null)
   }, [])
 
+  const mapGender = (englishGender, defaultLabel = 'Unknown') => {
+    const genderMap = {
+      MALE: 'Nam',
+      FEMALE: 'Nữ',
+      OTHER: 'Khác',
+    }
+
+    const vietnameseGender = genderMap[englishGender] || defaultLabel
+
+    return vietnameseGender
+  }
+
   // Get kyc pending list
   const getPendingList = trpc.useQuery(
     [
@@ -97,7 +109,7 @@ export const PendingKYCTable = () => {
     {
       title: <div className="ml-4">Thông tin người dùng</div>,
       dataIndex: 'name',
-      width: '25%',
+      width: '20%',
       align: 'left',
       render(value, record) {
         return (
@@ -112,15 +124,34 @@ export const PendingKYCTable = () => {
       title: 'Số điện thoại',
       dataIndex: 'phone',
       align: 'center',
+      width: '15%',
+      render: (value) => <div className="">{value ? '' : value}</div>,
+    },
+    {
+      title: 'Giới tính',
+      dataIndex: 'gender',
+      width: '15%',
+      align: 'left',
+      render: (value) => (
+        <div
+          className={`rounded-full w-[100px] item-center text-center px-2 py-1 bg-blue-500 text-white ${
+            mapGender(value) === 'Nữ' ? 'bg-pink-500' : ''
+          }`}
+        >
+          {mapGender(value)}
+        </div>
+      ),
     },
     {
       title: <div className="flex">Ngày tạo đơn</div>,
       dataIndex: 'createdAt',
-      width: '10%',
+      width: '15%',
+
       render: (value) => <div className="">{new Date(value).toLocaleDateString('en-GB')}</div>,
     },
     {
       title: '',
+      width: '10%',
       render(record) {
         return (
           <div className="flex">
@@ -140,7 +171,7 @@ export const PendingKYCTable = () => {
                   <a
                     className="hover:text-black"
                     target="_blank"
-                    href={`https://facebook.com`}
+                    href={`https://ume-software.me/home/${record.slug}}`}
                     rel="noopener noreferrer"
                   >
                     Xem trang cá nhân

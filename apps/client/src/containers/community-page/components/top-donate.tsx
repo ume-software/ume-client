@@ -51,9 +51,6 @@ const TopDonation = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [duration])
 
-  console.log(userDonation)
-  console.log(providerDonation)
-
   return (
     <>
       <div className="flex gap-3">

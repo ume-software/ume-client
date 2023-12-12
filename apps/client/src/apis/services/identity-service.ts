@@ -1,4 +1,5 @@
 import { TRPCError } from '@trpc/server'
+import { GenderEnum } from '~/enumVariable/enumVariable'
 import { getEnv } from '~/env'
 
 import { parse } from 'cookie'
@@ -175,6 +176,10 @@ export const userKYC = async (
     frontSideCitizenIdImageUrl: string
     backSideCitizenIdImageUrl: string
     portraitImageUrl: string
+    citizenId: string
+    citizenName: string
+    citizenDob: string
+    citizenGender: GenderEnum
   },
   ctx,
 ) => {
@@ -185,6 +190,7 @@ export const userKYC = async (
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
     }).userSendKYCRequest(query)
+
     return {
       data: reponse.data,
       success: true,
@@ -277,27 +283,6 @@ export const providerUpdateVoucher = async (query: { id: string; body: UpdateVou
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
     }).providerUpdateVoucher(query.id, query.body)
-    return {
-      data: reponse.data,
-      success: true,
-      message: '',
-    }
-  } catch (error) {
-    throw new TRPCError({
-      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
-      message: error.message || 'Fail to get data recharge',
-    })
-  }
-}
-
-export const getMyVoucher = async (input: { limit: string; page: string; where?: string; order?: string }, ctx) => {
-  const cookies = parse(ctx.req.headers.cookie ?? '')
-  try {
-    const reponse = await new VoucherApi({
-      basePath: getEnv().baseUmeServiceURL,
-      isJsonMime: () => true,
-      accessToken: cookies['accessToken'],
-    }).getMyVoucher(input.limit, input.page, '["$all"]', input.where, input.order)
     return {
       data: reponse.data,
       success: true,
@@ -478,6 +463,27 @@ export const updateServiceProvider = async (
   }
 }
 
+export const deleteServiceProvider = async (serviceId: string, ctx) => {
+  const cookies = parse(ctx.req.headers.cookie ?? '')
+  try {
+    const reponse = await new ProviderServiceApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).deleteProviderService(serviceId)
+    return {
+      data: reponse.data,
+      success: true,
+      message: '',
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to get data recharge',
+    })
+  }
+}
+
 export const getHistoryTransaction = async (
   query: { limit: string; page: string; where?: string; order?: string },
   ctx,
@@ -542,7 +548,28 @@ export const createUserPaymentSystem = async (
   } catch (error) {
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
-      message: error.message || 'Fail to get payment system',
+      message: error.message || 'Fail to create payment system',
+    })
+  }
+}
+
+export const deleteUserPaymentSystem = async (paymentSystemId: string, ctx) => {
+  const cookies = parse(ctx.req.headers.cookie ?? '')
+  try {
+    const reponse = await new UserPaymentSystemApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).deleteUserPaymentSystem(paymentSystemId)
+    return {
+      data: reponse.data,
+      success: true,
+      message: '',
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to delete payment system',
     })
   }
 }
@@ -633,6 +660,44 @@ export const userUpdateProviderProfile = async (
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
       message: error.message || 'Fail to update provider profile',
+    })
+  }
+}
+
+export const FollowProvider = async (slug: string, ctx) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie)
+    const respone = await new UserApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).followUserBySlug(slug)
+    return {
+      data: respone.data,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to create new booking',
+    })
+  }
+}
+
+export const UnFollowProvider = async (slug: string, ctx) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie)
+    const respone = await new UserApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).unFollowUserBySlug(slug)
+    return {
+      data: respone.data,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to create new booking',
     })
   }
 }

@@ -1,21 +1,22 @@
 import { Menu, Transition } from '@headlessui/react'
-import { Check, DownOne, Plus, Search } from '@icon-park/react'
-import { Button, InputWithAffix } from '@ume/ui'
+import { Check, DownOne, Plus, Search, SortTwo } from '@icon-park/react'
+import { Button, CustomDrawer, InputWithAffix } from '@ume/ui'
 import CategoryDrawer from '~/containers/home-page/components/category-drawer'
 import PromoteCard from '~/containers/home-page/components/promoteCard'
 import { GenderEnum } from '~/enumVariable/enumVariable'
 import useDebounce from '~/hooks/useDebounce'
 
-import { Fragment, useCallback, useEffect, useRef, useState } from 'react'
+import { Fragment, useCallback, useContext, useEffect, useRef, useState } from 'react'
 
 import { Slider, Tooltip } from 'antd'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { FilterProviderPagingResponse } from 'ume-service-openapi'
 
-import { AdvanceFilterModal } from './advance-filter-modal'
-import { AttrbuteProps, GenderProps, OrderByProps } from './iFilter'
+import AddAttributeDrawer from './add-attribute-drawer'
+import { AttrbuteProps, GenderProps, OnlineProps, OrderByProps } from './iFilter'
 
+import { DrawerContext } from '~/components/layouts/app-layout/app-layout'
 import { PlayerSkeletonLoader } from '~/components/skeleton-load'
 
 import { trpc } from '~/utils/trpc'
@@ -32,6 +33,12 @@ const orderBy: OrderByProps[] = [
 ]
 const max: number = 100000
 const min: number = 0
+
+const isOnlineData: OnlineProps[] = [
+  { key: undefined, name: 'Trạng thái' },
+  { key: true, name: 'Đang hoạt động' },
+  { key: false, name: 'Không hoạt động' },
+]
 
 const genderData: GenderProps[] = [
   { key: undefined, name: 'Giới tính' },
@@ -51,6 +58,7 @@ const FilterContainer = ({ service, listSubAttributeService }) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [scrollPosition, setScrollPosition] = useState(0)
   const [listProviderFilter, setListProviderFilter] = useState<FilterProviderPagingResponse['row']>([])
+  const { childrenDrawer, setChildrenDrawer } = useContext(DrawerContext)
 
   const [page, setPage] = useState<string>('1')
   const [searchText, setSearchText] = useState<string>(String(slug.name ?? ''))
@@ -58,9 +66,10 @@ const FilterContainer = ({ service, listSubAttributeService }) => {
   const [gender, setGender] = useState<GenderProps>(
     genderData.find((item) => item.name == String(slug.gender)) ?? genderData[0],
   )
+  const [isOnline, setIsOnline] = useState<OnlineProps>(isOnlineData[0])
   const [order, setOrder] = useState<OrderByProps>(orderBy[0])
+  const [isDesc, setIsDesc] = useState<boolean>(false)
   const [attributeFilter, setAttributeFilter] = useState<AttrbuteProps[]>([])
-  const [isModalFilterVisible, setIsModalFilterVisible] = useState<boolean>(false)
   const [listSkils, setListSkils] = useState<any>([])
   const [priceRange, setPriceRange] = useState<[number, number]>(
     [Number(slug.minPrice ?? min), Number(slug.maxPrice ?? max)] ?? [min, max],
@@ -99,9 +108,10 @@ const FilterContainer = ({ service, listSubAttributeService }) => {
         name: debouncedValue,
         gender: gender.key,
         status: 'ACTIVATED',
+        isOnline: isOnline.key,
         limit: limit,
         page: page,
-        order: `[{"${order.key}":"asc"}]`,
+        order: `[{"${order.key}":"${isDesc ? 'desc' : 'asc'}"}]`,
       },
     ],
     {
@@ -131,9 +141,20 @@ const FilterContainer = ({ service, listSubAttributeService }) => {
       max={max}
       step={1000}
       defaultValue={priceRange}
-      onAfterChange={handlePriceChange}
+      onChangeComplete={handlePriceChange}
     />
   )
+
+  const handleFilterOpen = () => {
+    setChildrenDrawer(
+      <AddAttributeDrawer
+        attributeData={listSubAttributeService}
+        attributeFilter={attributeFilter}
+        setAttributeFilter={setAttributeFilter}
+        setListProviderFilter={setListProviderFilter}
+      />,
+    )
+  }
 
   useEffect(() => {
     window.addEventListener('scroll', onScroll)
@@ -174,6 +195,7 @@ const FilterContainer = ({ service, listSubAttributeService }) => {
           maxPrice: priceRange[1],
           name: debouncedValue,
           gender: gender.name,
+          status: isOnline.name,
         },
       },
       undefined,
@@ -183,7 +205,7 @@ const FilterContainer = ({ service, listSubAttributeService }) => {
     )
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [priceRange, service, debouncedValue, gender, order])
+  }, [priceRange, service, debouncedValue, gender, isOnline, order, isDesc])
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
@@ -193,19 +215,12 @@ const FilterContainer = ({ service, listSubAttributeService }) => {
 
   return (
     <div className="min-h-screen mx-10 text-white">
-      <AdvanceFilterModal
-        isModalFilterVisible={isModalFilterVisible}
-        setIsModalFilterVisible={setIsModalFilterVisible}
-        attrbuteData={listSubAttributeService}
-        attributeFilter={attributeFilter}
-        setAttributeFilter={setAttributeFilter}
-      />
       <div className="flex items-center justify-between mx-5 my-5">
         <p className="text-5xl font-bold">{serviceName}</p>
         <CategoryDrawer data={listSkils} loadingService={loadingService} />
       </div>
       <div className="grid grid-cols-5 items-center mx-3">
-        <div className="xl:col-span-3 col-span-5 xl:justify-self-start">
+        <div className="2xl:col-span-3 col-span-5 2xl:justify-self-start">
           <div className="flex items-center gap-5 my-8">
             <div className="max-w-96">
               <InputWithAffix
@@ -226,7 +241,7 @@ const FilterContainer = ({ service, listSubAttributeService }) => {
                 trigger="click"
               >
                 {priceRange[0] != min || priceRange[1] != max ? (
-                  <div className="flex items-center gap-3 text-xl font-bold border border-light-50">
+                  <div className="flex items-center gap-3 2xl:text-lg lg:text-md text-sm font-bold border border-light-50">
                     <div className="flex items-center gap-1">
                       {priceRange[0].toLocaleString('en-US', {
                         currency: 'VND',
@@ -242,14 +257,14 @@ const FilterContainer = ({ service, listSubAttributeService }) => {
                     </div>
                   </div>
                 ) : (
-                  <div className="text-xl font-semibold">Khoảng giá</div>
+                  <div className="2xl:text-lg lg:text-md text-sm font-semibold">Khoảng giá</div>
                 )}
               </Tooltip>
             </div>
             <div className="relative">
               <Menu>
                 <Menu.Button>
-                  <button className="min-w-[130px] text-xl font-semibold px-8 py-2 bg-[#292734] hover:bg-gray-700 rounded-xl">
+                  <button className="min-w-[130px] 2xl:text-lg lg:text-md text-sm font-semibold px-8 py-2 bg-[#292734] hover:bg-gray-700 rounded-xl">
                     {gender.name}
                   </button>
                 </Menu.Button>
@@ -291,28 +306,96 @@ const FilterContainer = ({ service, listSubAttributeService }) => {
                 </Transition>
               </Menu>
             </div>
+            <div className="relative">
+              <Menu>
+                <Menu.Button>
+                  <button className="min-w-[190px] 2xl:text-lg lg:text-md text-sm font-semibold px-8 py-2 bg-[#292734] hover:bg-gray-700 rounded-xl">
+                    {isOnline.name}
+                  </button>
+                </Menu.Button>
+                <Transition
+                  as={Fragment}
+                  enter="transition ease-out duration-400"
+                  enterFrom="transform opacity-0 scale-95"
+                  enterTo="transform opacity-100 scale-100"
+                  leave="transition ease-in duration-400"
+                  leaveFrom="transform opacity-100 scale-100"
+                  leaveTo="transform opacity-0 scale-95"
+                >
+                  <Menu.Items
+                    className="absolute right-0 p-2 mt-1 origin-top-right bg-[#292734] divide-y divide-gray-100 rounded-xl shadow-lg w-full ring-1 ring-black ring-opacity-5 focus:outline-none"
+                    style={{ zIndex: 5 }}
+                  >
+                    <div className="flex flex-col gap-2" style={{ zIndex: 10 }}>
+                      {isOnlineData.map((isOnlineData, index) => (
+                        <div
+                          className={`flex gap-5 items-center ${
+                            isOnlineData.key === isOnline.key ? 'bg-gray-700' : ''
+                          } hover:bg-gray-700 cursor-pointer p-3 rounded-lg`}
+                          key={index}
+                          onClick={() => setIsOnline(isOnlineData)}
+                          onKeyDown={() => {}}
+                        >
+                          <p className="font-semibold text-mg">{isOnlineData.name}</p>
+                          <div>
+                            {isOnlineData.key === isOnline.key ? (
+                              <Check theme="filled" size="10" fill="#FFFFFF" strokeLinejoin="bevel" />
+                            ) : (
+                              ''
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </Menu.Items>
+                </Transition>
+              </Menu>
+            </div>
+            {isFetchingProviderFilter && (
+              <div className="flex justify-center items-center">
+                <span
+                  className={`spinner h-5 w-5 animate-spin rounded-full border-[3px] border-r-transparent border-white}`}
+                />
+              </div>
+            )}
           </div>
         </div>
-        <div className="xl:col-span-2 col-span-5 justify-self-end">
+        <div className="2xl:col-span-2 col-span-5 justify-self-end">
           <div className="flex items-center gap-2">
             {(listSubAttributeService.length ?? 0) > 0 && (
               <div className="mr-10 mt-2">
-                <Button
-                  isActive={false}
-                  isOutlinedButton={true}
-                  customCSS="w-fit text-md p-2 rounded-xl hover:scale-105"
-                  onClick={() => {
-                    setIsModalFilterVisible(true)
-                  }}
+                <CustomDrawer
+                  customOpenBtn={`text-md p-2 rounded-xl hover:scale-105`}
+                  openBtn={
+                    <Button
+                      type="button"
+                      isActive={false}
+                      isOutlinedButton={true}
+                      customCSS="w-fit text-md p-2 rounded-xl hover:scale-105"
+                      onClick={() => {
+                        handleFilterOpen()
+                      }}
+                    >
+                      <Plus theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
+                      Thêm thuộc tính
+                    </Button>
+                  }
                 >
-                  <Plus theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
-                  Thêm thuộc tính
-                </Button>
+                  {childrenDrawer}
+                </CustomDrawer>
               </div>
             )}
             <div className="flex items-center gap-2">
-              <div>
+              <div className="flex items-start gap-2">
                 <p className="text-xl font-semibold">Sắp xếp theo:</p>
+                <SortTwo
+                  className="opacity-30 cursor-pointer hover:opacity-100"
+                  theme="outline"
+                  size="15"
+                  fill="#FFF"
+                  strokeLinejoin="bevel"
+                  onClick={() => setIsDesc(!isDesc)}
+                />
               </div>
               <div className="relative pt-2">
                 <Menu>
@@ -364,7 +447,7 @@ const FilterContainer = ({ service, listSubAttributeService }) => {
         {attributeFilter.length > 0 && (
           <>
             {attributeFilter.map((attrFilter) => (
-              <div className="xl:col-span-2 lg:col-span-3 col-span-6 my-3 w-fit" key={attrFilter.id}>
+              <div className="2xl:col-span-2 lg:col-span-3 col-span-6 my-3 w-fit" key={attrFilter.id}>
                 {(attrFilter?.subAttr ?? []).length > 0 && (
                   <>
                     <span className="mx-20 flex items-center gap-5">
@@ -373,8 +456,8 @@ const FilterContainer = ({ service, listSubAttributeService }) => {
                         <Menu>
                           <Menu.Button>
                             <button className="flex justify-between items-center text-lg font-semibold p-2 bg-[#292734] hover:bg-gray-700 rounded-xl">
-                              <p className="text-lg font-semibold px-5">
-                                {(attrFilter?.subAttr?.map((itemAttrFilter) => itemAttrFilter.subAttrValue) ?? [])
+                              <p className="max-w-[250px] text-lg font-semibold px-5 truncate">
+                                {(attrFilter?.subAttr?.map((itemAttrFilter) => itemAttrFilter.subAttrViValue) ?? [])
                                   ?.slice()
                                   .sort()
                                   .join(', ')}
@@ -428,10 +511,11 @@ const FilterContainer = ({ service, listSubAttributeService }) => {
                                               : attr,
                                           ),
                                         )
+                                        setListProviderFilter([])
                                       }}
                                       onKeyDown={() => {}}
                                     >
-                                      <p className="font-semibold text-mg">{subAttrFilter.subAttrValue}</p>
+                                      <p className="font-semibold text-mg">{subAttrFilter.subAttrViValue}</p>
                                       <div>
                                         {attributeFilter.find((item) =>
                                           item?.subAttr?.find(
@@ -464,7 +548,7 @@ const FilterContainer = ({ service, listSubAttributeService }) => {
         ) : (
           <div
             ref={containerRef}
-            className="grid gap-6 mt-2 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1"
+            className="grid gap-6 mt-2 2xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1"
           >
             {listProviderFilter?.length != 0 ? (
               listProviderFilter?.map((provider) => (
@@ -473,8 +557,17 @@ const FilterContainer = ({ service, listSubAttributeService }) => {
                   href={`/profile/${provider?.slug ?? provider?.id}?tab=service&service=${
                     provider.serviceSlug ?? provider.serviceId
                   }`}
+                  className="mb-10"
                 >
-                  <PromoteCard data={provider} />
+                  <PromoteCard
+                    data={provider}
+                    filterAttributeValueData={attributeFilter.flatMap(
+                      (listSubAttr) =>
+                        listSubAttr.subAttr?.map(
+                          (itemSubAttr) => itemSubAttr.subAttrViValue ?? itemSubAttr.subAttrValue,
+                        ) ?? [],
+                    )}
+                  />
                 </Link>
               ))
             ) : (

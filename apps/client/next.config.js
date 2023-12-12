@@ -8,7 +8,7 @@ module.exports = {
         hostname: '**',
       },
     ],
-    domains: ['www.ume.software'],
+    domains: ['www.ume.software', 'www.api.ume.software'],
   },
   webpack(config, options) {
     const { isServer } = options

@@ -133,8 +133,8 @@ export const SidebarNavigation: SidebarNavigationItem[] = [
       },
       {
         label: 'Giao dịch rút tiền',
-        key: 'transaction-manager/withdraw',
-        path: '/transaction-manager/withdraw',
+        key: 'transaction-manager/withdrawal',
+        path: '/transaction-manager/withdrawal',
         icon: <Expenses theme="outline" size="22" fill="#fff" />,
       },
       {

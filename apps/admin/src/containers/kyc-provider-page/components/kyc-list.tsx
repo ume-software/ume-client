@@ -147,8 +147,18 @@ export const KYCTable = () => {
         return (
           <div className="flex justify-start">
             <div className="flex flex-row justify-center gap-2">
-              <Button customCSS="p-2 bg-green-600 hover:text-black" type="button" isDisable={!record.slug}>
-                <a className="hover:text-black" target="_blank" href={`https://facebook.com`} rel="noopener noreferrer">
+              <Button
+                customCSS="p-2 bg-green-600 hover:text-blac"
+                type="button"
+                isDisable={!record?.slug}
+                disabled={!record?.slug}
+              >
+                <a
+                  className="hover:text-black"
+                  target="_blank"
+                  href={`https://ume-software.me/home/${record.slug}}`}
+                  rel="noopener noreferrer"
+                >
                   Xem trang cá nhân
                 </a>
               </Button>
@@ -160,27 +170,25 @@ export const KYCTable = () => {
   ]
 
   return (
-    <>
-      <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-1">
+      <div>
+        <div className="mb-5">
+          <span className="content-title">Đơn đã duyệt</span>
+        </div>
         <div>
-          <div className="mb-5">
-            <span className="content-title">Đơn đã duyệt</span>
-          </div>
-          <div>
-            <CommonTable
-              locate={locale}
-              columns={kycTable}
-              data={kycList}
-              loading={getKYCList.isLoading || getKYCList.isFetching}
-              total={total}
-              page={page}
-              setPage={setPage}
-              pageSize={Number(LIMIT_PAGE_SIZE)}
-            />
-            <KYCModal visible={kcyModal} handleClose={handleClose} data={record} />
-          </div>
+          <CommonTable
+            locate={locale}
+            columns={kycTable}
+            data={kycList}
+            loading={getKYCList.isLoading || getKYCList.isFetching}
+            total={total}
+            page={page}
+            setPage={setPage}
+            pageSize={Number(LIMIT_PAGE_SIZE)}
+          />
+          <KYCModal visible={kcyModal} handleClose={handleClose} data={record} />
         </div>
       </div>
-    </>
+    </div>
   )
 }

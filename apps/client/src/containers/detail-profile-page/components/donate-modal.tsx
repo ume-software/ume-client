@@ -43,7 +43,10 @@ const DonateModal = ({ isModalDonationVisible, setIsModalDonationVisible, provid
     setIsModalConfirmationVisible(false)
   }
   const validationSchema = Yup.object().shape({
-    donateValue: Yup.string().required('Xin hãy nhập số tiền').min(1).max(7, 'Chỉ được nhập nhiều nhất 7 chữ số'),
+    donateValue: Yup.string()
+      .required('Xin hãy nhập số tiền')
+      .min(5, 'Ít nhất là 10,000')
+      .max(7, 'Chỉ được nhập nhiều nhất 7 chữ số'),
   })
 
   const donateModal = Modal.useEditableForm({
@@ -55,7 +58,7 @@ const DonateModal = ({ isModalDonationVisible, setIsModalDonationVisible, provid
       <>
         <Formik
           initialValues={{
-            donateValue: '1,000',
+            donateValue: '10,000',
             donateContent: undefined,
           }}
           onSubmit={(values) => {

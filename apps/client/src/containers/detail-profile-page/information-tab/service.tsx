@@ -4,7 +4,7 @@ import ImgForEmpty from 'public/img-for-empty.png'
 
 import { useState } from 'react'
 
-import { Rate } from 'antd'
+import { Rate, notification } from 'antd'
 import { parse } from 'cookie'
 import Image from 'next/legacy/image'
 import { useRouter } from 'next/router'
@@ -24,6 +24,7 @@ const Service = (props: { data: ProviderServiceResponse }) => {
   const slug = router.query
 
   const accessToken = parse(document.cookie).accessToken
+  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
 
   const feedbackGame =
     trpc.useQuery(['booking.getFeedbackServiceById', String(props.data.id ?? '')], {
@@ -43,7 +44,9 @@ const Service = (props: { data: ProviderServiceResponse }) => {
       enabled: !!slug.profileId && !!accessToken,
     },
   )
+
   const postFeedback = trpc.useMutation(['booking.postFeedback'])
+  const utils = trpc.useContext()
 
   const [feedback, setFeedback] = useState<PostFeedbackProps>({ rate: 5, content: '' })
 
@@ -56,13 +59,28 @@ const Service = (props: { data: ProviderServiceResponse }) => {
   const handleSendFeedback = () => {
     if (feedback.rate) {
       postFeedback.mutate(
-        { id: props.data.id!.toString(), feedback: { amountStar: feedback.rate, content: feedback.content } },
         {
-          onSuccess(data) {},
+          id: userCanFeedBackProvider?.data.id ?? '',
+          feedback: { amountStar: feedback.rate, content: feedback.content },
+        },
+        {
+          onSuccess(data) {
+            utils.invalidateQueries('booking.getFeedbackServiceById')
+            utils.invalidateQueries('booking.getCanFeedbackProvider')
+          },
+          onError() {
+            notification.error({
+              message: 'Gửi đánh giá không thành công',
+              description: 'Gửi đánh giá không thành công. Vui lòng thử lại sau!',
+              placement: 'bottomLeft',
+            })
+          },
         },
       )
     }
   }
+
+  console.log(props.data)
 
   return (
     <>
@@ -109,7 +127,9 @@ const Service = (props: { data: ProviderServiceResponse }) => {
               </>
             )}
           </div>
-          {userCanFeedBackProvider?.data?.id && userCanFeedBackProvider?.data?.providerService?.id == props.data.id ? (
+          {userCanFeedBackProvider?.data?.id &&
+          userCanFeedBackProvider?.data?.providerService?.id == props.data.id &&
+          userCanFeedBackProvider?.data?.bookerId == userInfo?.id ? (
             <div className="flex items-end gap-3 bg-transparent">
               <div className="w-full">
                 <div className="p-2">

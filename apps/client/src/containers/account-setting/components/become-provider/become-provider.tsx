@@ -105,6 +105,11 @@ const BecomeProvider = () => {
     !userInfo?.isProvider &&
       registerBecomeProvider.mutate(undefined, {
         onSuccess() {
+          const updatedUserInfor = {
+            ...userInfo,
+            isProvider: true,
+          }
+          sessionStorage.setItem('user', JSON.stringify(updatedUserInfor))
           setChecked(true)
         },
       })
@@ -127,6 +132,7 @@ const BecomeProvider = () => {
       <ConfirmForm
         title="Thay đổi giới thiệu"
         description="Bạn có chấp nhận thay đổi giới thiệu hay không?"
+        isLoading={updateIntroduceProvider.isLoading}
         onClose={() => setIsModalConfirmationVisible(false)}
         onOk={async () => {
           if (updateIntroduceForProviderFormRef.current) {
@@ -194,25 +200,29 @@ const BecomeProvider = () => {
     <>
       {isModalConfirmationVisible && confirmModal}
       <div className="w-full px-10">
-        <p className="text-4xl font-bold">Trở thành nhà cung cấp</p>
+        <p className="text-4xl font-bold">Nhà cung cấp</p>
 
-        <div className="w-full mt-10 px-5 space-y-10">
-          <div className="flex items-center justify-between gap-5 py-10 border-b border-white border-opacity-30">
-            <div className="flex flex-col gap-2">
-              <p className="text-lg">Trở thành nhà cung cấp dịch vụ của chúng tôi</p>
-              <span className="w-4/5 text-sm opacity-50">
-                Trở thành nhà cung cấp để có thể mang lại nhiều lợi ích cho bạn như là kiếm tiền, gia tăng độ nổi
-                tiếng,...
-              </span>
-            </div>
-            <Switch
-              className="bg-red-600"
-              checkedChildren={<CheckSmall theme="outline" size="23" fill="#fff" strokeLinejoin="bevel" />}
-              unCheckedChildren={<CloseSmall theme="outline" size="23" fill="#fff" strokeLinejoin="bevel" />}
-              checked={checked}
-              onChange={handleBecomeProvider}
-            />
-          </div>
+        <div className="w-full mt-10 px-5 space-y-10 pb-40">
+          {!checked && (
+            <>
+              <div className="flex items-center justify-between gap-5 py-10 border-b border-white border-opacity-30">
+                <div className="flex flex-col gap-2">
+                  <p className="text-lg">Trở thành nhà cung cấp dịch vụ của chúng tôi</p>
+                  <span className="w-4/5 text-sm opacity-50">
+                    Trở thành nhà cung cấp để có thể mang lại nhiều lợi ích cho bạn như là kiếm tiền, gia tăng độ nổi
+                    tiếng,...
+                  </span>
+                </div>
+                <Switch
+                  className="bg-red-600"
+                  checkedChildren={<CheckSmall theme="outline" size="23" fill="#fff" strokeLinejoin="bevel" />}
+                  unCheckedChildren={<CloseSmall theme="outline" size="23" fill="#fff" strokeLinejoin="bevel" />}
+                  checked={checked}
+                  onChange={handleBecomeProvider}
+                />
+              </div>
+            </>
+          )}
           {checked && (
             <>
               {!isLoadingUserSettingData ? (
@@ -250,7 +260,7 @@ const BecomeProvider = () => {
                         <label className="font-semibold">Trạng thái:</label>
                         <div className="relative">
                           <Menu>
-                            <Menu.Button>
+                            <Menu.Button type="button">
                               <button
                                 className="min-w-[200px] text-xl font-semibold px-8 py-2 bg-[#292734] hover:bg-gray-700 rounded-xl"
                                 type="button"
@@ -281,6 +291,7 @@ const BecomeProvider = () => {
                                       }`}
                                     >
                                       <button
+                                        type="button"
                                         className={`text-white text-md font-semibold group flex w-full items-center rounded-md px-2 py-2`}
                                         name="status"
                                         onClick={() => form.setFieldValue('status', itemStatus.key)}

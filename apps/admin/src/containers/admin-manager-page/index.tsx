@@ -93,12 +93,12 @@ const UserManager = () => {
   const [selectedAdmin, setSelectedAdmin] = useState<any>()
   const [openConfirm, setOpenConfirm] = useState(false)
   const mappingListWithKeys = (data) => {
-    const transactionsWithKeys = data.row.map((item) => ({
+    const dataWithKeys = data.row.map((item) => ({
       ...item,
       key: item.id,
     }))
     setCount(data.count)
-    setAdminList(transactionsWithKeys)
+    setAdminList(dataWithKeys)
   }
   function openCreateAdminHandler() {
     setOpenCreateAdmin(true)

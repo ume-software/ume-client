@@ -1,9 +1,22 @@
 import { Menu, Transition } from '@headlessui/react'
-import { Alarm, CopyOne, Dot, Female, Lock, Male, More, PaperMoneyTwo, ShareTwo, Stopwatch } from '@icon-park/react'
+import {
+  Alarm,
+  Check,
+  CopyOne,
+  Dot,
+  Female,
+  Lock,
+  Male,
+  More,
+  PaperMoneyTwo,
+  Plus,
+  ShareTwo,
+  Stopwatch,
+} from '@icon-park/react'
+import { Button } from '@ume/ui'
 import detailBackground from 'public/detail-cover-background.png'
 import ImgForEmpty from 'public/img-for-empty.png'
 import lgbtIcon from 'public/rainbow-flag-11151.svg'
-import { useAuth } from '~/contexts/auth'
 
 import { Fragment, ReactElement, useEffect, useState } from 'react'
 
@@ -26,6 +39,8 @@ import {
 } from './components/booking-countdown'
 import DonateModal from './components/donate-modal'
 import EndSoonModal from './components/end-soon-modal'
+import FollowerModal from './components/follower-modal'
+import FollowingModal from './components/following-modal'
 import { ReportModal } from './components/report-modal'
 import InformationTab from './information-tab/information-tab'
 import PostTab from './post-tab'
@@ -114,8 +129,8 @@ const DetailProfileContainer = () => {
   const slug = router.query
 
   const accessToken = parse(document.cookie).accessToken
+  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
 
-  const { isAuthenticated, user } = useAuth()
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
 
   const [messageApi, contextHolder] = message.useMessage()
@@ -124,6 +139,8 @@ const DetailProfileContainer = () => {
   const [isModalReportVisible, setIsModalReportVisible] = useState<boolean>(false)
   const [isModalDonationVisible, setIsModalDonationVisible] = useState<boolean>(false)
   const [isEndSoonModalVisible, setIsEndSoonModalVisible] = useState<boolean>(false)
+  const [isFollowerModalVisible, setIsFollowerModalVisible] = useState<boolean>(false)
+  const [isFollowingModalVisible, setIsFollowingModalVisible] = useState<boolean>(false)
 
   const { isLoading: isProviderDetailLoading } = trpc.useQuery(['booking.getUserBySlug', slug.profileId!.toString()], {
     refetchOnWindowFocus: false,
@@ -142,6 +159,10 @@ const DetailProfileContainer = () => {
     },
     enabled: !!slug.profileId!.toString(),
   })
+
+  const followProvider = trpc.useMutation(['identity.FollowProvider'])
+  const unFollowProvider = trpc.useMutation(['identity.UnFollowProvider'])
+  const utils = trpc.useContext()
 
   const currentBookingForProviderData: BookingHistoryPagingResponse['row'] | undefined =
     getCurrentBookingForProviderData()
@@ -202,13 +223,13 @@ const DetailProfileContainer = () => {
         duration: 2,
       })
     } else if (item.key == 'Donate') {
-      if (providerDetail && (isAuthenticated || user || accessToken)) {
+      if (providerDetail && (userInfo || accessToken)) {
         setIsModalDonationVisible(true)
       } else {
         setIsModalLoginVisible(true)
       }
     } else if (item.key == 'Report') {
-      if (providerDetail && (isAuthenticated || user || accessToken)) {
+      if (providerDetail && (userInfo || accessToken)) {
         setIsModalReportVisible(true)
       } else {
         setIsModalLoginVisible(true)
@@ -241,6 +262,14 @@ const DetailProfileContainer = () => {
         setIsEndSoonModalVisible={setIsEndSoonModalVisible}
         bookingHistoryId={currentBookingForProviderData?.[0]?.id ?? currentBookingForUserData?.[0]?.id ?? ''}
       />
+      <FollowerModal
+        isFollowerModalVisible={isFollowerModalVisible}
+        setIsFollowerModalVisible={setIsFollowerModalVisible}
+      />
+      <FollowingModal
+        isFollowingModalVisible={isFollowingModalVisible}
+        setIsFollowingModalVisible={setIsFollowingModalVisible}
+      />
 
       {!providerDetail && isProviderDetailLoading ? (
         <SkeletonDetailProvider />
@@ -262,7 +291,7 @@ const DetailProfileContainer = () => {
                       alt="avatar"
                     />
                   </div>
-                  <div className="flex flex-col my-5 text-white gap-y-2">
+                  <div className="flex flex-col my-2 text-white gap-y-2">
                     <p className="text-3xl font-medium text-white">{providerDetail?.name}</p>
                     <div className="flex flex-row items-center gap-3">
                       <div className="flex items-center gap-2 p-2 bg-gray-700 rounded-full">
@@ -287,32 +316,56 @@ const DetailProfileContainer = () => {
                       <Tooltip placement="bottomLeft" title={`${providerDetail?.isOnline ? 'Online' : 'Offline'}`}>
                         <div className="flex items-center gap-1 p-2 bg-gray-700 rounded-full">
                           <Dot theme="multi-color" size="24" fill={providerDetail?.isOnline ? '#008000' : '#FF0000'} />
-                          {/* {providerDetail?.isOnline ? ( */}
-                          <>
-                            <p>
-                              {providerDetail?.providerConfig?.status == ProviderConfigResponseStatusEnum.Activated &&
-                                'Sẵn sàng'}
-                            </p>
-                            <p>
-                              {providerDetail?.providerConfig?.status == ProviderConfigResponseStatusEnum.Busy && 'Bận'}
-                            </p>
-                            <p>
-                              {providerDetail?.providerConfig?.status ==
-                                ProviderConfigResponseStatusEnum.StoppedAcceptingBooking && 'Ngừng nhận đơn'}
-                            </p>
-                          </>
-                          {/* ) : (
+                          {providerDetail?.isOnline ? (
+                            <>
+                              <p>
+                                {providerDetail?.providerConfig?.status == ProviderConfigResponseStatusEnum.Activated &&
+                                  'Sẵn sàng'}
+                              </p>
+                              <p>
+                                {providerDetail?.providerConfig?.status == ProviderConfigResponseStatusEnum.Busy &&
+                                  'Bận'}
+                              </p>
+                              <p>
+                                {providerDetail?.providerConfig?.status ==
+                                  ProviderConfigResponseStatusEnum.StoppedAcceptingBooking && 'Ngừng nhận đơn'}
+                              </p>
+                              <p>
+                                {providerDetail?.providerConfig?.status ==
+                                  ProviderConfigResponseStatusEnum.UnActivated && 'Ngừng nhận đơn'}
+                              </p>
+                              <p>{!providerDetail?.isProvider && 'Hoạt động'}</p>
+                            </>
+                          ) : (
                             'Offline'
-                          )} */}
+                          )}
                         </div>
                       </Tooltip>
+                    </div>
+                    <div className="lg:flex lg:space-y-0 space-y-2 items-center gap-3">
+                      <div
+                        className="w-fit flex items-center gap-2 p-2 bg-gray-700 rounded-full cursor-pointer hover:underline decoration-solid decoration-2"
+                        onClick={() => setIsFollowerModalVisible(true)}
+                        onKeyDown={() => {}}
+                      >
+                        Người theo dõi: {providerDetail?.followerAmount}
+                      </div>
+                      <div
+                        className="w-fit flex items-center gap-2 p-2 bg-gray-700 rounded-full cursor-pointer hover:underline decoration-solid decoration-2"
+                        onClick={() => setIsFollowingModalVisible(true)}
+                        onKeyDown={() => {}}
+                      >
+                        <div>Đang theo dõi: {providerDetail?.followingAmount}</div>
+                      </div>
                     </div>
                     <div className="mt-2 flex items-center gap-2">
                       <>
                         {currentBookingForProviderData &&
-                          ((currentBookingForProviderData[0]?.providerService?.provider as any)?.slug ==
+                          (((currentBookingForProviderData[0]?.providerService?.provider as any)?.slug ??
+                            (currentBookingForProviderData[0]?.providerService?.provider as any)?.id) ==
                             slug.profileId ||
-                            currentBookingForProviderData[0]?.booker?.slug == slug.profileId) &&
+                            (currentBookingForProviderData[0]?.booker?.slug ??
+                              currentBookingForProviderData[0]?.booker?.id) == slug.profileId) &&
                           (currentBookingForProviderData?.length ?? 0) > 0 && (
                             <div className="text-center bg-gray-700 rounded-full">
                               <BookingCountdown />
@@ -321,8 +374,10 @@ const DetailProfileContainer = () => {
                       </>
                       <>
                         {currentBookingForUserData &&
-                          ((currentBookingForUserData[0]?.providerService?.provider as any)?.slug == slug.profileId ||
-                            currentBookingForUserData[0]?.booker?.slug == slug.profileId) &&
+                          (((currentBookingForUserData[0]?.providerService?.provider as any)?.slug ??
+                            (currentBookingForUserData[0]?.providerService?.provider as any)?.id) == slug.profileId ||
+                            (currentBookingForUserData[0]?.booker?.slug ?? currentBookingForUserData[0]?.booker?.id) ==
+                              slug.profileId) &&
                           (currentBookingForUserData?.length ?? 0) > 0 && (
                             <div className="text-center bg-gray-700 rounded-full">
                               <BookingCountdown />
@@ -330,11 +385,12 @@ const DetailProfileContainer = () => {
                           )}
                       </>
 
-                      {currentBookingForProviderData &&
-                        ((currentBookingForProviderData?.length ?? 0) > 0 ||
-                          (currentBookingForUserData?.length ?? 0) > 0) &&
-                        ((currentBookingForProviderData[0]?.providerService?.provider as any)?.slug == slug.profileId ||
-                          currentBookingForProviderData[0]?.booker?.slug == slug.profileId) && (
+                      {currentBookingForUserData &&
+                        (currentBookingForUserData?.length ?? 0) > 0 &&
+                        (((currentBookingForUserData[0]?.providerService?.provider as any)?.slug ??
+                          (currentBookingForUserData[0]?.providerService?.provider as any)?.id) == slug.profileId ||
+                          (currentBookingForUserData[0]?.booker?.slug ?? currentBookingForUserData[0]?.booker?.id) ==
+                            slug.profileId) && (
                           <>
                             <Tooltip placement="right" title={`Kết thúc sớm`}>
                               <div
@@ -353,7 +409,86 @@ const DetailProfileContainer = () => {
                   </div>
                 </div>
 
-                <div className="relative flex flex-col items-center justify-start" style={{ zIndex: 5 }}>
+                <div className="relative flex items-center justify-start gap-10" style={{ zIndex: 5 }}>
+                  <div
+                    className={`${
+                      providerDetail?.isFollowing ? 'bg-transparent text-purple-600' : 'bg-purple-600'
+                    } rounded-xl 2xl:mr-10 xl:mr-5 lg:mr-2 mr-0`}
+                  >
+                    {userInfo?.id != providerDetail?.id && (
+                      <>
+                        {providerDetail?.isFollowing ? (
+                          <Button
+                            isActive={true}
+                            isOutlinedButton={true}
+                            customCSS="p-2 rounded-xl hover:scale-105"
+                            type="button"
+                            onClick={() => {
+                              if (
+                                providerDetail &&
+                                (userInfo || accessToken) &&
+                                !unFollowProvider.isLoading &&
+                                !followProvider.isLoading
+                              ) {
+                                unFollowProvider.mutate(providerDetail.slug ?? providerDetail.id, {
+                                  onSuccess() {
+                                    utils.invalidateQueries('booking.getFollowingByUserSlug')
+                                    utils.invalidateQueries('booking.getFollowerByUserSlug')
+                                    utils.invalidateQueries('booking.getUserBySlug')
+                                  },
+                                })
+                              } else {
+                                setIsModalLoginVisible(true)
+                              }
+                            }}
+                          >
+                            {unFollowProvider.isLoading ? (
+                              <span
+                                className={`spinner h-5 w-5 animate-spin rounded-full border-[3px] border-r-transparent border-white`}
+                              />
+                            ) : (
+                              <Check className="px-3" theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
+                            )}
+                            Đang theo dõi
+                          </Button>
+                        ) : (
+                          <Button
+                            isActive={true}
+                            isOutlinedButton={true}
+                            customCSS="p-2 rounded-xl hover:scale-105 outline-purple-600"
+                            type="button"
+                            onClick={() => {
+                              if (
+                                providerDetail &&
+                                (userInfo || accessToken) &&
+                                !unFollowProvider.isLoading &&
+                                !followProvider.isLoading
+                              ) {
+                                followProvider.mutate(providerDetail.slug ?? providerDetail.id, {
+                                  onSuccess() {
+                                    utils.invalidateQueries('booking.getFollowingByUserSlug')
+                                    utils.invalidateQueries('booking.getFollowerByUserSlug')
+                                    utils.invalidateQueries('booking.getUserBySlug')
+                                  },
+                                })
+                              } else {
+                                setIsModalLoginVisible(true)
+                              }
+                            }}
+                          >
+                            {followProvider.isLoading ? (
+                              <span
+                                className={`spinner h-5 w-5 animate-spin rounded-full border-[3px] border-r-transparent border-white`}
+                              />
+                            ) : (
+                              <Plus className="px-3" theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
+                            )}
+                            Theo dõi
+                          </Button>
+                        )}
+                      </>
+                    )}
+                  </div>
                   <Menu>
                     <div>
                       <Menu.Button>
@@ -375,15 +510,15 @@ const DetailProfileContainer = () => {
                       leaveFrom="transform opacity-100 scale-100"
                       leaveTo="transform opacity-0 scale-95"
                     >
-                      <Menu.Items className="absolute right-0 p-2 origin-top-right bg-umeHeader divide-y divide-gray-200 rounded-md shadow-lg w-fit top-7 ring-1 ring-black ring-opacity-30 focus:outline-none">
+                      <Menu.Items className="absolute right-0 p-2 origin-top-right bg-umeHeader divide-y divide-gray-200 divide-opacity-30 rounded-md shadow-lg w-fit top-7 ring-1 ring-black ring-opacity-30 focus:outline-none">
                         <div className="flex flex-col gap-2 w-max">
                           {moreButtonDatas.map((item) => (
                             <Fragment key={item.key}>
-                              {user?.id == providerDetail?.id ? (
+                              {userInfo?.id == providerDetail?.id || !providerDetail?.isProvider ? (
                                 item.key != 'Donate' &&
                                 item.key != 'Report' && (
                                   <div
-                                    className="p-2 cursor-pointer rounded-t-md hover:bg-gray-700 text-white group border-b-2 border-white last:border-none last:rounded-md"
+                                    className={`p-2 cursor-pointer rounded-t-md hover:bg-gray-700 text-white group border-b-2 border-white border-opacity-30 last:border-none last:rounded-md`}
                                     onClick={() => {
                                       handleMenuButtonAction(item)
                                     }}
@@ -397,7 +532,9 @@ const DetailProfileContainer = () => {
                                 )
                               ) : (
                                 <div
-                                  className="p-2 cursor-pointer rounded-t-md hover:bg-gray-700 text-white group border-b-2 border-white last:border-none last:rounded--md"
+                                  className={`p-2 cursor-pointer rounded-t-md hover:bg-gray-700 ${
+                                    item.key == 'UnFollow' ? 'text-purple-600 font-semibold' : 'text-white font-normal'
+                                  } group border-b-2 border-white last:border-none last:rounded-md`}
                                   onClick={() => {
                                     handleMenuButtonAction(item)
                                   }}
@@ -453,10 +590,10 @@ const DetailProfileContainer = () => {
           </div>
           <div className="p-5">
             <span className="text-white">
-              <div className="flex justify-center my-10">
+              <div className="min-h-screen flex justify-center my-10">
                 {providerDetail?.isProvider && selectedTab.key == 'Service' && <InformationTab data={providerDetail} />}
                 {selectedTab.key == 'Album' && <AlbumTab data={providerDetail!} />}
-                {selectedTab.key == 'Post' && <PostTab providerId={providerDetail!.slug} />}
+                {selectedTab.key == 'Post' && <PostTab providerId={providerDetail?.slug ?? providerDetail?.id ?? ''} />}
               </div>
             </span>
           </div>

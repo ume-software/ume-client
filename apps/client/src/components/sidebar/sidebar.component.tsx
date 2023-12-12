@@ -23,7 +23,11 @@ export const Sidebar = () => {
   const [showMessage, setShowMessage] = useState(false)
   const utils = trpc.useContext()
   const { data: chattingChannels } = trpc.useQuery(['chatting.getListChattingChannels', { limit: '5', page: '1' }], {
-    enabled: !!userInfo,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: 'always',
+    cacheTime: 0,
+    refetchOnMount: true,
+    enabled: !!accessToken || !!userInfo,
   })
 
   useEffect(() => {
@@ -58,8 +62,10 @@ export const Sidebar = () => {
       }, 2000)
       return () => clearTimeout(timeout)
     }
+    console.log(socketContext?.socketChattingContext)
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socketContext?.socketChattingContext, socketContext?.socketChattingContext[0]?.channelId, !!accessToken])
+  }, [socketContext?.socketChattingContext[0]?.channelId, !!accessToken])
 
   return (
     <>
@@ -86,7 +92,8 @@ export const Sidebar = () => {
           {childrenDrawer}
         </CustomDrawer>
         <div className="flex flex-col gap-3">
-          {userInfo &&
+          {!!accessToken &&
+            !!userInfo &&
             chattingChannels?.data.row.map((item) => {
               const images = item.members.filter((member) => {
                 return member.userId.toString() != userInfo?.id.toString()

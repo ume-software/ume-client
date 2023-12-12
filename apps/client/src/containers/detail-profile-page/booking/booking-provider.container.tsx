@@ -28,15 +28,22 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
   const voucherLimit = '10'
   const voucherPage = '1'
   const [myVoucher, setMyVoucher] = useState<VoucherPagingResponse | undefined>(undefined)
-  trpc.useQuery(['identity.getMyVoucher', { limit: voucherLimit, page: voucherPage }], {
-    onSuccess(data) {
-      setMyVoucher(data.data)
+  trpc.useQuery(
+    [
+      'booking.getMyVoucherForBooking',
+      { providerSlug: String(slug.profileId ?? ''), limit: voucherLimit, page: voucherPage },
+    ],
+    {
+      onSuccess(data) {
+        setMyVoucher(data.data)
+      },
     },
-  })
+  )
 
   const [menuShow, setMenuShow] = useState<string>('')
   const accountBalance = trpc.useQuery(['identity.account-balance'])
   const createBooking = trpc.useMutation(['booking.createBooking'])
+  const utils = trpc.useContext()
 
   const [booking, setBooking] = useState<BookingProviderRequest>({
     providerServiceId:
@@ -55,14 +62,16 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
       voucher?.discountUnit == VoucherResponseDiscountUnitEnum.Cash
         ? voucher.discountValue
         : VoucherResponseDiscountUnitEnum.Percent
-        ? (voucher?.discountValue ?? 0) / 100
+        ? ((selectedItem?.defaultCost ?? 0) * booking.bookingPeriod * (voucher?.discountValue ?? 0)) / 100
         : 0
 
     setTotal((selectedItem?.defaultCost ?? 0) * booking.bookingPeriod)
 
     setTotalAfterDiscount(
       voucher?.discountUnit == VoucherResponseDiscountUnitEnum.Cash
-        ? (selectedItem?.defaultCost ?? 0) * booking.bookingPeriod * (voucherValue ?? 1)
+        ? (selectedItem?.defaultCost ?? 0) * booking.bookingPeriod > (voucherValue ?? 1)
+          ? (selectedItem?.defaultCost ?? 0) * booking.bookingPeriod - (voucherValue ?? 1)
+          : 0
         : VoucherResponseDiscountUnitEnum.Percent
         ? (selectedItem?.defaultCost ?? 0) * booking.bookingPeriod - (voucherValue ?? 0)
         : (selectedItem?.defaultCost ?? 0) * booking.bookingPeriod,
@@ -88,6 +97,7 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
           onSuccess: (data) => {
             if (data.success) {
               setBooking({ providerServiceId: '', bookingPeriod: 1, voucherIds: [] })
+              utils.invalidateQueries('identity.account-balance')
               notification.success({
                 message: 'Tạo đơn thành công',
                 description: 'Đơn của bạn đã được tạo thành công.',

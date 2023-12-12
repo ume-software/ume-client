@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { BalanceHistoryPagingResponse, BalanceHistoryResponseBalanceTypeEnum } from 'ume-service-openapi'
 
 import ColumnChart from './column-chart'
+import ComplainTicketModal from './complain-ticket-modal'
 
 import { TableSkeletonLoader } from '~/components/skeleton-load'
 import Table from '~/components/table/table'
@@ -37,11 +38,12 @@ const TransactionHistory = () => {
 
   const { user } = useAuth()
 
+  const [isModalComplainVisible, setIsModalComplainVisible] = useState<boolean>(false)
   const [transactionHistory, setTransactionHistory] = useState<BalanceHistoryPagingResponse | undefined>(undefined)
   const [transactionHistoryArray, setTransactionHistoryArray] = useState<any[] | undefined>(undefined)
   const [seriesCharts, setSeriesCharts] = useState<any[] | undefined>(undefined)
   const { isLoading: isTransactionHistoryLoading } = trpc.useQuery(
-    ['identity.getHistoryTransaction', { page: transactionPage, limit }],
+    ['identity.getHistoryTransaction', { page: transactionPage, limit, order: '{"updatedAt":"desc"}' }],
     {
       onSuccess(data) {
         setTransactionHistory(data.data)
@@ -77,7 +79,7 @@ const TransactionHistory = () => {
       const newTransactionArray = [
         TransactionContent.find((transContent) => transContent.key == transactionArray[5])?.label,
         <div className="flex items-center justify-center gap-2" key={transactionHistory[0]}>
-          {transactionArray[6]} <span className="text-xs italic"> đ</span>
+          {(transactionArray[6] ?? 0).toLocaleString()} <span className="text-xs italic"> đ</span>
         </div>,
         transactionArray[12]?.recipient?.name ?? user?.name,
         new Date(transactionArray[1]).toLocaleDateString('en-GB'),
@@ -90,8 +92,12 @@ const TransactionHistory = () => {
 
   return (
     <>
+      <ComplainTicketModal
+        isModalComplainVisible={isModalComplainVisible}
+        setIsModalComplainVisible={setIsModalComplainVisible}
+      />
       <div className="w-full px-10">
-        <p className="text-4xl font-bold">Lịch sử giao dịch</p>
+        <p className="text-4xl font-bold">Biến động số dư</p>
 
         <div className="flex flex-col gap-5 mt-10 space-y-10">
           {!isTransactionHistoryLoading && seriesCharts ? (
@@ -121,6 +127,8 @@ const TransactionHistory = () => {
                 onEdit={() => {}}
                 deleteAction={false}
                 onDelete={() => {}}
+                complainAction={false}
+                onComplain={() => {}}
               />
             </div>
           ) : (

@@ -73,6 +73,8 @@ const CreateAccountModal = ({ openValue, closeFunction }: ICreateAdminProps) => 
         description: 'Lưu ảnh tài khoản không thành công.',
       })
       console.error('Error uploading image:', error)
+      closeHandle()
+      return null
     }
     return { imageUrl }
   }
@@ -80,35 +82,37 @@ const CreateAccountModal = ({ openValue, closeFunction }: ICreateAdminProps) => 
   async function submitHandle() {
     const imgURL = await uploadImage()
     try {
-      const input = {
-        name: form.values.name,
-        dob: new Date(form.values.dob).toISOString(),
-        gender: form.values.gender,
-        avatarUrl: imgURL.imageUrl,
-        email: form.values.email,
-        phone: form.values.phone,
-        username: form.values.userName,
-        password: form.values.password,
-        roles: form.values.roles,
-      }
-      createAdminAccount.mutate(input, {
-        onSuccess: (data) => {
-          if (data.success) {
-            notification.success({
-              message: 'Tạo thành công!',
-              description: 'Tài khoản đã được tạo thành công.',
+      if (imgURL) {
+        const input = {
+          name: form.values.name,
+          dob: new Date(form.values.dob).toISOString(),
+          gender: form.values.gender,
+          avatarUrl: imgURL.imageUrl,
+          email: form.values.email,
+          phone: form.values.phone,
+          username: form.values.userName,
+          password: form.values.password,
+          roles: form.values.roles,
+        }
+        createAdminAccount.mutate(input, {
+          onSuccess: (data) => {
+            if (data.success) {
+              notification.success({
+                message: 'Tạo thành công!',
+                description: 'Tài khoản đã được tạo thành công.',
+              })
+              utils.invalidateQueries('admin.getAdminAccountList')
+              closeHandle()
+            }
+          },
+          onError: () => {
+            notification.error({
+              message: 'Tạo thất bại!',
+              description: 'Tạo tài khoản không thành công.',
             })
-            closeHandle()
-          }
-        },
-        onError: () => {
-          notification.error({
-            message: 'Tạo thất bại!',
-            description: 'Tạo tài khoản không thành công.',
-          })
-        },
-      })
-      utils.invalidateQueries('admin.getAdminAccountList')
+          },
+        })
+      }
     } catch (error) {
       console.error('Failed to post voucher:', error)
     }
@@ -382,12 +386,14 @@ const CreateAccountModal = ({ openValue, closeFunction }: ICreateAdminProps) => 
           </div>
           <div className="col-span-5 flex justify-center pb-4 mt-10">
             <Button
+              isActive={false}
               onClick={closeHandleSmall}
               customCSS={`mx-6 px-4 py-1 border-2 hover:scale-110 bg-red-500 border-red-500`}
             >
               Hủy
             </Button>
             <Button
+              isActive={false}
               customCSS={`mx-6 px-4 py-1 border-2  ${
                 !isDisableButton() && 'hover:scale-110 bg-blue-500 border-blue-500'
               }`}

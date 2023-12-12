@@ -16,6 +16,7 @@ import { trpc } from '~/utils/trpc'
 
 const PostItem = (props: { data: PostResponse }) => {
   const { isAuthenticated } = useAuth()
+  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
 
   const [formPost, setFormPost] = useState<ReactNode>(<></>)
   const [titleForm, setTitleForm] = useState<ReactNode>(<></>)
@@ -94,7 +95,7 @@ const PostItem = (props: { data: PostResponse }) => {
   }
 
   const handleLikePost = () => {
-    if (isAuthenticated) {
+    if (isAuthenticated || !!userInfo) {
       if (isLikePost) {
         unLikeForPostId.mutate(props?.data?.id, {
           onSuccess: () => {
@@ -122,20 +123,37 @@ const PostItem = (props: { data: PostResponse }) => {
       <LoginModal isModalLoginVisible={isModalLoginVisible} setIsModalLoginVisible={setIsModalLoginVisible} />
       <div className="col-span-2">
         <div className="relative flex justify-around w-full">
-          <div
-            style={{
-              width: '350px',
-              height: '350px',
-              overflow: 'hidden',
-              background: 'white',
-              borderRadius: 30,
-              position: 'relative',
-            }}
-            onClick={() => handleOpenImageModal(props.data.id)}
-            onKeyDown={() => {}}
-          >
-            <PostImageLayout data={props.data?.thumbnails} />
-          </div>
+          {props.data?.thumbnails.length > 0 ? (
+            <div
+              style={{
+                width: '350px',
+                height: '350px',
+                overflow: 'hidden',
+                background: 'white',
+                borderRadius: 30,
+                position: 'relative',
+              }}
+              onClick={() => handleOpenImageModal(props.data.id)}
+              onKeyDown={() => {}}
+            >
+              <PostImageLayout data={props.data?.thumbnails} />
+            </div>
+          ) : (
+            <div
+              style={{
+                width: '350px',
+                height: '350px',
+                overflow: 'hidden',
+                background: 'white',
+                borderRadius: 30,
+                position: 'relative',
+              }}
+              onClick={() => handleOpenImageModal(props.data.id)}
+              onKeyDown={() => {}}
+            >
+              <p className="text-black text-lg font-semibold">{props.data.content}</p>
+            </div>
+          )}
           <div
             className="absolute left-0 flex gap-5 pt-2 pb-2 pl-5 pr-3 bottom-5 rounded-r-xl"
             style={{ background: 'gray' }}

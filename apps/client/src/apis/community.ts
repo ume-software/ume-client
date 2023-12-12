@@ -11,6 +11,7 @@ import {
   getLikePostByID,
   getPostByID,
   getSuggestPost,
+  getSuggestPostFollowing,
   getSuggestPostWithoutCookies,
   likeForPostId,
   unlikeForPostId,
@@ -26,6 +27,11 @@ export const communityRouter = createRouter()
   .query('getSuggestPost', {
     resolve: async ({ ctx }) => {
       return await getSuggestPost(ctx)
+    },
+  })
+  .query('getSuggestPostFollowing', {
+    resolve: async ({ ctx }) => {
+      return await getSuggestPostFollowing(ctx)
     },
   })
   .mutation('watchedPost', {

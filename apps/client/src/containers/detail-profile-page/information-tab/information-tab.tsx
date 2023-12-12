@@ -3,18 +3,19 @@ import { CustomDrawer } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
 import 'swiper/swiper-bundle.css'
 import Chat from '~/containers/chat/chat.container'
-import { useAuth } from '~/contexts/auth'
 
 import { useContext, useEffect, useState } from 'react'
 
 import { notification } from 'antd'
 import { parse } from 'cookie'
 import Image from 'next/legacy/image'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { Swiper, SwiperSlide } from 'swiper/react'
-import { UserInformationResponse } from 'ume-service-openapi'
+import { BookingHistoryPagingResponse, UserInformationResponse } from 'ume-service-openapi'
 
 import BookingProvider from '../booking/booking-provider.container'
+import { BookingCountdown, getCurrentBookingForUserData } from '../components/booking-countdown'
 import PersonalIntroduce from './personal-introduce'
 import Service from './service'
 
@@ -32,7 +33,6 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
   const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
   const accessToken = parse(document.cookie).accessToken
 
-  const { user } = useAuth()
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
   const { childrenDrawer, setChildrenDrawer } = useContext(DrawerContext)
   const [channelId, setChannelId] = useState<string>('')
@@ -40,6 +40,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
   const [gameSelected, setGameSelected] = useState<string | undefined>(slug.service?.toString() ?? undefined)
 
   const createNewChatChannel = trpc.useMutation(['chatting.createNewChatChannel'])
+  const currentBookingForUserData: BookingHistoryPagingResponse['row'] | undefined = getCurrentBookingForUserData()
 
   const selectedService =
     props.data?.providerServices!.find(
@@ -82,7 +83,6 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
               setChildrenDrawer(<Chat providerId={data.data._id} />)
             },
             onError: (error) => {
-              console.error(error)
               notification.error({
                 message: 'Create New Channel Fail',
                 description: 'Create New Channel Fail. Please try again!',
@@ -140,7 +140,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
       {props.data ? (
         <div className="grid w-full grid-cols-10 gap-10 px-10">
           <div className="2xl:col-span-2 col-span-10">
-            <div className="sticky p-10 bg-zinc-800 rounded-3xl top-20">
+            <div className="sticky px-7 py-10 bg-zinc-800 rounded-3xl top-20">
               <div className="flex flex-col gap-5">
                 <div
                   className={`hidden 2xl:flex items-center p-3 rounded-xl gap-2 cursor-pointer hover:bg-gray-700 ${
@@ -153,23 +153,26 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                   <p className="xl:text-lg lg:text-sm text-xs lg:font-semibold font-normal truncate">Đôi chút về tui</p>
                 </div>
                 <div className="hidden 2xl:flex flex-col gap-5 cursor-pointer">
-                  <div
-                    className="flex flex-row items-center gap-2 p-3"
-                    onClick={handleGamesToggle}
-                    onKeyDown={() => {}}
-                  >
-                    <Gamepad theme="outline" size="18" fill="#fff" />
-                    <p className="xl:text-lg lg:text-sm text-xs lg:font-semibold font-normal truncate">Game tui chơi</p>
-                    {gamesToggle ? (
-                      <Down theme="outline" size="20" fill="#fff" />
-                    ) : (
-                      <Right theme="outline" size="20" fill="#fff" />
-                    )}
+                  <div onClick={handleGamesToggle} onKeyDown={() => {}}>
+                    <div className="flex flex-row justify-between items-center">
+                      <div className="flex flex-row items-center gap-2 p-3">
+                        <Gamepad theme="outline" size="18" fill="#fff" />
+                        <p className="xl:text-lg lg:text-sm text-xs lg:font-semibold font-normal truncate">
+                          Game tui chơi
+                        </p>
+                      </div>
+
+                      {gamesToggle ? (
+                        <Down theme="outline" size="20" fill="#fff" />
+                      ) : (
+                        <Right theme="outline" size="20" fill="#fff" />
+                      )}
+                    </div>
                   </div>
                   <div
                     className={`pl-5 gap-3 ${
                       gamesToggle
-                        ? 'flex flex-col items-start h-[500px] overflow-y-scroll overflow-x-hidden hide-scrollbar'
+                        ? 'flex flex-col items-start max-h-[500px] overflow-y-scroll overflow-x-hidden hide-scrollbar'
                         : 'hidden'
                     }`}
                   >
@@ -278,50 +281,71 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                   alt="Empty Image"
                 />
               </div>
-              {user?.id != props.data?.id ? (
-                <div className="flex flex-col gap-5 my-10">
-                  <CustomDrawer
-                    customOpenBtn={`rounded-full text-purple-700 border-2 border-purple-700 font-semibold text-2xl cursor-pointer hover:scale-105 text-center`}
-                    openBtn={
-                      <button
-                        className="bg-transparent w-full h-full py-2 focus:outline-none"
-                        type="button"
-                        onClick={handleChatOpen}
-                      >
-                        {createNewChatChannel.isLoading && (
-                          <span
-                            className={`spinner h-5 w-5 animate-spin rounded-full border-[3px] border-r-transparent dark:border-navy-300 dark:border-r-transparent border-white`}
-                          />
-                        )}
-                        Chat
-                      </button>
-                    }
-                    token={!!accessToken}
-                  >
-                    {childrenDrawer}
-                  </CustomDrawer>
-
-                  {!props.data?.isBanned && (
-                    <CustomDrawer
-                      drawerTitle="Xác nhận đặt"
-                      customOpenBtn="rounded-full text-white bg-purple-700 font-semibold text-2xl cursor-pointer hover:scale-105 text-center"
-                      openBtn={
-                        <button
-                          className="w-full h-full py-2 bg-transparent focus:outline-none"
-                          type="button"
-                          onClick={handleOrderOpen}
-                        >
-                          Thuê
-                        </button>
-                      }
-                      token={!!accessToken}
+              {currentBookingForUserData && (currentBookingForUserData?.length ?? 0) > 0 ? (
+                <div className="p-5 rounded-2xl border border-white border-opacity-30 mt-5 space-y-5">
+                  <span className="flex justify-center items-center gap-3">
+                    Bạn đang trong phiên với:
+                    <Link
+                      href={`/profile/${
+                        (currentBookingForUserData[0].providerService?.provider as any)?.slug
+                      }?tab=service`}
+                      className="text-lg font-bold hover:underline decoration-solid decoration-2"
                     >
-                      {childrenDrawer}
-                    </CustomDrawer>
-                  )}
+                      {(currentBookingForUserData[0].providerService?.provider as any)?.name}
+                    </Link>
+                  </span>
+                  <div className="text-center bg-gray-700 rounded-full">
+                    <BookingCountdown />
+                  </div>
                 </div>
               ) : (
-                <></>
+                <>
+                  {userInfo?.id != props.data?.id ? (
+                    <div className="flex flex-col gap-5 my-10">
+                      <CustomDrawer
+                        customOpenBtn={`rounded-full text-purple-700 border-2 border-purple-700 font-semibold text-2xl cursor-pointer hover:scale-105 text-center`}
+                        openBtn={
+                          <button
+                            className="bg-transparent w-full h-full py-2 focus:outline-none"
+                            type="button"
+                            onClick={handleChatOpen}
+                          >
+                            {createNewChatChannel.isLoading && (
+                              <span
+                                className={`spinner h-5 w-5 animate-spin rounded-full border-[3px] border-r-transparent dark:border-navy-300 dark:border-r-transparent border-white`}
+                              />
+                            )}
+                            Chat
+                          </button>
+                        }
+                        token={!!accessToken}
+                      >
+                        {childrenDrawer}
+                      </CustomDrawer>
+
+                      {!props.data?.isBanned && props.data.providerConfig?.status == 'ACTIVATED' && (
+                        <CustomDrawer
+                          drawerTitle="Xác nhận đặt"
+                          customOpenBtn="rounded-full text-white bg-purple-700 font-semibold text-2xl cursor-pointer hover:scale-105 text-center"
+                          openBtn={
+                            <button
+                              className="w-full h-full py-2 bg-transparent focus:outline-none"
+                              type="button"
+                              onClick={handleOrderOpen}
+                            >
+                              Thuê
+                            </button>
+                          }
+                          token={!!accessToken}
+                        >
+                          {childrenDrawer}
+                        </CustomDrawer>
+                      )}
+                    </div>
+                  ) : (
+                    <></>
+                  )}
+                </>
               )}
             </div>
           </div>
