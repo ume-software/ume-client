@@ -6,6 +6,7 @@ import { parse } from 'cookie'
 import {
   AuthApi,
   BalanceApi,
+  BookingApi,
   CreateVoucherRequest,
   CreateWithdrawalRequestUnitCurrencyEnum,
   DepositRequestApi,
@@ -141,6 +142,8 @@ export const updateUserProfile = async (
     dob?: string
     phone?: string
     avatarUrl?: string
+    isAllowNotificationToEmail?: boolean
+    isAllowNotificationMessage?: boolean
   },
   ctx,
 ) => {
@@ -157,6 +160,8 @@ export const updateUserProfile = async (
       gender: query.gender,
       phone: query.phone,
       slug: query.slug,
+      isAllowNotificationToEmail: query.isAllowNotificationToEmail,
+      isAllowNotificationMessage: query.isAllowNotificationMessage,
     })
     return {
       data: reponse.data,
@@ -691,6 +696,63 @@ export const UnFollowProvider = async (slug: string, ctx) => {
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
     }).unFollowUserBySlug(slug)
+    return {
+      data: respone.data,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to create new booking',
+    })
+  }
+}
+
+export const transactionHistoryStatistic = async (ctx) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie)
+    const respone = await new BalanceApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).getBalanceFluctuationStatistics()
+    return {
+      data: respone.data,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to create new booking',
+    })
+  }
+}
+
+export const bookingHistoryForUser = async (query: { limit: string; page: string }, ctx) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie)
+    const respone = await new BookingApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).bookerGetBookingHistory(query.limit, query.page, '["$all"]')
+    return {
+      data: respone.data,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
+      message: error.message || 'Fail to create new booking',
+    })
+  }
+}
+
+export const bookingHistoryForProvider = async (query: { limit: string; page: string }, ctx) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie)
+    const respone = await new BookingApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).providerGetBookingHistory(query.limit, query.page, '["$all"]')
     return {
       data: respone.data,
     }

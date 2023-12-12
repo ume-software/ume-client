@@ -1,15 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import {
-  Coupon,
-  EditName,
-  Expenses,
-  FileStaffOne,
-  Lock,
-  Remind,
-  Setting,
-  Transaction,
-  TransactionOrder,
-} from '@icon-park/react'
+import { Coupon, EditName, Expenses, FileStaffOne, Lock, Remind, Transaction, TransactionOrder } from '@icon-park/react'
 import logo from 'public/logo.png'
 import 'swiper/swiper-bundle.css'
 
@@ -26,7 +16,6 @@ import BookingHistory from './components/booking-history/booking-history'
 import Complain from './components/complain/complain'
 import EditNotificated from './components/edit-notificated'
 import EditProfile from './components/edit-profile/edit-profile'
-import Privacy from './components/privacy'
 import TransactionHistory from './components/transaction-history/transaction-history'
 import Voucher from './components/voucher/voucher'
 import Withdraw from './components/withdraw/withdraw'
@@ -51,12 +40,12 @@ const settingType: SettingTypeProps[] = [
     icon: <Remind theme="filled" size="20" fill="#FFFFFF" strokeLinejoin="bevel" />,
     children: <EditNotificated />,
   },
-  {
-    key: 'settingPrivacy',
-    label: 'Quyền riêng tư',
-    icon: <Setting theme="filled" size="20" fill="#FFFFFF" strokeLinejoin="bevel" />,
-    children: <Privacy />,
-  },
+  // {
+  //   key: 'settingPrivacy',
+  //   label: 'Quyền riêng tư',
+  //   icon: <Setting theme="filled" size="20" fill="#FFFFFF" strokeLinejoin="bevel" />,
+  //   children: <Privacy />,
+  // },
   {
     key: 'becomeProvider',
     label: 'Nhà cung cấp',

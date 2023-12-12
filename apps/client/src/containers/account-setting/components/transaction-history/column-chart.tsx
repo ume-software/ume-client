@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { CustomChart } from '~/components/custom-chart'
 
@@ -11,73 +11,34 @@ const ColumnChart = (props: { seriesCharts: any[] }) => {
     item.amount.reduce((acc, curr) => (curr < 0 ? acc + Math.abs(curr) : acc), 0),
   )
 
-  const [dataCharts] = useState<any[]>([
+  const [dataCharts, setDataCharts] = useState<any[]>([
     {
       name: 'Chi',
-      data: sendData,
+      data: [],
       color: '#F73164',
     },
     {
       name: 'Thu',
-      data: collectData,
+      data: [],
       color: '#6F4EF2',
     },
   ])
 
-  const [optionsTop, setToptionsTop] = useState([
-    {
-      key: '1M',
-      name: '1 tháng',
-      durationYear: 1,
-      durationPeriod: 0,
-      isActivated: true,
-      pointInterval: 1, //3,
-      pointIntervalUnit: 'month',
-    },
-    {
-      key: '3M',
-      name: '3 tháng',
-      durationYear: 3,
-      durationPeriod: 0,
-      isActivated: false,
-      pointInterval: 1, //3,
-      pointIntervalUnit: 'month',
-    },
-    {
-      key: '1Y',
-      name: '1 năm',
-      durationYear: 1,
-      durationPeriod: 0,
-      isActivated: false,
-      pointInterval: 1, //6,
-      pointIntervalUnit: 'month',
-    },
-    {
-      key: 'All',
-      name: 'Tất cả',
-      durationYear: 10,
-      durationPeriod: 0,
-      isActivated: false,
-      pointInterval: 1, //12,
-      pointIntervalUnit: 'month',
-    },
-  ])
-
-  const handleChangeOptionTop = (item: {
-    name: string
-    durationYear?: number
-    durationPeriod?: number
-    isActivated: boolean
-  }) => {
-    const newOptionsTop = optionsTop.map((option) => {
-      option.isActivated = false
-      if (option.name == item.name) {
-        option.isActivated = true
-      }
-      return option
-    })
-    setToptionsTop([...newOptionsTop])
-  }
+  useEffect(() => {
+    setDataCharts([
+      {
+        name: 'Chi',
+        data: sendData,
+        color: '#F73164',
+      },
+      {
+        name: 'Thu',
+        data: collectData,
+        color: '#6F4EF2',
+      },
+    ])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.seriesCharts])
 
   const tooltip = {
     formatter: function () {
@@ -141,8 +102,6 @@ const ColumnChart = (props: { seriesCharts: any[] }) => {
         }}
         tooltip={tooltip}
         customLegend={customLegend}
-        handleChangeOptionTop={handleChangeOptionTop}
-        optionsTop={optionsTop}
         yAxis={{
           labels: {
             overflow: 'justify',

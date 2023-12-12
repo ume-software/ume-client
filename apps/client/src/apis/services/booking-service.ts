@@ -408,8 +408,8 @@ export const postReportUser = async (
     }
   } catch (error) {
     throw new TRPCError({
-      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
-      message: error.message || 'Fail to get post report user',
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.data.codeNumber),
+      message: error.response?.data.message || 'Fail to get post report user',
     })
   }
 }

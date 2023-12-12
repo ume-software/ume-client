@@ -212,6 +212,7 @@ const ReportModal = ({ isModalReportVisible, setIsModalReportVisible, providerId
     onOK: () => {},
     onClose: handleCloseComfirmModal,
     show: isModalConfirmationVisible,
+
     form: (
       <>
         <ConfirmForm
@@ -219,6 +220,7 @@ const ReportModal = ({ isModalReportVisible, setIsModalReportVisible, providerId
           description={`Bạn muốn tố cáo nhà cũng cấp này với lý do ${
             reportType.find((item) => item.key == reportData.reasonType)?.label
           } không?`}
+          isLoading={reportUser.isLoading}
           onClose={handleCloseComfirmModal}
           onOk={() => {
             reportUser.mutate(
@@ -237,10 +239,10 @@ const ReportModal = ({ isModalReportVisible, setIsModalReportVisible, providerId
                     placement: 'bottomLeft',
                   })
                 },
-                onError() {
+                onError(error) {
                   notification.error({
                     message: 'Gửi tố cáo thất bại',
-                    description: 'Gửi tố cáo thất bại. Vui lòng thử lại sau!',
+                    description: `${error.message ?? 'Gửi tố cáo thất bại. Vui lòng thử lại sau!'}`,
                     placement: 'bottomLeft',
                   })
                 },
