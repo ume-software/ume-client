@@ -255,7 +255,7 @@ const Withdraw = () => {
     onOK: () => {},
     onClose: () => setIsModalWithdrawReqDetailVisible(false),
     show: isModalWithdrawReqDetailVisible,
-    customModalCSS: `${!(withdrawDetail?.status == 'PENDING') ? 'top-10' : 'top-32'} h-[90vh] min-w-[500px]`,
+    customModalCSS: `${!(withdrawDetail?.status == 'PENDING') ? 'top-10 h-[90vh] ' : 'top-32 h-fit'} min-w-[500px]`,
     title: <p className="text-white">Chi tiết yêu cầu</p>,
     form: (
       <div className="h-full mt-3 p-6 overflow-y-auto custom-scrollbar">

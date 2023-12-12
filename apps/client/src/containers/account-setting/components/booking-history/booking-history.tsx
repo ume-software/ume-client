@@ -7,8 +7,6 @@ import { Tooltip } from 'antd'
 
 import BookingTableHistory from './booking-history-table'
 
-import { trpc } from '~/utils/trpc'
-
 interface TabDataProps {
   key: string
   label: string
@@ -29,31 +27,7 @@ const tabDatas: TabDataProps[] = [
 const BookingHistory = () => {
   const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
 
-  const limit = '10'
-  const [page, setPage] = useState<string>('1')
-
   const [selectedTab, setSelectedTab] = useState<TabDataProps>(tabDatas[0])
-
-  const { data: bookingHistoryForUserData, isLoading: isBookingHistoryForUserLoading } = trpc.useQuery(
-    ['identity.bookingHistoryForUser', { limit: limit, page: page }],
-    {
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: 'always',
-      cacheTime: 0,
-      refetchOnMount: true,
-    },
-  )
-
-  const { data: bookingHistoryForProviderData, isLoading: isBookingHistoryForProviderLoading } = trpc.useQuery(
-    ['identity.bookingHistoryForProvider', { limit: limit, page: page }],
-    {
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: 'always',
-      cacheTime: 0,
-      refetchOnMount: true,
-      enabled: userInfo?.isProvider,
-    },
-  )
 
   const handleChangeTab = (item: TabDataProps) => {
     if (!userInfo?.isProvider && item.key == BookingHistoryEnum.BOOKING_FOR_PROVIDER) {
@@ -62,8 +36,6 @@ const BookingHistory = () => {
       setSelectedTab(item)
     }
   }
-
-  const handleCreateComplain = (id: string) => {}
 
   return (
     <>
