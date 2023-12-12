@@ -115,8 +115,9 @@ export const providerRouter = createRouter()
     input: z.object({
       id: z.string(),
       action: z.string(),
+      reason: z.optional(z.string()),
     }),
     resolve: async ({ input, ctx }) => {
-      return await kcyAction(ctx, { id: input.id, action: input.action })
+      return await kcyAction(ctx, { id: input.id, action: input.action, reason: input.reason })
     },
   })

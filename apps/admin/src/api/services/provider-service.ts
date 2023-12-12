@@ -260,7 +260,8 @@ export const getListKYC = async (
       frontSideCitizenIdImageUrl: data.frontSideCitizenIdImageUrl,
       portraitImageUrl: data.portraitImageUrl,
       status: data?.userKYCStatus,
-      requestId: data.id,
+      requestId: data.userId,
+      id: data.id,
       citizenId: data.citizenId,
       citizenDod: data.citizenDob,
       citizenName: data.citizenName,
@@ -281,7 +282,7 @@ export const getListKYC = async (
   }
 }
 
-export const kcyAction = async (ctx, { id, action }) => {
+export const kcyAction = async (ctx, { id, action, reason }) => {
   const cookies = parse(ctx.req.headers.cookie)
   try {
     let response = new AdminManageUserKYCRequestApi({
@@ -292,7 +293,7 @@ export const kcyAction = async (ctx, { id, action }) => {
     if (action === 'APPROVE') {
       await response.adminApprovedUserKYCRequest(id)
     } else if (action === 'REJECT') {
-      await response.adminRejectedUserKYCRequest(id)
+      await response.adminRejectedUserKYCRequest(id, { content: reason })
     }
     return {
       data: response,
