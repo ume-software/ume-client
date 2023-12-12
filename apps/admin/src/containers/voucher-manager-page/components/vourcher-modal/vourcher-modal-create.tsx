@@ -36,6 +36,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
   const MAX_NUMBER_DISCOUNT = '100000000'
   const [startDate, setstartDate] = useState<any>(new Date().toLocaleDateString('en-GB'))
   const [isSubmiting, setSubmiting] = useState(false)
+  const utils = trpc.useContext()
   interface IFormValues {
     vourcherCode: string
     imageSource: string
@@ -49,7 +50,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
     typeVoucher: any
     discountUnit: any
     audience: any
-    content: string // chua co trong API
+    content: string
     selectedImage: any
     status: any
     numUserCanUse: number
@@ -231,7 +232,6 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
         const req = {
           code: form.values.vourcherCode,
           image: imgURL.imageUrl,
-          // content: form.values.content,
           description: form.values.description,
           numberIssued: form.values.numVoucher,
           dailyNumberIssued: form.values.numVoucherInDay,
@@ -267,6 +267,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                 message: 'Tạo thành công!',
                 description: 'đã được tạo thành công.',
               })
+              utils.invalidateQueries('voucher.getAllVoucher')
               closeHandle()
             }
           },
@@ -669,13 +670,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                         const newValue = parseInt(e.target.value)
 
                         if (!isNaN(newValue) && newValue >= 1) {
-                          if (
-                            newValue >
-                            parseInt(
-                              // Math.floor(form.values.numVoucher / caculateDailyNumberIssued()) + ''
-                              form.values.numVoucher + '',
-                            )
-                          ) {
+                          if (newValue > parseInt(form.values.numVoucher + '')) {
                             e.target.value = form.values.numVoucher + ''
                           } else {
                             e.target.value = newValue.toString()
@@ -917,10 +912,14 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
             </div>
           </div>
           <div className="flex justify-center pb-4 mt-6">
-            <Button customCSS="mx-6 px-4 py-1 border-2 hover:scale-110" onClick={openConfirmModalCancel}>
+            <Button
+              customCSS={`mx-6 px-4 py-1 border-2 hover:scale-110 bg-red-500 border-red-500`}
+              onClick={openConfirmModalCancel}
+            >
               Hủy
             </Button>
             <Button
+              isActive={false}
               customCSS={`mx-6 px-4 py-1 border-2  ${
                 !isDisableButton() && 'hover:scale-110 bg-[#7463F0] border-[#7463F0]'
               }`}
@@ -933,6 +932,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                 }
               }}
               isDisable={isDisableButton()}
+              isLoading={createNewVoucherAdmin.isLoading}
             >
               {'Tạo'}
             </Button>

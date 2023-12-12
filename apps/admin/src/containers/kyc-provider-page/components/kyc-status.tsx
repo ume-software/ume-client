@@ -31,7 +31,7 @@ const StatusBlock: React.FC<StatusBlockProps> = ({ status }) => {
       break
   }
 
-  return <div className={`font-bold py-2 px-4 rounded-full w-fit ${bgColor} ${textColor}`}>{statusText}</div>
+  return <div className={`font-bold py-2 px-4 rounded-lg w-fit ${bgColor} ${textColor}`}>{statusText}</div>
 }
 
 export default StatusBlock

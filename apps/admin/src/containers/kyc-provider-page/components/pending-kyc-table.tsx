@@ -33,6 +33,7 @@ const SELECT_TRANS: PrismaSelectType<UserKYCRequestResponse> = [
 ]
 
 type KYCTableProps = {
+  key: string
   id: number
   email: string
   name: string
@@ -47,7 +48,13 @@ export const PendingKYCTable = () => {
   const [totalPendingKYC, setTotalPendingKYC] = useState(0)
   const [kycModal, setKycModal] = useState(false)
   const [record, setRecord] = useState<any>(null)
-
+  const mappingDataWithKeys = (data) => {
+    const dataWithKeys = data.map((data) => ({
+      ...data,
+      key: data.id,
+    }))
+    return dataWithKeys
+  }
   const handleClose = useCallback(() => {
     setKycModal(false)
     setRecord(null)
@@ -80,7 +87,7 @@ export const PendingKYCTable = () => {
       refetchOnWindowFocus: false,
       refetchOnReconnect: 'always',
       onSuccess(data) {
-        setKYCListPending(data.data)
+        setKYCListPending(mappingDataWithKeys(data?.data))
         setTotalPendingKYC(Number(data.count))
       },
       onError(error: any) {

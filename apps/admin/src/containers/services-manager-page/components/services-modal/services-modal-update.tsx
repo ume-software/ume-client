@@ -134,7 +134,6 @@ export const ServicesModalUpdate = ({ idService, closeFunction, openValue }: ISe
         },
       })
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nameInit])
 
   function closeHandleSmall() {

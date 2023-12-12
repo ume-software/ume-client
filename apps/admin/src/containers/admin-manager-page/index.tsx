@@ -1,6 +1,7 @@
-import { CheckOne, CloseOne, Eyes, Plus, Search, Write } from '@icon-park/react'
+import { CheckOne, CloseOne, Eyes, Plus, ReduceOne, Search, Write } from '@icon-park/react'
 import { Button, Input } from '@ume/ui'
 import EmptyErrorPic from 'public/empty_error.png'
+import { getItem } from '~/hooks/localHooks'
 
 import React, { useState } from 'react'
 
@@ -92,6 +93,8 @@ const UserManager = () => {
   const [idAdmin, setIdAdmin] = useState('')
   const [selectedAdmin, setSelectedAdmin] = useState<any>()
   const [openConfirm, setOpenConfirm] = useState(false)
+  const adminInfo = getItem('user')
+
   const mappingListWithKeys = (data) => {
     const dataWithKeys = data.row.map((item) => ({
       ...item,
@@ -329,7 +332,7 @@ const UserManager = () => {
             {record.adminRoles.some((item) => item.roleType === 'SUPER_ADMIN') ? (
               <Button isActive={false} className="pointer-events-none cursor-none">
                 {record.isActivated ? (
-                  <CloseOne className="p-2 rounded-full opacity-40" theme="outline" size="20" fill="#fff" />
+                  <ReduceOne className="p-2 rounded-full opacity-40" theme="outline" size="20" fill="#fff" />
                 ) : (
                   <CheckOne className="p-2 rounded-full opacity-40" theme="outline" size="20" fill="#fff" />
                 )}
@@ -337,7 +340,7 @@ const UserManager = () => {
             ) : (
               <Button isActive={false} onClick={() => handleOpenConfirm(record)}>
                 {record.isActivated ? (
-                  <CloseOne className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="20" fill="#ff0000" />
+                  <ReduceOne className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="20" fill="#ff0000" />
                 ) : (
                   <CheckOne className="p-2 rounded-full hover:bg-gray-500" theme="outline" size="20" fill="#85ea2d" />
                 )}
@@ -356,6 +359,13 @@ const UserManager = () => {
       </div>
     ),
   }
+  if (adminInfo?.adminRoles?.some((item) => item.roleType != 'SUPER_ADMIN')) {
+    return (
+      <div className="text-white w-full h-[600px] flex justify-center items-center">
+        Bạn không được cấp phép vào trang web này!
+      </div>
+    )
+  }
   return (
     <div>
       <Head>
@@ -364,7 +374,11 @@ const UserManager = () => {
       <div className="pb-10">
         <div className="flex justify-between items-center">
           <span className="content-title">Quản lý quản trị viên</span>
-          <Button customCSS="bg-[#7463f0] px-3 rounded-2xl active:bg-gray-600 py-2" onClick={openCreateAdminHandler}>
+          <Button
+            isActive={false}
+            customCSS="bg-[#7463f0] px-3 rounded-2xl active:bg-gray-600 py-2"
+            onClick={openCreateAdminHandler}
+          >
             <Plus theme="outline" size="24" fill="#fff" />
             Tạo tài khoản
           </Button>
