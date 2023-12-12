@@ -16,26 +16,26 @@ info  - Generating static pages (6/8)
 info  - Generating static pages (8/8)
 info  - Finalizing page optimization...
 
-Route (pages)                                     Size     First Load JS
-┌ λ /                                             257 B           100 kB
-├   /_app                                         0 B             100 kB
-├ ○ /404 (648 ms)                                 6.28 kB         106 kB
-├ ○ /account-setting (625 ms)                     1.85 kB         102 kB
-├ λ /api/status                                   0 B             100 kB
-├ λ /api/trpc/[trpc]                              0 B             100 kB
-├ ○ /community (621 ms)                           1.83 kB         102 kB
-├ ○ /filter-service/[filterServiceName] (629 ms)  1.89 kB         102 kB
-├ ○ /home (594 ms)                                1.84 kB         102 kB
-├ ○ /live (600 ms)                                1.82 kB         102 kB
-├ λ /logout                                       288 B           100 kB
-├ ○ /profile/[profileId] (601 ms)                 1.85 kB         102 kB
-└ ○ /register-provider (616 ms)                   1.83 kB         102 kB
-+ First Load JS shared by all                     109 kB
-  ├ chunks/framework-22108eb722d84e59.js          45.4 kB
-  ├ chunks/main-1549b305685c3af3.js               26.7 kB
-  ├ chunks/pages/_app-116cf4bec84de5a6.js         25.4 kB
-  ├ chunks/webpack-275d8bf9b03f9c79.js            2.62 kB
-  └ css/aa6a55401eac0403.css                      8.6 kB
+Route (pages)                              Size     First Load JS
+┌ λ /                                      257 B           100 kB
+├   /_app                                  0 B             100 kB
+├ ○ /404                                   6.28 kB         106 kB
+├ ○ /account-setting                       1.85 kB         102 kB
+├ λ /api/status                            0 B             100 kB
+├ λ /api/trpc/[trpc]                       0 B             100 kB
+├ ○ /community                             1.83 kB         102 kB
+├ ○ /filter-service/[filterServiceName]    1.89 kB         102 kB
+├ ○ /home                                  1.84 kB         102 kB
+├ ○ /live                                  1.82 kB         102 kB
+├ λ /logout                                288 B           100 kB
+├ ○ /profile/[profileId]                   1.85 kB         102 kB
+└ ○ /register-provider                     1.83 kB         102 kB
++ First Load JS shared by all              109 kB
+  ├ chunks/framework-22108eb722d84e59.js   45.4 kB
+  ├ chunks/main-1549b305685c3af3.js        26.7 kB
+  ├ chunks/pages/_app-116cf4bec84de5a6.js  25.4 kB
+  ├ chunks/webpack-275d8bf9b03f9c79.js     2.62 kB
+  └ css/aa6a55401eac0403.css               8.6 kB
 
 λ  (Server)  server-side renders at runtime (uses getInitialProps or getServerSideProps)
 ○  (Static)  automatically rendered as static HTML (uses no initial props)
