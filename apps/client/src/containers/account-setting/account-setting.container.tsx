@@ -120,38 +120,166 @@ const AccountSettingContainer = () => {
   }, [slug.tab])
 
   return (
-    <>
-      <div className="grid min-h-screen grid-cols-10 mr-10 text-white bg-umeBackground">
-        <div className="col-span-10 xl:col-span-2 w-full sticky xl:top-20 top-16 z-[5]">
-          <div className="min-w-[150px] xl:min-h-[85%] xl:max-h-[85%] xl:p-10 py-5 xl:bg-zinc-800 bg-umeBackground xl:rounded-3xl sticky top-20 bottom-20 overflow-y-auto hide-scrollbar">
-            <div className="flex-col hidden gap-5 xl:flex">
+    <div className="grid min-h-screen grid-cols-10 mr-10 text-white bg-umeBackground">
+      <div className="col-span-10 xl:col-span-2 w-full sticky xl:top-20 top-16 z-[5]">
+        <div className="min-w-[150px] xl:min-h-[85%] xl:max-h-[85%] xl:p-10 py-5 xl:bg-zinc-800 bg-umeBackground xl:rounded-3xl sticky top-20 bottom-20 overflow-y-auto hide-scrollbar">
+          <div className="flex-col hidden gap-5 xl:flex">
+            {settingType.map((item) => (
+              <>
+                <div
+                  key={item.key}
+                  className={`flex items-center gap-2 px-2 py-3 rounded-xl cursor-pointer hover:bg-gray-700 ${
+                    children.key == item.key && 'bg-gray-700'
+                  }`}
+                  onClick={() => {
+                    if (
+                      !(
+                        (item.key == 'becomeProvider' && !userInfo?.isVerified) ||
+                        (item.key == 'vouchers' && !userInfo?.isProvider) ||
+                        (item.key == 'withdraw' && !userInfo?.isProvider)
+                      )
+                    ) {
+                      handleChangeTab(item.key)
+                    }
+                  }}
+                  onKeyDown={() => {}}
+                >
+                  {item.key == 'becomeProvider' ? (
+                    <>
+                      <div className={`${!userInfo?.isVerified && 'opacity-30'}`}>{item.icon}</div>
+                      {!userInfo?.isVerified ? (
+                        <Tooltip placement="right" title={'Xác minh danh tính để mở khoá tính năng này'} arrow={true}>
+                          <span
+                            className={`w-full flex justify-between items-center 2xl:text-lg xl:text-sm text-xs font-semibold truncate ${
+                              !userInfo?.isVerified && 'opacity-30'
+                            }`}
+                          >
+                            {item.label}
+
+                            <Lock
+                              className="pl-3 opacity-30"
+                              theme="outline"
+                              size="20"
+                              fill="#FFF"
+                              strokeLinejoin="bevel"
+                            />
+                          </span>
+                        </Tooltip>
+                      ) : (
+                        <span
+                          className={`w-full flex justify-between items-center 2xl:text-lg xl:text-sm text-xs font-semibold truncate`}
+                        >
+                          {item.label}
+                        </span>
+                      )}
+                    </>
+                  ) : item.key == 'vouchers' ? (
+                    <>
+                      <div className={`${!userInfo?.isProvider && 'opacity-30'}`}>{item.icon}</div>{' '}
+                      {!userInfo?.isProvider ? (
+                        <Tooltip
+                          placement="right"
+                          title={'Trở thành nhà cung cấp để mở khóa tính năng này'}
+                          arrow={true}
+                        >
+                          <span
+                            className={`w-full flex justify-between items-center 2xl:text-lg xl:text-sm text-xs font-semibold truncate ${
+                              !userInfo?.isProvider && 'opacity-30'
+                            }`}
+                          >
+                            {item.label}
+
+                            <Lock
+                              className="pl-3 opacity-30"
+                              theme="outline"
+                              size="20"
+                              fill="#FFF"
+                              strokeLinejoin="bevel"
+                            />
+                          </span>
+                        </Tooltip>
+                      ) : (
+                        <span
+                          className={`w-full flex justify-between items-center 2xl:text-lg xl:text-sm lg:text-md md:text-xs font-semibold truncate`}
+                        >
+                          {item.label}
+                        </span>
+                      )}
+                    </>
+                  ) : item.key == 'withdraw' ? (
+                    <>
+                      <div className={`${!userInfo?.isProvider && 'opacity-30'}`}>{item.icon}</div>{' '}
+                      {!userInfo?.isProvider ? (
+                        <Tooltip
+                          placement="right"
+                          title={'Trở thành nhà cung cấp để mở khóa tính năng này'}
+                          arrow={true}
+                        >
+                          <span
+                            className={`w-full flex justify-between items-center 2xl:text-lg xl:text-sm text-xs font-semibold truncate ${
+                              !userInfo?.isProvider && 'opacity-30'
+                            }`}
+                          >
+                            {item.label}
+
+                            <Lock
+                              className="pl-3 opacity-30"
+                              theme="outline"
+                              size="20"
+                              fill="#FFF"
+                              strokeLinejoin="bevel"
+                            />
+                          </span>
+                        </Tooltip>
+                      ) : (
+                        <span
+                          className={`w-full flex justify-between items-center 2xl:text-lg xl:text-sm lg:text-md md:text-xs font-semibold truncate`}
+                        >
+                          {item.label}
+                        </span>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      <div>{item.icon}</div>
+                      <p className="font-semibold truncate 2xl:text-lg xl:text-sm lg:text-md md:text-xs">
+                        {item.label}
+                      </p>
+                    </>
+                  )}
+                </div>
+              </>
+            ))}
+          </div>
+          <div className="w-full xl:hidden">
+            <Swiper spaceBetween={20} slidesPerView="auto" mousewheel={true} direction="horizontal" className="w-full">
               {settingType.map((item) => (
-                <>
-                  <div
-                    key={item.key}
-                    className={`flex items-center gap-2 px-2 py-3 rounded-xl cursor-pointer hover:bg-gray-700 ${
-                      children.key == item.key && 'bg-gray-700'
-                    }`}
-                    onClick={() => {
-                      if (
-                        !(
-                          (item.key == 'becomeProvider' && !userInfo?.isVerified) ||
-                          (item.key == 'vouchers' && !userInfo?.isProvider) ||
-                          (item.key == 'withdraw' && !userInfo?.isProvider)
-                        )
-                      ) {
-                        handleChangeTab(item.key)
-                      }
-                    }}
-                    onKeyDown={() => {}}
-                  >
+                <SwiperSlide
+                  key={item.key}
+                  className={`max-w-fit xl:hidden px-2 py-3 border-2 border-white border-opacity-30 rounded-xl cursor-pointer hover:bg-gray-700 ${
+                    children.key == item.key && 'bg-gray-700'
+                  }`}
+                  onClick={() => {
+                    if (
+                      !(
+                        (item.key == 'becomeProvider' && !userInfo?.isVerified) ||
+                        (item.key == 'vouchers' && !userInfo?.isProvider) ||
+                        (item.key == 'withdraw' && !userInfo?.isProvider)
+                      )
+                    ) {
+                      handleChangeTab(item.key)
+                    }
+                  }}
+                  onKeyDown={() => {}}
+                >
+                  <div className="flex items-center gap-2 w-fit">
                     {item.key == 'becomeProvider' ? (
                       <>
                         <div className={`${!userInfo?.isVerified && 'opacity-30'}`}>{item.icon}</div>
                         {!userInfo?.isVerified ? (
-                          <Tooltip placement="right" title={'Xác minh danh tính để mở khoá tính năng này'} arrow={true}>
+                          <Tooltip placement="right" title={'Xác minh danh tính để mở kháo tính năng này'} arrow={true}>
                             <span
-                              className={`w-full flex justify-between items-center 2xl:text-lg xl:text-sm text-xs font-semibold truncate ${
+                              className={`w-full flex justify-between items-center text-lg font-semibold truncate ${
                                 !userInfo?.isVerified && 'opacity-30'
                               }`}
                             >
@@ -167,9 +295,7 @@ const AccountSettingContainer = () => {
                             </span>
                           </Tooltip>
                         ) : (
-                          <span
-                            className={`w-full flex justify-between items-center 2xl:text-lg xl:text-sm text-xs font-semibold truncate`}
-                          >
+                          <span className={`w-full flex justify-between items-center text-lg font-semibold truncate`}>
                             {item.label}
                           </span>
                         )}
@@ -184,7 +310,7 @@ const AccountSettingContainer = () => {
                             arrow={true}
                           >
                             <span
-                              className={`w-full flex justify-between items-center 2xl:text-lg xl:text-sm text-xs font-semibold truncate ${
+                              className={`w-full flex justify-between items-center text-lg lg:text-md font-semibold truncate ${
                                 !userInfo?.isProvider && 'opacity-30'
                               }`}
                             >
@@ -201,7 +327,7 @@ const AccountSettingContainer = () => {
                           </Tooltip>
                         ) : (
                           <span
-                            className={`w-full flex justify-between items-center 2xl:text-lg xl:text-sm lg:text-md md:text-xs font-semibold truncate`}
+                            className={`w-full flex justify-between items-center xl:text-lg lg:text-md font-semibold truncate`}
                           >
                             {item.label}
                           </span>
@@ -217,7 +343,7 @@ const AccountSettingContainer = () => {
                             arrow={true}
                           >
                             <span
-                              className={`w-full flex justify-between items-center 2xl:text-lg xl:text-sm text-xs font-semibold truncate ${
+                              className={`w-full flex justify-between items-center text-lg lg:text-md font-semibold truncate ${
                                 !userInfo?.isProvider && 'opacity-30'
                               }`}
                             >
@@ -234,7 +360,7 @@ const AccountSettingContainer = () => {
                           </Tooltip>
                         ) : (
                           <span
-                            className={`w-full flex justify-between items-center 2xl:text-lg xl:text-sm lg:text-md md:text-xs font-semibold truncate`}
+                            className={`w-full flex justify-between items-center xl:text-lg lg:text-md font-semibold truncate`}
                           >
                             {item.label}
                           </span>
@@ -243,156 +369,18 @@ const AccountSettingContainer = () => {
                     ) : (
                       <>
                         <div>{item.icon}</div>
-                        <p className="font-semibold truncate 2xl:text-lg xl:text-sm lg:text-md md:text-xs">
-                          {item.label}
-                        </p>
+                        <p className="font-semibold truncate xl:text-lg lg:text-md">{item.label}</p>
                       </>
                     )}
                   </div>
-                </>
+                </SwiperSlide>
               ))}
-            </div>
-            <div className="w-full xl:hidden">
-              <Swiper
-                spaceBetween={20}
-                slidesPerView="auto"
-                mousewheel={true}
-                direction="horizontal"
-                className="w-full"
-              >
-                {settingType.map((item) => (
-                  <SwiperSlide
-                    key={item.key}
-                    className={`max-w-fit xl:hidden px-2 py-3 border-2 border-white border-opacity-30 rounded-xl cursor-pointer hover:bg-gray-700 ${
-                      children.key == item.key && 'bg-gray-700'
-                    }`}
-                    onClick={() => {
-                      if (
-                        !(
-                          (item.key == 'becomeProvider' && !userInfo?.isVerified) ||
-                          (item.key == 'vouchers' && !userInfo?.isProvider) ||
-                          (item.key == 'withdraw' && !userInfo?.isProvider)
-                        )
-                      ) {
-                        handleChangeTab(item.key)
-                      }
-                    }}
-                    onKeyDown={() => {}}
-                  >
-                    <div className="flex items-center gap-2 w-fit">
-                      {item.key == 'becomeProvider' ? (
-                        <>
-                          <div className={`${!userInfo?.isVerified && 'opacity-30'}`}>{item.icon}</div>
-                          {!userInfo?.isVerified ? (
-                            <Tooltip
-                              placement="right"
-                              title={'Xác minh danh tính để mở kháo tính năng này'}
-                              arrow={true}
-                            >
-                              <span
-                                className={`w-full flex justify-between items-center text-lg font-semibold truncate ${
-                                  !userInfo?.isVerified && 'opacity-30'
-                                }`}
-                              >
-                                {item.label}
-
-                                <Lock
-                                  className="pl-3 opacity-30"
-                                  theme="outline"
-                                  size="20"
-                                  fill="#FFF"
-                                  strokeLinejoin="bevel"
-                                />
-                              </span>
-                            </Tooltip>
-                          ) : (
-                            <span className={`w-full flex justify-between items-center text-lg font-semibold truncate`}>
-                              {item.label}
-                            </span>
-                          )}
-                        </>
-                      ) : item.key == 'vouchers' ? (
-                        <>
-                          <div className={`${!userInfo?.isProvider && 'opacity-30'}`}>{item.icon}</div>{' '}
-                          {!userInfo?.isProvider ? (
-                            <Tooltip
-                              placement="right"
-                              title={'Trở thành nhà cung cấp để mở khóa tính năng này'}
-                              arrow={true}
-                            >
-                              <span
-                                className={`w-full flex justify-between items-center text-lg lg:text-md font-semibold truncate ${
-                                  !userInfo?.isProvider && 'opacity-30'
-                                }`}
-                              >
-                                {item.label}
-
-                                <Lock
-                                  className="pl-3 opacity-30"
-                                  theme="outline"
-                                  size="20"
-                                  fill="#FFF"
-                                  strokeLinejoin="bevel"
-                                />
-                              </span>
-                            </Tooltip>
-                          ) : (
-                            <span
-                              className={`w-full flex justify-between items-center xl:text-lg lg:text-md font-semibold truncate`}
-                            >
-                              {item.label}
-                            </span>
-                          )}
-                        </>
-                      ) : item.key == 'withdraw' ? (
-                        <>
-                          <div className={`${!userInfo?.isProvider && 'opacity-30'}`}>{item.icon}</div>{' '}
-                          {!userInfo?.isProvider ? (
-                            <Tooltip
-                              placement="right"
-                              title={'Trở thành nhà cung cấp để mở khóa tính năng này'}
-                              arrow={true}
-                            >
-                              <span
-                                className={`w-full flex justify-between items-center text-lg lg:text-md font-semibold truncate ${
-                                  !userInfo?.isProvider && 'opacity-30'
-                                }`}
-                              >
-                                {item.label}
-
-                                <Lock
-                                  className="pl-3 opacity-30"
-                                  theme="outline"
-                                  size="20"
-                                  fill="#FFF"
-                                  strokeLinejoin="bevel"
-                                />
-                              </span>
-                            </Tooltip>
-                          ) : (
-                            <span
-                              className={`w-full flex justify-between items-center xl:text-lg lg:text-md font-semibold truncate`}
-                            >
-                              {item.label}
-                            </span>
-                          )}
-                        </>
-                      ) : (
-                        <>
-                          <div>{item.icon}</div>
-                          <p className="font-semibold truncate xl:text-lg lg:text-md">{item.label}</p>
-                        </>
-                      )}
-                    </div>
-                  </SwiperSlide>
-                ))}
-              </Swiper>
-            </div>
+            </Swiper>
           </div>
         </div>
-        <div className="min-w-[770px] xl:col-span-8 col-span-10 xl:mt-0 mt-8 z-0">{children.children}</div>
       </div>
-    </>
+      <div className="min-w-[770px] xl:col-span-8 col-span-10 xl:mt-0 mt-8 z-0">{children.children}</div>
+    </div>
   )
 }
 export default AccountSettingContainer

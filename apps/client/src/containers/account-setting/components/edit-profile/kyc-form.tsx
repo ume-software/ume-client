@@ -7,6 +7,7 @@ import { GenderEnum } from '~/enumVariable/enumVariable'
 import { FormEvent, useState } from 'react'
 
 import { DatePicker, Select, Steps, notification, theme } from 'antd'
+import dayjs from 'dayjs'
 import { FormikErrors, useFormik } from 'formik'
 import Image from 'next/legacy/image'
 import { UserSendKYCRequest } from 'ume-service-openapi'
@@ -160,7 +161,7 @@ export const KYCFormStep = ({
   }
 
   return (
-    <div className="mt-10 max-h-[95%] flex flex-col px-5 pb-5 gap-5 overflow-y-auto custom-scrollbar">
+    <div className="flex flex-col gap-5 px-5 pb-5 mt-10 overflow-y-auto h-fit custom-scrollbar">
       <Steps current={current} className="mb-4" items={steps} />
       <div>
         <form onSubmit={handleUploadImage}>
@@ -192,9 +193,12 @@ export const KYCFormStep = ({
                 <div className="flex flex-col">
                   <div className="text-white">Ngày tháng năm sinh</div>
                   <DatePicker
+                    defaultValue={dayjs('01/12/1990', 'DD/MM/YYYY')}
+                    format={['DD/MM/YYYY', 'DDMMYYYY']}
                     onChange={(date, dateString) => {
                       form.setFieldValue('citizenDob', dateString)
                     }}
+                    value={form.values.citizenDob ? dayjs(form.values.citizenDob, 'DD/MM/YYYY') : undefined}
                   />
                 </div>
                 <div className="flex flex-col">
@@ -204,6 +208,7 @@ export const KYCFormStep = ({
                     onChange={(value) => {
                       form.setFieldValue('citizenGender', value)
                     }}
+                    value={form.values.citizenGender}
                     options={[
                       { value: GenderEnum.FEMALE, label: 'Nữ' },
                       { value: GenderEnum.MALE, label: 'Nam' },
@@ -269,12 +274,12 @@ export const KYCFormStep = ({
           )}
           {current === 1 && (
             <div>
-              <div className="flex flex-col gap-10 overflow-y-auto text-white text-md custom-scrollbar">
+              <div className="grid grid-cols-2 gap-10 overflow-y-auto text-white text-md custom-scrollbar">
                 <div>
                   <label>Ảnh mặt trước</label>
                   <p className="text-sm text-red-500 opacity-70 text-end">*Ảnh trên 2Mb có thể bị lỗi</p>
                   <div className="relative">
-                    <div className="relative w-full h-[300px] bg-white bg-opacity-30 rounded-xl">
+                    <div className="relative w-[200px] h-[150px] bg-white bg-opacity-30 rounded-xl">
                       {!selectedImage.frontVertificationImage && (
                         <div className="absolute top-0 bottom-0 left-0 right-0 z-10 flex items-center justify-center w-full h-full border-2 border-white border-dashed rounded-xl">
                           <p className="text-4xl font-bold text-white">+</p>
@@ -302,7 +307,7 @@ export const KYCFormStep = ({
                   <label>Ảnh mặt sau</label>
                   <p className="text-sm text-red-500 opacity-70 text-end">*Ảnh trên 2Mb có thể bị lỗi</p>
                   <div className="relative">
-                    <div className="relative w-full h-[300px] bg-white bg-opacity-30 rounded-xl">
+                    <div className="relative w-[200px] h-[150px] bg-white bg-opacity-30 rounded-xl">
                       <div className="absolute top-0 bottom-0 left-0 right-0 z-10 flex items-center justify-center w-full h-full border-2 border-white border-dashed rounded-xl">
                         <p className="text-4xl font-bold text-white">+</p>
                       </div>
@@ -326,7 +331,7 @@ export const KYCFormStep = ({
                   <label>Ảnh khuôn mặt</label>
                   <p className="text-sm text-red-500 opacity-70 text-end">*Ảnh trên 2Mb có thể bị lỗi</p>
                   <div className="relative">
-                    <div className="relative w-full h-[300px] bg-white bg-opacity-30 rounded-xl">
+                    <div className="relative w-[200px] h-[150px] bg-white bg-opacity-30 rounded-xl">
                       <div className="absolute top-0 bottom-0 left-0 right-0 z-10 flex items-center justify-center w-full h-full border-2 border-white border-dashed rounded-xl">
                         <p className="text-4xl font-bold text-white">+</p>
                       </div>
@@ -352,10 +357,10 @@ export const KYCFormStep = ({
                   type="button"
                   isActive={false}
                   isOutlinedButton={true}
-                  customCSS="w-[100px] text-xl py-2 px-7 rounded-xl hover:scale-105"
-                  onClick={() => handleClose()}
+                  customCSS="w-[150px] text-xl py-2 px-7 rounded-xl hover:scale-105"
+                  onClick={prev}
                 >
-                  Hủy
+                  Trở lại
                 </Button>
 
                 <Button

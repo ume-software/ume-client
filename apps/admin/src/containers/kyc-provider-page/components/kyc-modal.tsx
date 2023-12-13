@@ -71,7 +71,7 @@ const kycForm = (record: KYCFormType, handleAction: (action: KYCAction) => void,
       </div>
     )
   }
-  console.log(record)
+
   return (
     <div className="flex flex-col w-full p-6 gap-4  bg-[#15151b] text-white border-t border-slate-700 mt-3">
       <div>
@@ -174,6 +174,7 @@ export const KYCModal = ({ visible, handleClose, data }: KYCModalType) => {
   const [visibleConfirm, setVisibleConfirm] = useState(false)
   const [action, setAction] = useState<KYCAction>(KYCAction.APPROVE)
   const [reasonReject, setReasonReject] = useState(null)
+  const [loading, setLoading] = useState(false)
 
   const handleActionConfirm = useCallback(
     (action: KYCAction) => {
@@ -187,28 +188,37 @@ export const KYCModal = ({ visible, handleClose, data }: KYCModalType) => {
   }
 
   const handelCloseConfirm = () => {
+    setReasonReject(null)
     setVisibleConfirm(false)
   }
 
   const handleAction = (id: string) => {
+    const mapAction = {
+      REJECT: 'Từ chối',
+      APPROVE: 'Chấp thuận',
+    }
+
+    setLoading(true)
     actionKYC.mutate(
-      { id, action, reason: reasonReject || '' },
+      { id, action, reason: reasonReject ?? '' },
       {
         onSuccess: (data, success) => {
           if (success) {
             notification.success({
               message: 'Success',
-              description: `${action} KYC Success`,
+              description: `${mapAction[action]} KYC thành công`,
             })
             utils.invalidateQueries(['provider.getListRequestKYC'])
+            setLoading(false)
             handelCloseConfirm()
             handleClose()
           }
         },
-        onError: (error, data) => {
+        onError: (error) => {
+          setLoading(false)
           notification.error({
             message: 'Error',
-            description: error.message || `${action} KYC Failed`,
+            description: error.message || `${mapAction[action]} KYC thất bại`,
           })
         },
       },
@@ -253,7 +263,7 @@ export const KYCModal = ({ visible, handleClose, data }: KYCModalType) => {
         </div>
         <div className="flex flex-row justify-center gap-4 p-5">
           <Button
-            customCSS={`px-3 w-24 py-2 ${
+            customCSS={`px-3 w-32 py-2 ${
               KYCAction.REJECT === action && !reasonReject
                 ? 'opacity-20 cursor-not-allowed hover:scale-100 '
                 : 'hover:bg-green-400 hover:text-black '
@@ -263,12 +273,14 @@ export const KYCModal = ({ visible, handleClose, data }: KYCModalType) => {
               handleAction(data?.id)
             }}
             isDisable={KYCAction.REJECT === action && !reasonReject}
+            isLoading={loading}
           >
             Xác nhận
           </Button>
           <Button
             customCSS="px-3 w-24 py-2 hover:bg-red-400 hover:text-black"
             type="button"
+            isDisable={loading}
             onClick={() => {
               handelCloseConfirm()
             }}
@@ -301,7 +313,7 @@ export const KYCModal = ({ visible, handleClose, data }: KYCModalType) => {
     form: kycForm(data, handleActionConfirm, handleVisibleConfirm),
     title: <span className="text-white">Thông tin xác thực người dùng</span>,
     backgroundColor: '#15151b',
-    closeWhenClickOutSide: false,
+    closeWhenClickOutSide: !visibleConfirm,
     closeButtonOnConner: (
       <CloseSmall
         onClick={handleClose}
