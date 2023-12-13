@@ -169,7 +169,7 @@ export const KYCFormStep = ({
             <div className="mt-5 flex flex-col max-h-[70%] gap-10 overflow-y-auto text-md custom-scrollbar">
               <div className="flex flex-col gap-10">
                 <div className="flex flex-col">
-                  <div className="text-white">Số CCCD/Passport</div>
+                  <div className="text-white">Số CCCD/Passport*</div>
                   <FormInput
                     name="citizenId"
                     value={form.values.citizenId}
@@ -180,7 +180,7 @@ export const KYCFormStep = ({
                   />
                 </div>
                 <div className="flex flex-col">
-                  <div className="text-white">Họ và tên</div>
+                  <div className="text-white">Họ và tên*</div>
                   <FormInput
                     name="citizenName"
                     value={form.values.citizenName}
@@ -191,9 +191,8 @@ export const KYCFormStep = ({
                   />
                 </div>
                 <div className="flex flex-col">
-                  <div className="text-white">Ngày tháng năm sinh</div>
+                  <div className="text-white">Ngày tháng năm sinh*</div>
                   <DatePicker
-                    defaultValue={dayjs('01/12/1990', 'DD/MM/YYYY')}
                     format={['DD/MM/YYYY', 'DDMMYYYY']}
                     onChange={(date, dateString) => {
                       form.setFieldValue('citizenDob', dateString)
@@ -202,7 +201,7 @@ export const KYCFormStep = ({
                   />
                 </div>
                 <div className="flex flex-col">
-                  <div className="text-white">Giới tính</div>
+                  <div className="text-white">Giới tính*</div>
                   <Select
                     defaultValue={''}
                     onChange={(value) => {
