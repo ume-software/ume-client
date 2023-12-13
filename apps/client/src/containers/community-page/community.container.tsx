@@ -1,8 +1,9 @@
 import { CloseSmall, Earth, EveryUser, Lock, Plus } from '@icon-park/react'
 import { Modal } from '@ume/ui'
-import { useAuth } from '~/contexts/auth'
 
 import { ReactNode, useId, useState } from 'react'
+
+import { parse } from 'cookie'
 
 import CreatePost from './components/create-post'
 import FollowingPost from './components/following-post'
@@ -36,7 +37,7 @@ const postTypeData: CommunityProps[] = [
 const CommunityContainer = () => {
   const index = useId()
   const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
-  const { isAuthenticated } = useAuth()
+  const accessToken = parse(document.cookie).accessToken
 
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
   const [isModalVisible, setIsModalVisible] = useState(false)
@@ -73,8 +74,8 @@ const CommunityContainer = () => {
   })
 
   const handleCreatePost = () => {
-    setIsModalVisible(!!userInfo || isAuthenticated)
-    setIsModalLoginVisible(!(userInfo || isAuthenticated))
+    setIsModalVisible(!!userInfo || !!accessToken)
+    setIsModalLoginVisible(!(userInfo || !!accessToken))
   }
 
   return (
@@ -96,7 +97,7 @@ const CommunityContainer = () => {
                       ${item.key == 'Following' && !userInfo && 'justify-between opacity-30'}
                       ${socialSelected.key === item.key ? 'bg-gray-700' : ''}`}
                       onClick={() => {
-                        if (item.key == 'Following' && !(!!userInfo || isAuthenticated)) {
+                        if (item.key == 'Following' && !(!!userInfo || !!accessToken)) {
                           setIsModalLoginVisible(true)
                         } else {
                           setSocialSelected(item)
@@ -110,7 +111,7 @@ const CommunityContainer = () => {
                           {item.postTypeName}
                         </p>
                       </div>
-                      {item.key == 'Following' && !(!!userInfo || isAuthenticated) && (
+                      {item.key == 'Following' && !(!!userInfo || !!accessToken) && (
                         <Lock className="justify-items-end" theme="outline" size="20" fill="#fff" />
                       )}
                     </div>

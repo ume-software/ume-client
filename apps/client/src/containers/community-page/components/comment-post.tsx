@@ -5,6 +5,7 @@ import { useAuth } from '~/contexts/auth'
 
 import { Dispatch, SetStateAction, useEffect, useId, useRef, useState } from 'react'
 
+import { parse } from 'cookie'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
 
@@ -26,11 +27,12 @@ const CommmentPost = (props: CommentPostProps) => {
   const [commnetPostData, setCommnetPostData] = useState<any>([])
   const [page, setPage] = useState<string>('1')
 
-  const { user } = useAuth()
+  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
+  const accessToken = parse(document.cookie).accessToken
+
   const containerRef = useRef<HTMLDivElement>(null)
   const [comment, setComment] = useState('')
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
-  const { isAuthenticated } = useAuth()
   const {
     data: commentPostByID,
     isLoading: loadingCommentPostByID,
@@ -77,7 +79,7 @@ const CommmentPost = (props: CommentPostProps) => {
   })
 
   const handleSendComment = () => {
-    if (isAuthenticated) {
+    if (!!accessToken) {
       if (comment != '') {
         try {
           commentForPostId.mutate(
@@ -89,8 +91,8 @@ const CommmentPost = (props: CommentPostProps) => {
                     {
                       user: {
                         slug: '',
-                        avatarUrl: user?.avatarUrl,
-                        name: user?.name,
+                        avatarUrl: userInfo?.avatarUrl,
+                        name: userInfo?.name,
                       },
                       content: comment,
                       createdAt: Date.now(),

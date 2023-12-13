@@ -1,6 +1,9 @@
+import { Lock } from '@icon-park/react'
 import { ComplainEnum } from '~/enumVariable/enumVariable'
 
 import { Fragment, ReactElement, useState } from 'react'
+
+import { Tooltip } from 'antd'
 
 import ComplainTableHistory from './complain-table'
 
@@ -22,10 +25,15 @@ const tabDatas: TabDataProps[] = [
 ]
 
 const Complain = () => {
+  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
   const [selectedTab, setSelectedTab] = useState<TabDataProps>(tabDatas[0])
 
   const handleChangeTab = (item: TabDataProps) => {
-    setSelectedTab(item)
+    if (!userInfo?.isProvider) {
+      return
+    } else {
+      setSelectedTab(item)
+    }
   }
 
   return (
@@ -42,7 +50,19 @@ const Complain = () => {
                 data-tab={item.label}
                 onKeyDown={() => {}}
               >
-                {item.label}
+                {!userInfo?.isProvider && item.key == ComplainEnum.COMPLAIN_TO_ME ? (
+                  <Tooltip
+                    placement="bottom"
+                    title={'Trở thành nhà cung cấp để mở khóa tính năng này'}
+                    arrow={true}
+                    className="flex items-center justify-between"
+                  >
+                    {item.label}
+                    <Lock className="pl-3 opacity-30" theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
+                  </Tooltip>
+                ) : (
+                  <>{item.label}</>
+                )}
               </span>
             </Fragment>
           ))}

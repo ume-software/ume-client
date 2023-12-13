@@ -1,6 +1,7 @@
 import { CloseSmall } from '@icon-park/react'
 import { Modal } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
+import { BookingHistoryStatusEnum } from '~/enumVariable/enumVariable'
 
 import { Dispatch, SetStateAction } from 'react'
 
@@ -14,13 +15,23 @@ interface ComplainTicketProps {
   bookingSelected: BookingHistoryResponse | undefined
 }
 
+interface IEnumType {
+  key: string | number
+  label: string
+  [key: string]: any
+}
+
+const mappingBookingHistoryContent: IEnumType[] = [
+  { key: BookingHistoryStatusEnum.PROVIDER_ACCEPT, label: 'Chấp nhận', color: '#008000', textColor: '#FFF' },
+  { key: BookingHistoryStatusEnum.PROVIDER_CANCEL, label: 'Từ chối', color: '#FF0000', textColor: '#FFF' },
+  { key: BookingHistoryStatusEnum.USER_FINISH_SOON, label: 'Kết thúc sớm', color: '#FFFF00', textColor: '#000' },
+]
+
 const BookingHistoryDetailModal = ({
   isModalBookingHistoryDetailVisible,
   setIsModalBookingHistoryDetailVisible,
   bookingSelected,
 }: ComplainTicketProps) => {
-  console.log(bookingSelected)
-
   const isTimeMoreThan12Hours = () => {
     const bookingTime = new Date(bookingSelected?.updatedAt ?? 0)
     const timestampFromIso = bookingTime.getTime()
@@ -52,6 +63,8 @@ const BookingHistoryDetailModal = ({
     return formattedDate
   }
 
+  console.log(bookingSelected)
+
   const bookingHistoryDetailModal = Modal.useEditableForm({
     onOK: () => {},
     onClose: () => setIsModalBookingHistoryDetailVisible(false),
@@ -61,7 +74,9 @@ const BookingHistoryDetailModal = ({
     form: (
       <div className="max-h-[90vh] px-10 pt-5 pb-28 text-white space-y-5 overflow-y-auto custom-scrollbar">
         <div className={`flex ${(bookingSelected as any)?.isProcessingComplaint ? 'justify-end' : 'justify-center'}`}>
-          {(bookingSelected as any)?.isProcessingComplaint ? (
+          {bookingSelected?.status == BookingHistoryStatusEnum.PROVIDER_CANCEL ? (
+            <p className="text-lg font-bold text-yellow-500">Đơn này không thể khiếu nại</p>
+          ) : (bookingSelected as any)?.isProcessingComplaint ? (
             <div className="w-fit p-3 bg-red-700 rounded-lg text-white font-semibold">Đã gửi khiếu nại</div>
           ) : isTimeMoreThan12Hours() ? (
             <p className="text-lg font-bold text-red-500">Đơn này đã quá hạn khiếu nại</p>
@@ -69,6 +84,7 @@ const BookingHistoryDetailModal = ({
             <></>
           )}
         </div>
+
         <div className="flex flex-col gap-3">
           <label className="font-semibold opacity-30">{bookingSelected?.booker ? 'Người thuê:' : 'Người nhận:'}</label>
           <Link
@@ -117,7 +133,27 @@ const BookingHistoryDetailModal = ({
             </span>
           </div>
         </div>
+
         <div className="border-t border-light-900 w-full my-4 opacity-30"></div>
+        <div className="flex items-center gap-3">
+          <label className="font-semibold opacity-30">Trạng thái: </label>
+          <div className="flex justify-end">
+            <p
+              className={`w-fit px-2 py-1 text-md font-semibold rounded-lg`}
+              style={{
+                background: `${
+                  mappingBookingHistoryContent.find((statusType) => statusType.key == bookingSelected?.status)?.color
+                }`,
+                color: `${
+                  mappingBookingHistoryContent.find((statusType) => statusType.key == bookingSelected?.status)
+                    ?.textColor
+                }`,
+              }}
+            >
+              {mappingBookingHistoryContent.find((statusType) => statusType.key == bookingSelected?.status)?.label}
+            </p>
+          </div>
+        </div>
         <div className="flex items-center gap-3">
           <label className="font-semibold opacity-30">Thời gian tạo: </label>
           <p>{convertSendDate(bookingSelected?.updatedAt ?? '')}</p>

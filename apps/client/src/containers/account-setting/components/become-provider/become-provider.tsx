@@ -216,6 +216,7 @@ const BecomeProvider = () => {
                 unCheckedChildren={<CloseSmall theme="outline" size="23" fill="#fff" strokeLinejoin="bevel" />}
                 checked={checked}
                 onChange={handleBecomeProvider}
+                loading={registerBecomeProvider.isLoading}
               />
             </div>
           )}
