@@ -10,6 +10,7 @@ import {
   createService,
   getServiceDetails,
   getServiceList,
+  statisticMostUsedService,
   statisticService,
   updateService,
 } from './services/services-service'
@@ -103,5 +104,13 @@ export const servicesRouter = createRouter()
     }),
     resolve: async ({ ctx, input }) => {
       return await statisticService(ctx, input.amount)
+    },
+  })
+  .query('getStatisticUsedService', {
+    input: z.object({
+      amount: z.number(),
+    }),
+    resolve: async ({ ctx, input }) => {
+      return await statisticMostUsedService(ctx, input.amount)
     },
   })

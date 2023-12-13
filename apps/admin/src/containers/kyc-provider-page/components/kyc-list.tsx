@@ -96,7 +96,7 @@ export const KYCTable = () => {
     {
       title: 'Hình đại diện',
       dataIndex: 'avatarUrl',
-      width: '10%',
+      width: '20%',
       align: 'center',
       render(value, record, index) {
         return (
@@ -109,7 +109,7 @@ export const KYCTable = () => {
     {
       title: <div className="ml-4">Thông tin người dùng</div>,
       dataIndex: 'name',
-      width: '25%',
+      width: '30%',
       align: 'left',
       render(value, record) {
         return (
@@ -128,7 +128,7 @@ export const KYCTable = () => {
     },
     {
       title: <div className="ml-5">Trạng thái</div>,
-      width: '10%',
+      width: '15%',
       dataIndex: 'status',
       render(value) {
         return <StatusBlock status={value} />
@@ -137,7 +137,7 @@ export const KYCTable = () => {
     {
       title: <div className="flex">Ngày duyệt đơn</div>,
       dataIndex: 'updatedAt',
-      width: '12%',
+      width: '15%',
 
       render: (value) => <div>{new Date(value).toLocaleDateString('en-GB')}</div>,
     },

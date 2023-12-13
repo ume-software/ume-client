@@ -73,7 +73,7 @@ const kycForm = (record: KYCFormType, handleAction: (action: KYCAction) => void,
   }
 
   return (
-    <div className="flex flex-col w-full p-6 gap-4  bg-[#15151b] text-white border-t border-slate-700 mt-3">
+    <div className="flex flex-col p-6 gap-4  bg-[#15151b] text-white border-t border-slate-700 mt-3">
       <div>
         <div className="flex flex-col justify-start">
           <div className="text-lg font-medium">CCCD/Passport:</div>
@@ -104,8 +104,8 @@ const kycForm = (record: KYCFormType, handleAction: (action: KYCAction) => void,
                 <Image
                   src={record?.backSideCitizenIdImageUrl}
                   className="rounded-xl"
-                  width={180}
-                  height={120}
+                  width={140}
+                  height={100}
                   alt={'back side citizen id'}
                 />
               )}
@@ -118,8 +118,8 @@ const kycForm = (record: KYCFormType, handleAction: (action: KYCAction) => void,
                 <Image
                   src={record?.frontSideCitizenIdImageUrl}
                   className="rounded-xl"
-                  width={180}
-                  height={120}
+                  width={140}
+                  height={100}
                   alt={'front side citizen id'}
                 />
               )}
@@ -133,8 +133,8 @@ const kycForm = (record: KYCFormType, handleAction: (action: KYCAction) => void,
               <Image
                 src={record?.portraitImageUrl}
                 className="rounded-xl"
-                width={120}
-                height={120}
+                width={100}
+                height={100}
                 alt={'back side citizen id'}
               />
             )}
@@ -142,7 +142,7 @@ const kycForm = (record: KYCFormType, handleAction: (action: KYCAction) => void,
         </div>
       </div>
 
-      <div className="flex flex-row justify-center gap-4 mt-5">
+      <div className="flex flex-row justify-center gap-6 mt-5">
         <Button
           customCSS="px-3 w-28 py-2 bg-green-600 hover:bg-green-400 hover:text-black"
           type="button"

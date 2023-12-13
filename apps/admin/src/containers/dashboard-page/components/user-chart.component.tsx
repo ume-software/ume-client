@@ -6,12 +6,19 @@ import HighchartsReact from 'highcharts-react-official'
 import { trpc } from '~/utils/trpc'
 
 export const UserChart = () => {
-  const [totalUser, setTotalUser] = useState<any>()
+  const [userChartData, setUserChartData] = useState<any>()
   trpc.useQuery(['user.statisticTotalUser'], {
     refetchOnWindowFocus: false,
     refetchOnReconnect: 'always',
     onSuccess(data) {
-      setTotalUser(data.data)
+      const verifiedUser = data.totalUserIsVerified
+      const bannedUser = data.totalUserIsBanned
+      const normalUser = data.totalUserIsNotBannedAndIsNotVerified
+      setUserChartData([
+        { name: 'Đã xác thực', y: verifiedUser },
+        { name: 'Đã bị khóa', y: bannedUser },
+        { name: 'Chưa xác thực', y: normalUser },
+      ])
     },
     onError(error: any) {},
   })
@@ -42,10 +49,14 @@ export const UserChart = () => {
         showInLegend: true,
       },
     },
+    tooltip: {
+      pointFormat: '{series.name}: <b>{point.y}</b>',
+    },
     series: [
       {
-        name: 'Users',
-        data: totalUser,
+        name: 'Người dùng',
+        colorByPoint: true,
+        data: userChartData,
       },
     ],
     legend: {
@@ -64,5 +75,6 @@ export const UserChart = () => {
       enabled: false,
     },
   }
+
   return <HighchartsReact highcharts={Highcharts} options={userOptions} />
 }

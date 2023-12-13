@@ -1,8 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import { Tool, Wallet, WalletOne } from '@icon-park/react'
 import { useAuth } from '~/contexts/auth'
 
 import { useEffect, useState } from 'react'
 
+import { Statistic, Tooltip } from 'antd'
+import CountUp from 'react-countup'
 import { BalanceHistoryPagingResponse, BalanceHistoryResponseBalanceTypeEnum } from 'ume-service-openapi'
 
 import ColumnChart from './column-chart'
@@ -37,7 +40,7 @@ const TransactionHistory = () => {
   const limit = '10'
 
   const { user } = useAuth()
-
+  const [accountBalance, setAccountBalance] = useState<any>(0)
   const [isModalComplainVisible, setIsModalComplainVisible] = useState<boolean>(false)
   const [transactionHistory, setTransactionHistory] = useState<BalanceHistoryPagingResponse | undefined>(undefined)
   const [transactionHistoryArray, setTransactionHistoryArray] = useState<any[] | undefined>(undefined)
@@ -50,11 +53,26 @@ const TransactionHistory = () => {
   const { isLoading: isTransactionHistoryLoading } = trpc.useQuery(
     ['identity.getHistoryTransaction', { page: transactionPage, limit, order: '{"updatedAt":"desc"}' }],
     {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: 'always',
       onSuccess(data) {
         setTransactionHistory(data.data)
       },
     },
   )
+  const { isLoading, isFetching } = trpc.useQuery(['identity.account-balance'], {
+    onSuccess(data) {
+      console.log(data)
+      setAccountBalance({
+        balance: data.data.totalBalance,
+        balanceAvailable: data.data.totalBalanceAvailable,
+      })
+    },
+
+    onError(error) {
+      console.log(error)
+    },
+  })
 
   useEffect(() => {
     const monthYearAmountMap = {}
@@ -97,8 +115,7 @@ const TransactionHistory = () => {
     setTransactionHistoryArray(transactionHistoryResultArray)
   }, [transactionHistory])
 
-  console.log(seriesCharts)
-
+  const formatter = (value: number) => <CountUp end={value} separator="," />
   return (
     <>
       <ComplainTicketModal
@@ -108,6 +125,48 @@ const TransactionHistory = () => {
       <div className="w-full px-10">
         <p className="text-4xl font-bold">Biến động số dư</p>
 
+        <div className="flex flex-col my-20 sm:flex-row justify-evenly">
+          <div className="flex flex-col">
+            <div className="mb-4 text-2xl font-bold text-[#f4f4f3]">Số dư khả dụng:</div>
+            <div className="w-[400px] h-[200px] bg-[#7463f0] rounded-[50px] flex justify-center">
+              <Tooltip title="Số dư có thể sử dụng">
+                <Wallet size={50} className="my-auto text-3xl font-bold text-[#3fe14a]" theme="outline" />
+              </Tooltip>
+              <Statistic
+                className="my-auto ml-4 text-3xl font-bold"
+                value={accountBalance?.balanceAvailable}
+                valueStyle={{ color: '#f4f4f3' }}
+                suffix="VND"
+                precision={3}
+                formatter={formatter}
+                loading={isLoading || isFetching}
+              />
+            </div>
+          </div>
+          <div className="flex flex-col">
+            <div className="mb-4 text-2xl font-bold text-[#f4f4f3]">Tổng số dư:</div>
+            <div className="w-[400px] h-[200px] bg-[#7463f0] rounded-[50px] flex justify-center">
+              <Tooltip
+                title={`Số dư khả dụng + Số dư đang chờ xử lý ${
+                  accountBalance?.balance - accountBalance?.balanceAvailable > 0
+                    ? `(${accountBalance?.balance - accountBalance?.balanceAvailable})`
+                    : ''
+                }`}
+              >
+                <Tool size={50} className="my-auto text-3xl font-bold text-[#ff4343]" theme="outline" />
+              </Tooltip>
+              <Statistic
+                className="my-auto ml-4 text-3xl font-bold"
+                value={accountBalance?.balance}
+                valueStyle={{ color: '#f4f4f3' }}
+                suffix="VND"
+                precision={3}
+                formatter={formatter}
+                loading={isLoading || isFetching}
+              />
+            </div>
+          </div>
+        </div>
         <div className="flex flex-col gap-5 mt-10 space-y-10">
           {!istransactionHistoryStatisticDataLoading && seriesCharts ? (
             <ColumnChart seriesCharts={seriesCharts} />

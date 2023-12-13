@@ -48,7 +48,7 @@ const useEditableForm = ({
         >
           <div className="fixed inset-0 transition-opacity bg-gray-400 bg-opacity-50" />
         </Transition.Child>
-        <div className={`${customModalCSS ?? 'top-32'} fixed overflow-y-auto inset-0 z-50 custom-scrollbar`}>
+        <div className={`${customModalCSS ?? 'top-4'} fixed overflow-y-auto inset-0 z-50 custom-scrollbar`}>
           <div className={`flex justify-center text-center ${customModalCSS ? 'h-full' : 'min-h-fit'}  sm:p-0`}>
             <Transition.Child
               as={Fragment}
@@ -64,8 +64,8 @@ const useEditableForm = ({
                   backgroundColor ? `bg-[${backgroundColor}]` : 'bg-white'
                 }`}
               >
-                <div className="flex items-start justify-between pt-6 mx-4 rounded-t-lg dark:bg-navy-800 sm:px-5">
-                  <h3 className="flex items-center text-xl font-medium dark:text-navy-100">{title}</h3>
+                <div className="flex items-start justify-between pt-6 mx-4 rounded-t-lg sm:px-5">
+                  <h3 className="flex items-center text-xl font-medium">{title}</h3>
                   {closeButtonOnConner ?? (
                     <CloseSmall
                       onClick={handleClose}

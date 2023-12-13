@@ -76,3 +76,13 @@ export const userRouter = createRouter()
       return await statisticTotalProvider(ctx)
     },
   })
+  .query('statisticNewUser', {
+    input: z.object({
+      time: z.number(),
+      unit: z.enum([UnitQueryTime.MONTH, UnitQueryTime.YEAR]),
+      type: z.enum([StatisticNewUserType.NEW_USER, StatisticNewUserType.NEW_PROVIDER]),
+    }),
+    resolve: async ({ ctx, input }) => {
+      return await statisticNewMember(ctx, input.type, { time: input.time, unit: input.unit })
+    },
+  })
