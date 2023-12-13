@@ -158,25 +158,7 @@ export const statisticTotalUser = async (ctx) => {
       accessToken: cookies['accessToken'],
     }).adminGetTotalUser()
 
-    console.log(response)
-
-    const mappedData = Object.keys(response.data)
-      .filter((key) => key !== 'totalUser')
-      .map((key) => {
-        const formattedKey = key.charAt(0).toUpperCase() + key.slice(1)
-        return { name: formattedKey.replace('Total', ''), y: response.data[key] }
-      })
-
-    const calculateNormalUsers = (data) => {
-      return data.totalUser - data.totalUserIsBanned - data.totalUserIsVerified
-    }
-    const normalUsersCount = calculateNormalUsers(response.data)
-    mappedData.push({ name: 'NormalUsers', y: normalUsersCount })
-
-    return {
-      data: mappedData,
-      success: true,
-    }
+    return response.data
   } catch (error) {
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
@@ -195,23 +177,38 @@ export const statisticTotalProvider = async (ctx) => {
       accessToken: cookies['accessToken'],
     }).adminGetTotalProvider()
 
-    const mappedData = Object.keys(response.data)
-      .filter((key) => key !== 'totalProvider')
-      .map((key) => {
-        const formattedKey = key.charAt(0).toUpperCase() + key.slice(1)
-        return { name: formattedKey.replace('Total', ''), y: response.data[key] }
-      })
+    return response.data
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.message || 'Statistic transaction failed',
+    })
+  }
+}
 
-    const calculateNormalProviders = (data) => {
-      return data.totalProvider - data.totalProviderIsBanned
-    }
-    const normalProvidersCount = calculateNormalProviders(response.data)
-    mappedData.push({ name: 'NormalProviders', y: normalProvidersCount })
+export const statisticNewUser = async (
+  ctx,
+  query: { time: number; unit: UnitQueryTime; type: StatisticNewUserType },
+) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie ?? '')
+    let response
 
-    return {
-      data: mappedData,
-      success: true,
+    if (query.type === StatisticNewUserType.NEW_PROVIDER) {
+      response = await new AdminManageStatisticApi({
+        basePath: getEnv().baseUmeServiceURL,
+        isJsonMime: () => true,
+        accessToken: cookies['accessToken'],
+      }).adminGetNewProviderStatistic(query.time, query.unit, UnitQueryTime.MONTH)
+    } else if (query.type === StatisticNewUserType.NEW_USER) {
+      response = await new AdminManageStatisticApi({
+        basePath: getEnv().baseUmeServiceURL,
+        isJsonMime: () => true,
+        accessToken: cookies['accessToken'],
+      }).adminGetNewUserStatistic(query.time, query.unit, UnitQueryTime.MONTH)
     }
+
+    return response?.data
   } catch (error) {
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,

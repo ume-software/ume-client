@@ -58,6 +58,7 @@ export const getAccountBalance = async (ctx) => {
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
     }).getTotalBalance()
+
     return {
       data: response.data,
       success: true,

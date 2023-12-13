@@ -31,12 +31,12 @@ export const FinanceStatistic = () => {
   return (
     <div>
       <div>
-        <div className="text-2xl font-medium text-white">Tổng số nạp rút</div>
-        <div className="text-base font-normal text-gray-400">Tổng số nạp rút trong hệ thống</div>
+        <div className="text-2xl font-medium text-white">Thu nhập hệ thống:</div>
+        <div className="text-base font-normal text-gray-400">Tổng số tiền nạp rút trong hệ thống</div>
       </div>
       <div className="flex flex-col my-20 md:flex-row justify-evenly">
         <div className="flex flex-col">
-          <div className="mb-4 text-2xl font-bold text-[#f4f4f3]">Tổng số tiền đã nạp</div>
+          <div className="mb-4 text-2xl font-bold text-[#f4f4f3]">Thu nhập hệ thống:</div>
           <div className="w-[400px] h-[200px] bg-[#7463f0] rounded-[50px] flex justify-center">
             <ArrowUp size={50} className="my-auto text-3xl font-bold text-[#3fe452]" theme="outline" />
             <Statistic
@@ -51,7 +51,7 @@ export const FinanceStatistic = () => {
           </div>
         </div>
         <div className="flex flex-col">
-          <div className="mb-4 text-2xl font-bold text-[#f4f4f3]">Tổng số tiền đã rút</div>
+          <div className="mb-4 text-2xl font-bold text-[#f4f4f3]">Số tiền đã rút ra ngoài hệ thống:</div>
           <div className="w-[400px] h-[200px] bg-[#7463f0] rounded-[50px] flex justify-center">
             <ArrowDown size={50} className="my-auto text-3xl font-bold text-[#ff4343]" theme="outline" />
             <Statistic

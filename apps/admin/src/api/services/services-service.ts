@@ -9,6 +9,7 @@ import {
   UpdateServiceRequest,
 } from 'ume-service-openapi'
 
+import { UnitQueryTime } from '~/utils/constant'
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
 export const getServiceList = async (ctx, query: { page: string; select?: string; where?: string; order?: string }) => {
@@ -102,6 +103,42 @@ export const statisticService = async (ctx, amount) => {
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
     }).adminGetMostProviderServicesStatistics(amount)
+
+    return response.data
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.response.data.data.message || 'Failed to statistic service',
+    })
+  }
+}
+
+export const statisticMostUsedService = async (ctx, amount) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie ?? '')
+    const response = await new AdminManageStatisticApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).adminGetMostBookingServicesStatistics(amount)
+
+    return response.data
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.response.data.data.message || 'Failed to statistic service',
+    })
+  }
+}
+
+export const statsticWidrawalAndDeposit = async (ctx, query: { time: number; unit: UnitQueryTime }) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie ?? '')
+    const response = await new AdminManageStatisticApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).adminGetAmountMoneyDepositStatistics(query.time, query.unit, 'months')
 
     return response.data
   } catch (error) {

@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 import { createRouter } from './configurations'
+import { statsticWidrawalAndDeposit } from './services/services-service'
 import {
   approveWithdrawal,
   getBookingTransactions,
@@ -104,5 +105,17 @@ export const transactionRouter = createRouter()
     }),
     resolve: async ({ ctx, input }) => {
       return await statisticTransasction(ctx, { time: input.time, unit: input.unit })
+    },
+  })
+  .query('statisticWithdrawalDepositTransaction', {
+    input: z.object({
+      time: z.number(),
+      unit: z.enum([UnitQueryTime.MONTH, UnitQueryTime.YEAR]),
+    }),
+    resolve: async ({ ctx, input }) => {
+      return await statsticWidrawalAndDeposit(ctx, {
+        time: input.time,
+        unit: input.unit,
+      })
     },
   })

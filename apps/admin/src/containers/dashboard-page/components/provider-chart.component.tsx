@@ -12,7 +12,18 @@ export const ProviderChart = () => {
     refetchOnWindowFocus: false,
     refetchOnReconnect: 'always',
     onSuccess(data) {
-      setTotalProvider(data.data)
+      const provider = data.totalProvider
+      const proivderBanner = data.totalProviderIsBanned
+      setTotalProvider([
+        {
+          name: 'Nhà cung cấp',
+          y: provider,
+        },
+        {
+          name: 'Nhà cung cấp bị khóa',
+          y: proivderBanner,
+        },
+      ])
     },
     onError(error: any) {},
   })
@@ -46,7 +57,7 @@ export const ProviderChart = () => {
     },
     series: [
       {
-        name: 'Providers',
+        name: 'Nhà cung cấp',
         data: totalProvider,
       },
     ],
