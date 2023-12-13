@@ -2176,9 +2176,9 @@ camelcase@^6.2.0:
   integrity sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==
 
 caniuse-lite@^1.0.30001406, caniuse-lite@^1.0.30001538, caniuse-lite@^1.0.30001565:
-  version "1.0.30001568"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001568.tgz#53fa9297273c9a977a560663f48cbea1767518b7"
-  integrity sha512-vSUkH84HontZJ88MiNrOau1EBrCqEQYgkC5gIySiDlpsm8sGVrhU7Kx4V6h0tnqaHzIHZv08HlJIwPbL4XL9+A==
+  version "1.0.30001570"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001570.tgz#b4e5c1fa786f733ab78fc70f592df6b3f23244ca"
+  integrity sha512-+3e0ASu4sw1SWaoCtvPeyXp+5PsjigkSt8OXZbF9StH5pQWbxEjLAZE3n8Aup5udop1uRiKA7a4utUk/uoSpUw==
 
 chalk@^2.4.2:
   version "2.4.2"
@@ -6957,9 +6957,9 @@ ume-identity-service-openapi@latest:
     axios "^0.27.2"
 
 ume-service-openapi@latest:
-  version "1.3.59"
-  resolved "https://registry.yarnpkg.com/ume-service-openapi/-/ume-service-openapi-1.3.59.tgz#457b88426a2717f6b8a61d04c07197d59f0d2054"
-  integrity sha512-AtXyhN5xAuyqvGzYKhKI9tQfn34+M3Ui/Hg3B4Jp2HQiTAobwqxqc3LGv/pcGsxirywnKaMpauHvrcea9AOpOQ==
+  version "1.3.61"
+  resolved "https://registry.yarnpkg.com/ume-service-openapi/-/ume-service-openapi-1.3.61.tgz#2a88c09ff5e04d0e45da4ee3f070a314f83e20a9"
+  integrity sha512-HOVHQIB+IkZ9enV/wv4ZqQ7c+BLnB5KY5wUQDIKg/GDCTIjGN8CeUnjTBG++/1W7evcvfkfAhSuxVEWS3ohC1g==
   dependencies:
     axios "^0.27.2"
 

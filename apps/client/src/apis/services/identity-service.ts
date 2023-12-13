@@ -9,6 +9,7 @@ import {
   BalanceApi,
   BookingApi,
   BookingComplaintApi,
+  BookingComplaintResponseApi,
   CreateBookingComplaintRequestComplaintTypeEnum,
   CreateVoucherRequest,
   CreateWithdrawalRequestUnitCurrencyEnum,
@@ -736,7 +737,7 @@ export const bookingHistoryForUser = async (query: { limit: string; page: string
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).bookerGetBookingHistory(query.limit, query.page, '["$all"]')
+    }).bookerGetBookingHistory(query.limit, query.page, '["$all"]', undefined, '{"updatedAt":"desc"}')
     return {
       data: respone.data,
     }
@@ -755,7 +756,7 @@ export const bookingHistoryForProvider = async (query: { limit: string; page: st
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).providerGetBookingHistory(query.limit, query.page, '["$all"]')
+    }).providerGetBookingHistory(query.limit, query.page, '["$all"]', undefined, '{"updatedAt":"desc"}')
     return {
       data: respone.data,
     }
@@ -788,8 +789,84 @@ export const createComplain = async (
     }
   } catch (error) {
     throw new TRPCError({
-      code: getTRPCErrorTypeFromErrorStatus(error.respone?.status),
-      message: error.message || 'Fail to create new booking',
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.data.data.codeNumber),
+      message: error.response?.data.data.message || 'Fail to create new complain',
+    })
+  }
+}
+
+export const getBookerHistoryComplain = async (
+  query: {
+    limit: string
+    page: string
+  },
+  ctx,
+) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie)
+    const respone = await new BookingComplaintApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).bookerGetBookingComplaintHistory(query.limit, query.page, '["$all"]', undefined, '{"updatedAt":"desc"}')
+    return {
+      data: respone.data,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.data.data.codeNumber),
+      message: error.response?.data.data.message || 'Fail to get booker complain history',
+    })
+  }
+}
+
+export const getProviderHistoryComplain = async (
+  query: {
+    limit: string
+    page: string
+  },
+  ctx,
+) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie)
+    const respone = await new BookingComplaintApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).providerGetBookingComplaintHistory(query.limit, query.page, '["$all"]', undefined, '{"updatedAt":"desc"}')
+    return {
+      data: respone.data,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.data.data.codeNumber),
+      message: error.response?.data.data.message || 'Fail to get provider complain history',
+    })
+  }
+}
+
+export const responseComplain = async (
+  query: {
+    bookingComplaintId: string
+    responseMessage: string
+    attachments?: AttachmentRequest[]
+  },
+  ctx,
+) => {
+  try {
+    const cookies = parse(ctx.req.headers.cookie)
+    const respone = await new BookingComplaintResponseApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).providerCreateBookingComplaintResponse(query)
+    return {
+      data: respone.data,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.data.data.codeNumber),
+      message: error.response?.data.data.message || 'Fail to create new complain',
     })
   }
 }

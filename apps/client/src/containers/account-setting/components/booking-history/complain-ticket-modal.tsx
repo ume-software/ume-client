@@ -59,6 +59,12 @@ const ComplainTicketModal = ({
 
   const createComplain = trpc.useMutation(['identity.createComplain'])
 
+  useEffect(() => {
+    setMediaFiles(undefined)
+    setContent('')
+    setComplainType(mappingComplainTypes[0])
+  }, [bookingSelected])
+
   const isTimeMoreThan12Hours = () => {
     const bookingTime = new Date(bookingSelected?.updatedAt ?? 0)
     const timestampFromIso = bookingTime.getTime()
@@ -161,10 +167,10 @@ const ComplainTicketModal = ({
                 placement: 'bottomLeft',
               })
             },
-            onError() {
+            onError(error) {
               notification.error({
                 message: 'Gửi khiếu nại thất bại',
-                description: 'Gửi khiếu nại thất bại. Vui lòng thử lại sau!',
+                description: `${error.message ?? 'Gửi khiếu nại thất bại. Vui lòng thử lại sau!'}`,
                 placement: 'bottomLeft',
               })
             },
@@ -221,7 +227,7 @@ const ComplainTicketModal = ({
     onClose: () => setIsModalComplainVisible(false),
     show: isModalComplainVisible,
     title: <p className="text-white">Khiếu nại</p>,
-    customModalCSS: 'top-0',
+    customModalCSS: 'top-0 h-fit max-h-[98%] overflow-y-auto custom-scrollbar',
     form: (
       <>
         {isModalConfirmationVisible && confirmModal}

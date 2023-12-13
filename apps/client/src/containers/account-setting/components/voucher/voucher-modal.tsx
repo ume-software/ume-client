@@ -407,59 +407,49 @@ export default function VourcherModal(
         const responseData = await uploadImage(formData.getAll('files'))
 
         if (responseData?.data?.data?.results) {
-          try {
-            providerCreateVoucher.mutate(
-              {
-                code: form.values.vourcherCode,
-                image: String(responseData.data.data.results),
-                name: form.values.name,
-                type: form.values.typeVoucher as CreateVoucherRequestTypeEnum,
-                discountValue: Number(form.values.discountValue?.replace(/,/g, '')),
-                discountUnit: form.values.discountUnit as CreateVoucherRequestDiscountUnitEnum,
-                recipientType: form.values.audience as CreateVoucherRequestRecipientTypeEnum,
-                isHided: true,
-                description: form.values.description,
-                numberIssued: form.values.numVoucher,
-                dailyNumberIssued: form.values.numVoucherInDay,
-                numberUsablePerBooker: form.values.numUserCanUse,
-                dailyUsageLimitPerBooker: form.values.numUserCanUseInDay,
-                maximumDiscountValue: Number(form.values.minimize?.replace(/,/g, '')),
-                minimumBookingDurationForUsage: Number(form.values.minimumBookingDurationForUsage?.replace(/,/g, '')),
-                minimumBookingTotalPriceForUsage: Number(
-                  form.values.minimumBookingTotalPriceForUsage?.replace(/,/g, ''),
-                ),
-                startDate: new Date(today).toISOString(),
-                endDate: new Date(form.values.endDate).toISOString(),
-                applyISODayOfWeek: form.values.applyTime as number[],
+          providerCreateVoucher.mutate(
+            {
+              code: form.values.vourcherCode,
+              image: String(responseData.data.data.results),
+              name: form.values.name,
+              type: form.values.typeVoucher as CreateVoucherRequestTypeEnum,
+              discountValue: Number(form.values.discountValue?.replace(/,/g, '')),
+              discountUnit: form.values.discountUnit as CreateVoucherRequestDiscountUnitEnum,
+              recipientType: form.values.audience as CreateVoucherRequestRecipientTypeEnum,
+              isHided: true,
+              description: form.values.description,
+              numberIssued: form.values.numVoucher,
+              dailyNumberIssued: form.values.numVoucherInDay,
+              numberUsablePerBooker: form.values.numUserCanUse,
+              dailyUsageLimitPerBooker: form.values.numUserCanUseInDay,
+              maximumDiscountValue: Number(form.values.minimize?.replace(/,/g, '')),
+              minimumBookingDurationForUsage: Number(form.values.minimumBookingDurationForUsage),
+              minimumBookingTotalPriceForUsage: Number(form.values.minimumBookingTotalPriceForUsage?.replace(/,/g, '')),
+              startDate: new Date(today).toISOString(),
+              endDate: new Date(form.values.endDate).toISOString(),
+              applyISODayOfWeek: form.values.applyTime as number[],
+            },
+            {
+              onSuccess: (data) => {
+                if (data.success) {
+                  notification.success({
+                    message: 'Tạo khuyến mãi thành công!',
+                    description: 'Khuyến mãi đã được tạo thành công.',
+                    placement: 'bottomLeft',
+                  })
+                  clearData()
+                  utils.invalidateQueries('identity.providerGetSelfVoucher')
+                  props.handleCloseModalVoucher()
+                } else {
+                  notification.error({
+                    message: 'Tạo khuyến mãi thất bại!',
+                    description: 'Tạo không thành công.',
+                    placement: 'bottomLeft',
+                  })
+                }
               },
-              {
-                onSuccess: (data) => {
-                  if (data.success) {
-                    notification.success({
-                      message: 'Tạo khuyến mãi thành công!',
-                      description: 'Khuyến mãi đã được tạo thành công.',
-                      placement: 'bottomLeft',
-                    })
-                    clearData()
-                    utils.invalidateQueries('identity.providerGetSelfVoucher')
-                    props.handleCloseModalVoucher()
-                  } else {
-                    notification.error({
-                      message: 'Tạo khuyến mãi thất bại!',
-                      description: 'Tạo không thành công.',
-                      placement: 'bottomLeft',
-                    })
-                  }
-                },
-              },
-            )
-          } catch (error) {
-            notification.error({
-              message: 'Tạo khuyến mãi thất bại!',
-              description: 'Tạo không thành công. Vui lòng thử lại sau!',
-              placement: 'bottomLeft',
-            })
-          }
+            },
+          )
         } else {
           notification.error({
             message: 'Tạo khuyến mãi thất bại!',
@@ -509,7 +499,7 @@ export default function VourcherModal(
                   numberUsablePerBooker: form.values.numUserCanUse,
                   dailyUsageLimitPerBooker: form.values.numUserCanUseInDay,
                   maximumDiscountValue: Number(form.values.minimize?.replace(/,/g, '')),
-                  minimumBookingDurationForUsage: Number(form.values.minimumBookingDurationForUsage?.replace(/,/g, '')),
+                  minimumBookingDurationForUsage: Number(form.values.minimumBookingDurationForUsage),
                   minimumBookingTotalPriceForUsage: Number(
                     form.values.minimumBookingTotalPriceForUsage?.replace(/,/g, ''),
                   ),

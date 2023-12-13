@@ -28,8 +28,10 @@ import {
   deleteServiceProvider,
   deleteUserPaymentSystem,
   getAccountBalance,
+  getBookerHistoryComplain,
   getHistoryTransaction,
   getIdentityInfo,
+  getProviderHistoryComplain,
   getServiceAttributeByServiceSlug,
   getServiceAttributeValueByServiceAttributeId,
   getUserBySlug,
@@ -43,6 +45,7 @@ import {
   providerUpdateVoucher,
   registerBecomeProvider,
   requestRecharge,
+  responseComplain,
   transactionHistoryStatistic,
   updateServiceProvider,
   updateUserProfile,
@@ -381,5 +384,40 @@ export const identityRouter = createRouter()
     }),
     resolve: async ({ input, ctx }) => {
       return await createComplain(input, ctx)
+    },
+  })
+  .query('getBookerHistoryComplain', {
+    input: z.object({
+      limit: z.string(),
+      page: z.string(),
+    }),
+    resolve: async ({ input, ctx }) => {
+      return await getBookerHistoryComplain(input, ctx)
+    },
+  })
+  .query('getProviderHistoryComplain', {
+    input: z.object({
+      limit: z.string(),
+      page: z.string(),
+    }),
+    resolve: async ({ input, ctx }) => {
+      return await getProviderHistoryComplain(input, ctx)
+    },
+  })
+  .mutation('responseComplain', {
+    input: z.object({
+      bookingComplaintId: z.string(),
+      responseMessage: z.string(),
+      attachments: z.optional(
+        z.array(
+          z.object({
+            url: z.string(),
+            type: z.nativeEnum(AttachmentRequestTypeEnum),
+          }),
+        ),
+      ),
+    }),
+    resolve: async ({ input, ctx }) => {
+      return await responseComplain(input, ctx)
     },
   })

@@ -1,20 +1,32 @@
 $ npx tsup-node src/index.tsx --format esm,cjs --dts --external react --treeshake --minify && npx tailwindcss -i ./src/styles.css -o ./dist/styles.css
-CLI Building entry: src/index.tsx
-CLI Using tsconfig: tsconfig.json
-CLI tsup v6.7.0
-CLI Target: es6
-ESM Build start
-CJS Build start
-CJS dist/index.css 73.00 B
-CJS dist/index.js  14.08 KB
-CJS ⚡️ Build success in 104ms
-ESM dist/index.css 73.00 B
-ESM dist/index.mjs 12.87 KB
-ESM ⚡️ Build success in 104ms
-DTS Build start
-DTS ⚡️ Build success in 2149ms
-DTS dist/index.d.ts 5.29 KB
+[34mCLI[39m Building entry: src/index.tsx
+[34mCLI[39m Using tsconfig: tsconfig.json
+[34mCLI[39m tsup v6.7.0
+[34mCLI[39m Target: es6
+[34mESM[39m Build start
+[34mCJS[39m Build start
+[32mCJS[39m [1mdist\index.css [22m[32m73.00 B[39m
+[32mCJS[39m [1mdist\index.js  [22m[32m13.99 KB[39m
+[32mCJS[39m ⚡️ Build success in 323ms
+[32mESM[39m [1mdist\index.css [22m[32m73.00 B[39m
+[32mESM[39m [1mdist\index.mjs [22m[32m12.83 KB[39m
+[32mESM[39m ⚡️ Build success in 325ms
+[34mDTS[39m Build start
+[32mDTS[39m ⚡️ Build success in 7507ms
+[32mDTS[39m [1mdist\index.d.ts [22m[32m5.39 KB[39m
+node:internal/modules/cjs/loader:1147
+  throw err;
+  ^
 
-Rebuilding...
+Error: Cannot find module 'D:\FPTU\Capstone_Project\ume-client\node_modules\node_modules\tailwindcss\lib\cli.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1144:15)
+    at Module._load (node:internal/modules/cjs/loader:985:27)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:135:12)
+    at node:internal/main/run_main_module:28:49 {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
 
-Done in 101ms.
+Node.js v21.4.0
+error Command failed with exit code 1.
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
