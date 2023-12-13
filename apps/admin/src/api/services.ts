@@ -10,7 +10,7 @@ import {
   createService,
   getServiceDetails,
   getServiceList,
-  statisticProviderService,
+  statisticService,
   updateService,
 } from './services/services-service'
 
@@ -97,8 +97,11 @@ export const servicesRouter = createRouter()
       return await updateService(input, ctx)
     },
   })
-  .query('getStatisticProviderService', {
-    resolve: async ({ ctx }) => {
-      return await statisticProviderService(ctx)
+  .query('getStatisticService', {
+    input: z.object({
+      amount: z.number(),
+    }),
+    resolve: async ({ ctx, input }) => {
+      return await statisticService(ctx, input.amount)
     },
   })

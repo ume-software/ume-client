@@ -158,6 +158,8 @@ export const statisticTotalUser = async (ctx) => {
       accessToken: cookies['accessToken'],
     }).adminGetTotalUser()
 
+    console.log(response)
+
     const mappedData = Object.keys(response.data)
       .filter((key) => key !== 'totalUser')
       .map((key) => {
