@@ -60,6 +60,9 @@ export const UserChart = () => {
         color: '#628ee6',
       },
     },
+    credits: {
+      enabled: false,
+    },
   }
   return <HighchartsReact highcharts={Highcharts} options={userOptions} />
 }

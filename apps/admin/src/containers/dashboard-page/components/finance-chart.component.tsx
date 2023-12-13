@@ -30,6 +30,10 @@ export const FinanceStatistic = () => {
 
   return (
     <div>
+      <div>
+        <div className="text-2xl font-medium text-white">Tổng số nạp rút</div>
+        <div className="text-base font-normal text-gray-400">Tổng số nạp rút trong hệ thống</div>
+      </div>
       <div className="flex flex-col my-20 md:flex-row justify-evenly">
         <div className="flex flex-col">
           <div className="mb-4 text-2xl font-bold text-[#f4f4f3]">Tổng số tiền đã nạp</div>

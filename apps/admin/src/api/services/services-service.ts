@@ -94,21 +94,17 @@ export const updateService = async (input: { id: string; updateServiceRequest: U
   }
 }
 
-export const statisticProviderService = async (ctx) => {
+export const statisticService = async (ctx, amount) => {
   try {
     const cookies = parse(ctx.req.headers.cookie ?? '')
     const response = await new AdminManageStatisticApi({
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).adminGetMostProviderServicesStatistics(10, {})
+    }).adminGetMostProviderServicesStatistics(amount)
 
-    return {
-      data: response.data,
-      success: true,
-    }
+    return response.data
   } catch (error) {
-    console.log('Failed to statistic service', error.response.data)
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
       message: error.response.data.data.message || 'Failed to statistic service',
