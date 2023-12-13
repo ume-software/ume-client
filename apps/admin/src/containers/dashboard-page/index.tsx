@@ -17,13 +17,13 @@ const DasboardPage = () => {
     () => [
       {
         key: '1',
-        label: <div className="flex justify-center text-xl font-semibold w-fit ">Thống kê nạp rút</div>,
-        children: <FinanceStatistic />,
+        label: <div className="flex justify-center text-xl font-semibold w-fit ">Người dùng</div>,
+        children: <UserStatistic />,
       },
       {
         key: '2',
-        label: <div className="flex justify-center text-xl font-semibold w-fit ">Người dùng</div>,
-        children: <UserStatistic />,
+        label: <div className="flex justify-center text-xl font-semibold w-fit ">Thống kê nạp rút</div>,
+        children: <FinanceStatistic />,
       },
       {
         key: '3',

@@ -137,7 +137,7 @@ export const PendingKYCTable = () => {
     },
     {
       title: 'Giới tính',
-      dataIndex: 'gender',
+      dataIndex: 'citizenGender',
       width: '15%',
       align: 'left',
       render: (value) => (
@@ -154,7 +154,6 @@ export const PendingKYCTable = () => {
       title: <div className="flex">Ngày tạo đơn</div>,
       dataIndex: 'createdAt',
       width: '15%',
-
       render: (value) => <div className="">{new Date(value).toLocaleDateString('en-GB')}</div>,
     },
     {
