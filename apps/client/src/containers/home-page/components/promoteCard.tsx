@@ -38,8 +38,6 @@ const PromoteCard = (props: { data: FilterProviderResponse; filterAttributeValue
     }
   }, [])
 
-  console.log(props.filterAttributeValueData)
-
   const DisplayAttribute = (serviceAttribute) => {
     if ((serviceAttribute?.length ?? 0) > 0) {
       return (
@@ -56,14 +54,7 @@ const PromoteCard = (props: { data: FilterProviderResponse; filterAttributeValue
                           key={serviceAttrValues.value + indexAttrValue + index}
                           className="w-fit inline-block px-5 py-2 bg-zinc-500 text-sm font-bold rounded-lg mr-3 mb-3"
                         >
-                          {props.filterAttributeValueData && (props.filterAttributeValueData?.length ?? 0) > 0
-                            ? props.filterAttributeValueData?.find(
-                                (itemFilterAttr) => itemFilterAttr == serviceAttrValues.viValue,
-                              ) ??
-                              props.filterAttributeValueData?.find(
-                                (itemFilterAttr) => itemFilterAttr == serviceAttrValues.value,
-                              )
-                            : serviceAttrValues.viValue}
+                          {serviceAttrValues.viValue}
                         </div>
                       ),
                   )}

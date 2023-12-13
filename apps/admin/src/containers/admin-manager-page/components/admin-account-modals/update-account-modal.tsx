@@ -383,10 +383,6 @@ const UpdateAccountModal = ({ id, openValue, closeFunction }: IUpdateAdminProps)
                   marginLeft: '0.45rem',
                 }}
                 options={[
-                  // {
-                  //   value: 'SUPER_ADMIN',
-                  //   label: 'Super Admin',
-                  // },
                   {
                     value: 'ADMIN',
                     label: 'Admin',
@@ -466,6 +462,7 @@ const UpdateAccountModal = ({ id, openValue, closeFunction }: IUpdateAdminProps)
                 }
               }}
               isDisable={isDisableButton()}
+              isLoading={updateAdminAccount.isLoading}
             >
               Cập nhật
             </Button>

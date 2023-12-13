@@ -52,12 +52,19 @@ export const KYCTable = () => {
   const [record, setRecord] = useState<any>(null)
   const [total, setTotal] = useState(0)
 
+  const mappingDataWithKeys = (data) => {
+    const dataWithKeys = data.map((data) => ({
+      ...data,
+      key: data.id,
+    }))
+    return dataWithKeys
+  }
+
   const handleClose = useCallback(() => {
     setKYCModal(false)
     setRecord(null)
   }, [])
 
-  // Get kyc approved or rejected list
   const getKYCList = trpc.useQuery(
     [
       'provider.getListRequestKYC',
@@ -72,7 +79,7 @@ export const KYCTable = () => {
       refetchOnWindowFocus: false,
       refetchOnReconnect: 'always',
       onSuccess(data) {
-        setKYCList(data.data)
+        setKYCList(mappingDataWithKeys(data.data))
         setTotal(Number(data.count))
       },
       onError(error: any) {

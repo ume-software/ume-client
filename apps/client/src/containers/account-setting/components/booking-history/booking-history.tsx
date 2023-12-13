@@ -7,8 +7,6 @@ import { Tooltip } from 'antd'
 
 import BookingTableHistory from './booking-history-table'
 
-import { trpc } from '~/utils/trpc'
-
 interface TabDataProps {
   key: string
   label: string
@@ -31,8 +29,6 @@ const BookingHistory = () => {
 
   const [selectedTab, setSelectedTab] = useState<TabDataProps>(tabDatas[0])
 
-  // const {} = trpc.useQuery([''])
-
   const handleChangeTab = (item: TabDataProps) => {
     if (!userInfo?.isProvider && item.key == BookingHistoryEnum.BOOKING_FOR_PROVIDER) {
       return
@@ -40,8 +36,6 @@ const BookingHistory = () => {
       setSelectedTab(item)
     }
   }
-
-  const handleCreateComplain = (id: string) => {}
 
   return (
     <>

@@ -102,7 +102,6 @@ export const ServicesModalView = ({ idService, closeFunction, openValue }: IServ
     form.setFieldValue('serviceAttributes', serviceAttributesInit)
     form.setFieldValue('numberUsed', numberUsedInit)
     form.setFieldValue('createdAt', createdAtInit)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [servicesDetails])
 
   function closeHandleSmall() {

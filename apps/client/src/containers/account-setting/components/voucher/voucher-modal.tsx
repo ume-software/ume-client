@@ -107,7 +107,8 @@ export default function VourcherModal(
       numVoucherInDay: props.voucherSelected?.dailyNumberIssued,
       discountValue: props.voucherSelected?.discountValue?.toLocaleString() ?? '0',
       minimize: props.voucherSelected?.maximumDiscountValue?.toLocaleString() ?? '0',
-      minimumBookingTotalPriceForUsage: props.voucherSelected?.minimumBookingTotalPriceForUsage ?? 0,
+      minimumBookingTotalPriceForUsage:
+        props.voucherSelected?.minimumBookingTotalPriceForUsage?.toLocaleString() ?? '0',
       minimumBookingDurationForUsage: props.voucherSelected?.minimumBookingDurationForUsage?.toLocaleString(),
       startDate: props.voucherSelected?.startDate?.split('T')[0] ?? new Date().toISOString().split('T')[0],
       endDate: props.voucherSelected?.endDate?.split('T')[0] ?? '',
@@ -262,7 +263,10 @@ export default function VourcherModal(
           form.values.numUserCanUse == props.voucherSelected?.numberUsablePerBooker &&
           form.values.numUserCanUseInDay == props.voucherSelected?.dailyUsageLimitPerBooker &&
           form.values.startDate == props.voucherSelected?.startDate?.split('T')[0] &&
-          form.values.endDate == props.voucherSelected?.endDate?.split('T')[0]
+          form.values.endDate == props.voucherSelected?.endDate?.split('T')[0] &&
+          form.values.minimumBookingDurationForUsage == props.voucherSelected.minimumBookingDurationForUsage &&
+          Number(form.values.minimumBookingTotalPriceForUsage?.replace(/,/g, '')) ==
+            props.voucherSelected.minimumBookingTotalPriceForUsage
         ),
       )
   }, [
@@ -283,6 +287,8 @@ export default function VourcherModal(
     form.values.typeVoucher,
     form.values.vourcherCode,
     props.voucherSelected,
+    form.values.minimumBookingDurationForUsage,
+    form.values.minimumBookingTotalPriceForUsage,
   ])
 
   function clearData() {
@@ -418,6 +424,10 @@ export default function VourcherModal(
                 numberUsablePerBooker: form.values.numUserCanUse,
                 dailyUsageLimitPerBooker: form.values.numUserCanUseInDay,
                 maximumDiscountValue: Number(form.values.minimize?.replace(/,/g, '')),
+                minimumBookingDurationForUsage: Number(form.values.minimumBookingDurationForUsage?.replace(/,/g, '')),
+                minimumBookingTotalPriceForUsage: Number(
+                  form.values.minimumBookingTotalPriceForUsage?.replace(/,/g, ''),
+                ),
                 startDate: new Date(today).toISOString(),
                 endDate: new Date(form.values.endDate).toISOString(),
                 applyISODayOfWeek: form.values.applyTime as number[],
@@ -499,6 +509,10 @@ export default function VourcherModal(
                   numberUsablePerBooker: form.values.numUserCanUse,
                   dailyUsageLimitPerBooker: form.values.numUserCanUseInDay,
                   maximumDiscountValue: Number(form.values.minimize?.replace(/,/g, '')),
+                  minimumBookingDurationForUsage: Number(form.values.minimumBookingDurationForUsage?.replace(/,/g, '')),
+                  minimumBookingTotalPriceForUsage: Number(
+                    form.values.minimumBookingTotalPriceForUsage?.replace(/,/g, ''),
+                  ),
                   startDate: new Date(today).toISOString(),
                   endDate: new Date(form.values.endDate).toISOString(),
                   applyISODayOfWeek: form.values.applyTime as number[],
@@ -558,6 +572,10 @@ export default function VourcherModal(
                 numberUsablePerBooker: form.values.numUserCanUse,
                 dailyUsageLimitPerBooker: form.values.numUserCanUseInDay,
                 maximumDiscountValue: Number(form.values.minimize?.replace(/,/g, '')),
+                minimumBookingDurationForUsage: Number(form.values.minimumBookingDurationForUsage),
+                minimumBookingTotalPriceForUsage: Number(
+                  form.values.minimumBookingTotalPriceForUsage?.replace(/,/g, ''),
+                ),
                 startDate: new Date(today).toISOString(),
                 endDate: new Date(form.values.endDate).toISOString(),
                 applyISODayOfWeek: form.values.applyTime as number[],
@@ -1052,13 +1070,13 @@ export default function VourcherModal(
                     <FormInputWithAffix
                       name="minimumBookingTotalPriceForUsage"
                       className={`${
-                        form.values.minimumBookingTotalPriceForUsage ==
+                        Number(form.values.minimumBookingTotalPriceForUsage?.replace(/,/g, '')) ==
                         props.voucherSelected?.minimumBookingTotalPriceForUsage
                           ? 'bg-zinc-800'
                           : 'bg-[#413F4D]'
                       } rounded-md border-2 border-[#FFFFFF] h-8 ml-4 border-opacity-30`}
                       styleInput={`min-w-[120px] ${
-                        form.values.minimumBookingTotalPriceForUsage ==
+                        Number(form.values.minimumBookingTotalPriceForUsage?.replace(/,/g, '')) ==
                         props.voucherSelected?.minimumBookingTotalPriceForUsage
                           ? 'bg-zinc-800'
                           : 'bg-[#413F4D]'

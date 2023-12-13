@@ -1,6 +1,8 @@
 import { GenderEnum } from '~/enumVariable/enumVariable'
 
 import {
+  AttachmentRequestTypeEnum,
+  CreateBookingComplaintRequestComplaintTypeEnum,
   CreateVoucherRequestDiscountUnitEnum,
   CreateVoucherRequestRecipientTypeEnum,
   CreateVoucherRequestTypeEnum,
@@ -19,6 +21,7 @@ import {
   bookingHistoryForUser,
   cancelWithdrawRequests,
   checkSlugUser,
+  createComplain,
   createServiceProvider,
   createUserPaymentSystem,
   createWithdrawRequests,
@@ -362,5 +365,21 @@ export const identityRouter = createRouter()
     }),
     resolve: async ({ input, ctx }) => {
       return await bookingHistoryForProvider(input, ctx)
+    },
+  })
+  .mutation('createComplain', {
+    input: z.object({
+      bookingId: z.string(),
+      complaintDescription: z.string(),
+      complaintType: z.nativeEnum(CreateBookingComplaintRequestComplaintTypeEnum),
+      attachments: z.array(
+        z.object({
+          url: z.string(),
+          type: z.nativeEnum(AttachmentRequestTypeEnum),
+        }),
+      ),
+    }),
+    resolve: async ({ input, ctx }) => {
+      return await createComplain(input, ctx)
     },
   })

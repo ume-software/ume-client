@@ -22,6 +22,7 @@ const CreatePost = (props: any) => {
   const [removeMedia, setRemoveMedia] = useState<boolean>(false)
 
   const handleMediaChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setRemoveMedia(false)
     const fileInput = e.target as HTMLInputElement
     if (fileInput.files && fileInput.files.length > 0) {
       const newFiles: File[] = []
@@ -153,11 +154,19 @@ const CreatePost = (props: any) => {
               mediaFiles?.map((file: File) => {
                 if (file.type.startsWith('image/')) {
                   // eslint-disable-next-line @next/next/no-img-element
-                  return <img key={index} src={URL.createObjectURL(file)} alt="ImageUpload" />
+                  return (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      key={index}
+                      src={URL.createObjectURL(file)}
+                      alt="ImageUpload"
+                      className="rounded-lg border-2 border-opacity-30 p-2"
+                    />
+                  )
                 } else if (file.type.startsWith('video/')) {
                   const videoUrl = URL.createObjectURL(file)
                   return (
-                    <video key={index} src={videoUrl} controls>
+                    <video key={index} src={videoUrl} controls className="rounded-lg border-2 border-opacity-30 p-2">
                       Your browser does not support the video tag.
                     </video>
                   )

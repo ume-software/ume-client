@@ -1,4 +1,5 @@
 import { Down, Up } from '@icon-park/react'
+import { getItem } from '~/hooks/localHooks'
 
 import React, { useEffect, useState } from 'react'
 
@@ -11,6 +12,7 @@ const SideBarDropdown = () => {
   const router = useRouter()
   const [expandedItems, setExpandedItems] = useState<any>([])
   const [selectNavigation, setSelectNavigation] = useState<any>()
+  const adminInfo = getItem('user')
 
   function toggleItem(key) {
     setExpandedItems((prevExpanded) =>
@@ -72,20 +74,27 @@ const SideBarDropdown = () => {
                       })}
                   </div>
                 ) : (
-                  <Link
-                    href={subItem?.path!}
-                    className={`ml-3 my-2 px-4 mr-4 py-2 w-[16rem] rounded-xl text-white flex justify-between items-center ${
-                      selectNavigation === subItem.key ? 'bg-[#7463f0]' : ''
-                    }`}
-                    key={subItem.key}
-                    onClick={() => {
-                      handleSelectNavigation(subItem.key)
-                    }}
-                  >
-                    <div className="flex">
-                      {subItem.icon} <div className="ml-2 text-sm font-bold">{subItem.label}</div>
-                    </div>
-                  </Link>
+                  <>
+                    {subItem.key == 'admin-account-manager' &&
+                    adminInfo?.adminRoles?.some((item) => item.roleType !== 'SUPER_ADMIN') ? (
+                      <></>
+                    ) : (
+                      <Link
+                        href={subItem?.path!}
+                        className={`ml-3 my-2 px-4 mr-4 py-2 w-[16rem] rounded-xl text-white flex justify-between items-center ${
+                          selectNavigation === subItem.key ? 'bg-[#7463f0]' : ''
+                        }`}
+                        key={subItem.key}
+                        onClick={() => {
+                          handleSelectNavigation(subItem.key)
+                        }}
+                      >
+                        <div className="flex">
+                          {subItem.icon} <div className="ml-2 text-sm font-bold">{subItem.label}</div>
+                        </div>
+                      </Link>
+                    )}
+                  </>
                 )}
               </div>
             ))}

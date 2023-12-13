@@ -9,7 +9,6 @@ import CountUp from 'react-countup'
 import { BalanceHistoryPagingResponse, BalanceHistoryResponseBalanceTypeEnum } from 'ume-service-openapi'
 
 import ColumnChart from './column-chart'
-import ComplainTicketModal from './complain-ticket-modal'
 
 import { TableSkeletonLoader } from '~/components/skeleton-load'
 import Table from '~/components/table/table'
@@ -118,10 +117,6 @@ const TransactionHistory = () => {
   const formatter = (value: number) => <CountUp end={value} separator="," />
   return (
     <>
-      <ComplainTicketModal
-        isModalComplainVisible={isModalComplainVisible}
-        setIsModalComplainVisible={setIsModalComplainVisible}
-      />
       <div className="w-full px-10">
         <p className="text-4xl font-bold">Biến động số dư</p>
 

@@ -71,6 +71,10 @@ color: white !important;
   background-color: #292734 !important;
 }
 
+.ant-pagination-options{
+  display: none !important;
+}
+
 /* --------------------------------------------------------------- */
 /* ant-layout-sider ant-layout-sider-dark ant-layout-sider-collapsed ant-layout-sider-has-trigger fixed top-0 w-[21%] z-50 h-screen bg-umeHeader */
 /* ant-layout-sider ant-layout-sider-dark ant-layout-sider-has-trigger fixed top-0 w-[21%] z-50 h-screen bg-umeHeader */

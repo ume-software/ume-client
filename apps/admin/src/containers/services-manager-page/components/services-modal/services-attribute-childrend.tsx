@@ -63,7 +63,6 @@ const ServiceAttributes = ({
       `handleType`,
       serviceAttributesData.handleType ?? HandleServiceAttributeRequestHandleTypeEnum.Create,
     )
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [serviceAttributesData])
 
   const handleChange = (fieldName, e) => {

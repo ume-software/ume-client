@@ -398,10 +398,16 @@ const CreateAccountModal = ({ openValue, closeFunction }: ICreateAdminProps) => 
                 !isDisableButton() && 'hover:scale-110 bg-blue-500 border-blue-500'
               }`}
               onClick={(e) => {
-                openConfirmModal()
+                if (createAdminAccount.isLoading) {
+                  return
+                } else {
+                  e.preventDefault()
+                  openConfirmModal()
+                }
               }}
               type="submit"
               isDisable={isDisableButton()}
+              isLoading={createAdminAccount.isLoading}
             >
               Tạo
             </Button>

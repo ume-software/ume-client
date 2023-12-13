@@ -2,7 +2,7 @@ import { Send } from '@icon-park/react'
 import { Button, InputWithButton } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { Rate, notification } from 'antd'
 import { parse } from 'cookie'
@@ -80,7 +80,15 @@ const Service = (props: { data: ProviderServiceResponse }) => {
     }
   }
 
-  console.log(props.data)
+  useEffect(() => {
+    const serviceAttribute = props.data?.providerServiceAttributes?.flatMap(
+      (providerServiceAttribute) =>
+        providerServiceAttribute?.providerServiceAttributeValues?.map(
+          (attributeValue) => attributeValue.serviceAttributeValue?.viValue,
+        ) ?? [],
+    )
+    console.log(serviceAttribute)
+  }, [props.data])
 
   return (
     <>
