@@ -33,6 +33,7 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
   const imageInputRef = useRef<HTMLInputElement>(null)
   const [children, setChildren] = useState<JSX.Element[]>([])
   const createService = trpc.useMutation(['services.createService'])
+
   const form = useFormik({
     initialValues: {
       name: '',
@@ -339,10 +340,15 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
           {/* compent-child */}
 
           <div className="flex justify-center pb-4 mt-6 ">
-            <Button customCSS="mx-6 px-4 py-1 border-2 hover:scale-110" onClick={openConfirmModalCancel}>
+            <Button
+              isActive={false}
+              customCSS={`mx-6 px-4 py-1 border-2 hover:scale-110 bg-red-500 border-red-500`}
+              onClick={openConfirmModalCancel}
+            >
               Hủy
             </Button>
             <Button
+              isActive={false}
               customCSS={`mx-6 px-4 py-1 border-2 ${
                 form.isValid && form.values.name != '' && 'hover:scale-110 bg-[#7463F0] border-[#7463F0] '
               }

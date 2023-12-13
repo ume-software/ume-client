@@ -91,7 +91,7 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
     typeVoucher: any
     discountUnit: any
     audience: any
-    content: string // chua co trong API
+    content: string
     selectedImage: any
     status: any
     numUserCanUse: number
@@ -133,7 +133,6 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
       typeVoucher: Yup.string().required('Loại là bắt buộc'),
       discountUnit: Yup.string().required('discountUnit là bắt buộc'),
       audience: Yup.string().required('Đối tượng là bắt buộc'),
-      // email: Yup.string().email('Invalid email address').required('Email is required'),
     }),
     onSubmit: (values, { resetForm }) => {
       setSubmiting(true)
@@ -169,7 +168,6 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
         },
       })
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [endDateInit])
 
   const [adminCheckVoucherCodeExisted, setAdminCheckVoucherCodeExisted] = useState<CheckExistedResponse>()
@@ -998,6 +996,7 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                 }
               }}
               isDisable={isDisableButton()}
+              isLoading={updateVoucherAdmin.isLoading}
             >
               {'Sửa'}
             </Button>

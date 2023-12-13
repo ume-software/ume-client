@@ -175,7 +175,7 @@ const UserManager = () => {
         <div className="flex w-full justify-center pb-[200px] mt-5">
           <Pagination
             itemRender={(page, type) => (
-              <div className="text-white">
+              <div className="text-white flex items-center justify-center">
                 {type == 'prev' ? (
                   <div className="mt-1.5 ml-1">
                     <Left theme="outline" size="24" fill="#fff" />
@@ -189,11 +189,11 @@ const UserManager = () => {
                 )}
               </div>
             )}
-            pageSize={Number(LIMIT_PAGE_SIZE)}
+            pageSize={10}
             current={page}
             total={userList?.count}
-            onChange={(page) => {
-              handlePageChange(page)
+            onChange={(nextPage) => {
+              handlePageChange(nextPage)
             }}
           />
         </div>

@@ -52,23 +52,6 @@ export const SidebarNavigation: SidebarNavigationItem[] = [
         key: 'admin-account-manager',
         icon: <UserBusiness theme="outline" size="22" fill="#fff" />,
       },
-      // {
-      //   label: 'Cấu hình',
-      //   key: 'setting',
-      //   icon: <Setting theme="outline" size="22" fill="#fff" />,
-      //   children: [
-      //     {
-      //       label: 'Nền tảng giao dịch',
-      //       key: 'deposit-ratio',
-      //       path: '/dashboard',
-      //     },
-      //     {
-      //       label: 'Banner',
-      //       key: 'banner-manager',
-      //       path: '/dashboard',
-      //     },
-      //   ],
-      // },
     ],
   },
   {
@@ -95,12 +78,12 @@ export const SidebarNavigation: SidebarNavigationItem[] = [
         children: [
           {
             label: 'KYC chờ duyệt',
-            key: 'kyc-pending',
+            key: 'kyc-manager/kyc-pending',
             path: '/kyc-manager/kyc-pending',
           },
           {
             label: 'Danh sách KYC',
-            key: 'kyc-all',
+            key: 'kyc-manager/kyc-all',
             path: '/kyc-manager/kyc-all',
           },
         ],
@@ -163,7 +146,7 @@ export const SidebarNavigation: SidebarNavigationItem[] = [
     children: [
       {
         label: 'Khuyến mãi từ quản trị viên',
-        key: 'voucher-by-admin',
+        key: 'voucher-manager/voucher-by-admin',
         path: '/voucher-manager/voucher-by-admin',
         icon: <RightUser theme="outline" size="22" fill="#fff" />,
       },
@@ -174,12 +157,12 @@ export const SidebarNavigation: SidebarNavigationItem[] = [
         children: [
           {
             label: 'Tất cả khuyến mãi',
-            key: 'voucher-by-provider',
+            key: 'voucher-manager/voucher-by-provider',
             path: '/voucher-manager/voucher-by-provider',
           },
           {
             label: 'Khuyến mãi chờ duyệt',
-            key: 'approve-provider-voucher',
+            key: 'voucher-manager/approve-provider-voucher',
             path: '/voucher-manager/approve-provider-voucher',
           },
         ],
@@ -199,17 +182,4 @@ export const SidebarNavigation: SidebarNavigationItem[] = [
       },
     ],
   },
-  // {
-  //   label: 'Quản lý banner',
-  //   key: 'banner',
-  //   icon: <PictureOne theme="outline" size="24" fill="#fff" />,
-  //   children: [
-  //     {
-  //       label: 'Banner',
-  //       key: 'banner-manager',
-  //       path: '/banner-manager',
-  //       icon: <PictureOne theme="outline" size="22" fill="#fff" />,
-  //     },
-  //   ],
-  // },
 ]

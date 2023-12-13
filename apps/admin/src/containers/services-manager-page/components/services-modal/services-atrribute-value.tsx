@@ -45,7 +45,6 @@ export const ServiceAttributeValues = ({
       `handleType`,
       serviceAttributeValuesData.handleType ?? HandleServiceAttributeValueRequestHandleTypeEnum.Update,
     )
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [serviceAttributeValuesData])
   const handleChange = (fieldName, e) => {
     form.handleChange(e)

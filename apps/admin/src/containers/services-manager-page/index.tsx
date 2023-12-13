@@ -136,7 +136,11 @@ const ServicesManagerPage = () => {
       <div className="pb-10">
         <div className="flex justify-between">
           <span className="content-title">Quản Lý Dịch Vụ</span>
-          <Button customCSS="bg-[#7463f0] px-3 rounded-2xl active:bg-gray-600 py-2" onClick={addServicesHandler}>
+          <Button
+            isActive={false}
+            customCSS="bg-[#7463f0] px-3 rounded-2xl active:bg-gray-600 py-2"
+            onClick={addServicesHandler}
+          >
             <Plus theme="outline" size="24" fill="#fff" />
             Thêm dịch vụ
           </Button>

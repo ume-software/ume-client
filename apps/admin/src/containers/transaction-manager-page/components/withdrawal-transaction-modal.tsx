@@ -103,7 +103,7 @@ const WithdrawalTransactionModal = ({ id, openValue, closeFunction }: IWithdrawT
     form.setFieldValue('status', status)
   }
   function isDisableButton() {
-    return !form.isValid || form.values.status == ''
+    return !form.isValid || form.values.feedback == ''
   }
   const uploadImage = async () => {
     let imageUrl = ''
@@ -295,10 +295,16 @@ const WithdrawalTransactionModal = ({ id, openValue, closeFunction }: IWithdrawT
                             !isDisableButton() && 'hover:scale-110 bg-blue-500 border-blue-500'
                           }`}
                           onClick={(e) => {
-                            openConfirmModal()
+                            if (approveWithdrawRequest.isLoading) {
+                              return
+                            } else {
+                              e.preventDefault()
+                              openConfirmModal()
+                            }
                           }}
                           type="submit"
                           isDisable={isDisableButton()}
+                          isLoading={approveWithdrawRequest.isLoading}
                         >
                           Xác minh
                         </Button>
