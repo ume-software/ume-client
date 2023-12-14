@@ -70,7 +70,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const utils = trpc.useContext()
 
   if (typeof window !== 'undefined') {
-    console.log('You are on the browser')
     accessToken = sessionStorage.getItem('accessToken')
   }
 

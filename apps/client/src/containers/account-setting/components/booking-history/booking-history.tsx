@@ -37,7 +37,6 @@ const BookingHistory = () => {
     },
     onError() {
       sessionStorage.removeItem('accessToken')
-      sessionStorage.removeItem('refeshToken')
     },
     enabled: isNil(userInfo),
   })

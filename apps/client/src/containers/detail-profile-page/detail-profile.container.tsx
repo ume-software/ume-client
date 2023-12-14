@@ -138,7 +138,6 @@ const DetailProfileContainer = () => {
     },
     onError() {
       sessionStorage.removeItem('accessToken')
-      sessionStorage.removeItem('refeshToken')
     },
     enabled: isNil(userInfo),
   })

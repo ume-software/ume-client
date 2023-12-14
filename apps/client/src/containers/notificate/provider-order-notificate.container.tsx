@@ -24,7 +24,6 @@ const OrderNotificationForProvider = () => {
     },
     onError() {
       sessionStorage.removeItem('accessToken')
-      sessionStorage.removeItem('refeshToken')
     },
     enabled: isNil(userInfo),
   })
