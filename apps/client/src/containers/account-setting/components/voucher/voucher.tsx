@@ -75,9 +75,6 @@ const Voucher = () => {
           <p>{voucherArray[8]}</p>
           <p className="opacity-30">{voucherArray[6]}</p>
         </span>,
-        <span key={voucherArray[0] + 'description'} className="w-96 pl-6 line-clamp-3">
-          {voucherArray[9]}
-        </span>,
         voucherArray[16],
         new Date(voucherArray[22]).toLocaleDateString('en-GB'),
         new Date(voucherArray[23]).toLocaleDateString('en-GB'),
@@ -243,7 +240,7 @@ const Voucher = () => {
             </div>
             {!isVoucherLoading && voucherForProviderArray ? (
               <Table
-                dataHeader={['Tên', 'Mô tả', 'Loại', 'Bắt đầu', 'Kết thúc', 'Trạng thái', 'Đối tượng', 'Kích hoạt']}
+                dataHeader={['Tên', 'Loại', 'Bắt đầu', 'Kết thúc', 'Trạng thái', 'Đối tượng', 'Kích hoạt']}
                 dataBody={voucherForProviderArray}
                 page={page}
                 setPage={setPage}

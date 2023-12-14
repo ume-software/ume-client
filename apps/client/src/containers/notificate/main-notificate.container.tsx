@@ -30,7 +30,6 @@ const MainNotificate = () => {
     },
     onError() {
       sessionStorage.removeItem('accessToken')
-      sessionStorage.removeItem('refeshToken')
     },
     enabled: isNil(userInfo),
   })

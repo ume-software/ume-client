@@ -324,10 +324,10 @@ const EditProfile = () => {
           >
             <div className="flex items-center justify-start w-full gap-24">
               <div className="relative p-2 bg-gray-700 rounded-lg">
-                <div className="w-[250px] h-[300px]">
+                <div className="w-[200px] h-[250px] ">
                   <Image
-                    className="rounded-lg"
                     layout="fill"
+                    className="rounded-lg"
                     objectFit="cover"
                     src={
                       selectedImage.avatarURL
@@ -339,8 +339,8 @@ const EditProfile = () => {
                     alt="Personal Image"
                   />
                 </div>
-                <div className="absolute bottom-0 right-0 p-2 rounded-full bg-zinc-800 hover:bg-gray-700">
-                  <Pencil theme="filled" size="25" fill="#FFFFFF" strokeLinejoin="bevel" />
+                <div className="absolute p-2 rounded-full bottom-2 right-4 bg-zinc-800 hover:bg-gray-700">
+                  <Pencil theme="filled" size="22" fill="#FFFFFF" strokeLinejoin="bevel" />
                   <input
                     className="absolute top-0 left-0 z-20 w-full h-full opacity-0"
                     type="file"
@@ -372,7 +372,7 @@ const EditProfile = () => {
                   </div>
                   <div className="space-y-2">
                     <label className="flex items-end gap-3">
-                      Đường dẫn của bạn{' '}
+                      Đường dẫn của bạn
                       {!userSettingData.data?.slug && (
                         <p className="text-xs font-semibold text-red-600 opacity-80">
                           *( Chỉ được cập nhật một lần duy nhất )
@@ -388,7 +388,7 @@ const EditProfile = () => {
                           ? 'border border-white border-opacity-30'
                           : '!border-none !hover:border-none !focus:border-none outline-0'
                       }`}
-                      placeholder="nguyen_van_a"
+                      placeholder="@ume_official"
                       value={form.values.slug}
                       onChange={(e) => {
                         const updatedValue = e.target.value.replace(/ /g, '-')
