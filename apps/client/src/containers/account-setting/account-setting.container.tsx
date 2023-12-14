@@ -10,6 +10,7 @@ import { Tooltip } from 'antd'
 import Image from 'next/legacy/image'
 import { useRouter } from 'next/router'
 import { Swiper, SwiperSlide } from 'swiper/react'
+import { UserInformationResponse } from 'ume-service-openapi'
 
 import BecomeProvider from './components/become-provider/become-provider'
 import BookingHistory from './components/booking-history/booking-history'
@@ -19,6 +20,8 @@ import EditProfile from './components/edit-profile/edit-profile'
 import TransactionHistory from './components/transaction-history/transaction-history'
 import Voucher from './components/voucher/voucher'
 import Withdraw from './components/withdraw/withdraw'
+
+import { trpc } from '~/utils/trpc'
 
 interface SettingTypeProps {
   key: string
