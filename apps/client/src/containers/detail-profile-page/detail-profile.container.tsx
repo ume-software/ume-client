@@ -22,6 +22,7 @@ import { Fragment, ReactElement, useEffect, useState } from 'react'
 
 import { ConfigProvider, Tooltip, message, theme } from 'antd'
 import { parse } from 'cookie'
+import { isNil } from 'lodash'
 import Image from 'next/legacy/image'
 import { useRouter } from 'next/router'
 import {
@@ -129,7 +130,18 @@ const DetailProfileContainer = () => {
   const slug = router.query
 
   const accessToken = parse(document.cookie).accessToken
-  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
+
+  const [userInfo, setUserInfo] = useState<UserInformationResponse>()
+  trpc.useQuery(['identity.identityInfo'], {
+    onSuccess(data) {
+      setUserInfo(data.data)
+    },
+    onError() {
+      sessionStorage.removeItem('accessToken')
+      sessionStorage.removeItem('refeshToken')
+    },
+    enabled: isNil(userInfo),
+  })
 
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
 
@@ -342,23 +354,23 @@ const DetailProfileContainer = () => {
                         </div>
                       </Tooltip>
                     </div>
-                    <div className="lg:flex lg:space-y-0 space-y-2 items-center gap-3">
+                    <div className="items-center gap-3 space-y-2 lg:flex lg:space-y-0">
                       <div
-                        className="w-fit flex items-center gap-2 p-2 bg-gray-700 rounded-full cursor-pointer hover:underline decoration-solid decoration-2"
+                        className="flex items-center gap-2 p-2 bg-gray-700 rounded-full cursor-pointer w-fit hover:underline decoration-solid decoration-2"
                         onClick={() => setIsFollowerModalVisible(true)}
                         onKeyDown={() => {}}
                       >
                         Người theo dõi: {providerDetail?.followerAmount}
                       </div>
                       <div
-                        className="w-fit flex items-center gap-2 p-2 bg-gray-700 rounded-full cursor-pointer hover:underline decoration-solid decoration-2"
+                        className="flex items-center gap-2 p-2 bg-gray-700 rounded-full cursor-pointer w-fit hover:underline decoration-solid decoration-2"
                         onClick={() => setIsFollowingModalVisible(true)}
                         onKeyDown={() => {}}
                       >
                         <div>Đang theo dõi: {providerDetail?.followingAmount}</div>
                       </div>
                     </div>
-                    <div className="mt-2 flex items-center gap-2">
+                    <div className="flex items-center gap-2 mt-2">
                       <>
                         {currentBookingForProviderData &&
                           (((currentBookingForProviderData[0]?.providerService?.provider as any)?.slug ??
@@ -510,7 +522,7 @@ const DetailProfileContainer = () => {
                       leaveFrom="transform opacity-100 scale-100"
                       leaveTo="transform opacity-0 scale-95"
                     >
-                      <Menu.Items className="absolute right-0 p-2 origin-top-right bg-umeHeader divide-y divide-gray-200 divide-opacity-30 rounded-md shadow-lg w-fit top-7 ring-1 ring-black ring-opacity-30 focus:outline-none">
+                      <Menu.Items className="absolute right-0 p-2 origin-top-right divide-y divide-gray-200 rounded-md shadow-lg bg-umeHeader divide-opacity-30 w-fit top-7 ring-1 ring-black ring-opacity-30 focus:outline-none">
                         <div className="flex flex-col gap-2 w-max">
                           {moreButtonDatas.map((item) => (
                             <Fragment key={item.key}>
@@ -523,7 +535,7 @@ const DetailProfileContainer = () => {
                                     }}
                                     onKeyDown={() => {}}
                                   >
-                                    <div className="flex items-center justify-between gap-2 rounded-md duration-300 scale-x-100 group-hover:scale-x-95 group-hover:-translate-x-2">
+                                    <div className="flex items-center justify-between gap-2 duration-300 scale-x-100 rounded-md group-hover:scale-x-95 group-hover:-translate-x-2">
                                       <div>{item.label}</div>
                                       {item.icon}
                                     </div>
@@ -539,7 +551,7 @@ const DetailProfileContainer = () => {
                                   }}
                                   onKeyDown={() => {}}
                                 >
-                                  <div className="flex items-center justify-between gap-2 rounded-md duration-300 scale-x-100 group-hover:scale-x-95 group-hover:-translate-x-2">
+                                  <div className="flex items-center justify-between gap-2 duration-300 scale-x-100 rounded-md group-hover:scale-x-95 group-hover:-translate-x-2">
                                     <div>{item.label}</div>
                                     {item.icon}
                                   </div>
@@ -589,7 +601,7 @@ const DetailProfileContainer = () => {
           </div>
           <div className="p-5">
             <span className="text-white">
-              <div className="min-h-screen flex justify-center my-10">
+              <div className="flex justify-center min-h-screen my-10">
                 {providerDetail?.isProvider && selectedTab.key == 'Service' && <InformationTab data={providerDetail} />}
                 {selectedTab.key == 'Album' && <AlbumTab data={providerDetail!} />}
                 {selectedTab.key == 'Post' && <PostTab providerId={providerDetail?.slug ?? providerDetail?.id ?? ''} />}

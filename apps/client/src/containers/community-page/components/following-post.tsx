@@ -2,7 +2,8 @@ import { useAuth } from '~/contexts/auth'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import { PostResponse } from 'ume-service-openapi'
+import { isNil } from 'lodash'
+import { PostResponse, UserInformationResponse } from 'ume-service-openapi'
 
 import CommunityPost from './community-post'
 
@@ -14,7 +15,18 @@ const FollowingPost = () => {
   const [suggestPostData, setSuggestPostData] = useState<PostResponse[] | undefined>(undefined)
   const [scrollPosition, setScrollPosition] = useState(0)
 
-  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
+  const [userInfo, setUserInfo] = useState<UserInformationResponse>()
+  trpc.useQuery(['identity.identityInfo'], {
+    onSuccess(data) {
+      setUserInfo(data.data)
+    },
+    onError() {
+      sessionStorage.removeItem('accessToken')
+      sessionStorage.removeItem('refeshToken')
+    },
+    enabled: isNil(userInfo),
+  })
+
   const { isAuthenticated } = useAuth()
 
   const containerRef = useRef<HTMLDivElement>(null)

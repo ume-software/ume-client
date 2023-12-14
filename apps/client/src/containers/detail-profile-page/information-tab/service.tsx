@@ -8,7 +8,7 @@ import { Rate, notification } from 'antd'
 import { parse } from 'cookie'
 import Image from 'next/legacy/image'
 import { useRouter } from 'next/router'
-import { ProviderServiceResponse } from 'ume-service-openapi'
+import { ProviderServiceResponse, UserInformationResponse } from 'ume-service-openapi'
 
 import { CommentSkeletonLoader } from '~/components/skeleton-load'
 
@@ -24,7 +24,18 @@ const Service = (props: { data: ProviderServiceResponse }) => {
   const slug = router.query
 
   const accessToken = parse(document.cookie).accessToken
-  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
+
+  const [userInfo, setUserInfo] = useState<UserInformationResponse>()
+  trpc.useQuery(['identity.identityInfo'], {
+    onSuccess(data) {
+      setUserInfo(data.data)
+    },
+    onError() {
+      sessionStorage.removeItem('accessToken')
+      sessionStorage.removeItem('refeshToken')
+    },
+    enabled: isNil(userInfo),
+  })
 
   const feedbackGame =
     trpc.useQuery(['booking.getFeedbackServiceById', String(props.data.id ?? '')], {
@@ -175,3 +186,6 @@ const Service = (props: { data: ProviderServiceResponse }) => {
   )
 }
 export default Service
+function isNil(userInfo: any): boolean | undefined {
+  throw new Error('Function not implemented.')
+}

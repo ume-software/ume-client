@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 
 import { parse } from 'cookie'
-import { BookingHistoryPagingResponse } from 'ume-service-openapi'
+import { isNil } from 'lodash'
+import { BookingHistoryPagingResponse, UserInformationResponse } from 'ume-service-openapi'
 
 import { trpc } from '~/utils/trpc'
 
@@ -18,7 +19,17 @@ const getCurrentBookingForUserData = (): BookingHistoryPagingResponse['row'] | u
 }
 
 const getCurrentBookingForProviderData = (): BookingHistoryPagingResponse['row'] | undefined => {
-  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
+  const [userInfo, setUserInfo] = useState<UserInformationResponse>()
+  trpc.useQuery(['identity.identityInfo'], {
+    onSuccess(data) {
+      setUserInfo(data.data)
+    },
+    onError() {
+      sessionStorage.removeItem('accessToken')
+      sessionStorage.removeItem('refeshToken')
+    },
+    enabled: isNil(userInfo),
+  })
   const accessToken = parse(document.cookie).accessToken
 
   const { data: getCurrentBookingForProviderData } = trpc.useQuery(['booking.getCurrentBookingForProvider'], {
@@ -80,6 +91,6 @@ const BookingCountdown = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bookingData, currentBookingForUserData, currentBookingForProviderData])
 
-  return <div className="text-center p-2 bg-gray-700 rounded-full">Thời gian còn lại: {remainingTime}</div>
+  return <div className="p-2 text-center bg-gray-700 rounded-full">Thời gian còn lại: {remainingTime}</div>
 }
 export { BookingCountdown, getCurrentBookingForUserData, getCurrentBookingForProviderData }

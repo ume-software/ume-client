@@ -11,9 +11,10 @@ import { useAuth } from '~/contexts/auth'
 import React, { Fragment, ReactElement, useContext, useEffect, useState } from 'react'
 
 import { parse } from 'cookie'
-import { isNil } from 'lodash'
+import { isNil, set } from 'lodash'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
+import { UserInformationResponse } from 'ume-service-openapi'
 
 import { SocketContext } from '../layouts/app-layout/app-layout'
 import { DropDownMenu } from './drop-down.component'
@@ -36,14 +37,14 @@ export const Header: React.FC = React.memo(() => {
   const { socketContext } = useContext(SocketContext)
   const [isModalLoginVisible, setIsModalLoginVisible] = React.useState(false)
 
-  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
   const accessToken = parse(document.cookie).accessToken
   const { login } = useAuth()
-
   const utils = trpc.useContext()
 
+  const [userInfo, setUserInfo] = useState<UserInformationResponse>()
   trpc.useQuery(['identity.identityInfo'], {
     onSuccess(data) {
+      setUserInfo(data.data)
       login({ ...data.data })
     },
     onError() {

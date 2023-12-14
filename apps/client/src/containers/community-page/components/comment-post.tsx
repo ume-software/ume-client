@@ -6,8 +6,10 @@ import { useAuth } from '~/contexts/auth'
 import { Dispatch, SetStateAction, useEffect, useId, useRef, useState } from 'react'
 
 import { parse } from 'cookie'
+import { isNil } from 'lodash'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
+import { UserInformationResponse } from 'ume-service-openapi'
 
 import { LoginModal } from '~/components/header/login-modal.component'
 import { CommentSkeletonLoader } from '~/components/skeleton-load'
@@ -27,7 +29,18 @@ const CommmentPost = (props: CommentPostProps) => {
   const [commnetPostData, setCommnetPostData] = useState<any>([])
   const [page, setPage] = useState<string>('1')
 
-  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
+  const [userInfo, setUserInfo] = useState<UserInformationResponse>()
+
+  trpc.useQuery(['identity.identityInfo'], {
+    onSuccess(data) {
+      setUserInfo(data.data)
+    },
+    onError() {
+      sessionStorage.removeItem('accessToken')
+      sessionStorage.removeItem('refeshToken')
+    },
+    enabled: isNil(userInfo),
+  })
   const accessToken = parse(document.cookie).accessToken
 
   const containerRef = useRef<HTMLDivElement>(null)

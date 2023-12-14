@@ -9,9 +9,10 @@ import { paymentPlat } from '~/enumVariable/platform'
 import { useEffect, useId, useState } from 'react'
 
 import { notification } from 'antd'
+import { isNil } from 'lodash'
 import Image from 'next/legacy/image'
 import { Swiper, SwiperSlide } from 'swiper/react'
-import { UserPaymentSystemResponse } from 'ume-service-openapi'
+import { UserInformationResponse, UserPaymentSystemResponse } from 'ume-service-openapi'
 
 import UserPaymentPlatform from './user-payment-platform'
 import UserRequestWithdraw from './user-request-withdraw'
@@ -37,7 +38,17 @@ const mappingStatusWithdrawWithdraw: IEnumType[] = [
 
 const Withdraw = () => {
   const index_id = useId()
-  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
+  const [userInfo, setUserInfo] = useState<UserInformationResponse>()
+  trpc.useQuery(['identity.identityInfo'], {
+    onSuccess(data) {
+      setUserInfo(data.data)
+    },
+    onError() {
+      sessionStorage.removeItem('accessToken')
+      sessionStorage.removeItem('refeshToken')
+    },
+    enabled: isNil(userInfo),
+  })
 
   const [actionModal, setActionModal] = useState(ActionEnum.CREATE)
   const [isModalVisible, setIsModalVisible] = useState(false)
@@ -129,11 +140,11 @@ const Withdraw = () => {
       const newWithdrawArray = [
         (withdrawReqArray[14] as any).platform,
         (withdrawReqArray[14] as any).platformAccount,
-        <span key={index_id + '1'} className="flex justify-center items-center gap-1">
+        <span key={index_id + '1'} className="flex items-center justify-center gap-1">
           {((withdrawReqArray[5] ?? 0) as any).toLocaleString('en-US')}
           <p className="text-xs italic"> đ</p>
         </span>,
-        <span key={index_id + '2'} className="flex justify-center items-center gap-1">
+        <span key={index_id + '2'} className="flex items-center justify-center gap-1">
           {(withdrawReqArray[4] as any).toLocaleString('en-US')}
           <p className="text-xs italic"> VND</p>
         </span>,
@@ -258,14 +269,14 @@ const Withdraw = () => {
     customModalCSS: `${!(withdrawDetail?.status == 'PENDING') ? 'top-10 h-[90vh] ' : 'top-32 h-fit'} min-w-[500px]`,
     title: <p className="text-white">Chi tiết yêu cầu</p>,
     form: (
-      <div className="h-full mt-3 p-6 overflow-y-auto custom-scrollbar">
+      <div className="h-full p-6 mt-3 overflow-y-auto custom-scrollbar">
         {withdrawDetail && (
           <>
-            <div className="flex justify-between items-start pb-5 border-b-2 border-white border-opacity-30">
+            <div className="flex items-start justify-between pb-5 border-b-2 border-white border-opacity-30">
               <div className="flex items-center gap-2">
                 <div className="relative w-[100px] h-[100px]">
                   <Image
-                    className="absolute rounded-xl pointer-events-none object-cover"
+                    className="absolute object-cover pointer-events-none rounded-xl"
                     layout="fill"
                     src={
                       paymentPlat.find((paymentPlat) => paymentPlat.key == withdrawDetail.userPaymentSystem.platform)
@@ -274,7 +285,7 @@ const Withdraw = () => {
                     alt={withdrawDetail.userPaymentSystem.platform}
                   />
                 </div>
-                <div className="text-white space-y-3">
+                <div className="space-y-3 text-white">
                   <span className="flex gap-3">
                     <p className="text-white opacity-30">Nền tảng:</p> {withdrawDetail.userPaymentSystem.platform}
                   </span>
@@ -304,7 +315,7 @@ const Withdraw = () => {
                 </p>
               </div>
             </div>
-            <div className="mt-5 text-white space-y-5">
+            <div className="mt-5 space-y-5 text-white">
               <div className="flex justify-between py-1">
                 <span className="flex items-center gap-1">
                   <p className="text-white opacity-30">Số tiền rút: </p>{' '}
@@ -321,19 +332,19 @@ const Withdraw = () => {
                   <p className="text-xs italic"> VND</p>
                 </span>
               </div>
-              <div className="flex justify-between items-center py-1">
+              <div className="flex items-center justify-between py-1">
                 <span>
-                  <p className="text-white opacity-30 pb-1">Ngày tạo:</p>
+                  <p className="pb-1 text-white opacity-30">Ngày tạo:</p>
                   {new Date(withdrawDetail.createdAt).toLocaleString('en-US')}
                 </span>
                 <span>
-                  <p className="text-white opacity-30 pb-1">Ngày cập nhật:</p>
+                  <p className="pb-1 text-white opacity-30">Ngày cập nhật:</p>
                   {new Date(withdrawDetail.updatedAt).toLocaleString('en-US')}
                 </span>
               </div>
             </div>
             {!(withdrawDetail?.status == 'PENDING') && (
-              <div className="mt-5 text-white space-y-5">
+              <div className="mt-5 space-y-5 text-white">
                 <p className="text-white opacity-30">Hình ảnh chuyển tiền</p>
                 <div className="flex justify-center">
                   <div
@@ -342,7 +353,7 @@ const Withdraw = () => {
                     onKeyDown={() => {}}
                   >
                     <Image
-                      className="absolute rounded-xl pointer-events-none object-cover"
+                      className="absolute object-cover pointer-events-none rounded-xl"
                       layout="fill"
                       src={withdrawDetail?.billImageUrl ?? ImgForEmpty}
                       alt={'Bill widthdraw'}
@@ -353,7 +364,7 @@ const Withdraw = () => {
             )}
 
             {withdrawDetail?.status == 'PENDING' && (
-              <div className="flex justify-center mt-10 py-3 gap-5">
+              <div className="flex justify-center gap-5 py-3 mt-10">
                 <Button
                   customCSS={`text-md p-3 hover:scale-105 rounded-xl`}
                   type="button"
@@ -385,7 +396,7 @@ const Withdraw = () => {
         {isViewBillImage && (
           <div className="w-full h-full bg-black" onClick={() => setIsViewBillImage(false)} onKeyDown={() => {}}>
             <Image
-              className="absolute top-5 bottom-5 left-5 right-5 rounded-xl pointer-events-none object-cover"
+              className="absolute object-cover pointer-events-none top-5 bottom-5 left-5 right-5 rounded-xl"
               layout="fill"
               src={withdrawDetail?.billImageUrl ?? ImgForEmpty}
               alt={'Bill widthdraw'}
@@ -416,13 +427,13 @@ const Withdraw = () => {
       {isModalWithdrawReqDetailVisible && withdrawRequestDetail}
       <div className="w-full px-10">
         <p className="text-4xl font-bold">Rút tiền</p>
-        <div className="w-full mt-10 px-5 space-y-10">
+        <div className="w-full px-5 mt-10 space-y-10">
           <div className="flex flex-col gap-10">
             <div className="space-y-5">
-              <div className="w-full flex justify-between items-end">
+              <div className="flex items-end justify-between w-full">
                 {(userPaymentPlatformData?.data?.row?.length ?? 0) > 0 && (
                   <>
-                    <p className="text-md font-semibold">Tài khoản rút tiền</p>
+                    <p className="font-semibold text-md">Tài khoản rút tiền</p>
                     <Button
                       customCSS="text-md py-2 px-5 rounded-xl hover:scale-105"
                       isActive={true}
@@ -443,10 +454,10 @@ const Withdraw = () => {
                   <Swiper spaceBetween={20} slidesPerView="auto" mousewheel={true} direction="horizontal">
                     {userPaymentPlatformData?.data?.row?.map((paymentPlatform) => (
                       <SwiperSlide
-                        className="max-w-fit duration-500 ease-in-out cursor-pointer hover:scale-105"
+                        className="duration-500 ease-in-out cursor-pointer max-w-fit hover:scale-105"
                         key={paymentPlatform.id}
                       >
-                        <div className="flex justify-between items-start border-2 border-white border-opacity-30 rounded-2xl p-3">
+                        <div className="flex items-start justify-between p-3 border-2 border-white border-opacity-30 rounded-2xl">
                           <div
                             className={`flex items-center gap-5`}
                             onClick={() => handleViewPaymentAccount(paymentPlatform)}
@@ -455,7 +466,7 @@ const Withdraw = () => {
                             <div className="relative w-[130px] h-[130px]">
                               <Image
                                 key={paymentPlatform.id}
-                                className="absolute rounded-xl pointer-events-none object-cover"
+                                className="absolute object-cover pointer-events-none rounded-xl"
                                 layout="fill"
                                 src={
                                   paymentPlat.find((paymentPlat) => paymentPlat.key == paymentPlatform.platform)
@@ -490,7 +501,7 @@ const Withdraw = () => {
                       </SwiperSlide>
                     ))}
                   </Swiper>
-                  <div className="absolute h-full flex items-center pl-3 top-0 right-0 bg-umeBackground z-10">
+                  <div className="absolute top-0 right-0 z-10 flex items-center h-full pl-3 bg-umeBackground">
                     <Button
                       customCSS={`text-sm p-2 hover:scale-105 rounded-xl`}
                       type="button"

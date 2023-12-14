@@ -10,9 +10,9 @@ const CommunityPage = (props) => {
       <Head>
         <title>UME | Cộng đồng</title>
       </Head>
-      <AppLayout {...props}>
+      <div>
         <CommunityContainer />
-      </AppLayout>
+      </div>
     </div>
   )
 }

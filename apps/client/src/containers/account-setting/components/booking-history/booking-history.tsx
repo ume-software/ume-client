@@ -4,8 +4,12 @@ import { BookingHistoryEnum } from '~/enumVariable/enumVariable'
 import { Fragment, ReactElement, useState } from 'react'
 
 import { Tooltip } from 'antd'
+import { isNil } from 'lodash'
+import { UserInformationResponse } from 'ume-service-openapi'
 
 import BookingTableHistory from './booking-history-table'
+
+import { trpc } from '~/utils/trpc'
 
 interface TabDataProps {
   key: string
@@ -25,9 +29,18 @@ const tabDatas: TabDataProps[] = [
 ]
 
 const BookingHistory = () => {
-  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
-
+  const [userInfo, setUserInfo] = useState<UserInformationResponse>()
   const [selectedTab, setSelectedTab] = useState<TabDataProps>(tabDatas[0])
+  trpc.useQuery(['identity.identityInfo'], {
+    onSuccess(data) {
+      setUserInfo(data.data)
+    },
+    onError() {
+      sessionStorage.removeItem('accessToken')
+      sessionStorage.removeItem('refeshToken')
+    },
+    enabled: isNil(userInfo),
+  })
 
   const handleChangeTab = (item: TabDataProps) => {
     if (!userInfo?.isProvider && item.key == BookingHistoryEnum.BOOKING_FOR_PROVIDER) {
@@ -40,7 +53,7 @@ const BookingHistory = () => {
   return (
     <>
       <div className="w-full px-10">
-        <div className="flex flex-row gap-10 border-b-2 border-white border-opacity-30 pb-5" style={{ zIndex: 2 }}>
+        <div className="flex flex-row gap-10 pb-5 border-b-2 border-white border-opacity-30" style={{ zIndex: 2 }}>
           {tabDatas.map((item) => (
             <Fragment key={item.key}>
               <span

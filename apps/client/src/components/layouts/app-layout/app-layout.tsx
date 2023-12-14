@@ -15,6 +15,8 @@ import {
 } from 'react'
 
 import { parse } from 'cookie'
+import { isNil } from 'lodash'
+import { UserInformationResponse } from 'ume-service-openapi'
 
 import { Header } from '~/components/header/header.component'
 import { Sidebar } from '~/components/sidebar'
@@ -61,7 +63,7 @@ export const DrawerContext = createContext<DrawerProps>({
 })
 
 export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
-  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
+  const [userInfo, setUserInfo] = useState<UserInformationResponse>()
   const accessToken = parse(document.cookie).accessToken
   const { isAuthenticated } = useAuth()
   const audioRef = useRef<HTMLAudioElement | null>(null)
@@ -75,6 +77,14 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     socketNotificateContext: [],
     socketChattingContext: [],
     socketLivestreamContext: [],
+  })
+
+  trpc.useQuery(['identity.identityInfo'], {
+    onSuccess(data) {
+      setUserInfo(data.data)
+    },
+    onError() {},
+    enabled: isNil(userInfo),
   })
 
   useEffect(() => {
