@@ -1,4 +1,4 @@
-import { PropsWithChildren, createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { PropsWithChildren, createContext, use, useContext, useEffect, useMemo, useState } from 'react'
 
 import { useRouter } from 'next/router'
 import { UserInformationResponse } from 'ume-service-openapi'
@@ -20,6 +20,7 @@ export const AuthProvider = ({ children }: AuthProviderType) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const authContextValue = useMemo(() => {
     const login = async (user: UserInformationResponse): Promise<void> => {
+      setIsAuthenticated(true)
       setUser(user)
     }
 
