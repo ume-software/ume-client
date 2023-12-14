@@ -1,4 +1,5 @@
+import { useEffect } from 'react'
+
 export const LogoutPage = () => {
-  console.log('heeee')
   return <></>
 }

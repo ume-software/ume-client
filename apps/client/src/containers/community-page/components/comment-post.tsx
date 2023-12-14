@@ -29,18 +29,8 @@ const CommmentPost = (props: CommentPostProps) => {
   const [commnetPostData, setCommnetPostData] = useState<any>([])
   const [page, setPage] = useState<string>('1')
 
-  const [userInfo, setUserInfo] = useState<UserInformationResponse>()
+  const { user } = useAuth()
 
-  trpc.useQuery(['identity.identityInfo'], {
-    onSuccess(data) {
-      setUserInfo(data.data)
-    },
-    onError() {
-      sessionStorage.removeItem('accessToken')
-      sessionStorage.removeItem('refeshToken')
-    },
-    enabled: isNil(userInfo),
-  })
   const accessToken = sessionStorage.getItem('accessToken')
 
   const containerRef = useRef<HTMLDivElement>(null)
@@ -104,8 +94,8 @@ const CommmentPost = (props: CommentPostProps) => {
                     {
                       user: {
                         slug: '',
-                        avatarUrl: userInfo?.avatarUrl,
-                        name: userInfo?.name,
+                        avatarUrl: user?.avatarUrl,
+                        name: user?.name,
                       },
                       content: comment,
                       createdAt: Date.now(),

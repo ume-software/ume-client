@@ -15,19 +15,7 @@ const FollowingPost = () => {
   const [suggestPostData, setSuggestPostData] = useState<PostResponse[] | undefined>(undefined)
   const [scrollPosition, setScrollPosition] = useState(0)
 
-  const [userInfo, setUserInfo] = useState<UserInformationResponse>()
-  trpc.useQuery(['identity.identityInfo'], {
-    onSuccess(data) {
-      setUserInfo(data.data)
-    },
-    onError() {
-      sessionStorage.removeItem('accessToken')
-      sessionStorage.removeItem('refeshToken')
-    },
-    enabled: isNil(userInfo),
-  })
-
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, user } = useAuth()
 
   const containerRef = useRef<HTMLDivElement>(null)
   const [idPostArray, setIdPostArray] = useState<string[]>([])
@@ -78,7 +66,7 @@ const FollowingPost = () => {
 
   return (
     <>
-      {userInfo ? (
+      {user ? (
         <>
           {loadingSuggestPost && suggestPostData === undefined ? (
             <PostSkeletonLoader />

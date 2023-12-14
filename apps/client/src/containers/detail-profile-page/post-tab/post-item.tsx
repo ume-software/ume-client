@@ -17,17 +17,7 @@ import { trpc } from '~/utils/trpc'
 
 const PostItem = (props: { data: PostResponse }) => {
   const { isAuthenticated } = useAuth()
-  const [userInfo, setUserInfo] = useState<UserInformationResponse>()
-  trpc.useQuery(['identity.identityInfo'], {
-    onSuccess(data) {
-      setUserInfo(data.data)
-    },
-    onError() {
-      sessionStorage.removeItem('accessToken')
-      sessionStorage.removeItem('refeshToken')
-    },
-    enabled: isNil(userInfo),
-  })
+  const { user } = useAuth()
 
   const [formPost, setFormPost] = useState<ReactNode>(<></>)
   const [titleForm, setTitleForm] = useState<ReactNode>(<></>)
@@ -106,7 +96,7 @@ const PostItem = (props: { data: PostResponse }) => {
   }
 
   const handleLikePost = () => {
-    if (isAuthenticated || !!userInfo) {
+    if (isAuthenticated || !!user) {
       if (isLikePost) {
         unLikeForPostId.mutate(props?.data?.id, {
           onSuccess: () => {
