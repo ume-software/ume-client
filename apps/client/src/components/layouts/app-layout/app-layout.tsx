@@ -94,6 +94,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           audioRef.current?.play()
           setSocketContext((prev) => ({ ...prev, socketNotificateContext: args }))
         })
+        socketInstance.socketInstanceBooking.on(getSocket().SOCKET_SERVER_EMIT.ADMIN_HANDLE_KYC, (...args) => {
+          audioRef.current?.play()
+          setSocketContext((prev) => ({ ...prev, socketNotificateContext: args }))
+        })
       }
       if (socketInstance?.socketInstanceChatting) {
         socketInstance.socketInstanceChatting.on(

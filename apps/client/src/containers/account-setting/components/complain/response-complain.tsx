@@ -7,7 +7,12 @@ import { ChangeEvent, Dispatch, SetStateAction, useEffect, useId, useRef, useSta
 
 import { notification } from 'antd'
 import Image from 'next/legacy/image'
-import { AttachmentRequestTypeEnum, BookingComplaintResponse, ThumbnailResponseTypeEnum } from 'ume-service-openapi'
+import {
+  AttachmentRequestTypeEnum,
+  BookingComplaintResponse,
+  BookingComplaintResponseComplaintStatusEnum,
+  ThumbnailResponseTypeEnum,
+} from 'ume-service-openapi'
 
 import ConfirmForm from '~/components/confirm-form/confirm-form'
 
@@ -308,8 +313,12 @@ const ResponseComplainTicketModal = ({
           </div>
 
           <div className="p-5 mt-3 text-center">
-            {isTimeMoreThan7Days() ? (
+            {isTimeMoreThan7Days() &&
+            bookingSelected?.complaintStatus == BookingComplaintResponseComplaintStatusEnum.AwaitingProviderResponse ? (
               <p className="text-lg font-bold text-red-500">Đơn này đã quá hạn khiếu nại</p>
+            ) : bookingSelected?.complaintStatus !=
+              BookingComplaintResponseComplaintStatusEnum.AwaitingProviderResponse ? (
+              <p className="text-lg font-bold text-yellow-500">Đợi admin duyệt đơn</p>
             ) : (
               <Button
                 customCSS={`!rounded-2xl w-full !text-white py-2 px-9 font-semibold text-lg text-center ${
