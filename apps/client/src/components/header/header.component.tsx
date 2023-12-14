@@ -50,7 +50,6 @@ export const Header: React.FC = React.memo(() => {
     },
     onError() {
       sessionStorage.removeItem('accessToken')
-      sessionStorage.removeItem('refeshToken')
     },
     enabled: !!accessToken,
   })

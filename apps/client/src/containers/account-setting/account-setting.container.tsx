@@ -98,7 +98,6 @@ const AccountSettingContainer = () => {
     },
     onError() {
       sessionStorage.removeItem('accessToken')
-      sessionStorage.removeItem('refeshToken')
       router.push('/')
     },
     enabled: !!accessToken,
@@ -116,7 +115,7 @@ const AccountSettingContainer = () => {
   }
 
   useEffect(() => {
-    if (!accessToken || (!isFetching && !isLoading && !userInfo)) {
+    if (!isFetching && !isLoading && !userInfo) {
       router.push('/')
     }
   }, [accessToken])
