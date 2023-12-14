@@ -1,4 +1,5 @@
 import { MoreOne, PhoneTelephone, SendOne, Videocamera } from '@icon-park/react'
+import { useAuth } from '~/contexts/auth'
 import useChatScroll from '~/hooks/useChatScroll'
 
 import { ReactNode, useContext, useEffect, useRef, useState } from 'react'
@@ -40,18 +41,7 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
   const [displayMessageTime, setDisplayMessageTime] = useState('')
   const { socketClientEmit } = useContext(SocketClientEmit)
   const { socketContext } = useContext(SocketContext)
-  const [userInfo, setUserInfo] = useState<UserInformationResponse>()
-
-  trpc.useQuery(['identity.identityInfo'], {
-    onSuccess(data) {
-      setUserInfo(data.data)
-    },
-    onError() {
-      sessionStorage.removeItem('accessToken')
-      sessionStorage.removeItem('refeshToken')
-    },
-    enabled: isNil(userInfo),
-  })
+  const { user } = useAuth()
   const accessToken = sessionStorage.getItem('accessToken')
   const utils = trpc.useContext()
   const { data: chattingMessageChannel, isLoading: loadingChattingMessageChannel } = trpc.useQuery([
@@ -66,7 +56,7 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
       utils.invalidateQueries('chatting.getMessagesByChannelId')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socketContext?.socketChattingContext, !!accessToken, !!userInfo])
+  }, [socketContext?.socketChattingContext, !!accessToken, !!user])
 
   const mappingMember: { [key: string]: MemberChatChannelResponse } = convertArrayObjectToObject(
     chattingMessageChannel?.data.members ?? [],
@@ -74,7 +64,7 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
   )
 
   const images = chattingMessageChannel?.data.members.filter((member) => {
-    return member.userId.toString() != userInfo?.id.toString()
+    return member.userId.toString() != user?.id.toString()
   })!
 
   const handleSentMessage = () => {
@@ -135,16 +125,6 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
                 </div>
               )}
             </Link>
-            {/* <div className="flex gap-2">
-              {actionButtons.map((item, index) => (
-                <div
-                  key={index}
-                  className="p-2 bg-[#413F4D] rounded-full cursor-pointer hover:bg-gray-500 active:bg-gray-400"
-                >
-                  {item.actionButton}
-                </div>
-              ))}
-            </div> */}
           </div>
           <div className="flex flex-col h-full gap-2 overflow-y-auto">
             <div className="flex gap-2 pb-5 overflow-auto border-b-2 border-[#B9B8CC] custom-scrollbar"></div>
@@ -159,7 +139,7 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
                 <div className="flex flex-col mt-5 ">
                   {chattingMessageChannel?.data.messages.map((item, index) => {
                     const sender = mappingMember[item.senderId]
-                    const isSeftMessage = sender.userId.toString() == userInfo?.id.toString()
+                    const isSeftMessage = sender.userId.toString() == user?.id.toString()
                     return (
                       <div key={index} className="px-4 py-2 mb-4">
                         <div className={`flex justify-end items-end ${!isSeftMessage ? 'flex-row-reverse' : ''}`}>

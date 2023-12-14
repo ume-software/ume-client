@@ -3,6 +3,7 @@ import { CustomDrawer } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
 import 'swiper/swiper-bundle.css'
 import Chat from '~/containers/chat/chat.container'
+import { useAuth } from '~/contexts/auth'
 
 import { useContext, useEffect, useState } from 'react'
 
@@ -31,17 +32,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
   const basePath = router.asPath.split('?')[0]
   const slug = router.query
 
-  const [userInfo, setUserInfo] = useState<UserInformationResponse>()
-  trpc.useQuery(['identity.identityInfo'], {
-    onSuccess(data) {
-      setUserInfo(data.data)
-    },
-    onError() {
-      sessionStorage.removeItem('accessToken')
-      sessionStorage.removeItem('refeshToken')
-    },
-    enabled: isNil(userInfo),
-  })
+  const { user } = useAuth()
   const accessToken = sessionStorage.getItem('accessToken')
 
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
@@ -82,7 +73,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
   }, [props.data, setChannelId])
 
   const handleChatOpen = async () => {
-    if (userInfo) {
+    if (user) {
       setChildrenDrawer(<ChatSkeleton />)
       try {
         createNewChatChannel.mutate(
@@ -114,7 +105,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
     }
   }
   const handleOrderOpen = () => {
-    if (userInfo) {
+    if (user) {
       setChildrenDrawer(<BookingProvider data={props.data} />)
     } else {
       setIsModalLoginVisible(true)
@@ -311,7 +302,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                 </div>
               ) : (
                 <>
-                  {userInfo?.id != props.data?.id ? (
+                  {user?.id != props.data?.id ? (
                     <div className="flex flex-col gap-5 my-10">
                       <CustomDrawer
                         customOpenBtn={`rounded-full text-purple-700 border-2 border-purple-700 font-semibold text-2xl cursor-pointer hover:scale-105 text-center`}

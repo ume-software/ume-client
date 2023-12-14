@@ -1,6 +1,7 @@
 import { Send } from '@icon-park/react'
 import { Button, InputWithButton } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
+import { useAuth } from '~/contexts/auth'
 
 import { useEffect, useState } from 'react'
 
@@ -24,18 +25,7 @@ const Service = (props: { data: ProviderServiceResponse }) => {
   const slug = router.query
 
   const accessToken = sessionStorage.getItem('accessToken')
-
-  const [userInfo, setUserInfo] = useState<UserInformationResponse>()
-  trpc.useQuery(['identity.identityInfo'], {
-    onSuccess(data) {
-      setUserInfo(data.data)
-    },
-    onError() {
-      sessionStorage.removeItem('accessToken')
-      sessionStorage.removeItem('refeshToken')
-    },
-    enabled: isNil(userInfo),
-  })
+  const { user } = useAuth()
 
   const feedbackGame =
     trpc.useQuery(['booking.getFeedbackServiceById', String(props.data.id ?? '')], {
@@ -148,7 +138,7 @@ const Service = (props: { data: ProviderServiceResponse }) => {
           </div>
           {userCanFeedBackProvider?.data?.id &&
           userCanFeedBackProvider?.data?.providerService?.id == props.data.id &&
-          userCanFeedBackProvider?.data?.bookerId == userInfo?.id ? (
+          userCanFeedBackProvider?.data?.bookerId == user?.id ? (
             <div className="flex items-end gap-3 bg-transparent">
               <div className="w-full">
                 <div className="p-2">

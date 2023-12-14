@@ -1,5 +1,6 @@
 import { CloseSmall, Earth, EveryUser, Lock, Plus } from '@icon-park/react'
 import { Modal } from '@ume/ui'
+import { useAuth } from '~/contexts/auth'
 
 import { ReactNode, useId, useState } from 'react'
 
@@ -40,19 +41,8 @@ const postTypeData: CommunityProps[] = [
 
 const CommunityContainer = () => {
   const index = useId()
-  const [userInfo, setUserInfo] = useState<UserInformationResponse>()
   const accessToken = sessionStorage.getItem('accessToken')
-
-  trpc.useQuery(['identity.identityInfo'], {
-    onSuccess(data) {
-      setUserInfo(data.data)
-    },
-    onError() {
-      sessionStorage.removeItem('accessToken')
-      sessionStorage.removeItem('refeshToken')
-    },
-    enabled: isNil(userInfo),
-  })
+  const { user } = useAuth()
 
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
   const [isModalVisible, setIsModalVisible] = useState(false)
@@ -89,8 +79,8 @@ const CommunityContainer = () => {
   })
 
   const handleCreatePost = () => {
-    setIsModalVisible(!!userInfo || !!accessToken)
-    setIsModalLoginVisible(!(userInfo || !!accessToken))
+    setIsModalVisible(!!user || !!accessToken)
+    setIsModalLoginVisible(!(user || !!accessToken))
   }
 
   return (
@@ -109,10 +99,10 @@ const CommunityContainer = () => {
                     <div
                       key={index}
                       className={`flex items-center p-3 rounded-xl cursor-pointer hover:bg-gray-700
-                      ${item.key == 'Following' && !userInfo && 'justify-between opacity-30'}
+                      ${item.key == 'Following' && !user && 'justify-between opacity-30'}
                       ${socialSelected.key === item.key ? 'bg-gray-700' : ''}`}
                       onClick={() => {
-                        if (item.key == 'Following' && !(!!userInfo || !!accessToken)) {
+                        if (item.key == 'Following' && !(!!user || !!accessToken)) {
                           setIsModalLoginVisible(true)
                         } else {
                           setSocialSelected(item)
@@ -126,7 +116,7 @@ const CommunityContainer = () => {
                           {item.postTypeName}
                         </p>
                       </div>
-                      {item.key == 'Following' && !(!!userInfo || !!accessToken) && (
+                      {item.key == 'Following' && !(!!user || !!accessToken) && (
                         <Lock className="justify-items-end" theme="outline" size="20" fill="#fff" />
                       )}
                     </div>
