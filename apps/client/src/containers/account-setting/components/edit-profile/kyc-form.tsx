@@ -43,6 +43,8 @@ const validate = (values: IFormValues): FormikErrors<IFormValues> => {
     errors.citizenId = 'Số CCCD/Passport phải là một số.'
   } else if (values.citizenId.length > 13) {
     errors.citizenId = 'Số CCCD/Passport không vượt quá 13 kí tự.'
+  } else if (/[-+=]/.test(values.citizenId)) {
+    errors.citizenId = 'Số CCCD/Passport không được chứa các ký tự - + =.'
   }
 
   if (values.citizenName === '') {
