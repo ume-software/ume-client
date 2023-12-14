@@ -10,9 +10,9 @@ const DetailProfilePage = (props) => {
       <Head>
         <title>UME | Provider</title>
       </Head>
-      <AppLayout {...props}>
+      <div>
         <DetailPlayerContainer />
-      </AppLayout>
+      </div>
     </>
   )
 }

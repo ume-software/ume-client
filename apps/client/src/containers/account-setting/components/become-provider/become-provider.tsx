@@ -8,7 +8,8 @@ import { Fragment, useEffect, useRef, useState } from 'react'
 
 import { Switch, notification } from 'antd'
 import { useFormik } from 'formik'
-import { UpdateProviderProfileRequestStatusEnum } from 'ume-service-openapi'
+import { isNil } from 'lodash'
+import { UpdateProviderProfileRequestStatusEnum, UserInformationResponse } from 'ume-service-openapi'
 import * as Yup from 'yup'
 
 import ServiceForm from './service-form'
@@ -44,11 +45,23 @@ const mappingStatusOfProvider: IStatus[] = [
 ]
 
 const BecomeProvider = () => {
-  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
-  const [checked, setChecked] = useState<boolean>(userInfo?.isProvider)
+  const [userInfo, setUserInfo] = useState<UserInformationResponse>()
+
+  const [checked, setChecked] = useState<boolean>(userInfo?.isProvider as boolean)
 
   const [isModalConfirmationVisible, setIsModalConfirmationVisible] = useState(false)
   const [audioSource, setAudioSource] = useState<string | undefined>(undefined)
+
+  trpc.useQuery(['identity.identityInfo'], {
+    onSuccess(data) {
+      setUserInfo(data.data)
+    },
+    onError() {
+      sessionStorage.removeItem('accessToken')
+      sessionStorage.removeItem('refeshToken')
+    },
+    enabled: isNil(userInfo),
+  })
 
   const { data: userSettingData, isLoading: isLoadingUserSettingData } = trpc.useQuery(
     ['identity.getUserBySlug', String(userInfo?.slug ?? userInfo?.id ?? '')],

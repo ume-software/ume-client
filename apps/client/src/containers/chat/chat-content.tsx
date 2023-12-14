@@ -4,9 +4,11 @@ import useChatScroll from '~/hooks/useChatScroll'
 import { ReactNode, useContext, useEffect, useRef, useState } from 'react'
 
 import { parse } from 'cookie'
+import { isNil } from 'lodash'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
 import { ChattingChannelResponse, MemberChatChannelResponse } from 'ume-chatting-service-openapi'
+import { UserInformationResponse } from 'ume-service-openapi'
 
 import { SocketClientEmit, SocketContext } from '~/components/layouts/app-layout/app-layout'
 import { CommentSkeletonLoader } from '~/components/skeleton-load'
@@ -38,7 +40,18 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
   const [displayMessageTime, setDisplayMessageTime] = useState('')
   const { socketClientEmit } = useContext(SocketClientEmit)
   const { socketContext } = useContext(SocketContext)
-  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
+  const [userInfo, setUserInfo] = useState<UserInformationResponse>()
+
+  trpc.useQuery(['identity.identityInfo'], {
+    onSuccess(data) {
+      setUserInfo(data.data)
+    },
+    onError() {
+      sessionStorage.removeItem('accessToken')
+      sessionStorage.removeItem('refeshToken')
+    },
+    enabled: isNil(userInfo),
+  })
   const accessToken = parse(document.cookie).accessToken
   const utils = trpc.useContext()
   const { data: chattingMessageChannel, isLoading: loadingChattingMessageChannel } = trpc.useQuery([
@@ -148,7 +161,7 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
                     const sender = mappingMember[item.senderId]
                     const isSeftMessage = sender.userId.toString() == userInfo?.id.toString()
                     return (
-                      <div key={index} className="py-2 px-4 mb-4">
+                      <div key={index} className="px-4 py-2 mb-4">
                         <div className={`flex justify-end items-end ${!isSeftMessage ? 'flex-row-reverse' : ''}`}>
                           <div
                             className={`max-w-xs mx-2 py-3 px-4 text-white text-lg
@@ -220,7 +233,7 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
                   onKeyDown={handleKeyPress}
                 />
                 <div
-                  className="absolute transform -translate-y-1/2 rounded-full cursor-pointer top-1/2 right-0 z-4 hover:bg-gray-500 active:bg-gray-400 p-2"
+                  className="absolute right-0 p-2 transform -translate-y-1/2 rounded-full cursor-pointer top-1/2 z-4 hover:bg-gray-500 active:bg-gray-400"
                   onClick={handleSentMessage}
                   onKeyDown={() => {}}
                 >

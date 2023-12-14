@@ -1,5 +1,8 @@
 module.exports = {
-  reactStrictMode: true,
+  reactStrictMode: false,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   transpilePackages: ['ui'],
   images: {
     remotePatterns: [

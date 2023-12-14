@@ -8,7 +8,8 @@ import { useAuth } from '~/contexts/auth'
 
 import { ReactNode, useState } from 'react'
 
-import { PostResponse } from 'ume-service-openapi'
+import { isNil } from 'lodash'
+import { PostResponse, UserInformationResponse } from 'ume-service-openapi'
 
 import { LoginModal } from '~/components/header/login-modal.component'
 
@@ -16,7 +17,17 @@ import { trpc } from '~/utils/trpc'
 
 const PostItem = (props: { data: PostResponse }) => {
   const { isAuthenticated } = useAuth()
-  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
+  const [userInfo, setUserInfo] = useState<UserInformationResponse>()
+  trpc.useQuery(['identity.identityInfo'], {
+    onSuccess(data) {
+      setUserInfo(data.data)
+    },
+    onError() {
+      sessionStorage.removeItem('accessToken')
+      sessionStorage.removeItem('refeshToken')
+    },
+    enabled: isNil(userInfo),
+  })
 
   const [formPost, setFormPost] = useState<ReactNode>(<></>)
   const [titleForm, setTitleForm] = useState<ReactNode>(<></>)
@@ -151,7 +162,7 @@ const PostItem = (props: { data: PostResponse }) => {
               onClick={() => handleOpenImageModal(props.data.id)}
               onKeyDown={() => {}}
             >
-              <p className="text-black text-lg font-semibold">{props.data.content}</p>
+              <p className="text-lg font-semibold text-black">{props.data.content}</p>
             </div>
           )}
           <div
