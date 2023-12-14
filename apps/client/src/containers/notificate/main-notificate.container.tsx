@@ -1,11 +1,14 @@
 import SystemImg from 'public/32x32/ume-logo-white.png'
+import { useAuth } from '~/contexts/auth'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { parse } from 'cookie'
+import { isNil } from 'lodash'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
-import { NoticePagingResponse, NoticeResponseTypeEnum } from 'ume-service-openapi'
+import { userInfo } from 'os'
+import { NoticePagingResponse, NoticeResponseTypeEnum, UserInformationResponse } from 'ume-service-openapi'
 
 import { NotificateSkeletonLoader } from '~/components/skeleton-load'
 import { TimeFormat } from '~/components/time-format'
@@ -18,59 +21,25 @@ interface NotificateTypeProps {
   [key: string]: any
 }
 
-const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
-
-const notificate: NotificateTypeProps[] = [
-  {
-    key: NoticeResponseTypeEnum.AdminHasApprovedKycRequest,
-    label: 'KYC của bạn đã được chấp nhận',
-    link: `/account-setting?user=${userInfo?.name}&tab=settingInformation`,
-  },
-  { key: NoticeResponseTypeEnum.AdminHasBannedProvider, label: 'Tài khoản nhà cung cấp của bạn đã bị chặn' },
-  {
-    key: NoticeResponseTypeEnum.AdminHasCompletedWithdrawalRequest,
-    label: 'Yêu cầu rút tiền của bạn đã được hoàn thành',
-    link: `/account-setting?user=${userInfo?.name}&tab=withdraw`,
-  },
-  {
-    key: NoticeResponseTypeEnum.AdminHasRejectedKycRequest,
-    label: 'KYC của bạn đã bị từ chối',
-    link: `/account-setting?user=${userInfo?.name}&tab=settingInformation`,
-  },
-  {
-    key: NoticeResponseTypeEnum.AdminHasRejectedWithdrawalRequest,
-    label: 'Yêu cầu rút tiền của bạn đã bị từ chối',
-    link: `/account-setting?user=${userInfo?.name}&tab=withdraw`,
-  },
-  {
-    key: NoticeResponseTypeEnum.AdminHasUnBannedProvider,
-    label: 'Tài khoản nhà cung cấp của bạn đã được mở khóa',
-    link: `/profile/${userInfo?.slug ?? userInfo?.id}?tab=${userInfo?.isProvider ? 'Service' : 'Album'}`,
-  },
-  {
-    key: NoticeResponseTypeEnum.BookingHasBeenDeclined,
-    label: 'Đơn thuê của bạn đã bị từ chối',
-    link: `/profile/`,
-  },
-  {
-    key: NoticeResponseTypeEnum.BookingHasBeenSucceeded,
-    label: 'Đơn thuê của bạn đã được chấp nhận',
-    link: `/profile/`,
-  },
-  { key: NoticeResponseTypeEnum.HaveBooking, label: 'Có yêu cầu thuê mới được gửi tới', link: `/profile/` },
-  { key: NoticeResponseTypeEnum.NewMessage, label: 'Bạn có tin nhắn mới' },
-  { key: NoticeResponseTypeEnum.SomeoneFollowingYou, label: 'đã theo dõi bạn', link: `/profile/` },
-]
-
 const MainNotificate = () => {
-  const accessToken = parse(document.cookie).accessToken
+  const [userInfo, setUserInfo] = useState<UserInformationResponse>()
 
+  trpc.useQuery(['identity.identityInfo'], {
+    onSuccess(data) {
+      setUserInfo(data.data)
+    },
+    onError() {
+      sessionStorage.removeItem('accessToken')
+      sessionStorage.removeItem('refeshToken')
+    },
+    enabled: isNil(userInfo),
+  })
   const [page, setPage] = useState<number>(1)
   const limit = '10'
   const [listNotificated, setListNotificated] = useState<NoticePagingResponse['row']>([])
   const [scrollPosition, setScrollPosition] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)
-
+  const accessToken = localStorage.getItem('accessToken')
   const {
     data: notificatedData,
     isLoading: loadingNotificated,
@@ -87,6 +56,50 @@ const MainNotificate = () => {
     enabled: !!accessToken,
   })
 
+  const notificate: NotificateTypeProps[] = useMemo(() => {
+    return [
+      {
+        key: NoticeResponseTypeEnum.AdminHasApprovedKycRequest,
+        label: 'KYC của bạn đã được chấp nhận',
+        link: `/account-setting?user=${userInfo?.name}&tab=settingInformation`,
+      },
+      { key: NoticeResponseTypeEnum.AdminHasBannedProvider, label: 'Tài khoản nhà cung cấp của bạn đã bị chặn' },
+      {
+        key: NoticeResponseTypeEnum.AdminHasCompletedWithdrawalRequest,
+        label: 'Yêu cầu rút tiền của bạn đã được hoàn thành',
+        link: `/account-setting?user=${userInfo?.name}&tab=withdraw`,
+      },
+      {
+        key: NoticeResponseTypeEnum.AdminHasRejectedKycRequest,
+        label: 'KYC của bạn đã bị từ chối',
+        link: `/account-setting?user=${userInfo?.name}&tab=settingInformation`,
+      },
+      {
+        key: NoticeResponseTypeEnum.AdminHasRejectedWithdrawalRequest,
+        label: 'Yêu cầu rút tiền của bạn đã bị từ chối',
+        link: `/account-setting?user=${userInfo?.name}&tab=withdraw`,
+      },
+      {
+        key: NoticeResponseTypeEnum.AdminHasUnBannedProvider,
+        label: 'Tài khoản nhà cung cấp của bạn đã được mở khóa',
+        link: `/profile/${userInfo?.slug ?? userInfo?.id}?tab=${userInfo?.isProvider ? 'Service' : 'Album'}`,
+      },
+      {
+        key: NoticeResponseTypeEnum.BookingHasBeenDeclined,
+        label: 'Đơn thuê của bạn đã bị từ chối',
+        link: `/profile/`,
+      },
+      {
+        key: NoticeResponseTypeEnum.BookingHasBeenSucceeded,
+        label: 'Đơn thuê của bạn đã được chấp nhận',
+        link: `/profile/`,
+      },
+      { key: NoticeResponseTypeEnum.HaveBooking, label: 'Có yêu cầu thuê mới được gửi tới', link: `/profile/` },
+      { key: NoticeResponseTypeEnum.NewMessage, label: 'Bạn có tin nhắn mới' },
+      { key: NoticeResponseTypeEnum.SomeoneFollowingYou, label: 'đã theo dõi bạn', link: `/profile/` },
+    ]
+  }, [])
+
   useEffect(() => {
     window.addEventListener('scroll', onScroll)
     return () => {
@@ -101,7 +114,7 @@ const MainNotificate = () => {
   }, [])
 
   useEffect(() => {
-    if (containerRef?.current && Boolean(userInfo.id)) {
+    if (containerRef?.current && Boolean(userInfo?.id)) {
       const { scrollTop, scrollHeight, clientHeight } = containerRef.current
       const isAtEnd = scrollTop + clientHeight >= scrollHeight
 
@@ -127,7 +140,7 @@ const MainNotificate = () => {
                 listNotificated.map((item) => (
                   <div
                     key={item.id}
-                    className="px-2 py-3 border-b-2 border-gray-200 border-opacity-30 rounded-t-lg hover:bg-gray-700 cursor-pointer"
+                    className="px-2 py-3 border-b-2 border-gray-200 rounded-t-lg cursor-pointer border-opacity-30 hover:bg-gray-700"
                   >
                     <Link
                       href={`${notificate.find((notiTitle) => notiTitle.key == item.type)?.link}${
@@ -161,7 +174,7 @@ const MainNotificate = () => {
                             </div>
                             <div>{notificate.find((notiTitle) => notiTitle.key == item.type)?.label}</div>
                           </div>
-                          <p className="text-end text-md font-bold opacity-30">
+                          <p className="font-bold text-end text-md opacity-30">
                             {TimeFormat({ date: item?.createdAt })}
                           </p>
                         </div>

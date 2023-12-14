@@ -6,8 +6,10 @@ import { useAuth } from '~/contexts/auth'
 import { Dispatch, SetStateAction, useEffect, useId, useRef, useState } from 'react'
 
 import { parse } from 'cookie'
+import { isNil } from 'lodash'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
+import { UserInformationResponse } from 'ume-service-openapi'
 
 import { LoginModal } from '~/components/header/login-modal.component'
 import { CommentSkeletonLoader } from '~/components/skeleton-load'
@@ -27,8 +29,9 @@ const CommmentPost = (props: CommentPostProps) => {
   const [commnetPostData, setCommnetPostData] = useState<any>([])
   const [page, setPage] = useState<string>('1')
 
-  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
-  const accessToken = parse(document.cookie).accessToken
+  const { user } = useAuth()
+
+  const accessToken = sessionStorage.getItem('accessToken')
 
   const containerRef = useRef<HTMLDivElement>(null)
   const [comment, setComment] = useState('')
@@ -91,8 +94,8 @@ const CommmentPost = (props: CommentPostProps) => {
                     {
                       user: {
                         slug: '',
-                        avatarUrl: userInfo?.avatarUrl,
-                        name: userInfo?.name,
+                        avatarUrl: user?.avatarUrl,
+                        name: user?.name,
                       },
                       content: comment,
                       createdAt: Date.now(),

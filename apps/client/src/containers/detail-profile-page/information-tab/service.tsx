@@ -1,6 +1,7 @@
 import { Send } from '@icon-park/react'
 import { Button, InputWithButton } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
+import { useAuth } from '~/contexts/auth'
 
 import { useEffect, useState } from 'react'
 
@@ -8,7 +9,7 @@ import { Rate, notification } from 'antd'
 import { parse } from 'cookie'
 import Image from 'next/legacy/image'
 import { useRouter } from 'next/router'
-import { ProviderServiceResponse } from 'ume-service-openapi'
+import { ProviderServiceResponse, UserInformationResponse } from 'ume-service-openapi'
 
 import { CommentSkeletonLoader } from '~/components/skeleton-load'
 
@@ -23,8 +24,8 @@ const Service = (props: { data: ProviderServiceResponse }) => {
   const router = useRouter()
   const slug = router.query
 
-  const accessToken = parse(document.cookie).accessToken
-  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
+  const accessToken = sessionStorage.getItem('accessToken')
+  const { user } = useAuth()
 
   const feedbackGame =
     trpc.useQuery(['booking.getFeedbackServiceById', String(props.data.id ?? '')], {
@@ -137,7 +138,7 @@ const Service = (props: { data: ProviderServiceResponse }) => {
           </div>
           {userCanFeedBackProvider?.data?.id &&
           userCanFeedBackProvider?.data?.providerService?.id == props.data.id &&
-          userCanFeedBackProvider?.data?.bookerId == userInfo?.id ? (
+          userCanFeedBackProvider?.data?.bookerId == user?.id ? (
             <div className="flex items-end gap-3 bg-transparent">
               <div className="w-full">
                 <div className="p-2">
@@ -175,3 +176,6 @@ const Service = (props: { data: ProviderServiceResponse }) => {
   )
 }
 export default Service
+function isNil(userInfo: any): boolean | undefined {
+  throw new Error('Function not implemented.')
+}

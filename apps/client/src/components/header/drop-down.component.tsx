@@ -7,12 +7,9 @@ import { Fragment } from 'react'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
 
-interface MenuProps {
-  user: any
-}
+export const DropDownMenu = () => {
+  const { logout, user } = useAuth()
 
-export const DropDownMenu = ({ user }: MenuProps) => {
-  const { logout } = useAuth()
   return (
     <Menu>
       <div>
@@ -40,7 +37,7 @@ export const DropDownMenu = ({ user }: MenuProps) => {
           <Menu.Item as="div">
             {({ active }) => (
               <Link
-                href={`/profile/${user?.slug ?? user?.id}?tab=${user.isProvider ? 'Service' : 'Album'}`}
+                href={`/profile/${user?.slug || user?.id}?tab=${user?.isProvider ? 'Service' : 'Album'}`}
                 className={`${
                   active ? 'bg-slate-700' : 'text-gray-900'
                 } group flex w-full items-center rounded-md px-2 text-white py-2 text-sm`}

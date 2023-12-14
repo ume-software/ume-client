@@ -1,13 +1,27 @@
 import { CheckSmall, CloseSmall } from '@icon-park/react'
 
+import { useState } from 'react'
+
 import { Switch } from 'antd'
+import { isNil } from 'lodash'
+import { UserInformationResponse } from 'ume-service-openapi'
 
 import { CommentSkeletonLoader } from '~/components/skeleton-load'
 
 import { trpc } from '~/utils/trpc'
 
 const EditNotificated = () => {
-  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
+  const [userInfo, setUserInfo] = useState<UserInformationResponse>()
+  trpc.useQuery(['identity.identityInfo'], {
+    onSuccess(data) {
+      setUserInfo(data.data)
+    },
+    onError() {
+      sessionStorage.removeItem('accessToken')
+      sessionStorage.removeItem('refeshToken')
+    },
+    enabled: isNil(userInfo),
+  })
 
   const updateInformation = trpc.useMutation(['identity.updateUserProfile'])
 
@@ -16,7 +30,7 @@ const EditNotificated = () => {
       <div className="flex items-center gap-3">
         <p className="text-4xl font-bold">Cài đặt thông báo</p>
         {updateInformation.isLoading && (
-          <div className="flex justify-center items-center">
+          <div className="flex items-center justify-center">
             <span
               className={`spinner h-5 w-5 animate-spin rounded-full border-[3px] border-r-transparent border-white}`}
             />

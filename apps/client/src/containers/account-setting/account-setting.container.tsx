@@ -2,14 +2,17 @@
 import { Coupon, EditName, Expenses, FileStaffOne, Lock, Remind, Transaction, TransactionOrder } from '@icon-park/react'
 import logo from 'public/logo.png'
 import 'swiper/swiper-bundle.css'
+import { useAuth } from '~/contexts/auth'
 
 import { ReactNode, useEffect, useState } from 'react'
 
 import { Tooltip } from 'antd'
 import { parse } from 'cookie'
+import { isNil } from 'lodash'
 import Image from 'next/legacy/image'
 import { useRouter } from 'next/router'
 import { Swiper, SwiperSlide } from 'swiper/react'
+import { UserInformationResponse } from 'ume-service-openapi'
 
 import BecomeProvider from './components/become-provider/become-provider'
 import BookingHistory from './components/booking-history/booking-history'
@@ -19,6 +22,8 @@ import EditProfile from './components/edit-profile/edit-profile'
 import TransactionHistory from './components/transaction-history/transaction-history'
 import Voucher from './components/voucher/voucher'
 import Withdraw from './components/withdraw/withdraw'
+
+import { trpc } from '~/utils/trpc'
 
 interface SettingTypeProps {
   key: string
@@ -88,9 +93,8 @@ const AccountSettingContainer = () => {
   const router = useRouter()
   const basePath = router.asPath.split('?')[0]
   const slug = router.query
-
-  const accessToken = parse(document.cookie).accessToken
-  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
+  const { user, isAuthenticated } = useAuth()
+  const accessToken = sessionStorage.getItem('accessToken')
 
   const [children, setChildren] = useState<SettingTypeProps>(
     settingType.find((item) => item.key == slug.tab) ?? settingType[0],
@@ -108,7 +112,7 @@ const AccountSettingContainer = () => {
   }
 
   useEffect(() => {
-    if (accessToken && userInfo?.name == slug.user) {
+    if (accessToken && user?.name == slug.user) {
       return
     } else {
       router.replace({ pathname: '/home' })
@@ -134,9 +138,9 @@ const AccountSettingContainer = () => {
                   onClick={() => {
                     if (
                       !(
-                        (item.key == 'becomeProvider' && !userInfo?.isVerified) ||
-                        (item.key == 'vouchers' && !userInfo?.isProvider) ||
-                        (item.key == 'withdraw' && !userInfo?.isProvider)
+                        (item.key == 'becomeProvider' && !user?.isVerified) ||
+                        (item.key == 'vouchers' && !user?.isProvider) ||
+                        (item.key == 'withdraw' && !user?.isProvider)
                       )
                     ) {
                       handleChangeTab(item.key)
@@ -146,12 +150,12 @@ const AccountSettingContainer = () => {
                 >
                   {item.key == 'becomeProvider' ? (
                     <>
-                      <div className={`${!userInfo?.isVerified && 'opacity-30'}`}>{item.icon}</div>
-                      {!userInfo?.isVerified ? (
+                      <div className={`${!user?.isVerified && 'opacity-30'}`}>{item.icon}</div>
+                      {!user?.isVerified ? (
                         <Tooltip placement="right" title={'Xác minh danh tính để mở khoá tính năng này'} arrow={true}>
                           <span
                             className={`w-full flex justify-between items-center 2xl:text-lg xl:text-sm text-xs font-semibold truncate ${
-                              !userInfo?.isVerified && 'opacity-30'
+                              !user?.isVerified && 'opacity-30'
                             }`}
                           >
                             {item.label}
@@ -175,8 +179,8 @@ const AccountSettingContainer = () => {
                     </>
                   ) : item.key == 'vouchers' ? (
                     <>
-                      <div className={`${!userInfo?.isProvider && 'opacity-30'}`}>{item.icon}</div>{' '}
-                      {!userInfo?.isProvider ? (
+                      <div className={`${!user?.isProvider && 'opacity-30'}`}>{item.icon}</div>{' '}
+                      {!user?.isProvider ? (
                         <Tooltip
                           placement="right"
                           title={'Trở thành nhà cung cấp để mở khóa tính năng này'}
@@ -184,7 +188,7 @@ const AccountSettingContainer = () => {
                         >
                           <span
                             className={`w-full flex justify-between items-center 2xl:text-lg xl:text-sm text-xs font-semibold truncate ${
-                              !userInfo?.isProvider && 'opacity-30'
+                              !user?.isProvider && 'opacity-30'
                             }`}
                           >
                             {item.label}
@@ -208,8 +212,8 @@ const AccountSettingContainer = () => {
                     </>
                   ) : item.key == 'withdraw' ? (
                     <>
-                      <div className={`${!userInfo?.isProvider && 'opacity-30'}`}>{item.icon}</div>{' '}
-                      {!userInfo?.isProvider ? (
+                      <div className={`${!user?.isProvider && 'opacity-30'}`}>{item.icon}</div>{' '}
+                      {!user?.isProvider ? (
                         <Tooltip
                           placement="right"
                           title={'Trở thành nhà cung cấp để mở khóa tính năng này'}
@@ -217,7 +221,7 @@ const AccountSettingContainer = () => {
                         >
                           <span
                             className={`w-full flex justify-between items-center 2xl:text-lg xl:text-sm text-xs font-semibold truncate ${
-                              !userInfo?.isProvider && 'opacity-30'
+                              !user?.isProvider && 'opacity-30'
                             }`}
                           >
                             {item.label}
@@ -262,9 +266,9 @@ const AccountSettingContainer = () => {
                   onClick={() => {
                     if (
                       !(
-                        (item.key == 'becomeProvider' && !userInfo?.isVerified) ||
-                        (item.key == 'vouchers' && !userInfo?.isProvider) ||
-                        (item.key == 'withdraw' && !userInfo?.isProvider)
+                        (item.key == 'becomeProvider' && !user?.isVerified) ||
+                        (item.key == 'vouchers' && !user?.isProvider) ||
+                        (item.key == 'withdraw' && !user?.isProvider)
                       )
                     ) {
                       handleChangeTab(item.key)
@@ -275,12 +279,12 @@ const AccountSettingContainer = () => {
                   <div className="flex items-center gap-2 w-fit">
                     {item.key == 'becomeProvider' ? (
                       <>
-                        <div className={`${!userInfo?.isVerified && 'opacity-30'}`}>{item.icon}</div>
-                        {!userInfo?.isVerified ? (
+                        <div className={`${!user?.isVerified && 'opacity-30'}`}>{item.icon}</div>
+                        {!user?.isVerified ? (
                           <Tooltip placement="right" title={'Xác minh danh tính để mở kháo tính năng này'} arrow={true}>
                             <span
                               className={`w-full flex justify-between items-center text-lg font-semibold truncate ${
-                                !userInfo?.isVerified && 'opacity-30'
+                                !user?.isVerified && 'opacity-30'
                               }`}
                             >
                               {item.label}
@@ -302,8 +306,8 @@ const AccountSettingContainer = () => {
                       </>
                     ) : item.key == 'vouchers' ? (
                       <>
-                        <div className={`${!userInfo?.isProvider && 'opacity-30'}`}>{item.icon}</div>{' '}
-                        {!userInfo?.isProvider ? (
+                        <div className={`${!user?.isProvider && 'opacity-30'}`}>{item.icon}</div>{' '}
+                        {!user?.isProvider ? (
                           <Tooltip
                             placement="right"
                             title={'Trở thành nhà cung cấp để mở khóa tính năng này'}
@@ -311,7 +315,7 @@ const AccountSettingContainer = () => {
                           >
                             <span
                               className={`w-full flex justify-between items-center text-lg lg:text-md font-semibold truncate ${
-                                !userInfo?.isProvider && 'opacity-30'
+                                !user?.isProvider && 'opacity-30'
                               }`}
                             >
                               {item.label}
@@ -335,8 +339,8 @@ const AccountSettingContainer = () => {
                       </>
                     ) : item.key == 'withdraw' ? (
                       <>
-                        <div className={`${!userInfo?.isProvider && 'opacity-30'}`}>{item.icon}</div>{' '}
-                        {!userInfo?.isProvider ? (
+                        <div className={`${!user?.isProvider && 'opacity-30'}`}>{item.icon}</div>{' '}
+                        {!user?.isProvider ? (
                           <Tooltip
                             placement="right"
                             title={'Trở thành nhà cung cấp để mở khóa tính năng này'}
@@ -344,7 +348,7 @@ const AccountSettingContainer = () => {
                           >
                             <span
                               className={`w-full flex justify-between items-center text-lg lg:text-md font-semibold truncate ${
-                                !userInfo?.isProvider && 'opacity-30'
+                                !user?.isProvider && 'opacity-30'
                               }`}
                             >
                               {item.label}

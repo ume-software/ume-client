@@ -1,8 +1,10 @@
 import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 
 import { parse } from 'cookie'
+import { isNil } from 'lodash'
 import Image from 'next/image'
 import Link from 'next/link'
+import { UserInformationResponse } from 'ume-service-openapi'
 
 import { SocketContext } from '~/components/layouts/app-layout/app-layout'
 import { NotificateSkeletonLoader } from '~/components/skeleton-load'
@@ -11,9 +13,19 @@ import { TimeFormat } from '~/components/time-format'
 import { trpc } from '~/utils/trpc'
 
 const OrderNotificationForUser = () => {
-  const accessToken = parse(document.cookie).accessToken
-  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
+  const accessToken = sessionStorage.getItem('accessToken')
 
+  const [userInfo, setUserInfo] = useState<UserInformationResponse>()
+  trpc.useQuery(['identity.identityInfo'], {
+    onSuccess(data) {
+      setUserInfo(data.data)
+    },
+    onError() {
+      sessionStorage.removeItem('accessToken')
+      sessionStorage.removeItem('refeshToken')
+    },
+    enabled: isNil(userInfo),
+  })
   const { socketContext } = useContext(SocketContext)
   const [page, setPage] = useState<number>(1)
   const limit = '10'
@@ -51,7 +63,7 @@ const OrderNotificationForUser = () => {
   }, [])
 
   useEffect(() => {
-    if (containerRef?.current && Boolean(userInfo.id)) {
+    if (containerRef?.current && Boolean(userInfo?.id)) {
       const { scrollTop, scrollHeight, clientHeight } = containerRef.current
       const isAtEnd = scrollTop + clientHeight >= scrollHeight
 
@@ -67,7 +79,7 @@ const OrderNotificationForUser = () => {
 
   return (
     <>
-      {Boolean(userInfo.id) ? (
+      {Boolean(userInfo?.id) ? (
         <>
           {loadingNotificated ? (
             <NotificateSkeletonLoader />
@@ -77,7 +89,7 @@ const OrderNotificationForUser = () => {
                 <Link
                   href={`/profile/${socketContext.socketNotificateContext[0]?.providerService?.provider?.slug}?tab=service&service=${socketContext.socketNotificateContext[0]?.providerService?.service?.slug}`}
                 >
-                  <div className="px-2 py-3 border-b-2 border-gray-200 border-opacity-30 rounded-t-lg hover:bg-gray-700 cursor-pointer">
+                  <div className="px-2 py-3 border-b-2 border-gray-200 rounded-t-lg cursor-pointer border-opacity-30 hover:bg-gray-700">
                     <div className="grid grid-cols-10">
                       <div className="col-span-3">
                         <div className="w-[90%] h-full relative rounded-lg">
@@ -105,7 +117,7 @@ const OrderNotificationForUser = () => {
                             </p>
                           </div>
                         </div>
-                        <p className="text-end text-md font-bold opacity-30 space-y-2">
+                        <p className="space-y-2 font-bold text-end text-md opacity-30">
                           {TimeFormat({ date: socketContext.socketNotificateContext[0]?.createdAt })}
                         </p>
                       </div>
@@ -119,7 +131,7 @@ const OrderNotificationForUser = () => {
                     key={item.id}
                     href={`/profile/${item.providerService.provider.slug}?tab=service&service=${item?.providerService?.service?.slug}`}
                   >
-                    <div className="px-2 py-3 border-b-2 border-gray-200 border-opacity-30 rounded-t-lg hover:bg-gray-700 cursor-pointer">
+                    <div className="px-2 py-3 border-b-2 border-gray-200 rounded-t-lg cursor-pointer border-opacity-30 hover:bg-gray-700">
                       <div className="grid grid-cols-10">
                         <div className="col-span-3">
                           <div className="w-[90%] h-full relative rounded-lg">
@@ -142,7 +154,7 @@ const OrderNotificationForUser = () => {
                               <p className="inline font-bold">{item?.bookingPeriod || item?.data?.bookingPeriod}h</p>
                             </div>
                           </div>
-                          <p className="text-end text-md font-bold opacity-30 space-y-2">
+                          <p className="space-y-2 font-bold text-end text-md opacity-30">
                             {TimeFormat({ date: item?.createdAt })}
                           </p>
                         </div>

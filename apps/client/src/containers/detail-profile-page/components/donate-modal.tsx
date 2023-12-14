@@ -18,8 +18,7 @@ interface DonateProps {
 }
 
 const DonateModal = ({ isModalDonationVisible, setIsModalDonationVisible, providerId }) => {
-  const accessToken = parse(document.cookie).accessToken
-
+  const accessToken = sessionStorage.getItem('accessToken')
   const [donationValues, setDonationValues] = useState<DonateProps>({ donateValue: '1,000' })
 
   const [isModalConfirmationVisible, setIsModalConfirmationVisible] = useState<boolean>(false)

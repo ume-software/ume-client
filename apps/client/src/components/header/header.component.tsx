@@ -10,10 +10,10 @@ import { useAuth } from '~/contexts/auth'
 
 import React, { Fragment, ReactElement, useContext, useEffect, useState } from 'react'
 
-import { parse } from 'cookie'
-import { isNil } from 'lodash'
+import { isNil, set } from 'lodash'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
+import { UserInformationResponse } from 'ume-service-openapi'
 
 import { SocketContext } from '../layouts/app-layout/app-layout'
 import { DropDownMenu } from './drop-down.component'
@@ -28,18 +28,20 @@ interface TabProps {
   children: ReactElement
 }
 
-export const Header: React.FC = () => {
+export const Header: React.FC = React.memo(() => {
   const [showRechargeModal, setShowRechargeModal] = useState(false)
   const [balance, setBalance] = useState<any>()
   const [notificatedAmount, setNotificatedAmount] = useState<number>(0)
   const [selectedTab, setSelectedTab] = useState('Chính')
   const { socketContext } = useContext(SocketContext)
   const [isModalLoginVisible, setIsModalLoginVisible] = React.useState(false)
+  const { user } = useAuth()
+  let accessToken
 
-  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
-  const accessToken = parse(document.cookie).accessToken
+  if (typeof window !== 'undefined') {
+    accessToken = sessionStorage.getItem('accessToken')
+  }
   const { login } = useAuth()
-
   const utils = trpc.useContext()
 
   trpc.useQuery(['identity.identityInfo'], {
@@ -50,7 +52,7 @@ export const Header: React.FC = () => {
       sessionStorage.removeItem('accessToken')
       sessionStorage.removeItem('refeshToken')
     },
-    enabled: isNil(userInfo),
+    enabled: !!accessToken,
   })
 
   const { isLoading: isRechargeLoading } = trpc.useQuery(['identity.account-balance'], {
@@ -111,7 +113,7 @@ export const Header: React.FC = () => {
       </div>
       <div className="flex items-center">
         <div className="flex flex-1 pr-2 duration-500 hover:ease-in-out">
-          {userInfo && (
+          {user && (
             <button onClick={() => setShowRechargeModal(true)}>
               <div className="flex items-center justify-end rounded-full bg-[#37354F] pr-2 pl-4 mr-2 self-center text-white">
                 {isRechargeLoading ? (
@@ -137,7 +139,7 @@ export const Header: React.FC = () => {
             </button>
           )}
 
-          {userInfo && (
+          {user && (
             <span className="my-auto mr-5 duration-300 rounded-full">
               <div className="relative pt-2">
                 <Menu>
@@ -178,7 +180,7 @@ export const Header: React.FC = () => {
                           <>
                             {item.key == 'OrderForProvider' ? (
                               <>
-                                {userInfo.isProvider && (
+                                {user.isProvider && (
                                   <a
                                     href="#tab"
                                     className={`xl:text-lg text-md font-medium p-2 ${
@@ -224,7 +226,7 @@ export const Header: React.FC = () => {
             </span>
           )}
           <span className="my-auto mr-5">
-            {isNil(userInfo) ? (
+            {isNil(user) ? (
               <Button
                 name="register"
                 customCSS="bg-[#37354F] py-2 hover:bg-slate-500 duration-300 !rounded-3xl max-h-10 w-[120px] text-[15px] "
@@ -237,7 +239,7 @@ export const Header: React.FC = () => {
               </Button>
             ) : (
               <div className="mt-1 bg-[#292734]">
-                <DropDownMenu user={userInfo} />
+                <DropDownMenu />
               </div>
             )}
           </span>
@@ -245,4 +247,4 @@ export const Header: React.FC = () => {
       </div>
     </div>
   )
-}
+})

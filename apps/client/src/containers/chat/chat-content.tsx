@@ -1,12 +1,15 @@
 import { MoreOne, PhoneTelephone, SendOne, Videocamera } from '@icon-park/react'
+import { useAuth } from '~/contexts/auth'
 import useChatScroll from '~/hooks/useChatScroll'
 
 import { ReactNode, useContext, useEffect, useRef, useState } from 'react'
 
 import { parse } from 'cookie'
+import { isNil } from 'lodash'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
 import { ChattingChannelResponse, MemberChatChannelResponse } from 'ume-chatting-service-openapi'
+import { UserInformationResponse } from 'ume-service-openapi'
 
 import { SocketClientEmit, SocketContext } from '~/components/layouts/app-layout/app-layout'
 import { CommentSkeletonLoader } from '~/components/skeleton-load'
@@ -38,8 +41,8 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
   const [displayMessageTime, setDisplayMessageTime] = useState('')
   const { socketClientEmit } = useContext(SocketClientEmit)
   const { socketContext } = useContext(SocketContext)
-  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
-  const accessToken = parse(document.cookie).accessToken
+  const { user } = useAuth()
+  const accessToken = sessionStorage.getItem('accessToken')
   const utils = trpc.useContext()
   const { data: chattingMessageChannel, isLoading: loadingChattingMessageChannel } = trpc.useQuery([
     'chatting.getMessagesByChannelId',
@@ -53,7 +56,7 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
       utils.invalidateQueries('chatting.getMessagesByChannelId')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socketContext?.socketChattingContext, !!accessToken, !!userInfo])
+  }, [socketContext?.socketChattingContext, !!accessToken, !!user])
 
   const mappingMember: { [key: string]: MemberChatChannelResponse } = convertArrayObjectToObject(
     chattingMessageChannel?.data.members ?? [],
@@ -61,7 +64,7 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
   )
 
   const images = chattingMessageChannel?.data.members.filter((member) => {
-    return member.userId.toString() != userInfo?.id.toString()
+    return member.userId.toString() != user?.id.toString()
   })!
 
   const handleSentMessage = () => {
@@ -122,16 +125,6 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
                 </div>
               )}
             </Link>
-            {/* <div className="flex gap-2">
-              {actionButtons.map((item, index) => (
-                <div
-                  key={index}
-                  className="p-2 bg-[#413F4D] rounded-full cursor-pointer hover:bg-gray-500 active:bg-gray-400"
-                >
-                  {item.actionButton}
-                </div>
-              ))}
-            </div> */}
           </div>
           <div className="flex flex-col h-full gap-2 overflow-y-auto">
             <div className="flex gap-2 pb-5 overflow-auto border-b-2 border-[#B9B8CC] custom-scrollbar"></div>
@@ -146,9 +139,9 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
                 <div className="flex flex-col mt-5 ">
                   {chattingMessageChannel?.data.messages.map((item, index) => {
                     const sender = mappingMember[item.senderId]
-                    const isSeftMessage = sender.userId.toString() == userInfo?.id.toString()
+                    const isSeftMessage = sender.userId.toString() == user?.id.toString()
                     return (
-                      <div key={index} className="py-2 px-4 mb-4">
+                      <div key={index} className="px-4 py-2 mb-4">
                         <div className={`flex justify-end items-end ${!isSeftMessage ? 'flex-row-reverse' : ''}`}>
                           <div
                             className={`max-w-xs mx-2 py-3 px-4 text-white text-lg
@@ -220,7 +213,7 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
                   onKeyDown={handleKeyPress}
                 />
                 <div
-                  className="absolute transform -translate-y-1/2 rounded-full cursor-pointer top-1/2 right-0 z-4 hover:bg-gray-500 active:bg-gray-400 p-2"
+                  className="absolute right-0 p-2 transform -translate-y-1/2 rounded-full cursor-pointer top-1/2 z-4 hover:bg-gray-500 active:bg-gray-400"
                   onClick={handleSentMessage}
                   onKeyDown={() => {}}
                 >

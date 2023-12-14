@@ -3,11 +3,13 @@ import { CustomDrawer } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
 import 'swiper/swiper-bundle.css'
 import Chat from '~/containers/chat/chat.container'
+import { useAuth } from '~/contexts/auth'
 
 import { useContext, useEffect, useState } from 'react'
 
 import { notification } from 'antd'
 import { parse } from 'cookie'
+import { isNil } from 'lodash'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -30,8 +32,8 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
   const basePath = router.asPath.split('?')[0]
   const slug = router.query
 
-  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
-  const accessToken = parse(document.cookie).accessToken
+  const { user } = useAuth()
+  const accessToken = sessionStorage.getItem('accessToken')
 
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
   const { childrenDrawer, setChildrenDrawer } = useContext(DrawerContext)
@@ -71,7 +73,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
   }, [props.data, setChannelId])
 
   const handleChatOpen = async () => {
-    if (userInfo) {
+    if (user) {
       setChildrenDrawer(<ChatSkeleton />)
       try {
         createNewChatChannel.mutate(
@@ -103,7 +105,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
     }
   }
   const handleOrderOpen = () => {
-    if (userInfo) {
+    if (user) {
       setChildrenDrawer(<BookingProvider data={props.data} />)
     } else {
       setIsModalLoginVisible(true)
@@ -139,8 +141,8 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
       </div>
       {props.data ? (
         <div className="grid w-full grid-cols-10 gap-10 px-10">
-          <div className="2xl:col-span-2 col-span-10">
-            <div className="sticky px-7 py-10 bg-zinc-800 rounded-3xl top-20">
+          <div className="col-span-10 2xl:col-span-2">
+            <div className="sticky py-10 px-7 bg-zinc-800 rounded-3xl top-20">
               <div className="flex flex-col gap-5">
                 <div
                   className={`hidden 2xl:flex items-center p-3 rounded-xl gap-2 cursor-pointer hover:bg-gray-700 ${
@@ -150,14 +152,14 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                   onKeyDown={() => {}}
                 >
                   <People theme="outline" size="18" fill="#fff" />
-                  <p className="xl:text-lg lg:text-sm text-xs lg:font-semibold font-normal truncate">Đôi chút về tui</p>
+                  <p className="text-xs font-normal truncate xl:text-lg lg:text-sm lg:font-semibold">Đôi chút về tui</p>
                 </div>
-                <div className="hidden 2xl:flex flex-col gap-5 cursor-pointer">
+                <div className="flex-col hidden gap-5 cursor-pointer 2xl:flex">
                   <div onClick={handleGamesToggle} onKeyDown={() => {}}>
-                    <div className="flex flex-row justify-between items-center">
+                    <div className="flex flex-row items-center justify-between">
                       <div className="flex flex-row items-center gap-2 p-3">
                         <Gamepad theme="outline" size="18" fill="#fff" />
-                        <p className="xl:text-lg lg:text-sm text-xs lg:font-semibold font-normal truncate">
+                        <p className="text-xs font-normal truncate xl:text-lg lg:text-sm lg:font-semibold">
                           Game tui chơi
                         </p>
                       </div>
@@ -216,7 +218,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                   </div>
                 </div>
 
-                <div className="2xl:hidden flex items-center gap-3">
+                <div className="flex items-center gap-3 2xl:hidden">
                   <div
                     className={`flex flex-col justify-center items-center p-3 rounded-xl gap-2 cursor-pointer hover:bg-gray-700 ${
                       !gameSelected ? 'bg-gray-700' : ''
@@ -225,7 +227,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                     onKeyDown={() => {}}
                   >
                     <People theme="outline" size="25" fill="#fff" />
-                    <p className="xl:text-lg lg:text-sm text-xs lg:font-semibold font-normal truncate">Về tui</p>
+                    <p className="text-xs font-normal truncate xl:text-lg lg:text-sm lg:font-semibold">Về tui</p>
                   </div>
                   <Swiper
                     spaceBetween={20}
@@ -247,10 +249,10 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                         <div className="flex items-center gap-3">
                           <Image src={item?.service?.imageUrl ?? ImgForEmpty} alt="Game Image" width={60} height={80} />
                           <div className="">
-                            <p className="font-normal text-sm text-white">{item?.service?.name}</p>
+                            <p className="text-sm font-normal text-white">{item?.service?.name}</p>
                             <div className="flex items-center">
                               <span className="text-xs italic"> đ</span>
-                              <p className="font-normal text-xs text-white opacity-30">{item.defaultCost} / 1h</p>
+                              <p className="text-xs font-normal text-white opacity-30">{item.defaultCost} / 1h</p>
                             </div>
                           </div>
                         </div>
@@ -261,7 +263,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
               </div>
             </div>
           </div>
-          <div className="2xl:col-span-5 col-span-6">
+          <div className="col-span-6 2xl:col-span-5">
             <div className="flex flex-col gap-8">
               {selectedService && gameSelected ? (
                 <Service data={selectedService} />
@@ -270,7 +272,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
               )}
             </div>
           </div>
-          <div className="2xl:col-span-3 col-span-4">
+          <div className="col-span-4 2xl:col-span-3">
             <div className="sticky flex flex-col gap-3 top-20">
               <div className="relative w-full h-[450px] bg-zinc-800 rounded-3xl p-10">
                 <Image
@@ -282,8 +284,8 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                 />
               </div>
               {currentBookingForUserData && (currentBookingForUserData?.length ?? 0) > 0 ? (
-                <div className="p-5 rounded-2xl border border-white border-opacity-30 mt-5 space-y-5">
-                  <span className="flex justify-center items-center gap-3">
+                <div className="p-5 mt-5 space-y-5 border border-white rounded-2xl border-opacity-30">
+                  <span className="flex items-center justify-center gap-3">
                     Bạn đang trong phiên với:
                     <Link
                       href={`/profile/${
@@ -300,13 +302,13 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                 </div>
               ) : (
                 <>
-                  {userInfo?.id != props.data?.id ? (
+                  {user?.id != props.data?.id ? (
                     <div className="flex flex-col gap-5 my-10">
                       <CustomDrawer
                         customOpenBtn={`rounded-full text-purple-700 border-2 border-purple-700 font-semibold text-2xl cursor-pointer hover:scale-105 text-center`}
                         openBtn={
                           <button
-                            className="bg-transparent w-full h-full py-2 focus:outline-none"
+                            className="w-full h-full py-2 bg-transparent focus:outline-none"
                             type="button"
                             onClick={handleChatOpen}
                           >

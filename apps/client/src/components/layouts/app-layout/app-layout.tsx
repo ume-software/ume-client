@@ -15,6 +15,8 @@ import {
 } from 'react'
 
 import { parse } from 'cookie'
+import { isNil } from 'lodash'
+import { UserInformationResponse } from 'ume-service-openapi'
 
 import { Header } from '~/components/header/header.component'
 import { Sidebar } from '~/components/sidebar'
@@ -61,20 +63,31 @@ export const DrawerContext = createContext<DrawerProps>({
 })
 
 export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
-  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
-  const accessToken = parse(document.cookie).accessToken
+  const [userInfo, setUserInfo] = useState<UserInformationResponse>()
+  let accessToken
   const { isAuthenticated } = useAuth()
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const utils = trpc.useContext()
 
+  if (typeof window !== 'undefined') {
+    console.log('You are on the browser')
+    accessToken = sessionStorage.getItem('accessToken')
+  }
+
   const [childrenDrawer, setChildrenDrawer] = useState<ReactNode>()
-
   const [socketClientEmit, setSocketClientEmit] = useState<SocketClientEmit>({ socketInstanceChatting: null })
-
   const [socketContext, setSocketContext] = useState<SocketContext['socketContext']>({
     socketNotificateContext: [],
     socketChattingContext: [],
     socketLivestreamContext: [],
+  })
+
+  trpc.useQuery(['identity.identityInfo'], {
+    onSuccess(data) {
+      setUserInfo(data.data)
+    },
+    onError() {},
+    enabled: isNil(userInfo),
   })
 
   useEffect(() => {

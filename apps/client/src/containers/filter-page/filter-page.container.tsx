@@ -50,9 +50,9 @@ const FilterPage = (props) => {
       <Head>
         <title>UME | {props?.serviceName}</title>
       </Head>
-      <AppLayout {...props}>
+      <div>
         <FilterContainer service={service} listSubAttributeService={listSubAttributeService} />
-      </AppLayout>
+      </div>
     </>
   )
 }

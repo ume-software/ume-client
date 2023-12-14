@@ -50,7 +50,7 @@ const PersonalIntroduce = (props: { data: UserInformationResponse }) => {
                         <Rate disabled defaultValue={feedback.amountStar} />
                       </div>
                     </div>
-                    <span className="font-normal text-sm opacity-30">
+                    <span className="text-sm font-normal opacity-30">
                       -- {feedback.booking?.providerService?.service?.name} --
                     </span>
                     <span className="font-normal text-md">{feedback.content}</span>
