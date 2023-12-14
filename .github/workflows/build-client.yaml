@@ -1,6 +1,9 @@
 name: Deploy Client
 
 on:
+  pull_request:
+    branches:
+      - '*'
   push:
     branches:
       - main
