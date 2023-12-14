@@ -239,7 +239,7 @@ export const Header: React.FC = React.memo(() => {
               </Button>
             ) : (
               <div className="mt-1 bg-[#292734]">
-                <DropDownMenu user={user} />
+                <DropDownMenu />
               </div>
             )}
           </span>
