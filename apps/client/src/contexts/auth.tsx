@@ -20,7 +20,6 @@ export const AuthProvider = ({ children }: AuthProviderType) => {
 
   const authContextValue = useMemo(() => {
     const login = async (user: UserInformationResponse): Promise<void> => {
-      sessionStorage.setItem('user', JSON.stringify(user))
       setUser(user)
     }
 

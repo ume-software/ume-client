@@ -23,7 +23,7 @@ const Service = (props: { data: ProviderServiceResponse }) => {
   const router = useRouter()
   const slug = router.query
 
-  const accessToken = parse(document.cookie).accessToken
+  const accessToken = sessionStorage.getItem('accessToken')
 
   const [userInfo, setUserInfo] = useState<UserInformationResponse>()
   trpc.useQuery(['identity.identityInfo'], {

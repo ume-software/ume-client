@@ -10,9 +10,9 @@ const AccountSettingPage = (props) => {
       <Head>
         <title>UME | Cài đặt</title>
       </Head>
-      <AppLayout {...props}>
+      <div>
         <AccountSettingContainer />
-      </AppLayout>
+      </div>
     </div>
   )
 }

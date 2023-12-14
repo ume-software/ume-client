@@ -64,15 +64,18 @@ export const DrawerContext = createContext<DrawerProps>({
 
 export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const [userInfo, setUserInfo] = useState<UserInformationResponse>()
-  const accessToken = parse(document.cookie).accessToken
+  let accessToken
   const { isAuthenticated } = useAuth()
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const utils = trpc.useContext()
 
+  if (typeof window !== 'undefined') {
+    console.log('You are on the browser')
+    accessToken = sessionStorage.getItem('accessToken')
+  }
+
   const [childrenDrawer, setChildrenDrawer] = useState<ReactNode>()
-
   const [socketClientEmit, setSocketClientEmit] = useState<SocketClientEmit>({ socketInstanceChatting: null })
-
   const [socketContext, setSocketContext] = useState<SocketContext['socketContext']>({
     socketNotificateContext: [],
     socketChattingContext: [],

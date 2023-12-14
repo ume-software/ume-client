@@ -93,7 +93,7 @@ const AccountSettingContainer = () => {
   const basePath = router.asPath.split('?')[0]
   const slug = router.query
 
-  const accessToken = parse(document.cookie).accessToken
+  const accessToken = sessionStorage.getItem('accessToken')
 
   const [children, setChildren] = useState<SettingTypeProps>(
     settingType.find((item) => item.key == slug.tab) ?? settingType[0],

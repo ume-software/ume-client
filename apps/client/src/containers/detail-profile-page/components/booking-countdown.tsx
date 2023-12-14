@@ -7,7 +7,7 @@ import { BookingHistoryPagingResponse, UserInformationResponse } from 'ume-servi
 import { trpc } from '~/utils/trpc'
 
 const getCurrentBookingForUserData = (): BookingHistoryPagingResponse['row'] | undefined => {
-  const accessToken = parse(document.cookie).accessToken
+  const accessToken = sessionStorage.getItem('accessToken')
   const { data: getCurrentBookingForUserData } = trpc.useQuery(['booking.getCurrentBookingForUser'], {
     refetchOnWindowFocus: false,
     refetchOnReconnect: 'always',
@@ -30,7 +30,7 @@ const getCurrentBookingForProviderData = (): BookingHistoryPagingResponse['row']
     },
     enabled: isNil(userInfo),
   })
-  const accessToken = parse(document.cookie).accessToken
+  const accessToken = sessionStorage.getItem('accessToken')
 
   const { data: getCurrentBookingForProviderData } = trpc.useQuery(['booking.getCurrentBookingForProvider'], {
     refetchOnWindowFocus: false,

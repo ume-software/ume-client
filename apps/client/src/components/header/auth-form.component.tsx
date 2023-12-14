@@ -18,6 +18,7 @@ export const AuthForm = ({ setShowModal }: AuthFormProps) => {
         {
           onSuccess: (data) => {
             login({ ...data.data.user })
+            sessionStorage.setItem('accessToken', data.data.accessToken)
             setShowModal(false)
           },
           onError: (error) => console.log(error),
