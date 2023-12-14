@@ -28,7 +28,7 @@ interface TabProps {
   children: ReactElement
 }
 
-export const Header: React.FC = () => {
+export const Header: React.FC = React.memo(() => {
   const [showRechargeModal, setShowRechargeModal] = useState(false)
   const [balance, setBalance] = useState<any>()
   const [notificatedAmount, setNotificatedAmount] = useState<number>(0)
@@ -245,4 +245,4 @@ export const Header: React.FC = () => {
       </div>
     </div>
   )
-}
+})
