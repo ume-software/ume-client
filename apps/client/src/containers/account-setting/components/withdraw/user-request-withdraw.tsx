@@ -97,6 +97,7 @@ const UserRequestWithdraw = (props: {
     onOK: () => {},
     onClose: handleClose,
     show: isModalConfirmationVisible,
+    customModalCSS: 'top-32',
     form: (
       <>
         <ConfirmForm

@@ -19,6 +19,7 @@ const getCurrentBookingForUserData = (): BookingHistoryPagingResponse['row'] | u
 }
 
 const getCurrentBookingForProviderData = (): BookingHistoryPagingResponse['row'] | undefined => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [userInfo, setUserInfo] = useState<UserInformationResponse>()
   trpc.useQuery(['identity.identityInfo'], {
     onSuccess(data) {

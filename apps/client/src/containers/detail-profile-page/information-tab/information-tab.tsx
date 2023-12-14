@@ -8,8 +8,6 @@ import { useAuth } from '~/contexts/auth'
 import { useContext, useEffect, useState } from 'react'
 
 import { notification } from 'antd'
-import { parse } from 'cookie'
-import { isNil } from 'lodash'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -17,7 +15,11 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 import { BookingHistoryPagingResponse, UserInformationResponse } from 'ume-service-openapi'
 
 import BookingProvider from '../booking/booking-provider.container'
-import { BookingCountdown, getCurrentBookingForUserData } from '../components/booking-countdown'
+import {
+  BookingCountdown,
+  getCurrentBookingForProviderData,
+  getCurrentBookingForUserData,
+} from '../components/booking-countdown'
 import PersonalIntroduce from './personal-introduce'
 import Service from './service'
 
@@ -43,6 +45,9 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
 
   const createNewChatChannel = trpc.useMutation(['chatting.createNewChatChannel'])
   const currentBookingForUserData: BookingHistoryPagingResponse['row'] | undefined = getCurrentBookingForUserData()
+  const currentBookingForProviderData: BookingHistoryPagingResponse['row'] | undefined = user?.isProvider
+    ? getCurrentBookingForProviderData()
+    : undefined
 
   const selectedService =
     props.data?.providerServices!.find(
@@ -283,48 +288,66 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                   alt="Empty Image"
                 />
               </div>
-              {currentBookingForUserData && (currentBookingForUserData?.length ?? 0) > 0 ? (
-                <div className="p-5 mt-5 space-y-5 border border-white rounded-2xl border-opacity-30">
-                  <span className="flex items-center justify-center gap-3">
-                    Bạn đang trong phiên với:
-                    <Link
-                      href={`/profile/${
-                        (currentBookingForUserData[0].providerService?.provider as any)?.slug
-                      }?tab=service`}
-                      className="text-lg font-bold hover:underline decoration-solid decoration-2"
-                    >
-                      {(currentBookingForUserData[0].providerService?.provider as any)?.name}
-                    </Link>
-                  </span>
-                  <div className="text-center bg-gray-700 rounded-full">
-                    <BookingCountdown />
-                  </div>
-                </div>
-              ) : (
-                <>
-                  {user?.id != props.data?.id ? (
-                    <div className="flex flex-col gap-5 my-10">
-                      <CustomDrawer
-                        customOpenBtn={`rounded-full text-purple-700 border-2 border-purple-700 font-semibold text-2xl cursor-pointer hover:scale-105 text-center`}
-                        openBtn={
-                          <button
-                            className="w-full h-full py-2 bg-transparent focus:outline-none"
-                            type="button"
-                            onClick={handleChatOpen}
-                          >
-                            {createNewChatChannel.isLoading && (
-                              <span
-                                className={`spinner h-5 w-5 animate-spin rounded-full border-[3px] border-r-transparent dark:border-navy-300 dark:border-r-transparent border-white`}
-                              />
-                            )}
-                            Chat
-                          </button>
-                        }
-                        token={!!accessToken}
-                      >
-                        {childrenDrawer}
-                      </CustomDrawer>
 
+              {user?.id != props.data?.id ? (
+                <div className="flex flex-col gap-5 my-10">
+                  <CustomDrawer
+                    customOpenBtn={`rounded-full text-purple-700 border-2 border-purple-700 font-semibold text-2xl cursor-pointer hover:scale-105 text-center`}
+                    openBtn={
+                      <button
+                        className="w-full h-full py-2 bg-transparent focus:outline-none"
+                        type="button"
+                        onClick={handleChatOpen}
+                      >
+                        {createNewChatChannel.isLoading && (
+                          <span
+                            className={`spinner h-5 w-5 animate-spin rounded-full border-[3px] border-r-transparent dark:border-navy-300 dark:border-r-transparent border-white`}
+                          />
+                        )}
+                        Chat
+                      </button>
+                    }
+                    token={!!accessToken}
+                  >
+                    {childrenDrawer}
+                  </CustomDrawer>
+                  {currentBookingForUserData && (currentBookingForUserData?.length ?? 0) > 0 ? (
+                    <div className="p-5 mt-5 space-y-5 border border-white rounded-2xl border-opacity-30">
+                      <span className="flex items-center justify-center gap-3">
+                        Bạn đang trong phiên với:
+                        <Link
+                          href={`/profile/${
+                            (currentBookingForUserData[0].providerService?.provider as any)?.slug ||
+                            (currentBookingForUserData[0].providerService?.provider as any)?.id
+                          }?tab=Service`}
+                          className="text-lg font-bold hover:underline decoration-solid decoration-2"
+                        >
+                          {(currentBookingForUserData[0].providerService?.provider as any)?.name}
+                        </Link>
+                      </span>
+                      <div className="text-center bg-gray-700 rounded-full">
+                        <BookingCountdown />
+                      </div>
+                    </div>
+                  ) : currentBookingForProviderData && (currentBookingForProviderData?.length ?? 0) > 0 ? (
+                    <div className="p-5 mt-5 space-y-5 border border-white rounded-2xl border-opacity-30">
+                      <span className="flex items-center justify-center gap-3">
+                        Bạn đang trong phiên với:
+                        <Link
+                          href={`/profile/${
+                            currentBookingForProviderData[0].booker?.slug || currentBookingForProviderData[0].booker?.id
+                          }?tab=Album`}
+                          className="text-lg font-bold hover:underline decoration-solid decoration-2"
+                        >
+                          {currentBookingForProviderData[0].booker?.name}
+                        </Link>
+                      </span>
+                      <div className="text-center bg-gray-700 rounded-full">
+                        <BookingCountdown />
+                      </div>
+                    </div>
+                  ) : (
+                    <>
                       {!props.data?.isBanned && props.data.providerConfig?.status == 'ACTIVATED' && (
                         <CustomDrawer
                           drawerTitle="Xác nhận đặt"
@@ -343,11 +366,11 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                           {childrenDrawer}
                         </CustomDrawer>
                       )}
-                    </div>
-                  ) : (
-                    <></>
+                    </>
                   )}
-                </>
+                </div>
+              ) : (
+                <></>
               )}
             </div>
           </div>

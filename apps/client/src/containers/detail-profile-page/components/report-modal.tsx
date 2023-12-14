@@ -57,6 +57,7 @@ const ReportModal = ({ isModalReportVisible, setIsModalReportVisible, providerId
     onClose: () => setIsModalReportVisible(false),
     title: <p className="text-white">Tố cáo</p>,
     show: isModalReportVisible,
+    customModalCSS: 'top-32',
     form: (
       <Formik
         initialValues={{
@@ -212,7 +213,7 @@ const ReportModal = ({ isModalReportVisible, setIsModalReportVisible, providerId
     onOK: () => {},
     onClose: handleCloseComfirmModal,
     show: isModalConfirmationVisible,
-
+    customModalCSS: 'top-32',
     form: (
       <>
         <ConfirmForm

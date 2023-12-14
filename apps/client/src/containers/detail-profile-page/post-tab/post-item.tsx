@@ -39,6 +39,7 @@ const PostItem = (props: { data: PostResponse }) => {
     onClose: handleClose,
     title: titleForm,
     show: isModalVisible,
+    customModalCSS: 'top-32',
     form: formPost,
     backgroundColor: '#15151b',
     closeWhenClickOutSide: true,

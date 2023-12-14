@@ -68,7 +68,12 @@ const OrderNotificationForProvider = () => {
       notification.warning({
         message: `Bạn đang trong thời gian phục vụ ${getCurrentBookingForProviderData?.data?.row[0]?.booker?.name}`,
         description: (
-          <Link href={`/profile/${getCurrentBookingForProviderData?.data?.row[0]?.booker?.slug}`}>
+          <Link
+            href={`/profile/${
+              getCurrentBookingForProviderData?.data?.row[0]?.booker?.slug ??
+              getCurrentBookingForProviderData?.data?.row[0]?.booker?.id
+            }`}
+          >
             Bấm vào đây để tới trang của người thuê
           </Link>
         ),

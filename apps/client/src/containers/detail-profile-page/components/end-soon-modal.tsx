@@ -16,6 +16,7 @@ const EndSoonModal = ({ isEndSoonModalVisible, setIsEndSoonModalVisible, booking
     onOK: () => {},
     onClose: () => setIsEndSoonModalVisible(false),
     show: isEndSoonModalVisible,
+    customModalCSS: 'top-32',
     form: (
       <>
         <ConfirmForm
@@ -39,6 +40,7 @@ const EndSoonModal = ({ isEndSoonModalVisible, setIsEndSoonModalVisible, booking
                         placement: 'bottomLeft',
                       })
                       utils.invalidateQueries('booking.getCurrentBookingForUser')
+                      utils.invalidateQueries('booking.getCanFeedbackProvider')
                     }
                   },
                   onError: () => {

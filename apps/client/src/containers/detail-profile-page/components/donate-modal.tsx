@@ -53,6 +53,7 @@ const DonateModal = ({ isModalDonationVisible, setIsModalDonationVisible, provid
     onClose: handleCloseDonationModal,
     title: <p className="text-white">Tặng quà</p>,
     show: isModalDonationVisible,
+    customModalCSS: 'top-32',
     form: (
       <>
         <Formik

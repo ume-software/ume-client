@@ -28,6 +28,7 @@ interface TabProps {
   children: ReactElement
 }
 
+// eslint-disable-next-line react/display-name
 export const Header: React.FC = React.memo(() => {
   const [showRechargeModal, setShowRechargeModal] = useState(false)
   const [balance, setBalance] = useState<any>()

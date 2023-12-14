@@ -11,6 +11,7 @@ export const LoginModal = ({ isModalLoginVisible, setIsModalLoginVisible }) => {
     onOK: () => {},
     onClose: handleClose,
     show: isModalLoginVisible,
+    customModalCSS: 'top-32',
     form: <AuthForm setShowModal={setIsModalLoginVisible} />,
     backgroundColor: '#15151b',
     closeButtonOnConner: (

@@ -139,6 +139,7 @@ const BecomeProvider = () => {
     onOK: () => {},
     onClose: () => setIsModalConfirmationVisible(false),
     show: isModalConfirmationVisible,
+    customModalCSS: 'top-32',
     form: (
       <ConfirmForm
         title="Thay đổi giới thiệu"
