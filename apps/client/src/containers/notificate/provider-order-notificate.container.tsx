@@ -16,7 +16,7 @@ import { TimeFormat } from '~/components/time-format'
 import { trpc } from '~/utils/trpc'
 
 const OrderNotificationForProvider = () => {
-  const accessToken = parse(document.cookie).accessToken
+  const accessToken = sessionStorage.getItem('accessToken')
   const [userInfo, setUserInfo] = useState<UserInformationResponse>()
   trpc.useQuery(['identity.identityInfo'], {
     onSuccess(data) {

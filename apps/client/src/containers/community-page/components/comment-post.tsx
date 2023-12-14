@@ -41,7 +41,7 @@ const CommmentPost = (props: CommentPostProps) => {
     },
     enabled: isNil(userInfo),
   })
-  const accessToken = parse(document.cookie).accessToken
+  const accessToken = sessionStorage.getItem('accessToken')
 
   const containerRef = useRef<HTMLDivElement>(null)
   const [comment, setComment] = useState('')

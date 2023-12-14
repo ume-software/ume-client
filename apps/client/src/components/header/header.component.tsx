@@ -37,7 +37,10 @@ export const Header: React.FC = React.memo(() => {
   const { socketContext } = useContext(SocketContext)
   const [isModalLoginVisible, setIsModalLoginVisible] = React.useState(false)
 
-  const accessToken = parse(document.cookie).accessToken
+  let accessToken
+  if (typeof window !== 'undefined') {
+    accessToken = sessionStorage.getItem('accessToken')
+  }
   const { login } = useAuth()
   const utils = trpc.useContext()
 

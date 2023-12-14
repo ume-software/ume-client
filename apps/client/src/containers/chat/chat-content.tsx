@@ -52,7 +52,7 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
     },
     enabled: isNil(userInfo),
   })
-  const accessToken = parse(document.cookie).accessToken
+  const accessToken = sessionStorage.getItem('accessToken')
   const utils = trpc.useContext()
   const { data: chattingMessageChannel, isLoading: loadingChattingMessageChannel } = trpc.useQuery([
     'chatting.getMessagesByChannelId',

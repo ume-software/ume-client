@@ -42,7 +42,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
     },
     enabled: isNil(userInfo),
   })
-  const accessToken = parse(document.cookie).accessToken
+  const accessToken = sessionStorage.getItem('accessToken')
 
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
   const { childrenDrawer, setChildrenDrawer } = useContext(DrawerContext)

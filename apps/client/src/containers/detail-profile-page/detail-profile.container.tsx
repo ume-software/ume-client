@@ -129,7 +129,7 @@ const DetailProfileContainer = () => {
   const basePath = router.asPath.split('?')[0]
   const slug = router.query
 
-  const accessToken = parse(document.cookie).accessToken
+  const accessToken = sessionStorage.getItem('accessToken')
 
   const [userInfo, setUserInfo] = useState<UserInformationResponse>()
   trpc.useQuery(['identity.identityInfo'], {

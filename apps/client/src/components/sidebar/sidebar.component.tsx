@@ -5,7 +5,9 @@ import Chat from '~/containers/chat/chat.container'
 import { useContext, useEffect, useState } from 'react'
 
 import { parse } from 'cookie'
+import { isNil } from 'lodash'
 import Image from 'next/legacy/image'
+import { UserInformationResponse } from 'ume-service-openapi'
 
 import { LoginModal } from '../header/login-modal.component'
 import { DrawerContext, SocketContext } from '../layouts/app-layout/app-layout'
@@ -14,14 +16,28 @@ import { trpc } from '~/utils/trpc'
 
 export const Sidebar = () => {
   const { childrenDrawer, setChildrenDrawer } = useContext(DrawerContext)
-
-  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
-  const accessToken = parse(document.cookie).accessToken
-
+  let accessToken
+  if (typeof window !== 'undefined') {
+    accessToken = sessionStorage.getItem('accessToken')
+  }
   const { socketContext, setSocketContext } = useContext(SocketContext)
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
   const [showMessage, setShowMessage] = useState(false)
   const utils = trpc.useContext()
+
+  const [userInfo, setUserInfo] = useState<UserInformationResponse>()
+
+  trpc.useQuery(['identity.identityInfo'], {
+    onSuccess(data) {
+      setUserInfo(data.data)
+    },
+    onError() {
+      sessionStorage.removeItem('accessToken')
+      sessionStorage.removeItem('refeshToken')
+    },
+    enabled: isNil(userInfo),
+  })
+
   const { data: chattingChannels } = trpc.useQuery(['chatting.getListChattingChannels', { limit: '5', page: '1' }], {
     refetchOnWindowFocus: false,
     refetchOnReconnect: 'always',
