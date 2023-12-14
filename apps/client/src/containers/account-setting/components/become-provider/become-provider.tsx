@@ -3,6 +3,7 @@ import { Check, CheckSmall, CloseSmall, Voice, Write } from '@icon-park/react'
 import { Button, Modal, TextArea } from '@ume/ui'
 import 'swiper/swiper-bundle.css'
 import { uploadAudio } from '~/apis/upload-media'
+import { useAuth } from '~/contexts/auth'
 
 import { Fragment, useEffect, useRef, useState } from 'react'
 
@@ -46,13 +47,13 @@ const mappingStatusOfProvider: IStatus[] = [
 
 const BecomeProvider = () => {
   const [userInfo, setUserInfo] = useState<UserInformationResponse>()
-
-  const [checked, setChecked] = useState<boolean>(userInfo?.isProvider as boolean)
+  const { user } = useAuth()
+  const [checked, setChecked] = useState<boolean | undefined>(userInfo?.isProvider || user?.isProvider)
 
   const [isModalConfirmationVisible, setIsModalConfirmationVisible] = useState(false)
   const [audioSource, setAudioSource] = useState<string | undefined>(undefined)
 
-  trpc.useQuery(['identity.identityInfo'], {
+  const { isFetching, isLoading } = trpc.useQuery(['identity.identityInfo'], {
     onSuccess(data) {
       setUserInfo(data.data)
     },
@@ -63,16 +64,17 @@ const BecomeProvider = () => {
     enabled: isNil(userInfo),
   })
 
-  const { data: userSettingData, isLoading: isLoadingUserSettingData } = trpc.useQuery(
-    ['identity.getUserBySlug', String(userInfo?.slug ?? userInfo?.id ?? '')],
-    {
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: 'always',
-      cacheTime: 0,
-      refetchOnMount: true,
-      enabled: !!userInfo?.slug || !!userInfo?.id,
-    },
-  )
+  const {
+    data: userSettingData,
+    isLoading: loadingUserSettingData,
+    isFetching: fetchingUserSettingData,
+  } = trpc.useQuery(['identity.getUserBySlug', String(userInfo?.slug ?? userInfo?.id ?? '')], {
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: 'always',
+    cacheTime: 0,
+    refetchOnMount: true,
+    enabled: !!userInfo?.slug || !!userInfo?.id,
+  })
   const updateIntroduceProvider = trpc.useMutation(['identity.userUpdateProviderProfile'])
   const registerBecomeProvider = trpc.useMutation(['identity.registerBecomeProvider'])
   const utils = trpc.useContext()
@@ -116,11 +118,7 @@ const BecomeProvider = () => {
     !userInfo?.isProvider &&
       registerBecomeProvider.mutate(undefined, {
         onSuccess() {
-          const updatedUserInfor = {
-            ...userInfo,
-            isProvider: true,
-          }
-          sessionStorage.setItem('user', JSON.stringify(updatedUserInfor))
+          utils.invalidateQueries(['identity.identityInfo'])
           setChecked(true)
         },
       })
@@ -212,7 +210,6 @@ const BecomeProvider = () => {
       {isModalConfirmationVisible && confirmModal}
       <div className="w-full px-10">
         <p className="text-4xl font-bold">Nhà cung cấp</p>
-
         <div className="w-full px-5 pb-40 mt-10 space-y-10">
           {!checked && (
             <div className="flex items-center justify-between gap-5 py-10 border-b border-white border-opacity-30">
@@ -225,106 +222,106 @@ const BecomeProvider = () => {
               </div>
               <Switch
                 className="bg-red-600"
-                checkedChildren={<CheckSmall theme="outline" size="23" fill="#fff" strokeLinejoin="bevel" />}
-                unCheckedChildren={<CloseSmall theme="outline" size="23" fill="#fff" strokeLinejoin="bevel" />}
                 checked={checked}
                 onChange={handleBecomeProvider}
                 loading={registerBecomeProvider.isLoading}
               />
             </div>
           )}
+
           {checked && (
             <>
-              {!isLoadingUserSettingData ? (
+              {userInfo && userSettingData ? (
                 <form ref={updateIntroduceForProviderFormRef} onSubmit={form.handleSubmit} className="space-y-3">
-                  <p className="font-semibold text-md">Giới thiệu</p>
-                  <div className="py-5 space-y-3 border-2 border-white px-7 rounded-2xl border-opacity-30">
-                    <div className="flex justify-between">
-                      <div className="flex items-center gap-5">
-                        <label className="font-semibold">Giọng của bạn:</label>
-                        {audioSource && (
-                          <audio controls key={audioSource} className="h-7">
-                            <source src={audioSource} />
-                          </audio>
-                        )}
-
-                        <div className={`relative p-2 rounded-full bg-zinc-800 hover:bg-gray-700 cursor-pointer`}>
-                          {form.values.voice ? (
-                            <Write theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />
-                          ) : (
-                            <div className="min-w-[200px] flex items-center gap-2">
-                              Thêm giọng của bạn
-                              <Voice theme="filled" size="20" fill="#fff" strokeLinejoin="bevel" />
-                            </div>
+                  <div>
+                    <p className="font-semibold text-md">Giới thiệu</p>
+                    <div className="py-5 space-y-3 border-2 border-white px-7 rounded-2xl border-opacity-30">
+                      <div className="flex justify-between">
+                        <div className="flex items-center gap-5">
+                          <label className="font-semibold">Giọng của bạn:</label>
+                          {audioSource && (
+                            <audio controls key={audioSource} className="h-7">
+                              <source src={audioSource} />
+                            </audio>
                           )}
-                          <input
-                            className="absolute top-0 left-0 z-20 w-full h-full opacity-0 cursor-pointer"
-                            type="file"
-                            name="files"
-                            onChange={(e) => handleFileChange(e)}
-                            accept="audio/mp3,audio/*;capture=microphone"
-                          />
+
+                          <div className={`relative p-2 rounded-full bg-zinc-800 hover:bg-gray-700 cursor-pointer`}>
+                            {form.values.voice ? (
+                              <Write theme="outline" size="20" fill="#fff" strokeLinejoin="bevel" />
+                            ) : (
+                              <div className="min-w-[200px] flex items-center gap-2">
+                                Thêm giọng của bạn
+                                <Voice theme="filled" size="20" fill="#fff" strokeLinejoin="bevel" />
+                              </div>
+                            )}
+                            <input
+                              className="absolute top-0 left-0 z-20 w-full h-full opacity-0 cursor-pointer"
+                              type="file"
+                              name="files"
+                              onChange={(e) => handleFileChange(e)}
+                              accept="audio/mp3,audio/*;capture=microphone"
+                            />
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex items-center gap-5">
-                        <label className="font-semibold">Trạng thái:</label>
-                        <div className="relative">
-                          <Menu>
-                            <Menu.Button type="button">
-                              <button
-                                className="min-w-[200px] text-xl font-semibold px-8 py-2 bg-[#292734] hover:bg-gray-700 rounded-xl"
-                                type="button"
+                        <div className="flex items-center gap-5">
+                          <label className="font-semibold">Trạng thái:</label>
+                          <div className="relative">
+                            <Menu>
+                              <Menu.Button type="button">
+                                <button
+                                  className="min-w-[200px] text-xl font-semibold px-8 py-2 bg-[#292734] hover:bg-gray-700 rounded-xl"
+                                  type="button"
+                                >
+                                  {
+                                    mappingStatusOfProvider.find((itemStatus) => itemStatus.key == form.values.status)
+                                      ?.label
+                                  }
+                                </button>
+                              </Menu.Button>
+                              <Transition
+                                as={Fragment}
+                                enter="transition ease-out duration-400"
+                                enterFrom="transform opacity-0 scale-95"
+                                enterTo="transform opacity-100 scale-100"
+                                leave="transition ease-in duration-400"
+                                leaveFrom="transform opacity-100 scale-100"
+                                leaveTo="transform opacity-0 scale-95"
                               >
-                                {
-                                  mappingStatusOfProvider.find((itemStatus) => itemStatus.key == form.values.status)
-                                    ?.label
-                                }
-                              </button>
-                            </Menu.Button>
-                            <Transition
-                              as={Fragment}
-                              enter="transition ease-out duration-400"
-                              enterFrom="transform opacity-0 scale-95"
-                              enterTo="transform opacity-100 scale-100"
-                              leave="transition ease-in duration-400"
-                              leaveFrom="transform opacity-100 scale-100"
-                              leaveTo="transform opacity-0 scale-95"
-                            >
-                              <Menu.Items className="min-w-[200px] absolute right-0 p-2 mt-1 origin-top-right bg-[#292734] divide-y divide-gray-100 rounded-xl shadow-lg w-full ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
-                                {mappingStatusOfProvider.map((itemStatus) => (
-                                  <Menu.Item as={'div'} key={itemStatus.key}>
-                                    <div
-                                      className={`flex justify-between items-center px-2 rounded-lg hover:bg-gray-700 ${
-                                        itemStatus.key == form.values.status
-                                          ? 'bg-violet-500 text-white'
-                                          : 'text-gray-900'
-                                      }`}
-                                    >
-                                      <button
-                                        type="button"
-                                        className={`text-white text-md font-semibold group flex w-full items-center rounded-md px-2 py-2`}
-                                        name="status"
-                                        onClick={() => form.setFieldValue('status', itemStatus.key)}
+                                <Menu.Items className="min-w-[200px] absolute right-0 p-2 mt-1 origin-top-right bg-[#292734] divide-y divide-gray-100 rounded-xl shadow-lg w-full ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+                                  {mappingStatusOfProvider.map((itemStatus) => (
+                                    <Menu.Item as={'div'} key={itemStatus.key}>
+                                      <div
+                                        className={`flex justify-between items-center px-2 rounded-lg hover:bg-gray-700 ${
+                                          itemStatus.key == form.values.status
+                                            ? 'bg-violet-500 text-white'
+                                            : 'text-gray-900'
+                                        }`}
                                       >
-                                        {itemStatus.label}
-                                      </button>
-                                      <div>
-                                        {itemStatus.key == form.values.status ? (
-                                          <Check theme="filled" size="10" fill="#FFFFFF" strokeLinejoin="bevel" />
-                                        ) : (
-                                          ''
-                                        )}
+                                        <button
+                                          type="button"
+                                          className={`text-white text-md font-semibold group flex w-full items-center rounded-md px-2 py-2`}
+                                          name="status"
+                                          onClick={() => form.setFieldValue('status', itemStatus.key)}
+                                        >
+                                          {itemStatus.label}
+                                        </button>
+                                        <div>
+                                          {itemStatus.key == form.values.status ? (
+                                            <Check theme="filled" size="10" fill="#FFFFFF" strokeLinejoin="bevel" />
+                                          ) : (
+                                            ''
+                                          )}
+                                        </div>
                                       </div>
-                                    </div>
-                                  </Menu.Item>
-                                ))}
-                              </Menu.Items>
-                            </Transition>
-                          </Menu>
+                                    </Menu.Item>
+                                  ))}
+                                </Menu.Items>
+                              </Transition>
+                            </Menu>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="space-y-2">
+                      <div className="space-y-2"></div>
                       <label className="font-semibold">Giới thiệu về bạn:</label>
                       <TextArea
                         name="description"
@@ -366,10 +363,13 @@ const BecomeProvider = () => {
               ) : (
                 <SkeletonProviderService />
               )}
-              <div className="space-y-3">
-                <p className="font-semibold text-md">Dịch vụ</p>
-                <ServiceForm />
-              </div>
+
+              {userSettingData && (
+                <div className="space-y-3">
+                  <p className="font-semibold text-md">Dịch vụ</p>
+                  <ServiceForm />
+                </div>
+              )}
             </>
           )}
         </div>

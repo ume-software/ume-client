@@ -48,8 +48,6 @@ const EditNotificated = () => {
             </div>
             <Switch
               className="bg-red-600"
-              checkedChildren={<CheckSmall theme="outline" size="23" fill="#fff" strokeLinejoin="bevel" />}
-              unCheckedChildren={<CloseSmall theme="outline" size="23" fill="#fff" strokeLinejoin="bevel" />}
               checked={userInfo?.isAllowNotificationToEmail}
               onClick={(value) => {
                 updateInformation.mutate(
@@ -74,8 +72,6 @@ const EditNotificated = () => {
               <p className="text-lg">Âm thanh thông báo tin nhắn</p>
               <Switch
                 className="bg-red-600"
-                checkedChildren={<CheckSmall theme="outline" size="23" fill="#fff" strokeLinejoin="bevel" />}
-                unCheckedChildren={<CloseSmall theme="outline" size="23" fill="#fff" strokeLinejoin="bevel" />}
                 checked={userInfo?.isAllowNotificationMessage}
                 onClick={(value) => {
                   updateInformation.mutate(
@@ -93,15 +89,6 @@ const EditNotificated = () => {
                 }}
               />
             </div>
-            {/* <div className="flex items-center justify-between gap-5 py-10 border-b border-white border-opacity-30">
-            <p className="text-lg">Âm thanh thông báo cuộc gọi</p>
-            <Switch
-              className="bg-red-600"
-              checkedChildren={<CheckSmall theme="outline" size="23" fill="#fff" strokeLinejoin="bevel" />}
-              unCheckedChildren={<CloseSmall theme="outline" size="23" fill="#fff" strokeLinejoin="bevel" />}
-              defaultChecked
-            />
-          </div> */}
           </div>
         </div>
       ) : (

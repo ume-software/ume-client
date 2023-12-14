@@ -848,16 +848,16 @@ const AddSkillForm = () => {
                     updateProvicerService.isLoading ||
                     deleteProviderService.isLoading) &&
                   indexServiceForm == index ? (
-                    <div key={index} className="col-span-2 border border-white border-opacity-30 p-5 rounded-3xl">
-                      <div className="w-full h-full flex justify-center items-center">
+                    <div key={index} className="col-span-2 p-5 border border-white border-opacity-30 rounded-3xl">
+                      <div className="flex items-center justify-center w-full h-full">
                         <span
                           className={`spinner h-28 w-28 animate-spin rounded-full border-[5px] border-r-transparent dark:border-navy-300 dark:border-r-transparent border-white`}
                         />
                       </div>
                     </div>
                   ) : (
-                    <div key={index} className="col-span-2 border border-white border-opacity-30 p-5 rounded-3xl">
-                      <div className="flex justify-between items-center pb-3">
+                    <div key={index} className="col-span-2 p-5 border border-white border-opacity-30 rounded-3xl">
+                      <div className="flex items-center justify-between pb-3">
                         <div className="flex items-center gap-2">
                           {attr.id && (
                             <>
@@ -882,11 +882,11 @@ const AddSkillForm = () => {
                                     leaveTo="transform opacity-0 scale-95"
                                   >
                                     <Menu.Items className="min-w-full max-h-[200px] absolute right-0 p-2 origin-top-right bg-umeHeader divide-y divide-gray-200 rounded-md shadow-lg w-fit top-9 ring-1 ring-black ring-opacity-30 focus:outline-none overflow-y-auto hide-scrollbar">
-                                      <div className="flex flex-col gap-2 w-full">
+                                      <div className="flex flex-col w-full gap-2">
                                         {attributes?.map((_, position_index) => (
                                           <div
                                             key={position_index}
-                                            className="w-full p-2 text-md font-medium rounded-md cursor-pointer hover:bg-gray-700"
+                                            className="w-full p-2 font-medium rounded-md cursor-pointer text-md hover:bg-gray-700"
                                             onClick={() => {
                                               handleServiceChange('Position', index, undefined, position_index + 1)
                                             }}
@@ -904,7 +904,7 @@ const AddSkillForm = () => {
                           )}
                         </div>
 
-                        <div className="flex justify-end items-center gap-2">
+                        <div className="flex items-center justify-end gap-2">
                           <Button
                             type="button"
                             customCSS="text-xl p-2 rounded-xl hover:scale-105"
@@ -975,7 +975,7 @@ const AddSkillForm = () => {
                       <div className="flex flex-col gap-1 mb-5">
                         <label>Dịch vụ: </label>
                         <div className="flex items-center gap-3">
-                          <div className="w-fit relative">
+                          <div className="relative w-fit">
                             <InputWithAffix
                               disabled={
                                 !!listOwnService?.find((ownService) => ownService.serviceId == attr.service?.id)
@@ -984,7 +984,7 @@ const AddSkillForm = () => {
                               value={attributesDisplay[index]?.service || ''}
                               type="text"
                               onChange={(e) => handleServiceInputChange('Service', index, e.target.value)}
-                              className="bg-zinc-800 rounded-xl border border-white border-opacity-30"
+                              className="border border-white bg-zinc-800 rounded-xl border-opacity-30"
                               styleInput={`bg-zinc-800 rounded-xl border-none focus:outline-none`}
                               iconStyle="border-none"
                               position="right"
@@ -1055,11 +1055,11 @@ const AddSkillForm = () => {
                                         onClick={() => handleServiceChange('Service', index, undefined, service)}
                                         onKeyDown={() => {}}
                                       >
-                                        <p className="text-md font-semibold">{service.name}</p>
+                                        <p className="font-semibold text-md">{service.name}</p>
                                       </div>
                                     ))
                                   ) : (
-                                    <p className="text-md font-normal">Không có kết quả</p>
+                                    <p className="font-normal text-md">Không có kết quả</p>
                                   )}
                                 </div>
                               </div>
@@ -1104,7 +1104,7 @@ const AddSkillForm = () => {
                             {attr.specialTimeLot?.map((timeSlot, time_slot_index) => (
                               <>
                                 <div className="flex items-center gap-3" key={time_slot_index}>
-                                  <div className="grid 2xl:grid-cols-6 grid-cols-4 items-center 2xl:gap-3 gap-1">
+                                  <div className="grid items-center grid-cols-4 gap-1 2xl:grid-cols-6 2xl:gap-3">
                                     <div className="col-span-2 min-w-[105px]">
                                       <Input
                                         placeholder="Thời gian bắt đầu"
@@ -1195,7 +1195,7 @@ const AddSkillForm = () => {
                             {attr.serviceAttribute?.map((serviceAttribute, sub_index) => (
                               <>
                                 <div className="flex items-center gap-3" key={sub_index}>
-                                  <div className="w-fit relative">
+                                  <div className="relative w-fit">
                                     <InputWithAffix
                                       placeholder={`Hạng`}
                                       value={attributesDisplay[index].serviceAttribute[sub_index].serviceAttributeId}
@@ -1208,7 +1208,7 @@ const AddSkillForm = () => {
                                           sub_index,
                                         )
                                       }
-                                      className="bg-zinc-800 rounded-xl border border-white border-opacity-30"
+                                      className="border border-white bg-zinc-800 rounded-xl border-opacity-30"
                                       styleInput={`bg-zinc-800 rounded-xl border-none focus:outline-none`}
                                       iconStyle="border-none"
                                       position="right"
@@ -1284,16 +1284,16 @@ const AddSkillForm = () => {
                                                   }
                                                   onKeyDown={() => {}}
                                                 >
-                                                  <p className="text-mg font-semibold">{value_attr.viAttribute}</p>
+                                                  <p className="font-semibold text-mg">{value_attr.viAttribute}</p>
                                                 </div>
                                               ))
                                             ) : (
-                                              <p className="text-md font-normal">Không có kết quả</p>
+                                              <p className="font-normal text-md">Không có kết quả</p>
                                             )
                                           ) : (
                                             <>
-                                              <div className="w-full animate-pulse flex-row items-center justify-center space-x-1 rounded-xl border p-3">
-                                                <div className="h-6 w-full rounded-md bg-gray-300 "></div>
+                                              <div className="flex-row items-center justify-center w-full p-3 space-x-1 border animate-pulse rounded-xl">
+                                                <div className="w-full h-6 bg-gray-300 rounded-md "></div>
                                               </div>
                                             </>
                                           )}
@@ -1318,7 +1318,7 @@ const AddSkillForm = () => {
                                         (_, sub_attr_value_index) => (
                                           <>
                                             <div className="flex items-center gap-3" key={sub_attr_value_index}>
-                                              <div className="w-fit relative">
+                                              <div className="relative w-fit">
                                                 <InputWithAffix
                                                   placeholder={`Vàng`}
                                                   value={
@@ -1337,7 +1337,7 @@ const AddSkillForm = () => {
                                                       sub_attr_value_index,
                                                     )
                                                   }
-                                                  className="bg-zinc-800 rounded-xl border border-white border-opacity-30"
+                                                  className="border border-white bg-zinc-800 rounded-xl border-opacity-30"
                                                   styleInput={`bg-zinc-800 rounded-xl border-none focus:outline-none`}
                                                   iconStyle="border-none"
                                                   position="right"
@@ -1438,7 +1438,7 @@ const AddSkillForm = () => {
                                                                 }
                                                                 onKeyDown={() => {}}
                                                               >
-                                                                <p className="text-mg font-semibold">
+                                                                <p className="font-semibold text-mg">
                                                                   {value_attr.viValue != ''
                                                                     ? value_attr.viValue
                                                                     : value_attr.value}
@@ -1447,12 +1447,12 @@ const AddSkillForm = () => {
                                                             ),
                                                           )
                                                         ) : (
-                                                          <p className="text-md font-normal">Không có kết quả</p>
+                                                          <p className="font-normal text-md">Không có kết quả</p>
                                                         )
                                                       ) : (
                                                         <>
-                                                          <div className="w-full animate-pulse flex-row items-center justify-center space-x-1 rounded-xl border p-3">
-                                                            <div className="h-6 w-full rounded-md bg-gray-300 "></div>
+                                                          <div className="flex-row items-center justify-center w-full p-3 space-x-1 border animate-pulse rounded-xl">
+                                                            <div className="w-full h-6 bg-gray-300 rounded-md "></div>
                                                           </div>
                                                         </>
                                                       )}
@@ -1517,6 +1517,7 @@ const AddSkillForm = () => {
                   )}
                 </>
               ))}
+
             <div className="col-span-2 min-h-[500px] flex justify-center items-center">
               <Button
                 customCSS={`text-lg p-2 hover:scale-105 rounded-xl`}
