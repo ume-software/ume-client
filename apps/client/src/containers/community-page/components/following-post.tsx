@@ -72,11 +72,17 @@ const FollowingPost = () => {
             <PostSkeletonLoader />
           ) : (
             <div ref={containerRef}>
-              {suggestPostData?.map((data, index) => (
-                <div key={index}>
-                  <CommunityPost data={data} idPostArray={idPostArray} setIdPostArray={setIdPostArray} />
-                </div>
-              ))}
+              {(suggestPostData?.length ?? 0) > 0 ? (
+                <>
+                  {suggestPostData?.map((data, index) => (
+                    <div key={index}>
+                      <CommunityPost data={data} idPostArray={idPostArray} setIdPostArray={setIdPostArray} />
+                    </div>
+                  ))}
+                </>
+              ) : (
+                <p>Bạn chưa theo dõi ai</p>
+              )}
             </div>
           )}
           {(loadingSuggestPost ?? fetchingSuggestPost) && <PostSkeletonLoader />}

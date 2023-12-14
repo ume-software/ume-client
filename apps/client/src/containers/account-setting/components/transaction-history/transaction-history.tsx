@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Tool, Wallet, WalletOne } from '@icon-park/react'
+import { Tool, Wallet } from '@icon-park/react'
 import { useAuth } from '~/contexts/auth'
 
 import { useEffect, useState } from 'react'
@@ -40,7 +40,6 @@ const TransactionHistory = () => {
 
   const { user } = useAuth()
   const [accountBalance, setAccountBalance] = useState<any>(0)
-  const [isModalComplainVisible, setIsModalComplainVisible] = useState<boolean>(false)
   const [transactionHistory, setTransactionHistory] = useState<BalanceHistoryPagingResponse | undefined>(undefined)
   const [transactionHistoryArray, setTransactionHistoryArray] = useState<any[] | undefined>(undefined)
   const [seriesCharts, setSeriesCharts] = useState<any[] | undefined>(undefined)
@@ -124,7 +123,7 @@ const TransactionHistory = () => {
           <div className="flex flex-col">
             <div className="mb-4 text-2xl font-bold text-[#f4f4f3]">Số dư khả dụng:</div>
             <div className="w-[400px] h-[200px] bg-[#7463f0] rounded-[50px] flex justify-center">
-              <Tooltip title="Số dư có thể sử dụng">
+              <Tooltip title="Số dư khả dụng">
                 <Wallet size={50} className="my-auto text-3xl font-bold text-[#3fe14a]" theme="outline" />
               </Tooltip>
               <Statistic
@@ -142,9 +141,11 @@ const TransactionHistory = () => {
             <div className="mb-4 text-2xl font-bold text-[#f4f4f3]">Tổng số dư:</div>
             <div className="w-[400px] h-[200px] bg-[#7463f0] rounded-[50px] flex justify-center">
               <Tooltip
-                title={`Số dư khả dụng + Số dư đang chờ xử lý ${
-                  accountBalance?.balance - accountBalance?.balanceAvailable > 0
-                    ? `(${accountBalance?.balance - accountBalance?.balanceAvailable})`
+                title={`Số dư đang đợi xử lý ${
+                  Number(accountBalance?.balance ?? 0) - Number(accountBalance?.balanceAvailable ?? 0) >= 0
+                    ? `(${(
+                        Number(accountBalance?.balance ?? 0) - Number(accountBalance?.balanceAvailable ?? 0)
+                      ).toLocaleString()})`
                     : ''
                 }`}
               >

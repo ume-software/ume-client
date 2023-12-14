@@ -61,6 +61,7 @@ const CommunityPost = (props: CommunityPostProps) => {
     onClose: handleClose,
     title: titleForm,
     show: isModalVisible,
+    customModalCSS: 'top-32',
     form: modalForm,
     backgroundColor: '#15151b',
     closeWhenClickOutSide: true,

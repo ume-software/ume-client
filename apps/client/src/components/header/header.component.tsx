@@ -28,6 +28,7 @@ interface TabProps {
   children: ReactElement
 }
 
+// eslint-disable-next-line react/display-name
 export const Header: React.FC = React.memo(() => {
   const [showRechargeModal, setShowRechargeModal] = useState(false)
   const [balance, setBalance] = useState<any>()
@@ -107,7 +108,7 @@ export const Header: React.FC = React.memo(() => {
           <Link href={'/community'}>Cộng đồng</Link>
         </span>
         <span className="px-3 py-2 text-lg font-medium text-white align-middle duration-500 hover:bg-slate-700 rounded-2xl hover:ease-in-out">
-          <Link href={'/'}>FAQs</Link>
+          <Link href={'/FAQ'}>FAQs</Link>
         </span>
       </div>
       <div className="flex items-center">

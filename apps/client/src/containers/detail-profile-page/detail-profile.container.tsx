@@ -21,7 +21,6 @@ import lgbtIcon from 'public/rainbow-flag-11151.svg'
 import { Fragment, ReactElement, useEffect, useState } from 'react'
 
 import { ConfigProvider, Tooltip, message, theme } from 'antd'
-import { parse } from 'cookie'
 import { isNil } from 'lodash'
 import Image from 'next/legacy/image'
 import { useRouter } from 'next/router'
@@ -153,23 +152,26 @@ const DetailProfileContainer = () => {
   const [isFollowerModalVisible, setIsFollowerModalVisible] = useState<boolean>(false)
   const [isFollowingModalVisible, setIsFollowingModalVisible] = useState<boolean>(false)
 
-  const { isLoading: isProviderDetailLoading } = trpc.useQuery(['booking.getUserBySlug', slug.profileId!.toString()], {
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: 'always',
-    cacheTime: 0,
-    refetchOnMount: true,
-    onSuccess(data) {
-      if (data.data.id) {
-        setProviderDetail(data.data)
-      } else {
+  const { isLoading: isProviderDetailLoading } = trpc.useQuery(
+    ['booking.getUserBySlug', String(slug?.profileId ?? '')],
+    {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: 'always',
+      cacheTime: 0,
+      refetchOnMount: true,
+      onSuccess(data) {
+        if (data.data.id) {
+          setProviderDetail(data.data)
+        } else {
+          router.replace('/404')
+        }
+      },
+      onError() {
         router.replace('/404')
-      }
+      },
+      enabled: !!slug.profileId,
     },
-    onError() {
-      router.replace('/404')
-    },
-    enabled: !!slug.profileId!.toString(),
-  })
+  )
 
   const followProvider = trpc.useMutation(['identity.FollowProvider'])
   const unFollowProvider = trpc.useMutation(['identity.UnFollowProvider'])
@@ -187,10 +189,21 @@ const DetailProfileContainer = () => {
 
   useEffect(() => {
     if (!providerDetail?.isProvider) {
-      setSelectedTab(tabDatas[1])
+      setSelectedTab(
+        slug.tab != tabDatas[0].key
+          ? tabDatas.find((tab) => {
+              return tab.key.toString() == slug.tab?.toString()
+            }) ?? tabDatas[1]
+          : tabDatas[1],
+      )
     } else {
-      setSelectedTab(tabDatas[0])
+      setSelectedTab(
+        tabDatas.find((tab) => {
+          return tab.key.toString() == slug.tab?.toString()
+        }) ?? tabDatas[0],
+      )
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [providerDetail])
 
   const handleChangeTab = (item: TabDataProps) => {
@@ -602,7 +615,7 @@ const DetailProfileContainer = () => {
             <span className="text-white">
               <div className="flex justify-center min-h-screen my-10">
                 {providerDetail?.isProvider && selectedTab.key == 'Service' && <InformationTab data={providerDetail} />}
-                {selectedTab.key == 'Album' && <AlbumTab data={providerDetail!} />}
+                {selectedTab.key == 'Album' && <AlbumTab />}
                 {selectedTab.key == 'Post' && <PostTab providerId={providerDetail?.slug ?? providerDetail?.id ?? ''} />}
               </div>
             </span>

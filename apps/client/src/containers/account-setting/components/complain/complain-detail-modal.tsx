@@ -6,7 +6,11 @@ import { Dispatch, SetStateAction } from 'react'
 
 import { Image } from 'antd'
 import Link from 'next/link'
-import { BookingComplaintResponse, CreateBookingComplaintRequestComplaintTypeEnum } from 'ume-service-openapi'
+import {
+  BookingComplaintResponse,
+  BookingComplaintResponseComplaintStatusEnum,
+  CreateBookingComplaintRequestComplaintTypeEnum,
+} from 'ume-service-openapi'
 
 interface ComplainTicketProps {
   isModalComplainDetailVisible: boolean
@@ -68,8 +72,6 @@ const ComplainDetailModal = ({
     return formattedDate
   }
 
-  console.log(bookingSelected)
-
   const complainDetailModal = Modal.useEditableForm({
     onOK: () => {},
     onClose: () => setIsModalComplainDetailVisible(false),
@@ -84,10 +86,13 @@ const ComplainDetailModal = ({
               <div className="w-fit p-3 bg-red-700 rounded-lg text-white font-semibold">Đã gửi khiếu nại</div>
             ) : isTimeMoreThan7Days() < 1 ? (
               <p className="text-lg font-bold text-red-500">Đơn này đã quá hạn phản hồi</p>
-            ) : (
+            ) : bookingSelected?.complaintStatus ==
+              BookingComplaintResponseComplaintStatusEnum.AwaitingProviderResponse ? (
               <p className="text-lg font-bold text-red-500">
                 Bạn còn {isTimeMoreThan7Days()} ngày để {complainType == ComplainEnum.COMPLAIN_OF_ME && 'được'} phản hồi
               </p>
+            ) : (
+              <p className="text-lg font-bold text-yellow-500">Đợi admin duyệt đơn</p>
             )}
           </div>
           <div className="flex justify-between items-center">
