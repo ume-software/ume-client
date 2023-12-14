@@ -28,13 +28,13 @@ Route (pages)                              Size     First Load JS
 ├ ○ /community                             1.82 kB         647 kB
 ├ ○ /filter-service/[filterServiceName]    1.87 kB         647 kB
 ├ ○ /home                                  1.82 kB         647 kB
-├ λ /logout                                288 B           645 kB
+├ λ /logout                                274 B           645 kB
 └ ○ /profile/[profileId]                   1.83 kB         647 kB
 + First Load JS shared by all              654 kB
   ├ chunks/framework-22108eb722d84e59.js   45.4 kB
   ├ chunks/main-6d79117b6389fadc.js        26.7 kB
-  ├ chunks/pages/_app-183dba3c277a4f31.js  571 kB
-  ├ chunks/webpack-92038a2edc9f38f6.js     2.48 kB
+  ├ chunks/pages/_app-fe7c8c375357cbd1.js  571 kB
+  ├ chunks/webpack-ba4149b78a58998a.js     2.48 kB
   └ css/9310ea32f4183315.css               8.78 kB
 
 λ  (Server)  server-side renders at runtime (uses getInitialProps or getServerSideProps)
