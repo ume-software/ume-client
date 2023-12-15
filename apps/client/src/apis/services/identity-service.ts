@@ -230,7 +230,7 @@ export const providerGetSelfVoucher = async (
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).providerGetSelfVoucher(query.limit, query.page, '["$all"]', query.where, "[{ createdAt: 'asc' }]")
+    }).providerGetSelfVoucher(query.limit, query.page, '["$all"]', query.where, "[{ createdAt: 'desc' }]")
     return {
       data: reponse.data,
       success: true,

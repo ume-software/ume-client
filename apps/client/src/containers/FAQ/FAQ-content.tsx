@@ -35,7 +35,7 @@ export const FAQContents: AccoditionProps[] = [
   },
   {
     key: 'ProviderSettingProfile',
-    title: 'Nhà cung cấp',
+    title: 'Cách trở thành nhà cung cấp',
     descriptions: [
       { content: 'Nhấn vào "Nhà cung cấp" tại trang cài đặt tài khoản.', img: FAQProvider1 },
       { content: 'Nhấn vào nút "Trở thành nhà cung cấp".', img: FAQProvider2 },
