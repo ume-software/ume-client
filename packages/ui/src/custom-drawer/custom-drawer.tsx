@@ -91,15 +91,7 @@ const CustomDrawer = ({
               name="categorySearch"
               onChange={(e: any) => setSearchText(e.target.value)}
               position="left"
-              component={
-                <Search
-                  theme="outline"
-                  size="32"
-                  fill="#fff"
-                  // className="p-2 mt-2 mr-2 rounded-full hover:bg-gray-700 active:bg-gray-500"
-                  onClick={onSearch}
-                />
-              }
+              component={<Search theme="outline" size="32" fill="#fff" onClick={onSearch} />}
             />
           </div>
         )}
@@ -108,13 +100,12 @@ const CustomDrawer = ({
   }
   return (
     <>
-      <div onClick={showDrawer} className={`cursor-pointer hover:opacity-60 ${customOpenBtn}`} onKeyDown={() => {}}>
+      <div onClick={showDrawer} className={`cursor-pointer ${customOpenBtn}`} onKeyDown={() => {}}>
         {openBtn}
       </div>
       <Drawer
         className="bg-black"
         title={drawerHeader()}
-        // size="large"
         zIndex={30}
         placement="right"
         footer={footer && drawerFooter()}

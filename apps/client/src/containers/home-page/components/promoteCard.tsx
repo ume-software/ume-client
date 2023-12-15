@@ -52,7 +52,7 @@ const PromoteCard = (props: { data: FilterProviderResponse; filterAttributeValue
                       indexAttrValue < 1 && (
                         <div
                           key={serviceAttrValues.value + indexAttrValue + index}
-                          className="w-fit inline-block px-5 py-2 bg-zinc-500 text-sm font-bold rounded-lg mr-3 mb-3"
+                          className="inline-block px-5 py-2 mb-3 mr-3 text-sm font-bold rounded-lg w-fit bg-zinc-500"
                         >
                           {serviceAttrValues.viValue}
                         </div>
@@ -72,7 +72,7 @@ const PromoteCard = (props: { data: FilterProviderResponse; filterAttributeValue
       <div className="flex flex-row justify-between">
         <div className="w-[140px] h-[140px] relative -translate-y-6 group-hover:scale-110 duration-500">
           <Image
-            className="absolute ease-in-out rounded-2xl object-cover"
+            className="absolute object-cover ease-in-out rounded-2xl"
             src={props?.data?.avatarUrl ?? ''}
             alt="image_provider"
             layout="fill"
@@ -95,10 +95,10 @@ const PromoteCard = (props: { data: FilterProviderResponse; filterAttributeValue
           )}
         </button>
       </div>
-      <div className="h-72 flex flex-col justify-between pr-5">
-        <div className="flex flex-col gap-3">
-          <div className="w-fit flex items-center gap-3 bg-purple-600 p-2 mb-2 rounded-md text-white">
-            <p className="text-md font-semibold">{props?.data?.serviceName}</p>
+      <div className="flex flex-col justify-between h-64 pr-5">
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-4 p-2 mb-2 text-white bg-purple-600 rounded-md w-fit">
+            <p className="font-semibold text-md">{props?.data?.serviceName}</p>
             {props?.data?.star ? (
               <div className="flex items-center gap-1 text-lg font-bold">
                 <Star theme="filled" size="15" fill="#FFBB00" strokeLinejoin="bevel" />
@@ -110,22 +110,18 @@ const PromoteCard = (props: { data: FilterProviderResponse; filterAttributeValue
           </div>
           {DisplayAttribute((props.data as any).serviceAttributeValues)}
           <p className="text-xl font-bold">{props?.data?.name}</p>
-          {/* <div className="">
-          <Star theme="outline" size="20" fill="#EBFF00" className="inline-block mr-2" />
-          <span className="font-bold align-top text-slate-300">{props?.data?.totalVote}</span>
-        </div> */}
-          <p className="text-lg line-clamp-2">{props?.data?.description}</p>
+          <p className="text-lg text-slate-400 line-clamp-2">{props?.data?.description}</p>
         </div>
-        <div className="flex justify-end items-end mt-10 gap-1">
+        <div className="flex items-end justify-end gap-2">
           <div className="flex items-center gap-2">
-            <p className="text-2xl font-semibold">
+            <p className="text-xl font-semibold">
               {props?.data?.cost?.toLocaleString('en-US', {
                 currency: 'VND',
               })}
             </p>
-            <span className="text-xs italic"> đ</span>
+            <span className="text-xs italic">đ</span>
           </div>
-          <p className="text-lg font-semibold opacity-30">/ Giờ</p>
+          <p className="font-semibold text-md">/ Giờ</p>
         </div>
       </div>
     </div>

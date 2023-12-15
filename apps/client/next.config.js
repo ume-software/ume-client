@@ -3,7 +3,6 @@ module.exports = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  transpilePackages: ['ui'],
   images: {
     remotePatterns: [
       {
