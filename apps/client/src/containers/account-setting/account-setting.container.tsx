@@ -2,7 +2,6 @@
 import { Coupon, EditName, Expenses, FileStaffOne, Lock, Remind, Transaction, TransactionOrder } from '@icon-park/react'
 import logo from 'public/logo.png'
 import 'swiper/swiper-bundle.css'
-import { useAuth } from '~/contexts/auth'
 
 import { ReactNode, useEffect, useState } from 'react'
 

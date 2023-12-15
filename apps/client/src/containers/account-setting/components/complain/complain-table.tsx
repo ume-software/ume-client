@@ -27,7 +27,7 @@ const mappingBookingComplainStatus: IEnumType[] = [
   {
     key: BookingComplaintResponseComplaintStatusEnum.AwaitingProviderResponse,
     label: 'Đợi phản hồi',
-    color: '#008000',
+    color: '#FFFF00',
     textColor: '#FFF',
   },
   {
@@ -37,9 +37,9 @@ const mappingBookingComplainStatus: IEnumType[] = [
     textColor: '#000',
   },
   {
-    key: BookingComplaintResponseComplaintStatusEnum.Processing,
-    label: 'Processing',
-    color: '#FFFF00',
+    key: BookingComplaintResponseComplaintStatusEnum.ProviderResponded,
+    label: 'Đã phản hồi',
+    color: '#008000',
     textColor: '#FFF',
   },
   {
@@ -52,12 +52,6 @@ const mappingBookingComplainStatus: IEnumType[] = [
     key: BookingComplaintResponseComplaintStatusEnum.Resolved,
     label: 'Đã giải quyết',
     color: '#008000',
-    textColor: '#FFF',
-  },
-  {
-    key: BookingComplaintResponseComplaintStatusEnum.Unresolvable,
-    label: 'Không giải quyết',
-    color: '#FF0000',
     textColor: '#FFF',
   },
 ]

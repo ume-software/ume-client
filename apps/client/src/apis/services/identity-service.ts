@@ -11,6 +11,7 @@ import {
   BookingComplaintApi,
   BookingComplaintResponseApi,
   CreateBookingComplaintRequestComplaintTypeEnum,
+  CreateBookingComplaintResponseRequestBookingComplaintResponseTypeEnum,
   CreateVoucherRequest,
   CreateWithdrawalRequestUnitCurrencyEnum,
   DepositRequestApi,
@@ -860,7 +861,13 @@ export const responseComplain = async (
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).providerCreateBookingComplaintResponse(query)
+    }).providerCreateBookingComplaintResponse({
+      bookingComplaintId: query.bookingComplaintId,
+      responseMessage: query.responseMessage,
+      attachments: query.attachments,
+      bookingComplaintResponseType:
+        CreateBookingComplaintResponseRequestBookingComplaintResponseTypeEnum.ProviderSendToAdmin,
+    })
     return {
       data: respone.data,
     }
