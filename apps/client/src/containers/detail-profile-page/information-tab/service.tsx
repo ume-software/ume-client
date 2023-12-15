@@ -24,7 +24,7 @@ const Service = (props: { data: ProviderServiceResponse }) => {
   const router = useRouter()
   const slug = router.query
 
-  const accessToken = sessionStorage.getItem('accessToken')
+  const accessToken = localStorage.getItem('accessToken')
   const { user } = useAuth()
 
   const feedbackGame =

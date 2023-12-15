@@ -36,7 +36,7 @@ const BookingHistory = () => {
       setUserInfo(data.data)
     },
     onError() {
-      sessionStorage.removeItem('accessToken')
+      localStorage.removeItem('accessToken')
     },
     enabled: isNil(userInfo),
   })

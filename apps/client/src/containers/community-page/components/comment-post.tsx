@@ -31,7 +31,7 @@ const CommmentPost = (props: CommentPostProps) => {
 
   const { user } = useAuth()
 
-  const accessToken = sessionStorage.getItem('accessToken')
+  const accessToken = localStorage.getItem('accessToken')
 
   const containerRef = useRef<HTMLDivElement>(null)
   const [comment, setComment] = useState('')

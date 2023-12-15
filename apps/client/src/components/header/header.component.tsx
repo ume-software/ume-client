@@ -40,7 +40,7 @@ export const Header: React.FC = React.memo(() => {
   let accessToken
 
   if (typeof window !== 'undefined') {
-    accessToken = sessionStorage.getItem('accessToken')
+    accessToken = localStorage.getItem('accessToken')
   }
   const { login } = useAuth()
   const utils = trpc.useContext()
@@ -50,7 +50,7 @@ export const Header: React.FC = React.memo(() => {
       login({ ...data.data })
     },
     onError() {
-      sessionStorage.removeItem('accessToken')
+      localStorage.removeItem('accessToken')
     },
     enabled: !!accessToken,
   })
