@@ -273,6 +273,7 @@ export const RechargeModal = ({ setShowRechargeModal, showRechargeModal }: IRech
     onOK: () => {},
     onClose: handleClose,
     show: showRechargeModal,
+    customModalCSS: 'top-32',
     form: <RechargeForm handleClose={handleClose} qrContent={qrContent} setQRContent={setQRContent} />,
     backgroundColor: '#15151b',
     closeButtonOnConner: (

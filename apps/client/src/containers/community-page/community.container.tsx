@@ -4,18 +4,12 @@ import { useAuth } from '~/contexts/auth'
 
 import { ReactNode, useId, useState } from 'react'
 
-import { parse } from 'cookie'
-import { isNil } from 'lodash'
-import { UserInformationResponse } from 'ume-service-openapi'
-
 import CreatePost from './components/create-post'
 import FollowingPost from './components/following-post'
 import GeneralPost from './components/general-post'
 import TopDonation from './components/top-donate'
 
 import { LoginModal } from '~/components/header/login-modal.component'
-
-import { trpc } from '~/utils/trpc'
 
 interface CommunityProps {
   key: string
@@ -62,6 +56,7 @@ const CommunityContainer = () => {
     onClose: handleClose,
     title: <p className="text-white">Tạo bài viết</p>,
     show: isModalVisible,
+    customModalCSS: 'top-32',
     form: <CreatePost handleClose={handleClose} />,
     backgroundColor: '#15151b',
     closeWhenClickOutSide: true,

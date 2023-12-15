@@ -11,7 +11,7 @@ import { UserInformationResponse } from 'ume-service-openapi'
 
 import { trpc } from '~/utils/trpc'
 
-const AlbumTab = (props: { data: UserInformationResponse }) => {
+const AlbumTab = () => {
   const router = useRouter()
   const slug = router.query
 
@@ -26,22 +26,16 @@ const AlbumTab = (props: { data: UserInformationResponse }) => {
     data: AlbumData,
     isLoading: isLoadingAlbum,
     isFetching: isAlbumFetching,
-  } = trpc.useQuery(
-    [
-      'booking.getAlbumByUserSlug',
-      { slug: props.data.slug ?? props.data.id ?? slug.profileId?.toString(), limit: '8', page: page },
-    ],
-    {
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: 'always',
-      cacheTime: 0,
-      refetchOnMount: true,
-      onSuccess(data) {
-        setAlbum((prevData) => [...(prevData ?? []), ...(data?.data?.row ?? [])])
-      },
-      enabled: !!props.data.slug || !!props.data.id || !!slug.profileId?.toString(),
+  } = trpc.useQuery(['booking.getAlbumByUserSlug', { slug: String(slug.profileId ?? ''), limit: '8', page: page }], {
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: 'always',
+    cacheTime: 0,
+    refetchOnMount: true,
+    onSuccess(data) {
+      setAlbum((prevData) => [...(prevData ?? []), ...(data?.data?.row ?? [])])
     },
-  )
+    enabled: !!slug.profileId?.toString(),
+  })
   const [isPostModal, setIsPostModal] = useState<boolean>(false)
 
   const handleClose = () => {

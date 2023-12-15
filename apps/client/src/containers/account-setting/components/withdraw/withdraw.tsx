@@ -91,6 +91,7 @@ const Withdraw = () => {
     onClose: handleClose,
     title: <p className="text-white">Tài khoản rút tiền</p>,
     show: isModalVisible,
+    customModalCSS: 'top-32',
     form: (
       <>
         {actionModal == ActionEnum.CREATE ? (
@@ -191,6 +192,7 @@ const Withdraw = () => {
     onOK: () => {},
     onClose: () => setIsModalConfirmationVisible(false),
     show: isModalConfirmationVisible,
+    customModalCSS: 'top-32',
     form: (
       <ConfirmForm
         title={`${

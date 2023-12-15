@@ -190,6 +190,7 @@ const ComplainTicketModal = ({
     onOK: () => {},
     onClose: handleClose,
     show: isModalConfirmationVisible,
+    customModalCSS: 'top-32',
     form: (
       <ConfirmForm
         title="Gửi khiếu nại"

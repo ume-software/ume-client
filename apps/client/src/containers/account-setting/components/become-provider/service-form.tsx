@@ -790,6 +790,7 @@ const AddSkillForm = () => {
     onOK: () => {},
     onClose: closeConfirmModal,
     show: isModalConfirmationVisible,
+    customModalCSS: 'top-32',
     form: (
       <>
         <ConfirmForm

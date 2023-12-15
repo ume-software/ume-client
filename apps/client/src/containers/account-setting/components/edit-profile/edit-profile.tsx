@@ -257,6 +257,7 @@ const EditProfile = () => {
     onOK: () => {},
     onClose: handleClose,
     show: isModalConfirmationVisible,
+    customModalCSS: 'top-32',
     form: (
       <ConfirmForm
         title="Thay đổi thông tin cá nhân"

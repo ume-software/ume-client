@@ -26,7 +26,7 @@ const FollowingModal = ({ isFollowingModalVisible, setIsFollowingModalVisible })
     data: following,
     isLoading: loadingFollowing,
     isFetching: fetchingFollowing,
-  } = trpc.useQuery(['booking.getFollowingByUserSlug', { slug: slug.profileId!.toString(), page: page }], {
+  } = trpc.useQuery(['booking.getFollowingByUserSlug', { slug: String(slug.profileId ?? ''), page: page }], {
     refetchOnWindowFocus: false,
     refetchOnReconnect: 'always',
     cacheTime: 0,
