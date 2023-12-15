@@ -11,6 +11,7 @@ import {
   BookingComplaintApi,
   BookingComplaintResponseApi,
   CreateBookingComplaintRequestComplaintTypeEnum,
+  CreateBookingComplaintResponseRequestBookingComplaintResponseTypeEnum,
   CreateVoucherRequest,
   CreateWithdrawalRequestUnitCurrencyEnum,
   DepositRequestApi,
@@ -229,7 +230,7 @@ export const providerGetSelfVoucher = async (
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).providerGetSelfVoucher(query.limit, query.page, '["$all"]', query.where, "[{ createdAt: 'asc' }]")
+    }).providerGetSelfVoucher(query.limit, query.page, '["$all"]', query.where, "[{ createdAt: 'desc' }]")
     return {
       data: reponse.data,
       success: true,
@@ -860,7 +861,13 @@ export const responseComplain = async (
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).providerCreateBookingComplaintResponse(query)
+    }).providerCreateBookingComplaintResponse({
+      bookingComplaintId: query.bookingComplaintId,
+      responseMessage: query.responseMessage,
+      attachments: query.attachments,
+      bookingComplaintResponseType:
+        CreateBookingComplaintResponseRequestBookingComplaintResponseTypeEnum.ProviderSendToAdmin,
+    })
     return {
       data: respone.data,
     }

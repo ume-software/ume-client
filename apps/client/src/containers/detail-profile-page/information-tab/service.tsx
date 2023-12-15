@@ -3,13 +3,12 @@ import { Button, InputWithButton } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
 import { useAuth } from '~/contexts/auth'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import { Rate, notification } from 'antd'
-import { parse } from 'cookie'
 import Image from 'next/legacy/image'
 import { useRouter } from 'next/router'
-import { ProviderServiceResponse, UserInformationResponse } from 'ume-service-openapi'
+import { ProviderServiceResponse } from 'ume-service-openapi'
 
 import { CommentSkeletonLoader } from '~/components/skeleton-load'
 
@@ -81,16 +80,6 @@ const Service = (props: { data: ProviderServiceResponse }) => {
     }
   }
 
-  useEffect(() => {
-    const serviceAttribute = props.data?.providerServiceAttributes?.flatMap(
-      (providerServiceAttribute) =>
-        providerServiceAttribute?.providerServiceAttributeValues?.map(
-          (attributeValue) => attributeValue.serviceAttributeValue?.viValue,
-        ) ?? [],
-    )
-    console.log(serviceAttribute)
-  }, [props.data])
-
   return (
     <>
       <div className="p-10 bg-zinc-800 rounded-3xl">
@@ -98,6 +87,21 @@ const Service = (props: { data: ProviderServiceResponse }) => {
         <span className="text-lg font-normal leading-9 font-roboto">
           {props.data.description ?? 'Không có giới thiệu'}
         </span>
+        <div className="my-5 border-t border-light-900 w-full opacity-30"></div>
+        <div className="space-y-2">
+          {props.data?.providerServiceAttributes?.map((providerServiceAttribute) => (
+            <div key={providerServiceAttribute.id} className="flex items-center gap-3">
+              <p className="text-lg font-bold">{providerServiceAttribute.serviceAttribute?.viAttribute}:</p>
+              {providerServiceAttribute?.providerServiceAttributeValues?.map((attributeValue) => (
+                <div key={attributeValue.id}>
+                  <p>
+                    {attributeValue.serviceAttributeValue?.viValue ?? attributeValue.serviceAttributeValue?.value},{' '}
+                  </p>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
       {feedbackGame.data?.success && !isUserCanFeedBackProviderLoading ? (
         <div className="relative p-5 bg-zinc-800 rounded-3xl">
@@ -176,6 +180,3 @@ const Service = (props: { data: ProviderServiceResponse }) => {
   )
 }
 export default Service
-function isNil(userInfo: any): boolean | undefined {
-  throw new Error('Function not implemented.')
-}

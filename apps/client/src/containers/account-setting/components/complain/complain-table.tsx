@@ -23,12 +23,12 @@ interface IEnumType {
   [key: string]: any
 }
 
-const mappingBookingComplainStatus: IEnumType[] = [
+const mappingBookingComplainStatusForUser: IEnumType[] = [
   {
     key: BookingComplaintResponseComplaintStatusEnum.AwaitingProviderResponse,
     label: 'Đợi phản hồi',
-    color: '#008000',
-    textColor: '#FFF',
+    color: '#FFFF00',
+    textColor: '#000',
   },
   {
     key: BookingComplaintResponseComplaintStatusEnum.PendingProcessing,
@@ -37,9 +37,9 @@ const mappingBookingComplainStatus: IEnumType[] = [
     textColor: '#000',
   },
   {
-    key: BookingComplaintResponseComplaintStatusEnum.Processing,
-    label: 'Processing',
-    color: '#FFFF00',
+    key: BookingComplaintResponseComplaintStatusEnum.ProviderResponded,
+    label: 'Đã được phản hồi',
+    color: '#008000',
     textColor: '#FFF',
   },
   {
@@ -54,10 +54,37 @@ const mappingBookingComplainStatus: IEnumType[] = [
     color: '#008000',
     textColor: '#FFF',
   },
+]
+
+const mappingBookingComplainStatusForProvider: IEnumType[] = [
   {
-    key: BookingComplaintResponseComplaintStatusEnum.Unresolvable,
-    label: 'Không giải quyết',
-    color: '#FF0000',
+    key: BookingComplaintResponseComplaintStatusEnum.AwaitingProviderResponse,
+    label: 'Đợi phản hồi',
+    color: '#FFFF00',
+    textColor: '#000',
+  },
+  {
+    key: BookingComplaintResponseComplaintStatusEnum.PendingProcessing,
+    label: 'Đợi duyệt',
+    color: '#FFFF00',
+    textColor: '#000',
+  },
+  {
+    key: BookingComplaintResponseComplaintStatusEnum.ProviderResponded,
+    label: 'Đã phản hồi',
+    color: '#008000',
+    textColor: '#FFF',
+  },
+  {
+    key: BookingComplaintResponseComplaintStatusEnum.Rejected,
+    label: 'Đã được chấp nhận',
+    color: '#008000',
+    textColor: '#FFF',
+  },
+  {
+    key: BookingComplaintResponseComplaintStatusEnum.Resolved,
+    label: 'Đã giải quyết',
+    color: '#008000',
     textColor: '#FFF',
   },
 ]
@@ -149,16 +176,21 @@ const ComplainTableHistory = (props: { typeTable }) => {
             className={`w-fit px-2 py-1 text-lg font-semibold rounded-xl`}
             style={{
               background: `${
-                mappingBookingComplainStatus.find((statusType) => statusType.key == bookingComplainHistoryArray[6])
-                  ?.color
+                mappingBookingComplainStatusForUser.find(
+                  (statusType) => statusType.key == bookingComplainHistoryArray[6],
+                )?.color
               }`,
               color: `${
-                mappingBookingComplainStatus.find((statusType) => statusType.key == bookingComplainHistoryArray[6])
-                  ?.textColor
+                mappingBookingComplainStatusForUser.find(
+                  (statusType) => statusType.key == bookingComplainHistoryArray[6],
+                )?.textColor
               }`,
             }}
           >
-            {mappingBookingComplainStatus.find((statusType) => statusType.key == bookingComplainHistoryArray[6])?.label}
+            {
+              mappingBookingComplainStatusForUser.find((statusType) => statusType.key == bookingComplainHistoryArray[6])
+                ?.label
+            }
           </p>
         </div>,
 
@@ -197,18 +229,21 @@ const ComplainTableHistory = (props: { typeTable }) => {
               className={`w-fit px-2 py-1 text-lg font-semibold rounded-xl`}
               style={{
                 background: `${
-                  mappingBookingComplainStatus.find((statusType) => statusType.key == bookingComplainHistoryArray[6])
-                    ?.color
+                  mappingBookingComplainStatusForProvider.find(
+                    (statusType) => statusType.key == bookingComplainHistoryArray[6],
+                  )?.color
                 }`,
                 color: `${
-                  mappingBookingComplainStatus.find((statusType) => statusType.key == bookingComplainHistoryArray[6])
-                    ?.textColor
+                  mappingBookingComplainStatusForProvider.find(
+                    (statusType) => statusType.key == bookingComplainHistoryArray[6],
+                  )?.textColor
                 }`,
               }}
             >
               {
-                mappingBookingComplainStatus.find((statusType) => statusType.key == bookingComplainHistoryArray[6])
-                  ?.label
+                mappingBookingComplainStatusForProvider.find(
+                  (statusType) => statusType.key == bookingComplainHistoryArray[6],
+                )?.label
               }
             </p>
           </div>,

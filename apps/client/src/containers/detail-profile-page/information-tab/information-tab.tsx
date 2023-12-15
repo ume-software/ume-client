@@ -335,7 +335,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                         Bạn đang trong phiên với:
                         <Link
                           href={`/profile/${
-                            currentBookingForProviderData[0].booker?.slug || currentBookingForProviderData[0].booker?.id
+                            currentBookingForProviderData[0].booker?.slug ?? currentBookingForProviderData[0].booker?.id
                           }?tab=Album`}
                           className="text-lg font-bold hover:underline decoration-solid decoration-2"
                         >
