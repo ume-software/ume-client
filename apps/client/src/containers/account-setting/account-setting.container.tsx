@@ -85,7 +85,7 @@ const AccountSettingContainer = () => {
   const basePath = router.asPath.split('?')[0]
   const slug = router.query
 
-  const accessToken = sessionStorage.getItem('accessToken')
+  const accessToken = localStorage.getItem('accessToken')
   const [userInfo, setUserInfo] = useState<UserInformationResponse | null>(null)
   const [children, setChildren] = useState<SettingTypeProps>(
     settingType.find((item) => item.key == slug.tab) ?? settingType[0],
@@ -96,7 +96,7 @@ const AccountSettingContainer = () => {
       setUserInfo(data.data)
     },
     onError() {
-      sessionStorage.removeItem('accessToken')
+      localStorage.removeItem('accessToken')
       router.push('/')
     },
     enabled: !!accessToken,

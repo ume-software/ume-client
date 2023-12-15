@@ -26,7 +26,7 @@ const mappingBookingHistoryContent: IEnumType[] = [
 ]
 
 const BookingTableHistory = (props: { typeTable }) => {
-  const userInfo = JSON.parse(sessionStorage.getItem('user') ?? 'null')
+  const userInfo = JSON.parse(localStorage.getItem('user') ?? 'null')
 
   const limit = '10'
   const [page, setPage] = useState<string>('1')

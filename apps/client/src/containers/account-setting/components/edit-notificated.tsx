@@ -17,7 +17,7 @@ const EditNotificated = () => {
       setUserInfo(data.data)
     },
     onError() {
-      sessionStorage.removeItem('accessToken')
+      localStorage.removeItem('accessToken')
     },
     enabled: isNil(userInfo),
   })
@@ -57,7 +57,7 @@ const EditNotificated = () => {
                         ...userInfo,
                         isAllowNotificationToEmail: value,
                       }
-                      sessionStorage.setItem('user', JSON.stringify(updatedUserInfor))
+                      localStorage.setItem('user', JSON.stringify(updatedUserInfor))
                     },
                   },
                 )
@@ -81,7 +81,7 @@ const EditNotificated = () => {
                           ...userInfo,
                           isAllowNotificationMessage: value,
                         }
-                        sessionStorage.setItem('user', JSON.stringify(updatedUserInfor))
+                        localStorage.setItem('user', JSON.stringify(updatedUserInfor))
                       },
                     },
                   )

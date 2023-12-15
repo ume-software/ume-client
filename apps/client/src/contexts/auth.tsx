@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }: AuthProviderType) => {
     }
 
     const logout = async (): Promise<void> => {
-      sessionStorage.removeItem('accessToken')
+      localStorage.removeItem('accessToken')
       document.cookie = 'accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
       document.cookie = 'refeshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
       setUser(null)
@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }: AuthProviderType) => {
     }
 
     return { isAuthenticated, user, login, logout }
-  }, [router, user])
+  }, [router, user, isAuthenticated])
 
   return <AuthContext.Provider value={authContextValue}>{children}</AuthContext.Provider>
 }

@@ -70,7 +70,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const utils = trpc.useContext()
 
   if (typeof window !== 'undefined') {
-    accessToken = sessionStorage.getItem('accessToken')
+    accessToken = localStorage.getItem('accessToken')
   }
 
   const [childrenDrawer, setChildrenDrawer] = useState<ReactNode>()
