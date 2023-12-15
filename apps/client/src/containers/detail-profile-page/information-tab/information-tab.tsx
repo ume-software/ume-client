@@ -35,7 +35,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
   const slug = router.query
 
   const { user } = useAuth()
-  const accessToken = sessionStorage.getItem('accessToken')
+  const accessToken = localStorage.getItem('accessToken')
 
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
   const { childrenDrawer, setChildrenDrawer } = useContext(DrawerContext)

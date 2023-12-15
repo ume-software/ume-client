@@ -18,7 +18,7 @@ export const Sidebar = () => {
   const { childrenDrawer, setChildrenDrawer } = useContext(DrawerContext)
   let accessToken
   if (typeof window !== 'undefined') {
-    accessToken = sessionStorage.getItem('accessToken')
+    accessToken = localStorage.getItem('accessToken')
   }
   const { socketContext, setSocketContext } = useContext(SocketContext)
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
@@ -32,7 +32,7 @@ export const Sidebar = () => {
       setUserInfo(data.data)
     },
     onError() {
-      sessionStorage.removeItem('accessToken')
+      localStorage.removeItem('accessToken')
     },
     enabled: isNil(userInfo),
   })

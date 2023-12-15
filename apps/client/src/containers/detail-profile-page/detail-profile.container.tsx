@@ -128,7 +128,7 @@ const DetailProfileContainer = () => {
   const basePath = router.asPath.split('?')[0]
   const slug = router.query
 
-  const accessToken = sessionStorage.getItem('accessToken')
+  const accessToken = localStorage.getItem('accessToken')
 
   const [userInfo, setUserInfo] = useState<UserInformationResponse>()
   trpc.useQuery(['identity.identityInfo'], {
@@ -136,7 +136,7 @@ const DetailProfileContainer = () => {
       setUserInfo(data.data)
     },
     onError() {
-      sessionStorage.removeItem('accessToken')
+      localStorage.removeItem('accessToken')
     },
     enabled: isNil(userInfo),
   })

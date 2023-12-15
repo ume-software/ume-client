@@ -13,7 +13,7 @@ import { TimeFormat } from '~/components/time-format'
 import { trpc } from '~/utils/trpc'
 
 const OrderNotificationForUser = () => {
-  const accessToken = sessionStorage.getItem('accessToken')
+  const accessToken = localStorage.getItem('accessToken')
 
   const [userInfo, setUserInfo] = useState<UserInformationResponse>()
   trpc.useQuery(['identity.identityInfo'], {
@@ -21,7 +21,7 @@ const OrderNotificationForUser = () => {
       setUserInfo(data.data)
     },
     onError() {
-      sessionStorage.removeItem('accessToken')
+      localStorage.removeItem('accessToken')
     },
     enabled: isNil(userInfo),
   })

@@ -42,7 +42,7 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
   const { socketClientEmit } = useContext(SocketClientEmit)
   const { socketContext } = useContext(SocketContext)
   const { user } = useAuth()
-  const accessToken = sessionStorage.getItem('accessToken')
+  const accessToken = localStorage.getItem('accessToken')
   const utils = trpc.useContext()
   const { data: chattingMessageChannel, isLoading: loadingChattingMessageChannel } = trpc.useQuery([
     'chatting.getMessagesByChannelId',

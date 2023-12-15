@@ -35,7 +35,7 @@ const postTypeData: CommunityProps[] = [
 
 const CommunityContainer = () => {
   const index = useId()
-  const accessToken = sessionStorage.getItem('accessToken')
+  const accessToken = localStorage.getItem('accessToken')
   const { user } = useAuth()
 
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
