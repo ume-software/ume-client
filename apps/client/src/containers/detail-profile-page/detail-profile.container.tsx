@@ -445,7 +445,7 @@ const DetailProfileContainer = () => {
                           <Button
                             isActive={true}
                             isOutlinedButton={true}
-                            customCSS="p-2 rounded-xl hover:scale-105"
+                            customCSS="pr-4 py-2 rounded-xl hover:scale-105"
                             type="button"
                             onClick={() => {
                               if (

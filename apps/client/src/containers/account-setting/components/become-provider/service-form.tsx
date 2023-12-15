@@ -270,7 +270,7 @@ const AddSkillForm = () => {
   }
 
   const handleRemoveAttribute = (index: number) => {
-    if (attributes[index].service?.id) {
+    if (attributes[index]?.id) {
       deleteProviderService.mutate(attributes[index].service?.id ?? '', {
         onSuccess() {
           utils.invalidateQueries('identity.providerGetServiceHaveNotRegistered')

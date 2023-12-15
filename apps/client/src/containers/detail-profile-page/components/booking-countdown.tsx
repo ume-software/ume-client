@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 
-import { parse } from 'cookie'
 import { isNil } from 'lodash'
 import { BookingHistoryPagingResponse, UserInformationResponse } from 'ume-service-openapi'
 
@@ -20,7 +19,7 @@ const getCurrentBookingForUserData = (): BookingHistoryPagingResponse['row'] | u
 
 const getCurrentBookingForProviderData = (): BookingHistoryPagingResponse['row'] | undefined => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [userInfo, setUserInfo] = useState<UserInformationResponse>()
+  const [userInfo, setUserInfo] = useState<UserInformationResponse | undefined>(undefined)
   trpc.useQuery(['identity.identityInfo'], {
     onSuccess(data) {
       setUserInfo(data.data)

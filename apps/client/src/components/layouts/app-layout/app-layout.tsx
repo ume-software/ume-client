@@ -108,6 +108,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         })
         socketInstance.socketInstanceBooking.on(getSocket().SOCKET_SERVER_EMIT.ADMIN_HANDLE_KYC, (...args) => {
           audioRef.current?.play()
+          utils.invalidateQueries('identity.identityInfo')
           setSocketContext((prev) => ({ ...prev, socketNotificateContext: args }))
         })
       }
