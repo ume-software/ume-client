@@ -17,8 +17,8 @@ import { BookingHistoryPagingResponse, UserInformationResponse } from 'ume-servi
 import BookingProvider from '../booking/booking-provider.container'
 import {
   BookingCountdown,
-  getCurrentBookingForProviderData,
-  getCurrentBookingForUserData,
+  CurrentBookingForProviderData,
+  CurrentBookingForUserData,
 } from '../components/booking-countdown'
 import PersonalIntroduce from './personal-introduce'
 import Service from './service'
@@ -44,9 +44,9 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
   const [gameSelected, setGameSelected] = useState<string | undefined>(slug.service?.toString() ?? undefined)
 
   const createNewChatChannel = trpc.useMutation(['chatting.createNewChatChannel'])
-  const currentBookingForUserData: BookingHistoryPagingResponse['row'] | undefined = getCurrentBookingForUserData()
+  const currentBookingForUserData: BookingHistoryPagingResponse['row'] | undefined = CurrentBookingForUserData()
   const currentBookingForProviderData: BookingHistoryPagingResponse['row'] | undefined = user?.isProvider
-    ? getCurrentBookingForProviderData()
+    ? CurrentBookingForProviderData()
     : undefined
 
   const selectedService =
@@ -74,7 +74,7 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
   }
 
   useEffect(() => {
-    setChannelId(String(props.data?.id))
+    setChannelId(String(props.data?.id ?? ''))
   }, [props.data, setChannelId])
 
   const handleChatOpen = async () => {

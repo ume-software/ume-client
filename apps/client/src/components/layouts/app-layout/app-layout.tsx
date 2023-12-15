@@ -14,7 +14,6 @@ import {
   useState,
 } from 'react'
 
-import { parse } from 'cookie'
 import { isNil } from 'lodash'
 import { UserInformationResponse } from 'ume-service-openapi'
 
@@ -132,7 +131,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accessToken, isAuthenticated])
+  }, [accessToken, isAuthenticated, userInfo])
 
   const socketClientEmitValue = useMemo(
     () => ({ socketClientEmit, socketContext, setSocketContext, childrenDrawer, setChildrenDrawer }),

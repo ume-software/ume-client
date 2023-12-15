@@ -34,8 +34,8 @@ import {
 import AlbumTab from './album-tab/album-tab'
 import {
   BookingCountdown,
-  getCurrentBookingForProviderData,
-  getCurrentBookingForUserData,
+  CurrentBookingForProviderData,
+  CurrentBookingForUserData,
 } from './components/booking-countdown'
 import DonateModal from './components/donate-modal'
 import EndSoonModal from './components/end-soon-modal'
@@ -177,9 +177,8 @@ const DetailProfileContainer = () => {
   const unFollowProvider = trpc.useMutation(['identity.UnFollowProvider'])
   const utils = trpc.useContext()
 
-  const currentBookingForProviderData: BookingHistoryPagingResponse['row'] | undefined =
-    getCurrentBookingForProviderData()
-  const currentBookingForUserData: BookingHistoryPagingResponse['row'] | undefined = getCurrentBookingForUserData()
+  const currentBookingForProviderData: BookingHistoryPagingResponse['row'] | undefined = CurrentBookingForProviderData()
+  const currentBookingForUserData: BookingHistoryPagingResponse['row'] | undefined = CurrentBookingForUserData()
 
   const [selectedTab, setSelectedTab] = useState<TabDataProps>(
     tabDatas.find((tab) => {
