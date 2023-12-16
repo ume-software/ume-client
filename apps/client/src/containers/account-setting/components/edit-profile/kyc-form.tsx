@@ -107,7 +107,7 @@ export const KYCFormStep = ({
               frontSideCitizenIdImageUrl: responseData.data.data.results[0],
               backSideCitizenIdImageUrl: responseData.data.data.results[1],
               portraitImageUrl: responseData.data.data.results[2],
-              citizenDob: form.values.citizenDob,
+              citizenDob: new Date(form.values.citizenDob).toISOString(),
               citizenGender: form.values.citizenGender as any,
               citizenId: form.values.citizenId,
               citizenName: form.values.citizenName,
