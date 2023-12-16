@@ -139,7 +139,7 @@ const EditProfile = () => {
         latestOnline: null,
         name: userSettingData?.data?.name ?? '',
         phone: userSettingData?.data?.phone ?? '',
-        slug: userSettingData?.data?.slug ?? '',
+        slug: userSettingData?.data?.slug,
         username: userSettingData?.data?.username ?? '',
       })
     }
@@ -171,6 +171,10 @@ const EditProfile = () => {
   const handleUpdateInformation = async () => {
     if (editAccountInforFormRef.current) {
       if (selectedImage.avatarURL) {
+        const slugUpdate = form.values.slug == '' ? undefined : form.values.slug
+
+        console.log(slugUpdate)
+
         const formData = new FormData(editAccountInforFormRef.current)
         const file = formData.get('files')
         const image = new FormData()
@@ -186,7 +190,7 @@ const EditProfile = () => {
                   dob: form.values.dob,
                   gender: form.values.gender.key,
                   name: form.values.name?.trim(),
-                  slug: form.values.slug?.trim(),
+                  slug: slugUpdate,
                   phone: form.values.phone,
                 },
                 {
