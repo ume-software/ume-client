@@ -133,20 +133,22 @@ export const PendingKYCTable = () => {
       dataIndex: 'phone',
       align: 'center',
       width: '15%',
-      render: (value) => <div className="">{value ? '' : value}</div>,
+      render: (value) => <div className="">{value ? value : ''}</div>,
     },
     {
       title: 'Giới tính',
       dataIndex: 'citizenGender',
+      align: 'center',
       width: '15%',
-      align: 'left',
       render: (value) => (
-        <div
-          className={`rounded-full w-[100px] item-center text-center px-2 py-1 bg-blue-500 text-white ${
-            mapGender(value) === 'Nữ' ? 'bg-pink-500' : ''
-          }`}
-        >
-          {mapGender(value)}
+        <div className="flex justify-center items-center">
+          <div
+            className={`rounded-full w-[100px] text-center px-2 py-1 bg-blue-500 text-white ${
+              mapGender(value) === 'Nữ' ? 'bg-pink-500' : ''
+            }`}
+          >
+            {mapGender(value)}
+          </div>
         </div>
       ),
     },
@@ -179,6 +181,7 @@ export const PendingKYCTable = () => {
       },
     },
   ]
+  console.log(kycListPending)
 
   const locale = {
     emptyText: (

@@ -302,14 +302,14 @@ export const ServicesModalUpdate = ({ idService, closeFunction, openValue }: ISe
             },
             onError: (err) => {
               notification.error({
-                message: 'Chỉnh sửa Dịch vụ không thành công!',
+                message: 'Chỉnh sửa dịch vụ không thành công!',
                 description: err.message,
               })
             },
           })
         } catch (error) {
           notification.error({
-            message: 'Chỉnh sửa Dịch vụ không thành công!',
+            message: 'Chỉnh sửa dịch vụ không thành công!',
             description: 'Gặp lỗi khi chỉnh sửa',
           })
           console.error('Failed to Handle update voucher:', error)

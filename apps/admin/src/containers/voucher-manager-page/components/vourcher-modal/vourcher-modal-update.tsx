@@ -351,14 +351,14 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
             },
             onError: (err) => {
               notification.error({
-                message: 'Chỉnh sửa Khuyến mãi không thành công!',
+                message: 'Chỉnh sửa khuyến mãi không thành công!',
                 description: err.message,
               })
             },
           })
         } catch (error) {
           notification.error({
-            message: 'Chỉnh sửa Khuyến mãi không thành công!',
+            message: 'Chỉnh sửa khuyến mãi không thành công!',
             description: 'Gặp lỗi khi chỉnh sửa',
           })
           console.error('Failed to Handle update voucher:', error)
