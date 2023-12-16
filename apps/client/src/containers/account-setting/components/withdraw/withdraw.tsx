@@ -3,6 +3,7 @@ import { CloseSmall, DeleteFive, Plus } from '@icon-park/react'
 import { Button, Modal } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
 import 'swiper/swiper-bundle.css'
+import { useAuth } from '~/contexts/auth'
 import { ActionEnum } from '~/enumVariable/enumVariable'
 import { paymentPlat } from '~/enumVariable/platform'
 
@@ -39,16 +40,17 @@ const mappingStatusWithdrawWithdraw: IEnumType[] = [
 const Withdraw = () => {
   const index_id = useId()
   const [userInfo, setUserInfo] = useState<UserInformationResponse>()
+  const { isAuthenticated, logout } = useAuth()
+
   trpc.useQuery(['identity.identityInfo'], {
     onSuccess(data) {
       setUserInfo(data.data)
     },
     onError() {
-      localStorage.removeItem('accessToken')
+      logout()
     },
-    enabled: isNil(userInfo),
+    enabled: isAuthenticated,
   })
-
   const [actionModal, setActionModal] = useState(ActionEnum.CREATE)
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [paymentAccount, setPaymentAccount] = useState<UserPaymentSystemResponse | undefined>(undefined)

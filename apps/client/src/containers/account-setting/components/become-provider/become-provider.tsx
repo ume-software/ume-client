@@ -52,15 +52,16 @@ const BecomeProvider = () => {
 
   const [isModalConfirmationVisible, setIsModalConfirmationVisible] = useState(false)
   const [audioSource, setAudioSource] = useState<string | undefined>(undefined)
+  const { isAuthenticated, logout } = useAuth()
 
-  const { isFetching, isLoading } = trpc.useQuery(['identity.identityInfo'], {
+  trpc.useQuery(['identity.identityInfo'], {
     onSuccess(data) {
       setUserInfo(data.data)
     },
     onError() {
-      localStorage.removeItem('accessToken')
+      logout()
     },
-    enabled: isNil(userInfo),
+    enabled: isAuthenticated,
   })
 
   const { data: userSettingData, isLoading: loadingUserSettingData } = trpc.useQuery(
