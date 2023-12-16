@@ -35,8 +35,8 @@ const postTypeData: CommunityProps[] = [
 
 const CommunityContainer = () => {
   const index = useId()
-  const accessToken = localStorage.getItem('accessToken')
-  const { user } = useAuth()
+
+  const { user, isAuthenticated } = useAuth()
 
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
   const [isModalVisible, setIsModalVisible] = useState(false)
@@ -74,8 +74,8 @@ const CommunityContainer = () => {
   })
 
   const handleCreatePost = () => {
-    setIsModalVisible(!!user || !!accessToken)
-    setIsModalLoginVisible(!(user || !!accessToken))
+    setIsModalVisible(!!user || isAuthenticated)
+    setIsModalLoginVisible(!(user || isAuthenticated))
   }
 
   return (
@@ -97,7 +97,7 @@ const CommunityContainer = () => {
                       ${item.key == 'Following' && !user && 'justify-between opacity-30'}
                       ${socialSelected.key === item.key ? 'bg-gray-700' : ''}`}
                       onClick={() => {
-                        if (item.key == 'Following' && !(!!user || !!accessToken)) {
+                        if (item.key == 'Following' && !(!!user || isAuthenticated)) {
                           setIsModalLoginVisible(true)
                         } else {
                           setSocialSelected(item)
@@ -111,7 +111,7 @@ const CommunityContainer = () => {
                           {item.postTypeName}
                         </p>
                       </div>
-                      {item.key == 'Following' && !(!!user || !!accessToken) && (
+                      {item.key == 'Following' && !(!!user || isAuthenticated) && (
                         <Lock className="justify-items-end" theme="outline" size="20" fill="#fff" />
                       )}
                     </div>
