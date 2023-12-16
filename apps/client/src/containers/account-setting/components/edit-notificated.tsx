@@ -1,4 +1,5 @@
 import { CheckSmall, CloseSmall } from '@icon-park/react'
+import { useAuth } from '~/contexts/auth'
 
 import { useState } from 'react'
 
@@ -12,14 +13,15 @@ import { trpc } from '~/utils/trpc'
 
 const EditNotificated = () => {
   const [userInfo, setUserInfo] = useState<UserInformationResponse>()
+  const { logout, isAuthenticated } = useAuth()
   trpc.useQuery(['identity.identityInfo'], {
     onSuccess(data) {
       setUserInfo(data.data)
     },
     onError() {
-      localStorage.removeItem('accessToken')
+      logout()
     },
-    enabled: isNil(userInfo),
+    enabled: isAuthenticated,
   })
 
   const updateInformation = trpc.useMutation(['identity.updateUserProfile'])
@@ -57,7 +59,6 @@ const EditNotificated = () => {
                         ...userInfo,
                         isAllowNotificationToEmail: value,
                       }
-                      localStorage.setItem('user', JSON.stringify(updatedUserInfor))
                     },
                   },
                 )
@@ -81,7 +82,6 @@ const EditNotificated = () => {
                           ...userInfo,
                           isAllowNotificationMessage: value,
                         }
-                        localStorage.setItem('user', JSON.stringify(updatedUserInfor))
                       },
                     },
                   )

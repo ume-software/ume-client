@@ -1,4 +1,5 @@
 import { Lock } from '@icon-park/react'
+import { useAuth } from '~/contexts/auth'
 import { ComplainEnum } from '~/enumVariable/enumVariable'
 
 import { Fragment, ReactElement, useState } from 'react'
@@ -30,14 +31,16 @@ const tabDatas: TabDataProps[] = [
 
 const Complain = () => {
   const [userInfo, setUserInfo] = useState<UserInformationResponse>()
+  const { isAuthenticated, logout } = useAuth()
+
   trpc.useQuery(['identity.identityInfo'], {
     onSuccess(data) {
       setUserInfo(data.data)
     },
     onError() {
-      localStorage.removeItem('accessToken')
+      logout()
     },
-    enabled: isNil(userInfo),
+    enabled: isAuthenticated,
   })
 
   const [selectedTab, setSelectedTab] = useState<TabDataProps>(tabDatas[0])
