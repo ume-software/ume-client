@@ -70,7 +70,13 @@ export const Header = ({ handleOpen, openSideBar, setOpenPopupSideBar, openPopup
   return (
     <div
       className={`fixed top-0 w-full h-16 z-40 bg-umeHeader pr-7 ${
-        width <= 900 ? 'pl-7%' : !openSideBar || width <= 1200 ? 'pl-[9%]' : 'pl-[21%]'
+        width <= 900
+          ? 'pl-7%'
+          : !openSideBar || width <= 1200
+          ? 'pl-[9%]'
+          : width <= 1920 && width >= 1707 && openSideBar
+          ? 'pl-[18%]'
+          : 'pl-[21%]'
       } shadow-md`}
     >
       <div className="flex items-center justify-between flex-1 h-full align-middle">

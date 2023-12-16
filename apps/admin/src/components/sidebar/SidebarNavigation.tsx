@@ -6,6 +6,7 @@ import {
   EveryUser,
   Exchange,
   Expenses,
+  FileStaffOne,
   GameEmoji,
   Gift,
   Income,
@@ -175,10 +176,16 @@ export const SidebarNavigation: SidebarNavigationItem[] = [
     icon: <Abnormal theme="outline" size="24" fill="#fff" />,
     children: [
       {
-        label: 'Báo cáo',
+        label: 'Tố cáo',
         key: 'report-manager',
         path: '/report-manager',
         icon: <Abnormal theme="outline" size="22" fill="#fff" />,
+      },
+      {
+        label: 'Khiếu nại dịch vụ',
+        key: 'complaint-booking-manager',
+        path: '/complaint-booking-manager',
+        icon: <FileStaffOne theme="outline" size="22" fill="#fff" />,
       },
     ],
   },

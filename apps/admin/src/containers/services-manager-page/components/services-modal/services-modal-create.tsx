@@ -33,6 +33,7 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
   const imageInputRef = useRef<HTMLInputElement>(null)
   const [children, setChildren] = useState<JSX.Element[]>([])
   const createService = trpc.useMutation(['services.createService'])
+  const utils = trpc.useContext()
 
   const form = useFormik({
     initialValues: {
@@ -183,6 +184,8 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
                   message: 'Tạo thành công!',
                   description: 'đã được tạo thành công.',
                 })
+                utils.invalidateQueries('services.getServiceList')
+
                 closeHandle()
               }
             },

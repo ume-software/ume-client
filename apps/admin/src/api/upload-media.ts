@@ -21,7 +21,7 @@ export const uploadImageServices = async (formData) => {
     const response = await new ImageApi({
       basePath: getEnv().baseUploadFileURL,
       isJsonMime: () => true,
-    }).uploadImage(undefined, formData)
+    }).uploadImage(formData)
     return {
       data: response,
     }
@@ -35,7 +35,7 @@ export const uploadImageAdminAccount = async (formData) => {
     const response = await new ImageApi({
       basePath: getEnv().baseUploadFileURL,
       isJsonMime: () => true,
-    }).uploadImage(undefined, formData, undefined, undefined)
+    }).uploadImage(formData)
     return {
       data: response,
     }
@@ -49,7 +49,7 @@ export const uploadWithdrawalImage = async (formData) => {
     const response = await new ImageApi({
       basePath: getEnv().baseUploadFileURL,
       isJsonMime: () => true,
-    }).uploadImage(undefined, formData)
+    }).uploadImage(formData)
     return {
       data: response,
     }

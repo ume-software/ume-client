@@ -128,6 +128,9 @@ const ServicesManagerPage = () => {
   function closeServicesModalUpdate() {
     setOpenServicesModalUpdate(false)
   }
+
+  console.log(serviceList)
+
   return (
     <div>
       <Head>

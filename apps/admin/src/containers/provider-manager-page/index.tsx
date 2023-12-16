@@ -55,7 +55,7 @@ const ProviderManager = () => {
     search: 'all',
   })
   const [searchChange, setSearchChange] = useState('')
-  const ORDER = [{ id: 'asc' }]
+  const ORDER = [{ createdAt: 'desc' }]
   const [providerList, setProviderList] = useState<AdminGetUserPagingResponseResponse | undefined>()
   const generateQuery = () => {
     let query: LooseObject = {}

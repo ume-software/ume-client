@@ -1,6 +1,6 @@
 import { adminRouter } from './admin-account'
 import { authRouter } from './auth'
-import { bannerRouter } from './banner'
+import { complaintRouter } from './complaint-booking'
 import { createRouter } from './configurations'
 import { identityRouter } from './identity'
 import { providerRouter } from './provider'
@@ -20,5 +20,6 @@ export const rootRouter = createRouter()
   .merge('transaction.', transactionRouter)
   .merge('report.', reportRouter)
   .merge('admin.', adminRouter)
-  .merge('banner.', bannerRouter)
+  .merge('complaint.', complaintRouter)
+
 export type RootRouterTypes = typeof rootRouter
