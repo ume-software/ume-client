@@ -366,6 +366,8 @@ const UserManager = () => {
       </div>
     )
   }
+  console.log(adminList)
+
   return (
     <div>
       <Head>

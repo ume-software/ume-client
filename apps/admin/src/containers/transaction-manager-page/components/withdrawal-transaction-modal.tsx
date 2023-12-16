@@ -132,38 +132,40 @@ const WithdrawalTransactionModal = ({ id, openValue, closeFunction }: IWithdrawT
 
   async function submitHandle() {
     const imgURL = await uploadImage()
-    try {
-      if (imgURL) {
-        const action = {
-          billImageUrl: form.values.billImageUrl,
-          feedback: form.values.feedback,
-          status: form.values.status,
-        }
-        approveWithdrawRequest.mutate(
-          { id, action },
-          {
-            onSuccess: (data) => {
-              if (data.success) {
-                notification.success({
-                  message: 'Cập nhật thành công!',
-                  description: 'Trạng thái cập nhật thành công.',
+    if (!approveWithdrawRequest.isLoading) {
+      try {
+        if (imgURL) {
+          const action = {
+            billImageUrl: form.values.billImageUrl,
+            feedback: form.values.feedback,
+            status: form.values.status,
+          }
+          approveWithdrawRequest.mutate(
+            { id, action },
+            {
+              onSuccess: (data) => {
+                if (data.success) {
+                  notification.success({
+                    message: 'Cập nhật thành công!',
+                    description: 'Trạng thái cập nhật thành công.',
+                  })
+                  utils.invalidateQueries('transaction.getWithdrawRequest')
+                  cancelConfirmHandle()
+                }
+              },
+              onError: () => {
+                notification.error({
+                  message: 'Cập nhật thất bại!',
+                  description: 'Trạng thái cập nhật không thành công.',
                 })
-                utils.invalidateQueries('transaction.getWithdrawRequest')
                 cancelConfirmHandle()
-              }
+              },
             },
-            onError: () => {
-              notification.error({
-                message: 'Cập nhật thất bại!',
-                description: 'Trạng thái cập nhật không thành công.',
-              })
-              cancelConfirmHandle()
-            },
-          },
-        )
+          )
+        }
+      } catch (error) {
+        console.error('Failed to patch voucher:', error)
       }
-    } catch (error) {
-      console.error('Failed to patch voucher:', error)
     }
   }
 
@@ -306,7 +308,7 @@ const WithdrawalTransactionModal = ({ id, openValue, closeFunction }: IWithdrawT
                           isDisable={isDisableButton()}
                           isLoading={approveWithdrawRequest.isLoading}
                         >
-                          Xác minh
+                          Hoàn thành
                         </Button>
                       </div>
                     </form>

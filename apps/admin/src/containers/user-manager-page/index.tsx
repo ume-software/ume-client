@@ -71,7 +71,7 @@ const UserManager = () => {
     gender: filter.gender !== 'ALL' ? filter.gender : undefined,
     isBanned: filter.isBanned !== 'all' ? (filter.isBanned == 'true' ? true : false) : undefined,
   })
-  const ORDER = [{ id: 'asc' }]
+  const ORDER = [{ createdAt: 'desc' }]
 
   const { isLoading: isUserListLoading } = trpc.useQuery(
     [

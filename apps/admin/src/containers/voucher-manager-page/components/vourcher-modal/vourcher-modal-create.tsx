@@ -265,7 +265,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
             if (data.success) {
               notification.success({
                 message: 'Tạo thành công!',
-                description: 'đã được tạo thành công.',
+                description: 'Khuyến mãi đã được tạo thành công.',
               })
               utils.invalidateQueries('voucher.getAllVoucher')
               closeHandle()
@@ -367,7 +367,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
               </div>
               <div className="flex flex-col justify-end w-2/5 ">
                 <div className="flex w-full h-12 text-white">
-                  <span className="w-8">*Tên:</span>
+                  <span className="min-w-[3rem]">*Tên:</span>
                   <div className="inline-block w-2/3 ml-4">
                     <FormInput
                       name="name"
@@ -385,7 +385,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                   </div>
                 </div>
                 <div className="flex h-12 text-white ">
-                  <span className="w-8"> Mã:</span>
+                  <span className="min-w-[3rem]"> Mã:</span>
                   <div className="inline-block w-2/3 h-12 ml-4">
                     <FormInput
                       name="vourcherCode"
@@ -437,7 +437,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                 </div>
                 <div className="h-12 text-white">
                   Ngày kết thúc:
-                  <div className="inline-block w-1/3 ">
+                  <div className="inline-block w-1/3 ml-3">
                     <FormInput
                       name="endDate"
                       className="bg-[#413F4D] border-2 border-[#FFFFFF] h-8 ml-4 border-opacity-30"

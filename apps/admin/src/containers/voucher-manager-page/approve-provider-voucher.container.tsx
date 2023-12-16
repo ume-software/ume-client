@@ -54,7 +54,7 @@ const ApproveProviderVoucher = () => {
     type: filter.type !== 'all' ? filter.type : undefined,
     discountUnit: filter.discountUnit !== 'all' ? filter.discountUnit : undefined,
   })
-  const ORDER = [{ id: 'asc' }]
+  const ORDER = [{ createdAt: 'desc' }]
 
   const { isLoading } = trpc.useQuery(
     [
