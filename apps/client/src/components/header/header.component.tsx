@@ -36,13 +36,8 @@ export const Header: React.FC = React.memo(() => {
   const [selectedTab, setSelectedTab] = useState('Chính')
   const { socketContext } = useContext(SocketContext)
   const [isModalLoginVisible, setIsModalLoginVisible] = React.useState(false)
-  const { user } = useAuth()
-  let accessToken
 
-  if (typeof window !== 'undefined') {
-    accessToken = localStorage.getItem('accessToken')
-  }
-  const { login } = useAuth()
+  const { login, logout, user, isAuthenticated } = useAuth()
   const utils = trpc.useContext()
 
   trpc.useQuery(['identity.identityInfo'], {
@@ -50,16 +45,15 @@ export const Header: React.FC = React.memo(() => {
       login({ ...data.data })
     },
     onError() {
-      localStorage.removeItem('accessToken')
+      logout()
     },
-    enabled: !!accessToken,
   })
 
   const { isLoading: isRechargeLoading } = trpc.useQuery(['identity.account-balance'], {
     onSuccess(data) {
       setBalance(data.data.totalBalanceAvailable)
     },
-    enabled: !!accessToken,
+    enabled: isAuthenticated,
   })
 
   const tabDatas: TabProps[] = [
@@ -102,13 +96,19 @@ export const Header: React.FC = React.memo(() => {
           </Link>
         </span>
         <span className="px-3 py-2 text-lg font-medium text-white align-middle duration-500 hover:bg-slate-700 rounded-2xl hover:ease-in-out">
-          <Link href={'/home'}>Trang chủ</Link>
+          <Link prefetch href={'/home'}>
+            Trang chủ
+          </Link>
         </span>
         <span className="px-3 py-2 text-lg font-medium text-white align-middle duration-500 hover:bg-slate-700 rounded-2xl hover:ease-in-out">
-          <Link href={'/community'}>Cộng đồng</Link>
+          <Link prefetch href={'/community'}>
+            Cộng đồng
+          </Link>
         </span>
         <span className="px-3 py-2 text-lg font-medium text-white align-middle duration-500 hover:bg-slate-700 rounded-2xl hover:ease-in-out">
-          <Link href={'/FAQ'}>FAQs</Link>
+          <Link prefetch href={'/faq'}>
+            FAQs
+          </Link>
         </span>
       </div>
       <div className="flex items-center">

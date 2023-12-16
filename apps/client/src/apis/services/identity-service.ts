@@ -860,7 +860,11 @@ export const responseComplain = async (
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).providerCreateBookingComplaintResponse(query)
+    }).providerCreateBookingComplaintResponse({
+      bookingComplaintId: query.bookingComplaintId,
+      responseMessage: query.responseMessage,
+      attachments: query.attachments,
+    })
     return {
       data: respone.data,
     }

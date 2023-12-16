@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic'
 
-const FAQRender = dynamic(() => import('~/containers/FAQ/FAQ-page'), {
+const FAQRender = dynamic(() => import('~/containers/faq/faq-page'), {
   ssr: false,
 })
 
