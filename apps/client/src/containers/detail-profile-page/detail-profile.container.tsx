@@ -317,7 +317,7 @@ const DetailProfileContainer = () => {
                   <div className="flex flex-col my-2 text-white gap-y-2">
                     <p className="text-3xl font-medium text-white">{providerDetail?.name}</p>
                     <div className="flex flex-row items-center gap-3">
-                      <div className="flex items-center gap-2 p-2 bg-gray-700 rounded-full">
+                      <div className="flex items-center gap-2 py-2 px-4 bg-gray-700 rounded-full">
                         <div>
                           {providerDetail?.gender == UserInformationResponseGenderEnum.Male && (
                             <Male theme="outline" size="20" fill="#3463f9" />
@@ -337,44 +337,42 @@ const DetailProfileContainer = () => {
                         <p>{caculateAge(providerDetail?.dob)}</p>
                       </div>
                       <Tooltip placement="bottomLeft" title={`${providerDetail?.isOnline ? 'Online' : 'Offline'}`}>
-                        <div className="flex items-center gap-1 p-2 bg-gray-700 rounded-full">
+                        <div className="flex items-center gap-1 py-2 pl-2 pr-4 bg-gray-700 rounded-full">
                           <Dot theme="multi-color" size="24" fill={providerDetail?.isOnline ? '#008000' : '#FF0000'} />
                           {providerDetail?.isOnline ? (
                             <>
-                              <p>
-                                {providerDetail?.providerConfig?.status == ProviderConfigResponseStatusEnum.Activated &&
-                                  'Sẵn sàng'}
-                              </p>
-                              <p>
-                                {providerDetail?.providerConfig?.status == ProviderConfigResponseStatusEnum.Busy &&
-                                  'Bận'}
-                              </p>
-                              <p>
-                                {providerDetail?.providerConfig?.status ==
-                                  ProviderConfigResponseStatusEnum.StoppedAcceptingBooking && 'Ngừng nhận đơn'}
-                              </p>
-                              <p>
-                                {providerDetail?.providerConfig?.status ==
-                                  ProviderConfigResponseStatusEnum.UnActivated && 'Ngừng nhận đơn'}
-                              </p>
-                              <p>{!providerDetail?.isProvider && 'Hoạt động'}</p>
+                              {providerDetail?.providerConfig?.status == ProviderConfigResponseStatusEnum.Activated && (
+                                <p>Sẵn sàng</p>
+                              )}
+
+                              {providerDetail?.providerConfig?.status == ProviderConfigResponseStatusEnum.Busy && (
+                                <p>Bận</p>
+                              )}
+
+                              {providerDetail?.providerConfig?.status ==
+                                ProviderConfigResponseStatusEnum.StoppedAcceptingBooking && <p>Ngừng nhận đơn</p>}
+
+                              {providerDetail?.providerConfig?.status ==
+                                ProviderConfigResponseStatusEnum.UnActivated && <p>Ngừng nhận đơn</p>}
+
+                              {!providerDetail?.isProvider && <p>Hoạt động</p>}
                             </>
                           ) : (
-                            'Offline'
+                            'Không hoạt động'
                           )}
                         </div>
                       </Tooltip>
                     </div>
                     <div className="items-center gap-3 space-y-2 lg:flex lg:space-y-0">
                       <div
-                        className="flex items-center gap-2 p-2 bg-gray-700 rounded-full cursor-pointer w-fit hover:underline decoration-solid decoration-2"
+                        className="flex items-center gap-2 py-2 px-4 bg-gray-700 rounded-full cursor-pointer w-fit hover:underline decoration-solid decoration-2"
                         onClick={() => setIsFollowerModalVisible(true)}
                         onKeyDown={() => {}}
                       >
                         Người theo dõi: {providerDetail?.followerAmount}
                       </div>
                       <div
-                        className="flex items-center gap-2 p-2 bg-gray-700 rounded-full cursor-pointer w-fit hover:underline decoration-solid decoration-2"
+                        className="flex items-center gap-2 py-2 px-4 bg-gray-700 rounded-full cursor-pointer w-fit hover:underline decoration-solid decoration-2"
                         onClick={() => setIsFollowingModalVisible(true)}
                         onKeyDown={() => {}}
                       >

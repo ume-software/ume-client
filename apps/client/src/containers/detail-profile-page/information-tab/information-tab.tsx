@@ -348,24 +348,26 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
                     </div>
                   ) : (
                     <>
-                      {!props.data?.isBanned && props.data.providerConfig?.status == 'ACTIVATED' && (
-                        <CustomDrawer
-                          drawerTitle="Xác nhận đặt"
-                          customOpenBtn="rounded-full text-white bg-purple-700 font-semibold text-2xl cursor-pointer hover:scale-105 text-center"
-                          openBtn={
-                            <button
-                              className="w-full h-full py-2 bg-transparent focus:outline-none"
-                              type="button"
-                              onClick={handleOrderOpen}
-                            >
-                              Thuê
-                            </button>
-                          }
-                          token={!!accessToken}
-                        >
-                          {childrenDrawer}
-                        </CustomDrawer>
-                      )}
+                      {!props.data?.isBanned &&
+                        props.data.providerConfig?.status == 'ACTIVATED' &&
+                        props.data.isOnline && (
+                          <CustomDrawer
+                            drawerTitle="Xác nhận đặt"
+                            customOpenBtn="rounded-full text-white bg-purple-700 font-semibold text-2xl cursor-pointer hover:scale-105 text-center"
+                            openBtn={
+                              <button
+                                className="w-full h-full py-2 bg-transparent focus:outline-none"
+                                type="button"
+                                onClick={handleOrderOpen}
+                              >
+                                Thuê
+                              </button>
+                            }
+                            token={!!accessToken}
+                          >
+                            {childrenDrawer}
+                          </CustomDrawer>
+                        )}
                     </>
                   )}
                 </div>
