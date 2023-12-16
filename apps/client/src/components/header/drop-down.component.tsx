@@ -75,20 +75,6 @@ export const DropDownMenu = () => {
           </Menu.Item>
           <Menu.Item as="div">
             {({ active }) => (
-              <Link
-                href={`/FAQ`}
-                className={`${
-                  active ? 'bg-slate-700 text-white' : 'text-gray-900'
-                } group flex w-full items-center rounded-md text-white px-2 py-2 text-sm`}
-              >
-                <Help theme="outline" size="20" fill="#ffffff" className="mr-3" />
-                Hỗ trợ
-              </Link>
-            )}
-          </Menu.Item>
-
-          <Menu.Item as="div">
-            {({ active }) => (
               <button
                 onClick={logout}
                 className={`${

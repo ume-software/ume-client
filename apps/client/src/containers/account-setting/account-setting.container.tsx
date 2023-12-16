@@ -2,6 +2,7 @@
 import { Coupon, EditName, Expenses, FileStaffOne, Lock, Remind, Transaction, TransactionOrder } from '@icon-park/react'
 import logo from 'public/logo.png'
 import 'swiper/swiper-bundle.css'
+import { useAuth } from '~/contexts/auth'
 
 import { ReactNode, useEffect, useState } from 'react'
 
@@ -85,7 +86,7 @@ const AccountSettingContainer = () => {
   const basePath = router.asPath.split('?')[0]
   const slug = router.query
 
-  const accessToken = localStorage.getItem('accessToken')
+  const { isAuthenticated } = useAuth()
   const [userInfo, setUserInfo] = useState<UserInformationResponse | null>(null)
   const [children, setChildren] = useState<SettingTypeProps>(
     settingType.find((item) => item.key == slug.tab) ?? settingType[0],
@@ -95,11 +96,8 @@ const AccountSettingContainer = () => {
     onSuccess(data) {
       setUserInfo(data.data)
     },
-    onError() {
-      localStorage.removeItem('accessToken')
-      router.push('/')
-    },
-    enabled: !!accessToken,
+    onError() {},
+    enabled: isAuthenticated,
   })
 
   const handleChangeTab = (item: string) => {
@@ -117,7 +115,7 @@ const AccountSettingContainer = () => {
     if (!isFetching && !isLoading && !userInfo) {
       router.push('/')
     }
-  }, [accessToken])
+  }, [])
 
   useEffect(() => {
     setChildren(settingType.find((item) => item.key == slug.tab) ?? settingType[0])
