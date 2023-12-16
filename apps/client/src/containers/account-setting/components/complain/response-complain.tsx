@@ -42,6 +42,8 @@ const ResponseComplainTicketModal = ({
   const [removeMedia, setRemoveMedia] = useState<boolean>(false)
   const [isModalConfirmationVisible, setIsModalConfirmationVisible] = useState<boolean>(false)
 
+  const utils = trpc.useContext()
+
   const responseComplain = trpc.useMutation(['identity.responseComplain'])
 
   useEffect(() => {
@@ -142,6 +144,7 @@ const ResponseComplainTicketModal = ({
           },
           {
             onSuccess() {
+              utils.invalidateQueries('identity.getProviderHistoryComplain')
               setIsModalConfirmationVisible(false)
               setIsModalComplainVisible(false)
               notification.success({
