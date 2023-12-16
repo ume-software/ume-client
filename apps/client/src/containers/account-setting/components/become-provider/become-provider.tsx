@@ -1,5 +1,5 @@
 import { Menu, Transition } from '@headlessui/react'
-import { Check, CheckSmall, CloseSmall, Voice, Write } from '@icon-park/react'
+import { Check, CloseSmall, Voice, Write } from '@icon-park/react'
 import { Button, Modal, TextArea } from '@ume/ui'
 import 'swiper/swiper-bundle.css'
 import { uploadAudio } from '~/apis/upload-media'
@@ -63,17 +63,16 @@ const BecomeProvider = () => {
     enabled: isNil(userInfo),
   })
 
-  const {
-    data: userSettingData,
-    isLoading: loadingUserSettingData,
-    isFetching: fetchingUserSettingData,
-  } = trpc.useQuery(['identity.getUserBySlug', String(userInfo?.slug ?? userInfo?.id ?? '')], {
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: 'always',
-    cacheTime: 0,
-    refetchOnMount: true,
-    enabled: !!userInfo?.slug || !!userInfo?.id,
-  })
+  const { data: userSettingData, isLoading: loadingUserSettingData } = trpc.useQuery(
+    ['identity.getUserBySlug', String(userInfo?.id ?? '')],
+    {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: 'always',
+      cacheTime: 0,
+      refetchOnMount: true,
+      enabled: !!userInfo?.id,
+    },
+  )
   const updateIntroduceProvider = trpc.useMutation(['identity.userUpdateProviderProfile'])
   const registerBecomeProvider = trpc.useMutation(['identity.registerBecomeProvider'])
   const utils = trpc.useContext()
@@ -231,7 +230,7 @@ const BecomeProvider = () => {
 
           {checked && (
             <>
-              {userInfo && userSettingData ? (
+              {userInfo && !loadingUserSettingData ? (
                 <form ref={updateIntroduceForProviderFormRef} onSubmit={form.handleSubmit} className="space-y-3">
                   <div>
                     <p className="font-semibold text-md">Giới thiệu</p>

@@ -205,12 +205,12 @@ const ComplainDetailModal = ({
               (bookingSelected?.bookingComplaintResponses?.length ?? 0) > 0 && (
                 <>
                   <div className="border-t border-light-900 w-full my-4 opacity-30"></div>
-
-                  <div className="space-y-2">
+                  <label className="text-lg font-semibold">Phản hồi: </label>
+                  <div className="space-y-2 pl-5">
                     <label className="font-semibold opacity-30">Nội dung: </label>
                     <p className="pl-5">{bookingSelected?.bookingComplaintResponses[0]?.responseMessage}</p>
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-2 pl-5">
                     <label className="font-semibold opacity-30">Hình ảnh: </label>
                     <div className="pl-5 grid grid-cols-3">
                       {(bookingSelected?.bookingComplaintResponses[0].attachments?.length ?? 0) > 0 &&

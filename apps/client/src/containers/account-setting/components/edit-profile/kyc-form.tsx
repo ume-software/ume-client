@@ -6,8 +6,7 @@ import { GenderEnum } from '~/enumVariable/enumVariable'
 
 import { FormEvent, useState } from 'react'
 
-import { DatePicker, Select, Steps, notification, theme } from 'antd'
-import dayjs from 'dayjs'
+import { Select, Steps, notification } from 'antd'
 import { FormikErrors, useFormik } from 'formik'
 import Image from 'next/legacy/image'
 import { UserSendKYCRequest } from 'ume-service-openapi'
@@ -193,12 +192,14 @@ export const KYCFormStep = ({
                 </div>
                 <div className="flex flex-col">
                   <div className="text-white">Ngày tháng năm sinh*</div>
-                  <DatePicker
-                    format={['DD/MM/YYYY', 'DDMMYYYY']}
-                    onChange={(date, dateString) => {
-                      form.setFieldValue('citizenDob', dateString)
+                  <FormInput
+                    type="date"
+                    onChange={(e) => {
+                      form.setFieldValue('citizenDob', e.target.value)
                     }}
-                    value={form.values.citizenDob ? dayjs(form.values.citizenDob, 'DD/MM/YYYY') : undefined}
+                    value={form.values.citizenDob}
+                    error={undefined}
+                    errorMessage={undefined}
                   />
                 </div>
                 <div className="flex flex-col">
