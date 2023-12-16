@@ -106,11 +106,6 @@ export const Header: React.FC = React.memo(() => {
             Cộng đồng
           </Link>
         </span>
-        <span className="px-3 py-2 text-lg font-medium text-white align-middle duration-500 hover:bg-slate-700 rounded-2xl hover:ease-in-out">
-          <Link prefetch href={'/faq'}>
-            FAQs
-          </Link>
-        </span>
       </div>
       <div className="flex items-center">
         <div className="flex flex-1 pr-2 duration-500 hover:ease-in-out">
