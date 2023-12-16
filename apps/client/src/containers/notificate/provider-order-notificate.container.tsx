@@ -36,7 +36,7 @@ const OrderNotificationForProvider = () => {
   const containerRef = useRef<HTMLDivElement>(null)
   const utils = trpc.useContext()
 
-  const { data: getCurrentBookingForProviderData } = trpc.useQuery(['booking.getCurrentBookingForProvider'], {
+  const { data: CurrentBookingForProviderData } = trpc.useQuery(['booking.getCurrentBookingForProvider'], {
     refetchOnWindowFocus: false,
     refetchOnReconnect: 'always',
     cacheTime: 0,
@@ -63,14 +63,14 @@ const OrderNotificationForProvider = () => {
   const responeBooking = trpc.useMutation(['booking.putProviderResponeBooking'])
 
   const handleAcceptBooking = (bookingHistoryId: string, bookerName: string) => {
-    if ((getCurrentBookingForProviderData?.data.row?.length ?? 0) > 0 && getCurrentBookingForProviderData?.data?.row) {
+    if ((CurrentBookingForProviderData?.data.row?.length ?? 0) > 0 && CurrentBookingForProviderData?.data?.row) {
       notification.warning({
-        message: `Bạn đang trong thời gian phục vụ ${getCurrentBookingForProviderData?.data?.row[0]?.booker?.name}`,
+        message: `Bạn đang trong thời gian phục vụ ${CurrentBookingForProviderData?.data?.row[0]?.booker?.name}`,
         description: (
           <Link
             href={`/profile/${
-              getCurrentBookingForProviderData?.data?.row[0]?.booker?.slug ??
-              getCurrentBookingForProviderData?.data?.row[0]?.booker?.id
+              CurrentBookingForProviderData?.data?.row[0]?.booker?.slug ??
+              CurrentBookingForProviderData?.data?.row[0]?.booker?.id
             }`}
           >
             Bấm vào đây để tới trang của người thuê

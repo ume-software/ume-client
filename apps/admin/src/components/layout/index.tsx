@@ -18,7 +18,11 @@ type IContentRender = PropsWithChildren & {
 
 const ContentRender = ({ width, openSideBar, children }: IContentRender) => {
   if (width >= 900) {
-    if (width >= 1200 && openSideBar) {
+    if (width <= 1920 && width >= 1707 && openSideBar) {
+      return <div className={`pl-[18%] mt-16 w-full pr-[2%] py-5 min-h-screen bg-[#15151b] text-white`}>{children}</div>
+    } else if (width <= 1720) {
+      return <div className={`pl-[22%] mt-16 w-full pr-[2%] py-5 min-h-screen bg-[#15151b] text-white`}>{children}</div>
+    } else if (width >= 1200 && width <= 1537 && openSideBar) {
       return <div className={`pl-[22%] mt-16 w-full pr-[2%] py-5 min-h-screen bg-[#15151b] text-white`}>{children}</div>
     } else {
       return <div className={`pl-[9%] mt-16 w-full pr-[2%] py-5 min-h-screen bg-[#15151b] text-white`}>{children}</div>

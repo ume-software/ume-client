@@ -129,7 +129,7 @@ const kycForm = (record: KYCFormType, handleAction: (action: KYCAction) => void,
         <div className="flex flex-col mt-5">
           <div className="text-lg font-bold">Ảnh khuôn mặt:</div>
           <div className="ml-8">
-            {record?.backSideCitizenIdImageUrl && (
+            {record?.portraitImageUrl && (
               <Image
                 src={record?.portraitImageUrl}
                 className="rounded-xl"

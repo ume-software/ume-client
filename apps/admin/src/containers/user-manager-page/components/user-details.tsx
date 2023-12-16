@@ -38,7 +38,7 @@ export default function UserDetails({ details, openValue, closeFunction }: IUser
   const [transaction, setTransaction] = useState<BalanceHistoryPagingResponse>()
   const [total, setTotal] = useState<UserBalanceResponse>()
   const [page, setPage] = useState(1)
-  const ORDER = [{ id: 'asc' }]
+  const ORDER = [{ createdAt: 'desc' }]
 
   const { isLoading } = trpc.useQuery(
     [

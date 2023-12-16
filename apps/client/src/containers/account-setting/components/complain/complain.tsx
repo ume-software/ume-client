@@ -59,7 +59,7 @@ const Complain = () => {
               <span
                 className={`text-white xl:text-2xl text-xl font-medium p-4 cursor-pointer ${
                   item.key == selectedTab.key ? 'border-b-4 border-purple-700' : ''
-                }`}
+                } ${!userInfo?.isProvider && item.key == ComplainEnum.COMPLAIN_TO_ME && 'opacity-30'}`}
                 onClick={() => handleChangeTab(item)}
                 data-tab={item.label}
                 onKeyDown={() => {}}

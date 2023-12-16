@@ -83,7 +83,7 @@ const VoucherByAdmin = () => {
     recipientType: filter.recipientType !== 'ALL' ? filter.recipientType : undefined,
     isActivated: filter.isActivated !== 'all' ? (filter.isActivated == 'true' ? true : false) : undefined,
   })
-  const ORDER = [{ id: 'asc' }]
+  const ORDER = [{ createdAt: 'desc' }]
 
   const { isLoading } = trpc.useQuery(
     [

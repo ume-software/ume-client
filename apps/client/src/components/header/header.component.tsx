@@ -10,10 +10,9 @@ import { useAuth } from '~/contexts/auth'
 
 import React, { Fragment, ReactElement, useContext, useEffect, useState } from 'react'
 
-import { isNil, set } from 'lodash'
+import { isNil } from 'lodash'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
-import { UserInformationResponse } from 'ume-service-openapi'
 
 import { SocketContext } from '../layouts/app-layout/app-layout'
 import { DropDownMenu } from './drop-down.component'
@@ -77,8 +76,10 @@ export const Header: React.FC = React.memo(() => {
 
   useEffect(() => {
     if (socketContext.socketNotificateContext[0]?.status == 'PROVIDER_ACCEPT') {
+      setNotificatedAmount(notificatedAmount + 1)
       utils.invalidateQueries('booking.getCurrentBookingForUser')
     } else if (socketContext.socketNotificateContext[0]?.status == 'USER_FINISH_SOON') {
+      setNotificatedAmount(notificatedAmount + 1)
       utils.invalidateQueries('booking.getCurrentBookingForProvider')
     } else if (socketContext.socketNotificateContext[0]) {
       setNotificatedAmount(notificatedAmount + 1)

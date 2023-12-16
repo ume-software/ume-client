@@ -53,8 +53,6 @@ const ComplainDetailModal = ({
     return daysLeft
   }
 
-  console.log(bookingSelected)
-
   const convertSendDate = (inputTimestamp: string) => {
     const date = new Date(inputTimestamp)
 
@@ -77,13 +75,15 @@ const ComplainDetailModal = ({
     onClose: () => setIsModalComplainDetailVisible(false),
     show: isModalComplainDetailVisible,
     title: <p className="text-white">Chi tiết đơn</p>,
-    customModalCSS: 'top-20 h-fit max-h-[80%] overflow-y-auto custom-scrollbar',
+    customModalCSS: `${
+      (bookingSelected?.bookingComplaintResponses?.length ?? 0) > 0 ? 'top-5 max-h-[95%]' : 'top-20 max-h-[80%]'
+    } h-fit  overflow-y-auto custom-scrollbar`,
     form: (
       <>
         <div className="max-h-[90vh] px-10 pt-5 pb-10 text-white space-y-5 overflow-y-auto custom-scrollbar">
           <div className={`flex ${(bookingSelected as any)?.isProcessingComplaint ? 'justify-end' : 'justify-center'}`}>
-            {(bookingSelected?.bookingComplaintResponse?.length ?? 0) > 0 ? (
-              <div className="w-fit p-3 bg-red-700 rounded-lg text-white font-semibold">Đã gửi khiếu nại</div>
+            {(bookingSelected?.bookingComplaintResponses?.length ?? 0) > 0 ? (
+              <div className="w-fit p-3 bg-red-700 rounded-lg text-white font-semibold">Đã phản hồi khiếu nại</div>
             ) : isTimeMoreThan7Days() < 1 ? (
               <p className="text-lg font-bold text-red-500">Đơn này đã quá hạn phản hồi</p>
             ) : bookingSelected?.complaintStatus ==
@@ -199,6 +199,36 @@ const ComplainDetailModal = ({
                   </div>
                 ))}
             </div>
+          </div>
+          <div className="mt-3">
+            {bookingSelected?.bookingComplaintResponses &&
+              (bookingSelected?.bookingComplaintResponses?.length ?? 0) > 0 && (
+                <>
+                  <div className="border-t border-light-900 w-full my-4 opacity-30"></div>
+
+                  <div className="space-y-2">
+                    <label className="font-semibold opacity-30">Nội dung: </label>
+                    <p className="pl-5">{bookingSelected?.bookingComplaintResponses[0]?.responseMessage}</p>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="font-semibold opacity-30">Hình ảnh: </label>
+                    <div className="pl-5 grid grid-cols-3">
+                      {(bookingSelected?.bookingComplaintResponses[0].attachments?.length ?? 0) > 0 &&
+                        bookingSelected?.bookingComplaintResponses[0].attachments?.map((attachment, index) => (
+                          <div key={index} className="col-span-1 mb-3">
+                            <Image
+                              className="rounded-lg"
+                              width={70}
+                              height={90}
+                              src={attachment?.url ?? 'public/img-for-empty.png'}
+                              alt="Avatar"
+                            />
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                </>
+              )}
           </div>
         </div>
       </>

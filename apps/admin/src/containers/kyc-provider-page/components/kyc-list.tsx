@@ -99,6 +99,7 @@ export const KYCTable = () => {
     ),
   }
 
+
   const kycTable: ColumnsType<KYCTableProps> = [
     {
       title: 'Hình đại diện',
