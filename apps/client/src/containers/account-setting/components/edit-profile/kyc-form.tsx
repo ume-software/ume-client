@@ -98,7 +98,6 @@ export const KYCFormStep = ({
     e.preventDefault()
 
     const formData = new FormData(e.currentTarget)
-
     if (selectedImage.frontVertificationImage && selectedImage.backVertificationImage && selectedImage.faceImage) {
       try {
         const responseData = await uploadImage(formData)
@@ -108,7 +107,7 @@ export const KYCFormStep = ({
               frontSideCitizenIdImageUrl: responseData.data.data.results[0],
               backSideCitizenIdImageUrl: responseData.data.data.results[1],
               portraitImageUrl: responseData.data.data.results[2],
-              citizenDob: new Date(form.values.citizenDob).toISOString(),
+              citizenDob: form.values.citizenDob,
               citizenGender: form.values.citizenGender as any,
               citizenId: form.values.citizenId,
               citizenName: form.values.citizenName,

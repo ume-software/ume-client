@@ -1,6 +1,6 @@
 import Head from 'next/head'
 
-import FAQContainer from './FAQ.container'
+import FAQContainer from './faq.container'
 
 const AccountSettingPage = (props) => {
   return (
