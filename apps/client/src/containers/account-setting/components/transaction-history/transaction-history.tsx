@@ -32,6 +32,8 @@ const TransactionContent: IEnumType[] = [
   { key: BalanceHistoryResponseBalanceTypeEnum.SpendDonate, label: 'Tặng quà' },
   { key: BalanceHistoryResponseBalanceTypeEnum.SpendGift, label: 'Tặng quà' },
   { key: BalanceHistoryResponseBalanceTypeEnum.Withdrawal, label: 'Rút tiền' },
+  { key: BalanceHistoryResponseBalanceTypeEnum.RefundToUser, label: 'Hoàn tiền' },
+  { key: BalanceHistoryResponseBalanceTypeEnum.ProviderRefund, label: 'Hoàn tiền' },
 ]
 
 const TransactionHistory = () => {
