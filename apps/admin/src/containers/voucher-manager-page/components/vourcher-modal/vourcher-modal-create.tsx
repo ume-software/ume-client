@@ -868,7 +868,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                   />
                 </div>
                 <div className="h-12 text-white">
-                  Khuyến mãi dùng cho hóa đơn có giờ tối thiểu (giờ):
+                  Khuyến mãi dùng cho hóa đơn có giờ tối thiểu:
                   <div className="inline-block w-1/5 ">
                     <FormInput
                       name="minimumBookingDurationForUsage"

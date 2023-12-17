@@ -49,7 +49,7 @@ export const ServicesModalView = ({ idService, closeFunction, openValue }: IServ
   const viNameInit = servicesDetails?.viName
   const imageUrlInit = servicesDetails?.imageUrl ?? empty_img
   const isActivatedInit = true
-  const numberUsedInit = 100
+  const numberUsedInit = servicesDetails?.countProviderUsed
   const createdAtInit = servicesDetails?.createdAt
     ? new Date(servicesDetails?.createdAt).toLocaleDateString('en-GB')
     : ''
