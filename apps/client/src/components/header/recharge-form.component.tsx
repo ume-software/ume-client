@@ -29,7 +29,7 @@ interface PaymentPlatformArrayProps {
 const coinRechangeValue: number[] = [10000, 20000, 50000, 100000, 200000, 500000]
 const paymentPlatformArray: PaymentPlatformArrayProps[] = [
   { paymentPlatform: 'MOMO', imgSrc: momo, tax: 0.01, type: 'QR' },
-  { paymentPlatform: 'VNPAY', imgSrc: vnpay, tax: 0.03, type: 'VNPAY' },
+  { paymentPlatform: 'VNPAY', imgSrc: vnpay, tax: 0.01, type: 'VNPAY' },
 ]
 
 interface ReachargeFromProps {
@@ -173,18 +173,25 @@ const RechargeForm = ({ handleClose, qrContent, setQRContent }: ReachargeFromPro
                           autoComplete="off"
                         />
                       </div>
-                      <div className="flex items-center justify-between my-5">
-                        <p className="text-xl font-semibold">Tổng:</p>
-                        <div className="flex items-center gap-1">
-                          <p className="text-xl font-semibold">
-                            {(
-                              Number(values.balance.replace(/,/g, '')) +
-                              Number(values.balance.replace(/,/g, '')) * platform.tax
-                            ).toLocaleString('en-US', {
-                              currency: 'VND',
-                            })}
-                          </p>
-                          <span className="text-xs italic"> VND</span>
+                      <div className="my-5">
+                        <p className="text-end text-xs font-semibold text-red-500">
+                          {/* Phí nạp là {platform.tax * 100}% + 2,000đ */}
+                          Đã bao gồm phụ phí
+                        </p>
+                        <div className="flex items-center justify-between">
+                          <p className="text-xl font-semibold">Tổng:</p>
+                          <div className="flex items-center gap-1">
+                            <p className="text-xl font-semibold">
+                              {(
+                                Number(values.balance.replace(/,/g, '')) +
+                                Number(values.balance.replace(/,/g, '')) * platform.tax +
+                                2000
+                              ).toLocaleString('en-US', {
+                                currency: 'VND',
+                              })}
+                            </p>
+                            <span className="text-xs italic"> VND</span>
+                          </div>
                         </div>
                       </div>
                       <div className="flex items-center justify-center mt-2">

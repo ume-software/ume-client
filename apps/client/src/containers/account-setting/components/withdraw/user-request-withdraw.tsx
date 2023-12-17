@@ -260,13 +260,13 @@ const UserRequestWithdraw = (props: {
             <p>Tổng: </p>
             <span className="flex justify-start items-center gap-2">
               {Number(form.values.withdrawMoney.replace(/,/g, '')) -
-                Number(form.values.withdrawMoney.replace(/,/g, '')) * 0.001 -
+                Number(form.values.withdrawMoney.replace(/,/g, '')) * 0.01 -
                 1000 >
                 0 &&
                 (
                   Number(form.values.withdrawMoney.replace(/,/g, '')) -
-                  Number(form.values.withdrawMoney.replace(/,/g, '')) * 0.001 -
-                  1000
+                  Number(form.values.withdrawMoney.replace(/,/g, '')) * 0.01 -
+                  2000
                 ).toLocaleString('en-US', {
                   currency: 'VND',
                 })}

@@ -2,6 +2,7 @@ import ImgForEmpty from 'public/img-for-empty.png'
 
 import { Rate } from 'antd'
 import Image from 'next/legacy/image'
+import Link from 'next/link'
 import { UserInformationResponse } from 'ume-service-openapi'
 
 import { CommentSkeletonLoader } from '~/components/skeleton-load'
@@ -17,6 +18,9 @@ const PersonalIntroduce = (props: { data: UserInformationResponse }) => {
       refetchOnMount: true,
       enabled: !!props.data.slug || !!props.data.id,
     }) ?? undefined
+
+  console.log(feedbackByUserSlug.data)
+
   return (
     <>
       <div className="p-10 bg-zinc-800 rounded-3xl">
@@ -30,7 +34,11 @@ const PersonalIntroduce = (props: { data: UserInformationResponse }) => {
             <p className="text-2xl font-bold font-inter">Đánh giá</p>
             {Number(feedbackByUserSlug.data.data.row?.length || 0) > 0 ? (
               feedbackByUserSlug.data.data.row?.map((feedback) => (
-                <div key={feedback.id} className="grid grid-cols-10 p-3 border-b-2 border-gray-600">
+                <Link
+                  key={feedback.id}
+                  className="grid grid-cols-10 p-3 border-b-2 border-gray-600 group cursor-pointer"
+                  href={`/profile/${feedback.booking?.bookerId}`}
+                >
                   <div className="col-span-1">
                     <Image
                       className="object-cover rounded-full"
@@ -42,7 +50,7 @@ const PersonalIntroduce = (props: { data: UserInformationResponse }) => {
                   </div>
                   <div className="col-span-9 gap-3">
                     <div className="flex flex-row justify-between">
-                      <span className="text-2xl font-bold leading-9 font-roboto">
+                      <span className="text-xl font-bold leading-9 font-roboto group-hover:underline">
                         {feedback?.booking?.booker?.name}
                       </span>
 
@@ -50,12 +58,12 @@ const PersonalIntroduce = (props: { data: UserInformationResponse }) => {
                         <Rate disabled defaultValue={feedback.amountStar} />
                       </div>
                     </div>
-                    <span className="text-sm font-normal opacity-30">
+                    {/* <span className="text-sm font-normal opacity-30">
                       -- {feedback.booking?.providerService?.service?.name} --
-                    </span>
-                    <span className="font-normal text-md">{feedback.content}</span>
+                    </span> */}
+                    <span className="font-normal text-md pl-3">{feedback.content}</span>
                   </div>
-                </div>
+                </Link>
               ))
             ) : (
               <>
