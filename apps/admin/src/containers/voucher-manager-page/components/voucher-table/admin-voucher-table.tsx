@@ -78,12 +78,12 @@ const AdminVoucherTable = ({ data, isLoading }) => {
               if (isActivated) {
                 notification.success({
                   message: 'Dừng hoạt động thành công!',
-                  description: 'Khuyến mãi đã bị dừng hoạt động',
+                  description: 'Khuyến mãi đã bị dừng hoạt động.',
                 })
               } else {
                 notification.success({
                   message: 'Kích hoạt thành công!',
-                  description: 'Khuyến mãi đã được kích hoạt lại',
+                  description: 'Khuyến mãi đã được kích hoạt.',
                 })
               }
 

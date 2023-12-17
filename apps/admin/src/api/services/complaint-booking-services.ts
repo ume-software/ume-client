@@ -50,7 +50,6 @@ export const getComplaintDetails = async (ctx, query: { id; select }) => {
 
 export const updateComplaint = async (input: { id: string; complaintStatus: any }, ctx) => {
   const cookies = parse(ctx.req.headers.cookie)
-  console.log(input.complaintStatus)
   try {
     const response = await new AdminManageBookingComplaintApi({
       basePath: getEnv().baseUmeServiceURL,

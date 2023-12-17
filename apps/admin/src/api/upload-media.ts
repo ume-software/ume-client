@@ -7,7 +7,7 @@ export const uploadImageVoucher = async (formData) => {
     const response = await new ImageApi({
       basePath: getEnv().baseUploadFileURL,
       isJsonMime: () => true,
-    }).uploadImage(undefined, formData)
+    }).uploadImage(formData)
     return {
       data: response,
     }
