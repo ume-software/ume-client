@@ -98,7 +98,6 @@ const ResolveConfirmModal = ({
             }
             break
         }
-        console.log(complaintStatus)
 
         resolveComplaint.mutate(
           {

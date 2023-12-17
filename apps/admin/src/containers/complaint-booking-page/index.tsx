@@ -312,8 +312,6 @@ const ComplaintBookingContainer = () => {
     },
   ]
 
-  // console.log(complaintList)
-
   return (
     <div>
       <Head>

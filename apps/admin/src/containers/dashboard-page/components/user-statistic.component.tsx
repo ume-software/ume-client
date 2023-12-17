@@ -44,7 +44,6 @@ export const UserStatistic = () => {
       refetchOnReconnect: 'always',
       onSuccess(data) {
         setProviderChartData(data.data.data)
-        console.log(providerChartData)
       },
       onError(error: any) {},
     },

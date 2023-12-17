@@ -21,11 +21,11 @@ export const AuthForm = ({ setShowModal }: AuthFormProps) => {
             login({ ...data.data.user })
             setShowModal(false)
           },
-          onError: (error) => console.log(error),
+          onError: (error) => console.error(error),
         },
       )
     },
-    onError: (error) => console.log(error),
+    onError: (error) => console.error(error),
   })
 
   return (

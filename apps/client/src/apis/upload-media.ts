@@ -12,7 +12,7 @@ export const uploadImage = async (formData) => {
       data: response,
     }
   } catch (error) {
-    console.log('error at catch', error)
+    console.error('error at catch', error)
   }
 }
 
@@ -26,7 +26,7 @@ export const uploadAudio = async (formData) => {
       data: response,
     }
   } catch (error) {
-    console.log('error at catch', error)
+    console.error('error at catch', error)
   }
 }
 
@@ -40,6 +40,6 @@ export const uploadFile = async (formData) => {
       data: response,
     }
   } catch (error) {
-    console.log('error at catch', error)
+    console.error('error at catch', error)
   }
 }

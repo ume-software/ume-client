@@ -181,7 +181,6 @@ export const PendingKYCTable = () => {
       },
     },
   ]
-  console.log(kycListPending)
 
   const locale = {
     emptyText: (
