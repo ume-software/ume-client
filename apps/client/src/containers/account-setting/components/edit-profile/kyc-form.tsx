@@ -374,6 +374,7 @@ export const KYCFormStep = ({
                   }"`}
                   isActive={true}
                   isOutlinedButton={true}
+                  isLoading={userKYC.isLoading}
                 >
                   Xác minh
                 </Button>
