@@ -1,4 +1,4 @@
-import { PropsWithChildren, createContext, use, useContext, useEffect, useMemo, useState } from 'react'
+import { PropsWithChildren, createContext, useContext, useMemo, useState } from 'react'
 
 import { useRouter } from 'next/router'
 import { UserInformationResponse } from 'ume-service-openapi'
@@ -30,11 +30,11 @@ export const AuthProvider = ({ children }: AuthProviderType) => {
       document.cookie = 'refeshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
       setUser(null)
       setIsAuthenticated(false)
-      await router.push('/logout')
+      // await router.push('/logout')
     }
 
     return { isAuthenticated, user, login, logout }
-  }, [router, user, isAuthenticated])
+  }, [user, isAuthenticated])
 
   return <AuthContext.Provider value={authContextValue}>{children}</AuthContext.Provider>
 }

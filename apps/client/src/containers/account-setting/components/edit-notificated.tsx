@@ -4,7 +4,6 @@ import { useAuth } from '~/contexts/auth'
 import { useState } from 'react'
 
 import { Switch } from 'antd'
-import { isNil } from 'lodash'
 import { UserInformationResponse } from 'ume-service-openapi'
 
 import { CommentSkeletonLoader } from '~/components/skeleton-load'

@@ -17,6 +17,7 @@ import {
 import { isNil } from 'lodash'
 import { UserInformationResponse } from 'ume-service-openapi'
 
+import { Footer } from '~/components/footer/footer.component'
 import { Header } from '~/components/header/header.component'
 import { Sidebar } from '~/components/sidebar'
 
@@ -152,6 +153,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             </div>
           </DrawerContext.Provider>
         </div>
+        <Footer />
       </SocketContext.Provider>
     </SocketClientEmit.Provider>
   )

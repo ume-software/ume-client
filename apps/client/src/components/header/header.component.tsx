@@ -17,6 +17,7 @@ import Link from 'next/link'
 import { SocketContext } from '../layouts/app-layout/app-layout'
 import { DropDownMenu } from './drop-down.component'
 import { LoginModal } from './login-modal.component'
+import { MoreMenu } from './more-menu.component'
 import { RechargeModal } from './recharge-form.component'
 
 import { trpc } from '~/utils/trpc'
@@ -35,7 +36,7 @@ export const Header: React.FC = React.memo(() => {
   const [selectedTab, setSelectedTab] = useState('Chính')
   const { socketContext } = useContext(SocketContext)
   const [isModalLoginVisible, setIsModalLoginVisible] = React.useState(false)
-
+  let accessToken
   const { login, logout, user, isAuthenticated } = useAuth()
   const utils = trpc.useContext()
 
@@ -87,7 +88,7 @@ export const Header: React.FC = React.memo(() => {
   }, [socketContext.socketNotificateContext[0]])
 
   return (
-    <div className="fixed !z-50 flex items-center justify-between w-full h-16 bg-umeHeader ">
+    <div className="fixed !z-50 flex items-center justify-between w-full min-h-[6vh] bg-umeHeader ">
       <LoginModal isModalLoginVisible={isModalLoginVisible} setIsModalLoginVisible={setIsModalLoginVisible} />
       <RechargeModal showRechargeModal={showRechargeModal} setShowRechargeModal={setShowRechargeModal} />
       <div className="z-50 flex items-center">
@@ -96,15 +97,18 @@ export const Header: React.FC = React.memo(() => {
             <Image width={160} height={40} alt="logo-ume" src={logo} layout="fixed" />
           </Link>
         </span>
-        <span className="px-3 py-2 text-lg font-medium text-white align-middle duration-500 hover:bg-slate-700 rounded-2xl hover:ease-in-out">
+        <span className="px-3 py-2 text-lg font-medium text-white align-middle hover:bg-slate-700 rounded-2xl hover:ease-in-out">
           <Link prefetch href={'/home'}>
             Trang chủ
           </Link>
         </span>
-        <span className="px-3 py-2 text-lg font-medium text-white align-middle duration-500 hover:bg-slate-700 rounded-2xl hover:ease-in-out">
+        <span className="px-3 py-2 text-lg font-medium text-white align-middle hover:bg-slate-700 rounded-2xl hover:ease-in-out">
           <Link prefetch href={'/community'}>
             Cộng đồng
           </Link>
+        </span>
+        <span className="relative justify-center px-3 py-2 text-lg font-medium text-white align-middle hover:bg-slate-700 rounded-2xl hover:ease-in-out">
+          <MoreMenu />
         </span>
       </div>
       <div className="flex items-center">

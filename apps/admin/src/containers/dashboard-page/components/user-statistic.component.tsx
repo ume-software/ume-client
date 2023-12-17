@@ -19,7 +19,7 @@ export const UserStatistic = () => {
   const [userChartData, setUserChartData] = useState<any[]>([])
   const [providerChartData, setProviderChartData] = useState<any[]>([])
 
-  const { isLoading: loadingUser, isFetching: fetchingUser } = trpc.useQuery(
+  trpc.useQuery(
     [
       'user.statisticNewUser',
       { time: timeMember, unit: unitMember || UnitQueryTime.MONTH, type: StatisticNewUserType.NEW_USER },
@@ -34,7 +34,7 @@ export const UserStatistic = () => {
     },
   )
 
-  const { isLoading: loadingProivder, isFetching: fetchingProvider } = trpc.useQuery(
+  trpc.useQuery(
     [
       'user.statisticNewUser',
       { time: timeProvider, unit: unitProvider || UnitQueryTime.MONTH, type: StatisticNewUserType.NEW_PROVIDER },
@@ -52,9 +52,10 @@ export const UserStatistic = () => {
 
   const newMemberOptions = {
     chart: {
-      type: 'line',
+      type: 'spline',
       backgroundColor: '#292734',
       borderRadius: 20,
+      height: 400,
     },
     title: {
       text: 'Thành viên mới',
@@ -67,7 +68,7 @@ export const UserStatistic = () => {
       },
     },
     xAxis: {
-      categories: userChartData.map((item) => moment(item.time).format('DD MMM')),
+      categories: userChartData.map((item) => moment(item.time).format('MM/YY')),
       labels: {
         style: {
           color: '#FFFFFF',
@@ -102,7 +103,7 @@ export const UserStatistic = () => {
     series: [
       {
         name: 'Thành viên mới',
-        data: userChartData.map((item) => [moment(item.time).format('DD MMM'), item.value]),
+        data: userChartData.map((item) => [moment(item.time).format('MM/YY'), item.value]),
       },
     ],
     legend: {
@@ -139,9 +140,10 @@ export const UserStatistic = () => {
 
   const newProviderOptions = {
     chart: {
-      type: 'line',
+      type: 'spline',
       backgroundColor: '#292734',
       borderRadius: 20,
+      height: 400,
     },
     title: {
       text: 'Nhà cung cấp mới',
@@ -154,7 +156,7 @@ export const UserStatistic = () => {
       },
     },
     xAxis: {
-      categories: providerChartData.map((item) => moment(item.time).format('DD MMM')),
+      categories: providerChartData.map((item) => moment(item.time).format('MM/YY')),
       labels: {
         style: {
           color: '#FFFFFF',
@@ -189,7 +191,7 @@ export const UserStatistic = () => {
     series: [
       {
         name: 'Nhà cung cấp mới',
-        data: providerChartData.map((item) => [moment(item.time).format('DD MMM'), item.value]),
+        data: providerChartData.map((item) => [moment(item.time).format('MM/YY'), item.value]),
       },
     ],
     legend: {
@@ -238,19 +240,14 @@ export const UserStatistic = () => {
           <ProviderChart />
         </div>
       </div>
-      <div className="flex flex-row justify-between mx-20 mt-8">
-        <div>
+
+      <div className="flex flex-row justify-around mt-6">
+        <div className="flex flex-col w-[600px]">
           <TimeUnit unit={timeMember} setUnit={setTimeMember} />
-        </div>
-        <div>
-          <TimeUnit unit={timeProvider} setUnit={setTimeProvider} />
-        </div>
-      </div>
-      <div className="flex flex-row justify-around">
-        <div className="flex flex-col">
           <HighchartsReact highcharts={Highcharts} options={newMemberOptions} />
         </div>
-        <div className="flex flex-col">
+        <div className="flex flex-col w-[600px]">
+          <TimeUnit unit={timeProvider} setUnit={setTimeProvider} />
           <HighchartsReact highcharts={Highcharts} options={newProviderOptions} />
         </div>
       </div>

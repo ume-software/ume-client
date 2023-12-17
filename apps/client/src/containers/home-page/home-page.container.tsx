@@ -10,7 +10,6 @@ const HomePage = (props) => {
       <Head>
         <title>UME | Trang Chủ</title>
       </Head>
-
       <div className="flex flex-col mx-16">
         <Cover />
         <Category />
