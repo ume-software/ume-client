@@ -1,15 +1,16 @@
 import { Menu, Transition } from '@headlessui/react'
-import { Help, Logout, Setting, User, WalletOne } from '@icon-park/react'
+import { Logout, Setting, User, WalletOne } from '@icon-park/react'
 import { useAuth } from '~/contexts/auth'
 
 import { Fragment } from 'react'
 
 import Image from 'next/legacy/image'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 export const DropDownMenu = () => {
   const { logout, user } = useAuth()
-
+  const router = useRouter()
   return (
     <Menu>
       <div>
@@ -37,6 +38,7 @@ export const DropDownMenu = () => {
           <Menu.Item as="div">
             {({ active }) => (
               <Link
+                prefetch
                 href={`/profile/${user?.slug || user?.id}?tab=${user?.isProvider ? 'Service' : 'Album'}`}
                 className={`${
                   active ? 'bg-slate-700' : 'text-gray-900'
@@ -50,6 +52,7 @@ export const DropDownMenu = () => {
           <Menu.Item as="div">
             {({ active }) => (
               <Link
+                prefetch
                 href={`/account-setting?user=${user?.name}&tab=transactionHistory`}
                 className={`${
                   active ? 'bg-slate-700' : 'text-gray-900'
@@ -63,6 +66,7 @@ export const DropDownMenu = () => {
           <Menu.Item as="div">
             {({ active }) => (
               <Link
+                prefetch
                 href={`/account-setting?user=${user?.name}&tab=settingInformation`}
                 className={`${
                   active ? 'bg-slate-700 text-white' : 'text-gray-900'
@@ -76,7 +80,10 @@ export const DropDownMenu = () => {
           <Menu.Item as="div">
             {({ active }) => (
               <button
-                onClick={logout}
+                onClick={() => {
+                  logout()
+                  router.push('/')
+                }}
                 className={`${
                   active ? 'bg-slate-700 ' : 'text-gray-900'
                 } group flex w-full items-center rounded-md text-white px-2 py-2 text-sm`}

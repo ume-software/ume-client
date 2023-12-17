@@ -29,6 +29,7 @@ export const MoreMenu: FC = () => {
             <Menu.Item key={item.id} as="div">
               {({ active }) => (
                 <Link
+                  prefetch
                   href={`/${item.path}`}
                   className={`${
                     active ? 'bg-slate-700' : 'text-gray-900'
