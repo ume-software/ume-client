@@ -62,9 +62,9 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
       vourcherCode: '',
       imageSource: '',
       description: '',
-      numVoucher: 1,
-      numVoucherInDay: 1,
-      minimize: 1,
+      numVoucher: 0,
+      numVoucherInDay: 0,
+      minimize: 0,
       endDate: new Date().toISOString().split('T')[0],
       startDate: new Date().toISOString().split('T')[0],
       applyTime: [],
@@ -75,8 +75,8 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
       content: '',
       selectedImage: null,
       status: '',
-      numUserCanUse: 1,
-      numUserCanUseInDay: 1,
+      numUserCanUse: 0,
+      numUserCanUseInDay: 0,
       minimumBookingDurationForUsage: 0,
       minimumBookingTotalPriceForUsage: 0,
       maximumDiscountValue: 0,
@@ -86,6 +86,11 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
       typeVoucher: Yup.string().required('Loại là bắt buộc'),
       discountUnit: Yup.string().required('discountUnit là bắt buộc'),
       audience: Yup.string().required('Đối tượng là bắt buộc'),
+      numUserCanUse: Yup.number().moreThan(0),
+      numUserCanUseInDay: Yup.number().moreThan(0),
+      numVoucher: Yup.number().moreThan(0),
+      numVoucherInDay: Yup.number().moreThan(0),
+      minimize: Yup.number().moreThan(0),
     }),
     onSubmit: (values, { resetForm }) => {
       setSubmiting(true)
@@ -469,7 +474,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                       onBlur={form.handleBlur}
                       value={form.values.numVoucher}
                       error={!!form.errors.numVoucher && form.touched.numVoucher}
-                      errorMessage={form.errors.numVoucher}
+                      errorMessage={undefined}
                       disabled={false}
                       onChange={(e) => {
                         const newValue = parseInt(e.target.value)
@@ -486,12 +491,12 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                             }
                           }
                         } else {
-                          e.target.value = '1'
+                          e.target.value = '0'
                         }
                         form.handleChange(e)
                       }}
                       type="number"
-                      min={1}
+                      min={0}
                       max={100000}
                     />
                   </div>
@@ -507,7 +512,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                       value={form.values.numUserCanUse}
                       onBlur={form.handleBlur}
                       error={!!form.errors.numUserCanUse && form.touched.numUserCanUse}
-                      errorMessage={form.errors.numUserCanUse}
+                      errorMessage={undefined}
                       onChange={(e) => {
                         const newValue = parseInt(e.target.value)
                         if (!isNaN(newValue) && newValue >= 1) {
@@ -517,7 +522,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                             e.target.value = newValue.toString()
                           }
                         } else {
-                          e.target.value = '1'
+                          e.target.value = '0'
                         }
                         form.handleChange(e)
                       }}
@@ -665,7 +670,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                       value={form.values.numVoucherInDay}
                       onBlur={form.handleBlur}
                       error={!!form.errors.numVoucherInDay && form.touched.numVoucherInDay}
-                      errorMessage={form.errors.numVoucherInDay}
+                      errorMessage={undefined}
                       onChange={(e) => {
                         const newValue = parseInt(e.target.value)
 
@@ -679,7 +684,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                             }
                           }
                         } else {
-                          e.target.value = '1'
+                          e.target.value = '0'
                         }
                         form.handleChange(e)
                       }}
@@ -699,7 +704,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                       value={form.values.numUserCanUseInDay}
                       onBlur={form.handleBlur}
                       error={!!form.errors.numUserCanUseInDay && form.touched.numUserCanUseInDay}
-                      errorMessage={form.errors.numUserCanUseInDay}
+                      errorMessage={undefined}
                       onChange={(e) => {
                         const newValue = parseInt(e.target.value)
                         if (!isNaN(newValue) && newValue >= 1) {
@@ -709,7 +714,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                             e.target.value = newValue.toString()
                           }
                         } else {
-                          e.target.value = '1'
+                          e.target.value = '0'
                         }
                         form.handleChange(e)
                       }}
@@ -733,7 +738,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                       value={form.values.minimize}
                       onBlur={form.handleBlur}
                       error={!!form.errors.minimize && form.touched.minimize}
-                      errorMessage={form.errors.minimize}
+                      errorMessage={undefined}
                       onChange={(e) => {
                         if (form.values.discountUnit == CreateVoucherRequestDiscountUnitEnum.Percent) {
                           const newValue = parseInt(e.target.value)
@@ -744,7 +749,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                               e.target.value = newValue.toString()
                             }
                           } else {
-                            e.target.value = '1'
+                            e.target.value = '0'
                           }
                           form.handleChange(e)
                         } else {
@@ -863,7 +868,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                   />
                 </div>
                 <div className="h-12 text-white">
-                  Khuyến mãi dùng cho hóa đơn có giờ tối thiểu:
+                  Khuyến mãi dùng cho hóa đơn có giờ tối thiểu (giờ):
                   <div className="inline-block w-1/5 ">
                     <FormInput
                       name="minimumBookingDurationForUsage"

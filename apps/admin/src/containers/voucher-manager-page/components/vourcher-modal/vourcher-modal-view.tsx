@@ -226,7 +226,7 @@ export default function VourcherModalView({ vourcherId, closeFunction, openValue
                 <span className="font-bold">{numUserCanUseInDay}</span>
               </div>
               <div className="flex items-baseline h-12 text-white">
-                <span className="h-8">Giảm :</span>
+                <span className="h-8 min-w-[3rem]">Giảm :</span>
                 <div className="inline-block w-4/12 ml-1 font-bold">
                   {formatNumberWithCommas(minimize) || 0}{' '}
                   {discountUnitInit == CreateVoucherRequestDiscountUnitEnum.Percent ? ' %' : ' VND'}
@@ -247,7 +247,7 @@ export default function VourcherModalView({ vourcherId, closeFunction, openValue
               <div className="flex h-12 text-white">
                 <div className="flex items-center">
                   {'Khuyến mãi dùng cho hóa đơn có giờ tối thiểu: '}
-                  <span className="ml-2 font-bold">{minimumBookingDurationForUsageInit} h</span>
+                  <span className="ml-2 font-bold">{minimumBookingDurationForUsageInit} giờ</span>
                 </div>
               </div>
             </div>
