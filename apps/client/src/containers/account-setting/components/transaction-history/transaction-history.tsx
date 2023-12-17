@@ -60,7 +60,6 @@ const TransactionHistory = () => {
   )
   const { isLoading, isFetching } = trpc.useQuery(['identity.account-balance'], {
     onSuccess(data) {
-      console.log(data)
       setAccountBalance({
         balance: data.data.totalBalance,
         balanceAvailable: data.data.totalBalanceAvailable,

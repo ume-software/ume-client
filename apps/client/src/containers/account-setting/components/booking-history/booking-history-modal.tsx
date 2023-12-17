@@ -63,8 +63,6 @@ const BookingHistoryDetailModal = ({
     return formattedDate
   }
 
-  console.log(bookingSelected)
-
   const bookingHistoryDetailModal = Modal.useEditableForm({
     onOK: () => {},
     onClose: () => setIsModalBookingHistoryDetailVisible(false),

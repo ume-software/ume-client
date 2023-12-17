@@ -82,7 +82,7 @@ const ComplainDetailModal = ({
       <>
         <div className="max-h-[90vh] px-10 pt-5 pb-10 text-white space-y-5 overflow-y-auto custom-scrollbar">
           <div className={`flex ${(bookingSelected as any)?.isProcessingComplaint ? 'justify-end' : 'justify-center'}`}>
-            {(bookingSelected?.bookingComplaintResponses?.length ?? 0) > 0 ? (
+            {(bookingSelected?.bookingComplaintResponses?.length ?? 1) > 1 ? (
               <div className="w-fit p-3 bg-red-700 rounded-lg text-white font-semibold">Đã phản hồi khiếu nại</div>
             ) : isTimeMoreThan7Days() < 1 ? (
               <p className="text-lg font-bold text-red-500">Đơn này đã quá hạn phản hồi</p>
