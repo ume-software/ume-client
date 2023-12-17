@@ -139,7 +139,7 @@ const EditProfile = () => {
         latestOnline: null,
         name: userSettingData?.data?.name ?? '',
         phone: userSettingData?.data?.phone ?? '',
-        slug: userSettingData?.data?.slug,
+        slug: userSettingData?.data?.slug ?? '',
         username: userSettingData?.data?.username ?? '',
       })
     }

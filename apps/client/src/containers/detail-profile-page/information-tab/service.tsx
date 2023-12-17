@@ -7,6 +7,7 @@ import { useState } from 'react'
 
 import { Rate, notification } from 'antd'
 import Image from 'next/legacy/image'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { ProviderServiceResponse } from 'ume-service-openapi'
 
@@ -109,7 +110,11 @@ const Service = (props: { data: ProviderServiceResponse }) => {
             <p className="text-2xl font-bold font-inter">Đánh giá</p>
             {Number(feedbackGame.data.data.row?.length || 0) > 0 ? (
               feedbackGame.data.data.row?.map((feedback) => (
-                <div key={feedback.id} className="grid grid-cols-10 p-3 border-b-2 border-gray-600">
+                <Link
+                  key={feedback.id}
+                  className="grid grid-cols-10 p-3 border-b-2 border-gray-600 group cursor-pointer"
+                  href={`/profile/${feedback.booking?.bookerId}`}
+                >
                   <div className="col-span-1">
                     <Image
                       className="object-cover rounded-full"
@@ -121,7 +126,7 @@ const Service = (props: { data: ProviderServiceResponse }) => {
                   </div>
                   <div className="col-span-9 gap-3">
                     <div className="flex flex-row justify-between">
-                      <span className="text-2xl font-bold leading-9 font-roboto">
+                      <span className="text-xl font-bold leading-9 font-roboto group-hover:underline">
                         {feedback?.booking?.booker?.name}
                       </span>
 
@@ -131,7 +136,7 @@ const Service = (props: { data: ProviderServiceResponse }) => {
                     </div>
                     <span className="font-normal text-md">{feedback.content}</span>
                   </div>
-                </div>
+                </Link>
               ))
             ) : (
               <>

@@ -38,7 +38,7 @@ export const Button = ({
       <button
         {...props}
         type={type}
-        disabled={isDisable}
+        disabled={isLoading || isDisable}
         className={`w-fit h-fit btn ${!isOutlinedButton ? 'bg-transparent' : 'bg-transparent cursor-pointer'}`}
         tabIndex={99}
         style={{ borderRadius: 3 }}
