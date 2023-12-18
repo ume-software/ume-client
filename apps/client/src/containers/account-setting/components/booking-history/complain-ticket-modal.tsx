@@ -398,7 +398,11 @@ const ComplainTicketModal = ({
           </div>
 
           <div className="p-5 mt-3 text-center">
-            {isTimeMoreThan12Hours() ? (
+            {(bookingSelected as any)?.isProcessingComplaint ? (
+              <div className="text-lg font-bold text-red-500">Đã gửi khiếu nại</div>
+            ) : (bookingSelected as any)?.isRefund ? (
+              <div className="text-lg font-bold text-green-500">Đã được hoàn tiền</div>
+            ) : isTimeMoreThan12Hours() ? (
               <p className="text-lg font-bold text-red-500">Đơn này đã quá hạn khiếu nại</p>
             ) : (
               <Button
