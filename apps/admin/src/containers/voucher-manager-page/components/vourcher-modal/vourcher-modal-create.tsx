@@ -489,6 +489,9 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                             if (form.values.numVoucherInDay > newValue) {
                               form.setFieldValue('numVoucherInDay', newValue)
                             }
+                            if (parseInt(form.values.numUserCanUseInDay + '') > newValue) {
+                              form.setFieldValue('numUserCanUseInDay', newValue)
+                            }
                           }
                         } else {
                           e.target.value = '0'
@@ -520,6 +523,9 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                             e.target.value = form.values.numVoucher + ''
                           } else {
                             e.target.value = newValue.toString()
+                            if (parseInt(form.values.numUserCanUseInDay + '') > newValue) {
+                              form.setFieldValue('numUserCanUseInDay', newValue)
+                            }
                           }
                         } else {
                           e.target.value = '0'
@@ -708,8 +714,15 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                       onChange={(e) => {
                         const newValue = parseInt(e.target.value)
                         if (!isNaN(newValue) && newValue >= 1) {
-                          if (newValue > parseInt(form.values.numVoucherInDay + '')) {
-                            e.target.value = form.values.numVoucherInDay + ''
+                          if (
+                            newValue > parseInt(form.values.numVoucherInDay + '') ||
+                            newValue > parseInt(form.values.numUserCanUse + '')
+                          ) {
+                            if (parseInt(form.values.numVoucherInDay + '') < parseInt(form.values.numUserCanUse + '')) {
+                              e.target.value = form.values.numVoucherInDay + ''
+                            } else {
+                              e.target.value = form.values.numUserCanUse + ''
+                            }
                           } else {
                             e.target.value = newValue.toString()
                           }
