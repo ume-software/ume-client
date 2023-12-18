@@ -59,7 +59,7 @@ const PersonalIntroduce = (props: { data: UserInformationResponse }) => {
                     {/* <span className="text-sm font-normal opacity-30">
                       -- {feedback.booking?.providerService?.service?.name} --
                     </span> */}
-                    <span className="font-normal text-md pl-3">{feedback.content}</span>
+                    <span className="font-normal text-md">{feedback.content}</span>
                   </div>
                 </Link>
               ))

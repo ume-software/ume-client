@@ -19,7 +19,7 @@ function CategoryDrawer({ data, loadingService }) {
         ) : (
           <div className="w-full h-full px-6 overflow-y-auto custom-scrollbar">
             <div className="grid grid-cols-5 pb-5 place-items-center ">
-              {data.map((category, index) => (
+              {data.map((category) => (
                 <div key={category.id} className="my-8">
                   <Link href={`/filter-service/${category.name}?service=${category.slug || category.id}`}>
                     <div className="relative w-[170px] h-[230px]">
@@ -30,7 +30,9 @@ function CategoryDrawer({ data, loadingService }) {
                         alt={category.name}
                       />
                     </div>
-                    <span className="font-bold">{category.name}</span>
+                    <span className="font-bold">
+                      {category.viName && category.viName != '' ? category.viName : category.name}
+                    </span>
                   </Link>
                 </div>
               ))}
@@ -44,7 +46,11 @@ function CategoryDrawer({ data, loadingService }) {
     <CustomDrawer
       drawerTitle="Tất cả dịch vụ"
       customOpenBtn="p-2 mr-2 rounded-xl cursor-pointer justify-self-end font-semibold active:bg-gray-200 hover:bg-blue-500 "
-      openBtn={<div onClick={handleAllServiceOpen}>Tất cả dịch vụ</div>}
+      openBtn={
+        <div onClick={handleAllServiceOpen} onKeyDown={() => {}}>
+          Tất cả dịch vụ
+        </div>
+      }
     >
       {childrenDrawer}
     </CustomDrawer>

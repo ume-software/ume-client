@@ -83,7 +83,11 @@ const AddAttributeDrawer = (props: {
                       />
                     )}
                   </div>
-                  <p className="text-md font-normal px-2 inline-block">{subAttr.subAttrViValue}</p>
+                  <p className="text-md font-normal px-2 inline-block">
+                    {subAttr.subAttrViValue && subAttr.subAttrViValue != ''
+                      ? subAttr.subAttrViValue
+                      : subAttr.subAttrValue}
+                  </p>
                 </div>
               ))}
             </div>
