@@ -489,6 +489,7 @@ export const ServicesModalUpdate = ({ idService, closeFunction, openValue }: ISe
               Hủy
             </Button>
             <Button
+              isActive={false}
               customCSS={`mx-6 px-4 py-1 border-2 ${
                 !isDisableButton() && 'hover:scale-110 bg-[#7463F0] border-[#7463F0]'
               }`}
