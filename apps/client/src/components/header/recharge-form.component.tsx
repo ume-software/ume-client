@@ -203,6 +203,7 @@ const RechargeForm = ({ handleClose, qrContent, setQRContent }: ReachargeFromPro
                             type="button"
                             isActive={true}
                             isOutlinedButton={!!values.balance}
+                            isLoading={requestRecharge.isLoading}
                             onClick={() => {
                               handleSubmit()
                             }}

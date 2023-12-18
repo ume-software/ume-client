@@ -536,7 +536,8 @@ const DetailProfileContainer = () => {
                           {moreButtonDatas.map((item) => (
                             <Fragment key={item.key}>
                               {userInfo?.id == providerDetail?.id || !providerDetail?.isProvider ? (
-                                item.key != 'Donate' && (
+                                item.key != 'Donate' &&
+                                item.key != 'Report' && (
                                   <div
                                     className={`p-2 cursor-pointer rounded-t-md hover:bg-gray-700 text-white group border-b-2 border-white border-opacity-30 last:border-none last:rounded-md`}
                                     onClick={() => {
