@@ -96,7 +96,11 @@ const Service = (props: { data: ProviderServiceResponse }) => {
               {providerServiceAttribute?.providerServiceAttributeValues?.map((attributeValue) => (
                 <div key={attributeValue.id}>
                   <p>
-                    {attributeValue.serviceAttributeValue?.viValue ?? attributeValue.serviceAttributeValue?.value},{' '}
+                    {attributeValue.serviceAttributeValue?.viValue &&
+                    attributeValue.serviceAttributeValue?.viValue != ''
+                      ? attributeValue.serviceAttributeValue?.viValue
+                      : attributeValue.serviceAttributeValue?.value}
+                    ,{' '}
                   </p>
                 </div>
               ))}

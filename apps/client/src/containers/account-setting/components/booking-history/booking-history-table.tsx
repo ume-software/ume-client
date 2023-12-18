@@ -21,7 +21,7 @@ interface IEnumType {
 
 const mappingBookingHistoryContent: IEnumType[] = [
   { key: BookingHistoryStatusEnum.PROVIDER_ACCEPT, label: 'Chấp nhận', color: '#008000', textColor: '#FFF' },
-  { key: BookingHistoryStatusEnum.INIT, label: 'Mới tạo', color: '#008000', textColor: '#FFF' },
+  { key: BookingHistoryStatusEnum.INIT, label: 'Mới tạo', color: '#FF0000', textColor: '#FFF' },
   { key: BookingHistoryStatusEnum.PROVIDER_CANCEL, label: 'Từ chối', color: '#FF0000', textColor: '#FFF' },
   { key: BookingHistoryStatusEnum.USER_FINISH_SOON, label: 'Kết thúc sớm', color: '#FFFF00', textColor: '#000' },
 ]
@@ -77,6 +77,15 @@ const BookingTableHistory = (props: { typeTable }) => {
     return formattedDate
   }
 
+  const isBookingRequestExpired = (createDate: string) => {
+    const bookingTime = new Date(createDate)
+    const timestampFromIso = bookingTime.getTime()
+    const currentTimestamp = Date.now()
+    const fiveMinutesAgoTimestamp = currentTimestamp - 5 * 60 * 1000
+
+    return timestampFromIso < fiveMinutesAgoTimestamp
+  }
+
   useEffect(() => {
     const bookingHistoryForUserArray = bookingHistoryForUserData?.data.row?.map((bookignHistory) => {
       const bookingHistoryArray = Object.values(bookignHistory)
@@ -128,7 +137,9 @@ const BookingTableHistory = (props: { typeTable }) => {
               }`,
             }}
           >
-            {mappingBookingHistoryContent.find((statusType) => statusType.key == bookingHistoryArray[4])?.label}
+            {bookingHistoryArray[4] == BookingHistoryStatusEnum.INIT && isBookingRequestExpired(bookingHistoryArray[2])
+              ? 'Hết hạn nhận đơn'
+              : mappingBookingHistoryContent.find((statusType) => statusType.key == bookingHistoryArray[4])?.label}
           </p>
         </div>,
         <div key={bookingHistoryArray[1] + 'price'} className="flex items-center justify-center gap-2">

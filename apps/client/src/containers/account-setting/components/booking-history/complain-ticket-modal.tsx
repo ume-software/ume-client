@@ -3,6 +3,7 @@ import { AddPicture, Check, CloseSmall, DeleteFive, Down } from '@icon-park/reac
 import { Button, Input, InputWithAffix, Modal, TextArea } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
 import { uploadAudio, uploadImage } from '~/apis/upload-media'
+import { BookingHistoryStatusEnum } from '~/enumVariable/enumVariable'
 
 import { ChangeEvent, Dispatch, Fragment, SetStateAction, useEffect, useId, useRef, useState } from 'react'
 
@@ -41,6 +42,8 @@ const mappingComplainTypes: ComplainTypeProps[] = [
   { key: CreateBookingComplaintRequestComplaintTypeEnum.DelayedService, label: 'Phục vụ trễ giờ' },
   { key: CreateBookingComplaintRequestComplaintTypeEnum.Other, label: 'Khác' },
 ]
+
+const statucComplain: string[] = [BookingHistoryStatusEnum.PROVIDER_ACCEPT, BookingHistoryStatusEnum.USER_FINISH_SOON]
 
 const ComplainTicketModal = ({
   isModalComplainVisible,
@@ -404,6 +407,8 @@ const ComplainTicketModal = ({
               <div className="text-lg font-bold text-green-500">Đã được hoàn tiền</div>
             ) : isTimeMoreThan12Hours() ? (
               <p className="text-lg font-bold text-red-500">Đơn này đã quá hạn khiếu nại</p>
+            ) : !statucComplain.includes(bookingSelected?.status ?? '') ? (
+              <p className="text-lg font-bold text-red-500">Đơn này không thể khiếu nại</p>
             ) : (
               <Button
                 customCSS={`!rounded-2xl w-full !text-white py-2 px-9 font-semibold text-lg text-center ${
