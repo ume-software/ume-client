@@ -104,7 +104,6 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
     PREVIOUS_BOOKING: ' Người đã từng thuê',
     TOP_5_BOOKER: ' Top 5 người thuê',
     TOP_10_BOOKER: ' Top 10 người thuê',
-    SELECTIVE_BOOKER: 'Người đặt chọn',
   }
 
   const mappingType = {
@@ -864,10 +863,6 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                       {
                         value: CreateVoucherRequestRecipientTypeEnum.PreviousBooking,
                         label: mappingRecipientType.PREVIOUS_BOOKING,
-                      },
-                      {
-                        value: CreateVoucherRequestRecipientTypeEnum.SelectiveBooker,
-                        label: mappingRecipientType.SELECTIVE_BOOKER,
                       },
                       {
                         value: CreateVoucherRequestRecipientTypeEnum.Top10Booker,
