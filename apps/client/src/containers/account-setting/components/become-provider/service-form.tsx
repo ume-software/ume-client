@@ -706,7 +706,7 @@ const AddSkillForm = () => {
                     amount: Number((bookingCost.amount ?? '0').replace(/,/g, '')),
                   }
                 })
-              : undefined) as any,
+              : []) as any,
             handleProviderServiceAttributes: req.createServiceAttributes.map((serAttr) => {
               return {
                 id: serAttr.id ?? '',
