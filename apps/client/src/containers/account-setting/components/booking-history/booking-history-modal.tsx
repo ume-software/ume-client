@@ -63,8 +63,6 @@ const BookingHistoryDetailModal = ({
     return formattedDate
   }
 
-  console.log(bookingSelected)
-
   const bookingHistoryDetailModal = Modal.useEditableForm({
     onOK: () => {},
     onClose: () => setIsModalBookingHistoryDetailVisible(false),
@@ -78,6 +76,8 @@ const BookingHistoryDetailModal = ({
             <p className="text-lg font-bold text-yellow-500">Đơn này không thể khiếu nại</p>
           ) : (bookingSelected as any)?.isProcessingComplaint ? (
             <div className="w-fit p-3 bg-red-700 rounded-lg text-white font-semibold">Đã gửi khiếu nại</div>
+          ) : (bookingSelected as any)?.isRefund ? (
+            <div className="w-fit p-3 bg-green-600 rounded-lg text-white font-semibold">Đã được hoàn tiền</div>
           ) : isTimeMoreThan12Hours() ? (
             <p className="text-lg font-bold text-red-500">Đơn này đã quá hạn khiếu nại</p>
           ) : (

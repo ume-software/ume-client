@@ -19,8 +19,6 @@ const PersonalIntroduce = (props: { data: UserInformationResponse }) => {
       enabled: !!props.data.slug || !!props.data.id,
     }) ?? undefined
 
-  console.log(feedbackByUserSlug.data)
-
   return (
     <>
       <div className="p-10 bg-zinc-800 rounded-3xl">

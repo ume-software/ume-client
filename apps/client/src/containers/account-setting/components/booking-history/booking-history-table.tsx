@@ -21,6 +21,7 @@ interface IEnumType {
 
 const mappingBookingHistoryContent: IEnumType[] = [
   { key: BookingHistoryStatusEnum.PROVIDER_ACCEPT, label: 'Chấp nhận', color: '#008000', textColor: '#FFF' },
+  { key: BookingHistoryStatusEnum.INIT, label: 'Mới tạo', color: '#008000', textColor: '#FFF' },
   { key: BookingHistoryStatusEnum.PROVIDER_CANCEL, label: 'Từ chối', color: '#FF0000', textColor: '#FFF' },
   { key: BookingHistoryStatusEnum.USER_FINISH_SOON, label: 'Kết thúc sớm', color: '#FFFF00', textColor: '#000' },
 ]
@@ -83,10 +84,10 @@ const BookingTableHistory = (props: { typeTable }) => {
       const newBookingHistoryArray = [
         <Link
           key={bookingHistoryArray[1] + 'link'}
-          href={`/profile/${bookingHistoryArray[13]?.provider?.slug ?? bookingHistoryArray[13]?.provider?.id}`}
+          href={`/profile/${bookingHistoryArray[14]?.provider?.slug ?? bookingHistoryArray[14]?.provider?.id}`}
           className="hover:underline"
         >
-          {bookingHistoryArray[13]?.provider?.name}
+          {bookingHistoryArray[14]?.provider?.name}
         </Link>,
         bookingHistoryArray[13]?.service?.name,
         bookingHistoryArray[9] + 'h',
@@ -109,10 +110,10 @@ const BookingTableHistory = (props: { typeTable }) => {
       const newBookingHistoryArray = [
         <Link
           key={bookingHistoryArray[1] + 'link'}
-          href={`/profile/${bookingHistoryArray[14]?.slug ?? bookingHistoryArray[14]?.id}`}
+          href={`/profile/${bookingHistoryArray[15]?.slug ?? bookingHistoryArray[15]?.id}`}
           className="hover:underline"
         >
-          {bookingHistoryArray[14]?.name}
+          {bookingHistoryArray[15]?.name}
         </Link>,
         bookingHistoryArray[13]?.service?.name,
         <div className="flex justify-center" key={bookingHistoryArray[1] + 'status'}>
