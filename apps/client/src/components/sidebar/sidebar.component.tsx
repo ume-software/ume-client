@@ -2,16 +2,15 @@ import { ArrowLeft, Dot } from '@icon-park/react'
 import { CustomDrawer } from '@ume/ui'
 import Chat from '~/containers/chat/chat.container'
 import { useAuth } from '~/contexts/auth'
+import { useSockets } from '~/contexts/chatting-context'
 
 import { useContext, useEffect, useState } from 'react'
 
-import { parse } from 'cookie'
-import { isNil } from 'lodash'
 import Image from 'next/legacy/image'
 import { UserInformationResponse } from 'ume-service-openapi'
 
 import { LoginModal } from '../header/login-modal.component'
-import { DrawerContext, SocketContext } from '../layouts/app-layout/app-layout'
+import { DrawerContext } from '../layouts/app-layout/app-layout'
 
 import { trpc } from '~/utils/trpc'
 
@@ -22,7 +21,7 @@ export const Sidebar = () => {
     accessToken = localStorage.getItem('accessToken')
   }
   const [userInfo, setUserInfo] = useState<UserInformationResponse>()
-  const { socketContext, setSocketContext } = useContext(SocketContext)
+  const { socket, messages } = useSockets()
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
   const [showMessage, setShowMessage] = useState(false)
   const utils = trpc.useContext()
@@ -55,22 +54,13 @@ export const Sidebar = () => {
   const handleChatOpen = (channelId?: string) => {
     if (userInfo) {
       setChildrenDrawer(<Chat providerId={channelId} />)
-      if (channelId) {
-        setSocketContext((prevState) => ({
-          ...prevState,
-          socketContext: {
-            ...prevState,
-            socketChattingContext: [],
-          },
-        }))
-      }
     } else {
       setIsModalLoginVisible(true)
     }
   }
 
   useEffect(() => {
-    if (socketContext.socketChattingContext) {
+    if (socket && messages) {
       utils.invalidateQueries('chatting.getListChattingChannels')
       setShowMessage(true)
       const timeout = setTimeout(() => {
@@ -80,7 +70,7 @@ export const Sidebar = () => {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socketContext?.socketChattingContext[0]?.channelId, !!accessToken])
+  }, [messages?.length])
 
   return (
     <>
@@ -109,6 +99,7 @@ export const Sidebar = () => {
         <div className="flex flex-col gap-3">
           {!!accessToken &&
             !!userInfo &&
+            messages &&
             chattingChannels?.data.row.map((item) => {
               const images = item.members.filter((member) => {
                 return member.userId.toString() != userInfo?.id.toString()
@@ -119,8 +110,8 @@ export const Sidebar = () => {
                   <CustomDrawer
                     openBtn={
                       <div>
-                        {item._id === socketContext?.socketChattingContext[0]?.channelId &&
-                        socketContext?.socketChattingContext[0]?.senderId !== userInfo?.id ? (
+                        {item._id === messages[(messages.length ?? 1) - 1]?.channelId &&
+                        messages[(messages.length ?? 1) - 1]?.senderId !== userInfo?.id ? (
                           <>
                             <div className="relative">
                               <Dot
@@ -133,7 +124,7 @@ export const Sidebar = () => {
                             </div>
                             {showMessage && (
                               <div className="max-w-xs absolute top-2 bottom-2 right-[60px] p-2 bg-purple-700 rounded-lg text-white">
-                                <p className="truncate">{socketContext?.socketChattingContext[0]?.content}</p>
+                                <p className="truncate">{messages[(messages.length ?? 1) - 1]?.content}</p>
                               </div>
                             )}
                           </>
