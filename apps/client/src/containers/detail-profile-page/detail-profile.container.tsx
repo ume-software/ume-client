@@ -217,19 +217,6 @@ const DetailProfileContainer = () => {
     setSelectedTab(item)
   }
 
-  const caculateAge = (dateOfBirth: string | undefined) => {
-    if (dateOfBirth) {
-      const currentDate = new Date().getFullYear()
-      const dob = new Date(dateOfBirth).getFullYear()
-
-      const age = Math.floor(currentDate - dob)
-
-      return age
-    } else {
-      return 1
-    }
-  }
-
   const handleMenuButtonAction = (item: TabDataProps) => {
     if (item.key == 'Share') {
       navigator.clipboard.writeText(window.location.href)
@@ -298,7 +285,7 @@ const DetailProfileContainer = () => {
         <SkeletonDetailProvider />
       ) : (
         <>
-          <div style={{ height: '380px', margin: '0 70px' }}>
+          <div style={{ height: '380px', margin: '0 150px' }}>
             <div className="absolute left-0 top-16" style={{ width: '100%', height: '416px' }}>
               <Image layout="fill" src={detailBackground} alt="background" />
             </div>
@@ -317,7 +304,7 @@ const DetailProfileContainer = () => {
                   <div className="flex flex-col my-2 text-white gap-y-2">
                     <p className="text-3xl font-medium text-white">{providerDetail?.name}</p>
                     <div className="flex flex-row items-center gap-3">
-                      <div className="flex items-center gap-2 py-2 px-4 bg-gray-700 rounded-full">
+                      <div className="flex items-center gap-2 p-2 bg-gray-700 rounded-full">
                         <div>
                           {providerDetail?.gender == UserInformationResponseGenderEnum.Male && (
                             <Male theme="outline" size="20" fill="#3463f9" />
@@ -334,7 +321,6 @@ const DetailProfileContainer = () => {
                             <Lock theme="outline" size="20" fill="#f7761c" />
                           )}
                         </div>
-                        <p>{caculateAge(providerDetail?.dob)}</p>
                       </div>
                       <Tooltip placement="bottomLeft" title={`${providerDetail?.isOnline ? 'Online' : 'Offline'}`}>
                         <div className="flex items-center gap-1 py-2 pl-2 pr-4 bg-gray-700 rounded-full">
@@ -363,7 +349,7 @@ const DetailProfileContainer = () => {
                         </div>
                       </Tooltip>
                     </div>
-                    <div className="items-center gap-3 space-y-2 lg:flex lg:space-y-0">
+                    <div className="items-center gap-3 space-y-2 xl:flex xl:space-y-0">
                       <div
                         className="flex items-center gap-2 py-2 px-4 bg-gray-700 rounded-full cursor-pointer w-fit hover:underline decoration-solid decoration-2"
                         onClick={() => setIsFollowerModalVisible(true)}
@@ -430,11 +416,14 @@ const DetailProfileContainer = () => {
                   </div>
                 </div>
 
-                <div className="relative flex items-center justify-start gap-10" style={{ zIndex: 5 }}>
+                <div
+                  className="relative flex xl:flex-row flex-col items-center xl:justify-start gap-5"
+                  style={{ zIndex: 5 }}
+                >
                   <div
                     className={`${
                       providerDetail?.isFollowing ? 'bg-transparent text-purple-600' : 'bg-purple-600'
-                    } rounded-xl 2xl:mr-10 xl:mr-5 lg:mr-2 mr-0`}
+                    } rounded-xl`}
                   >
                     {userInfo?.id != providerDetail?.id && (
                       <>
@@ -442,7 +431,7 @@ const DetailProfileContainer = () => {
                           <Button
                             isActive={true}
                             isOutlinedButton={true}
-                            customCSS="pr-4 py-2 rounded-xl hover:scale-105"
+                            customCSS="px-5 py-2 rounded-xl hover:scale-105"
                             type="button"
                             onClick={() => {
                               if (
@@ -468,7 +457,7 @@ const DetailProfileContainer = () => {
                                 className={`spinner h-5 w-5 animate-spin rounded-full border-[3px] border-r-transparent border-white`}
                               />
                             ) : (
-                              <Check className="px-3" theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
+                              <Check className="pr-3" theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
                             )}
                             Đang theo dõi
                           </Button>
@@ -476,7 +465,7 @@ const DetailProfileContainer = () => {
                           <Button
                             isActive={true}
                             isOutlinedButton={true}
-                            customCSS="p-2 rounded-xl hover:scale-105 outline-purple-600"
+                            customCSS="px-5 py-2 rounded-xl hover:scale-105 outline-purple-600"
                             type="button"
                             onClick={() => {
                               if (
@@ -502,7 +491,7 @@ const DetailProfileContainer = () => {
                                 className={`spinner h-5 w-5 animate-spin rounded-full border-[3px] border-r-transparent border-white`}
                               />
                             ) : (
-                              <Plus className="px-3" theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
+                              <Plus className="pr-3" theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
                             )}
                             Theo dõi
                           </Button>
@@ -576,9 +565,9 @@ const DetailProfileContainer = () => {
                 </div>
               </div>
 
-              <div className="flex flex-row gap-10" style={{ zIndex: 2 }}>
+              <div className="flex flex-row gap-10 mx-5" style={{ zIndex: 2 }}>
                 {tabDatas.map((item) => (
-                  <Fragment key={item.key}>
+                  <Fragment key={item.key + 'tab_title'}>
                     {providerDetail?.isProvider ? (
                       <span
                         className={`text-white xl:text-2xl text-xl font-medium p-4 cursor-pointer ${
@@ -609,7 +598,7 @@ const DetailProfileContainer = () => {
               </div>
             </div>
           </div>
-          <div className="p-5">
+          <div className="p-5" style={{ margin: '0 150px' }}>
             <span className="text-white">
               <div className="flex justify-center min-h-screen my-10">
                 {providerDetail?.isProvider && selectedTab.key == 'Service' && <InformationTab data={providerDetail} />}

@@ -95,7 +95,7 @@ const AlbumTab = () => {
   return (
     <>
       {isPostModal && PostModal}
-      <div ref={containerRef} className="w-full px-10">
+      <div ref={containerRef} className="w-full">
         {album && album.length > 0 ? (
           <div className="grid w-full grid-cols-8 gap-10">
             {album.map((item, index) => (

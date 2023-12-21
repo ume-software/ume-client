@@ -229,7 +229,7 @@ const SkeletonForAccountSetting = () => {
 const SkeletonDetailProvider = () => {
   return (
     <>
-      <div style={{ height: '380px', margin: '0 70px' }}>
+      <div style={{ height: '380px', margin: '0 150px' }}>
         <div className="absolute left-0 top-16" style={{ width: '100%', height: '416px' }}>
           <Image layout="fill" src={detailBackground} alt="background" />
         </div>
@@ -249,15 +249,17 @@ const SkeletonDetailProvider = () => {
           </div>
         </div>
       </div>
-      <div className="grid w-full h-screen grid-cols-10 gap-10 px-10 mt-10">
-        <div className="col-span-2">
-          <BGFullGridSkeleton />
-        </div>
-        <div className="col-span-5">
-          <BGFullGridSkeleton />
-        </div>
-        <div className="col-span-3">
-          <BGFullGridSkeleton />
+      <div className="mx-[150px]">
+        <div className="grid w-full h-screen grid-cols-9 gap-10 px-10 mt-10">
+          <div className="col-span-2">
+            <BGFullGridSkeleton />
+          </div>
+          <div className="col-span-5">
+            <BGFullGridSkeleton />
+          </div>
+          <div className="col-span-2">
+            <BGFullGridSkeleton />
+          </div>
         </div>
       </div>
     </>

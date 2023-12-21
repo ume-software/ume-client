@@ -145,8 +145,8 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
         <LoginModal isModalLoginVisible={isModalLoginVisible} setIsModalLoginVisible={setIsModalLoginVisible} />
       </div>
       {props.data ? (
-        <div className="grid w-full grid-cols-10 gap-10 px-10">
-          <div className="col-span-10 2xl:col-span-2">
+        <div className="grid w-full grid-cols-9 gap-10">
+          <div className="col-span-9 2xl:col-span-2">
             <div className="sticky py-10 px-7 bg-zinc-800 rounded-3xl top-20">
               <div className="flex flex-col gap-5">
                 <div
@@ -277,9 +277,9 @@ const InformationTab = (props: { data: UserInformationResponse }) => {
               )}
             </div>
           </div>
-          <div className="col-span-4 2xl:col-span-3">
+          <div className="col-span-3 2xl:col-span-2">
             <div className="sticky flex flex-col gap-3 top-20">
-              <div className="relative w-full h-[450px] bg-zinc-800 rounded-3xl p-10">
+              <div className="relative w-full 2xl:h-[300px] lg:h-[250px] h-[200px] bg-zinc-800 rounded-3xl p-10">
                 <Image
                   className="absolute rounded-xl"
                   layout="fill"

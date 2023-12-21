@@ -75,7 +75,7 @@ const CommunityContainer = () => {
 
   const handleCreatePost = () => {
     setIsModalVisible(!!user || isAuthenticated)
-    setIsModalLoginVisible(!(user || isAuthenticated))
+    setIsModalLoginVisible(!(user ?? isAuthenticated))
   }
 
   return (
@@ -84,7 +84,7 @@ const CommunityContainer = () => {
         <LoginModal isModalLoginVisible={isModalLoginVisible} setIsModalLoginVisible={setIsModalLoginVisible} />
       </div>
       {isModalVisible && CreatePostModal}
-      <div className="min-h-screen" style={{ margin: '0 70px' }}>
+      <div className="min-h-screen 2xl:ml-[170px] 2xl:mr-[100px] mx-[70px]">
         <div className="grid grid-cols-10 gap-10 text-white">
           <div className="relative col-span-6 xl:col-span-2">
             <div className="flex xl:flex-col xl:items-start items-center gap-10 xl:border-none border-b-2 border-white border-opacity-30 xl:sticky fixed xl:top-20 top-16 left-0 right-[90px] z-[5]">
@@ -107,7 +107,7 @@ const CommunityContainer = () => {
                     >
                       <div className="flex items-center gap-2">
                         {item.icon}
-                        <p className="text-xs font-normal truncate xl:text-lg lg:text-sm lg:font-semibold">
+                        <p className="text-xs font-normal truncate xl:text-lg lg:text-sm lg:font-semibold 2xl:max-w-none max-w-[100px]">
                           {item.postTypeName}
                         </p>
                       </div>
@@ -137,7 +137,7 @@ const CommunityContainer = () => {
             </div>
           </div>
           <div className="col-span-6 mt-5 xl:col-span-5 xl:mt-0">{socialSelected.postTypeChildren}</div>
-          <div className="col-span-4 xl:col-span-3">
+          <div className="col-span-4 xl:col-span-3 max-w-[350px]">
             <div className="sticky xl:top-20 top-36">
               <TopDonation />
             </div>

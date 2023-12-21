@@ -545,17 +545,23 @@ const EditProfile = () => {
                               <Info theme="outline" size="24" fill="#fff" className="mb-1 ml-2" />
                             </Tooltip>
                           </div>
-                          <Button
-                            isActive={true}
-                            isOutlinedButton={true}
-                            customCSS="py-2 px-7 rounded-xl hover:scale-105"
-                            type="button"
-                            onClick={() => {
-                              setIsModalVertificationVisible(true)
-                            }}
-                          >
-                            Xác minh danh tính
-                          </Button>
+                          {userSettingData.data.isWaitingKYC ? (
+                            <span className="py-2 px-5 rounded-xl bg-yellow-500 font-semibold text-lg text-black">
+                              Đang đợi duyệt
+                            </span>
+                          ) : (
+                            <Button
+                              isActive={true}
+                              isOutlinedButton={true}
+                              customCSS="py-2 px-7 rounded-xl hover:scale-105"
+                              type="button"
+                              onClick={() => {
+                                setIsModalVertificationVisible(true)
+                              }}
+                            >
+                              Xác minh danh tính
+                            </Button>
+                          )}
                         </div>
                       )}
                     </div>
