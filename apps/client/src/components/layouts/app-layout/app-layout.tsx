@@ -1,6 +1,7 @@
 import NotiSound from 'public/sounds/notification.mp3'
 import { socket } from '~/apis/socket/socket-connect'
 import { useAuth } from '~/contexts/auth'
+import { useSockets } from '~/contexts/chatting-context'
 
 import {
   Dispatch,
@@ -26,13 +27,9 @@ import { trpc } from '~/utils/trpc'
 
 type AppLayoutProps = PropsWithChildren
 
-interface SocketClientEmit {
-  [key: string]: any
-}
 interface SocketContext {
   socketContext: {
     socketNotificateContext: any[]
-    socketChattingContext: any[]
     socketLivestreamContext: any[]
   }
   setSocketContext: Dispatch<
@@ -44,14 +41,9 @@ interface DrawerProps {
   setChildrenDrawer: (children: ReactNode) => void
 }
 
-export const SocketClientEmit = createContext<SocketClientEmit>({
-  socketInstanceChatting: null,
-})
-
 export const SocketContext = createContext<SocketContext>({
   socketContext: {
     socketNotificateContext: [],
-    socketChattingContext: [],
     socketLivestreamContext: [],
   },
   setSocketContext: () => {},
@@ -66,6 +58,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const [userInfo, setUserInfo] = useState<UserInformationResponse>()
   let accessToken
   const { isAuthenticated } = useAuth()
+  const { messages } = useSockets()
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const utils = trpc.useContext()
 
@@ -74,10 +67,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   }
 
   const [childrenDrawer, setChildrenDrawer] = useState<ReactNode>()
-  const [socketClientEmit, setSocketClientEmit] = useState<SocketClientEmit>({ socketInstanceChatting: null })
   const [socketContext, setSocketContext] = useState<SocketContext['socketContext']>({
     socketNotificateContext: [],
-    socketChattingContext: [],
     socketLivestreamContext: [],
   })
 
@@ -95,8 +86,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
       const socketInstance = Boolean(userInfo?.id) ? socket(accessToken) : null
 
-      setSocketClientEmit({ socketInstanceChatting: socketInstance?.socketInstanceChatting })
-
       if (socketInstance?.socketInstanceBooking) {
         socketInstance.socketInstanceBooking.on(getSocket().SOCKET_SERVER_EMIT.USER_BOOKING_PROVIDER, (...args) => {
           audioRef.current?.play()
@@ -112,49 +101,43 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           setSocketContext((prev) => ({ ...prev, socketNotificateContext: args }))
         })
       }
-      if (socketInstance?.socketInstanceChatting) {
-        socketInstance.socketInstanceChatting.on(
-          getSocket().SOCKER_CHATTING_SERVER_EMIT.MESSAGE_FROM_CHANNEL,
-          (...args) => {
-            args[0]?.senderId != userInfo?.id && userInfo?.isAllowNotificationMessage && audioRef.current?.play()
-            setSocketContext((prev) => ({ ...prev, socketChattingContext: args }))
-          },
-        )
-      }
 
       return () => {
         if (socketInstance?.socketInstanceBooking) {
           socketInstance.socketInstanceBooking.off(getSocket().SOCKET_SERVER_EMIT.USER_BOOKING_PROVIDER)
-        }
-        if (socketInstance?.socketInstanceChatting) {
-          socketInstance.socketInstanceChatting.off(getSocket().SOCKER_CHATTING_SERVER_EMIT.MESSAGE_FROM_CHANNEL)
         }
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accessToken, isAuthenticated, userInfo])
 
+  useEffect(() => {
+    if (messages && (messages?.length ?? 0) > 0) {
+      messages[messages?.length - 1]?.senderId != userInfo?.id &&
+        userInfo?.isAllowNotificationMessage &&
+        audioRef.current?.play()
+    }
+  }, [messages, userInfo?.id, userInfo?.isAllowNotificationMessage])
+
   const socketClientEmitValue = useMemo(
-    () => ({ socketClientEmit, socketContext, setSocketContext, childrenDrawer, setChildrenDrawer }),
-    [socketClientEmit, socketContext, setSocketContext, childrenDrawer, setChildrenDrawer],
+    () => ({ socketContext, setSocketContext, childrenDrawer, setChildrenDrawer }),
+    [socketContext, setSocketContext, childrenDrawer, setChildrenDrawer],
   )
   return (
-    <SocketClientEmit.Provider value={socketClientEmitValue}>
-      <SocketContext.Provider value={socketClientEmitValue}>
-        <audio ref={audioRef} src={NotiSound} />
-        <div className="flex flex-col">
-          <div className="fixed z-10 flex flex-col w-full ">
-            <Header />
-          </div>
-          <DrawerContext.Provider value={socketClientEmitValue}>
-            <div className="pb-8 bg-umeBackground pt-[90px] pr-[60px] pl-[10px]">{children}</div>
-            <div className="fixed h-full bg-umeHeader top-[65px] right-0">
-              <Sidebar />
-            </div>
-          </DrawerContext.Provider>
+    <SocketContext.Provider value={socketClientEmitValue}>
+      <audio ref={audioRef} src={NotiSound} />
+      <div className="flex flex-col">
+        <div className="fixed z-10 flex flex-col w-full ">
+          <Header />
         </div>
-        <Footer />
-      </SocketContext.Provider>
-    </SocketClientEmit.Provider>
+        <DrawerContext.Provider value={socketClientEmitValue}>
+          <div className="pb-8 bg-umeBackground pt-[90px] pr-[60px] pl-[10px]">{children}</div>
+          <div className="fixed h-full bg-umeHeader top-[65px] right-0">
+            <Sidebar />
+          </div>
+        </DrawerContext.Provider>
+      </div>
+      <Footer />
+    </SocketContext.Provider>
   )
 }
