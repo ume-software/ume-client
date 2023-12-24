@@ -138,6 +138,7 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
       numVoucher: Yup.number().moreThan(0),
       numVoucherInDay: Yup.number().moreThan(0),
       minimize: Yup.number().moreThan(0),
+      vourcherCode: Yup.string().required('Mã là bắt buộc'),
     }),
     onSubmit: (values, { resetForm }) => {
       setSubmiting(true)
@@ -504,12 +505,18 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                 </div>
 
                 <div className="flex h-12 text-white">
-                  <span className="w-8"> Mã:</span>
+                  <span className="w-8"> *Mã:</span>
                   <div className="inline-block w-2/3 ">
                     <FormInput
                       name="vourcherCode"
-                      className="bg-[#413F4D] border-2 border-[#FFFFFF] h-8 ml-4 border-opacity-30"
-                      placeholder="Mã: SUPPERSALE"
+                      className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8  border-opacity-30 ml-4 ${
+                        form.errors.vourcherCode && form.touched.vourcherCode ? 'placeholder:text-red-500' : ''
+                      }`}
+                      placeholder={
+                        !!form.errors.vourcherCode && form.touched.vourcherCode
+                          ? form.errors.vourcherCode
+                          : 'Mã: SUPPERSALE '
+                      }
                       disabled={false}
                       onChange={(e) => {
                         e.target.value = e.target.value.toUpperCase()
@@ -518,7 +525,7 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                       onBlur={form.handleBlur}
                       value={form.values.vourcherCode}
                       error={!!form.errors.vourcherCode && form.touched.vourcherCode}
-                      errorMessage={form.errors.vourcherCode}
+                      errorMessage={''}
                       type="text"
                     />
                     {adminCheckVoucherCodeExisted?.isExisted && debouncedValue != vourcherCodeInit && (
