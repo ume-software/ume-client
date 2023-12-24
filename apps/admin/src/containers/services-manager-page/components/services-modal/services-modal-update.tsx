@@ -2,6 +2,7 @@ import { DeleteOne, Plus } from '@icon-park/react'
 import { Button, FormInput } from '@ume/ui'
 import empty_img from 'public/empty_error.png'
 import { uploadImageServices } from '~/api/upload-media'
+import useDebounce from '~/hooks/adminDebounce'
 
 import * as React from 'react'
 import { useRef, useState } from 'react'
@@ -9,10 +10,12 @@ import { useRef, useState } from 'react'
 import { Select, notification } from 'antd'
 import { useFormik } from 'formik'
 import Image from 'next/legacy/image'
+import { PrismaWhereConditionType, prismaWhereConditionToJsonString } from 'query-string-prisma-ume'
 import {
   HandleServiceAttributeRequest,
   HandleServiceAttributeRequestHandleTypeEnum,
   HandleServiceAttributeValueRequestHandleTypeEnum,
+  ServicePagingResponse,
   ServiceResponse,
   UpdateServiceRequest,
 } from 'ume-service-openapi'
@@ -79,7 +82,10 @@ export const ServicesModalUpdate = ({ idService, closeFunction, openValue }: ISe
     }) ?? []
 
   const updateService = trpc.useMutation(['services.updateService'])
-
+  const [isExitName, setIsExitName] = useState<boolean>(false)
+  const [isExitViName, setIsExitViName] = useState<boolean>(false)
+  const NOT_EXITED = 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
+  const [serviceList, setServiceList] = useState<ServicePagingResponse | undefined>()
   const form = useFormik({
     initialValues: {
       name: nameInit,
@@ -136,6 +142,96 @@ export const ServicesModalUpdate = ({ idService, closeFunction, openValue }: ISe
     }
   }, [nameInit])
 
+  const debouncedName = useDebounce<string>(form.values.name, 500)
+  const debouncedViName = useDebounce<string>(form.values.viName, 500)
+  const checkNameQuery: PrismaWhereConditionType<ServicePagingResponse> = Object.assign({
+    OR: [
+      {
+        name: {
+          equals: debouncedName ? debouncedName + '' : NOT_EXITED,
+          mode: 'insensitive',
+        },
+      },
+      {
+        viName: {
+          equals: debouncedName ? debouncedName + '' : NOT_EXITED,
+          mode: 'insensitive',
+        },
+      },
+    ],
+  })
+  trpc.useQuery(
+    [
+      'services.getServiceList',
+      {
+        limit: '1',
+        page: '1',
+        select: undefined,
+        where: prismaWhereConditionToJsonString(checkNameQuery, ['isUndefined']),
+        order: undefined,
+      },
+    ],
+    {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: 'always',
+      cacheTime: 0,
+      refetchOnMount: true,
+      onSuccess(data) {
+        setServiceList(data.data)
+        console.log(data.data)
+        if (data.data.count != 0) {
+          if (debouncedName != nameInit) setIsExitName(true)
+        } else {
+          setIsExitName(false)
+        }
+      },
+    },
+  )
+
+  const checkViNameQuery: PrismaWhereConditionType<ServicePagingResponse> = Object.assign({
+    OR: [
+      {
+        name: {
+          equals: debouncedViName ? debouncedViName + '' : NOT_EXITED,
+          mode: 'insensitive',
+        },
+      },
+      {
+        viName: {
+          equals: debouncedViName ? debouncedViName + '' : NOT_EXITED,
+          mode: 'insensitive',
+        },
+      },
+    ],
+  })
+  trpc.useQuery(
+    [
+      'services.getServiceList',
+      {
+        limit: '1',
+        page: '1',
+        select: undefined,
+        where: prismaWhereConditionToJsonString(checkViNameQuery, ['isUndefined']),
+        order: undefined,
+      },
+    ],
+    {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: 'always',
+      cacheTime: 0,
+      refetchOnMount: true,
+      onSuccess(data) {
+        setServiceList(data.data)
+        if (data.data.count != 0) {
+          if (debouncedViName != viNameInit) setIsExitViName(true)
+        } else {
+          setIsExitViName(false)
+        }
+      },
+    },
+  )
+  console.log('isExitName: ' + isExitName)
+  console.log('isExitViName: ' + isExitViName)
   function closeHandleSmall() {
     openConfirmModalCancel()
   }
@@ -320,7 +416,7 @@ export const ServicesModalUpdate = ({ idService, closeFunction, openValue }: ISe
     }
   }
   function isDisableButton() {
-    return !form.isValid || !form.dirty
+    return !form.isValid || !form.dirty || (isExitName ? true : false) || (isExitViName ? true : false)
   }
   return (
     <div>
@@ -390,6 +486,7 @@ export const ServicesModalUpdate = ({ idService, closeFunction, openValue }: ISe
                       error={!!form.errors.name && form.touched.name}
                       errorMessage={''}
                     />
+                    {isExitName && <div className="w-full text-xs text-red-500">Tên dịch vụ đã tồn tại</div>}
                   </div>
                 </div>
                 <div className="w-64 h-12 text-white">
@@ -411,6 +508,7 @@ export const ServicesModalUpdate = ({ idService, closeFunction, openValue }: ISe
                       error={!!form.errors.viName && form.touched.viName}
                       errorMessage={''}
                     />
+                    {isExitViName && <div className="w-full text-xs text-red-500">Tên dịch vụ đã tồn tại</div>}
                   </div>
                 </div>
               </div>
