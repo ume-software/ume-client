@@ -18,6 +18,7 @@ export interface IServiceAttributesProps {
   removeChildComponent?: any
   index: number
   isReadOnly?: boolean
+  isAttributeUnique: any
 }
 
 const ServiceAttributes = ({
@@ -26,6 +27,7 @@ const ServiceAttributes = ({
   setServiceAttributesData,
   removeChildComponent,
   isReadOnly,
+  isAttributeUnique,
 }: IServiceAttributesProps) => {
   const form = useFormik({
     initialValues: {
@@ -89,6 +91,7 @@ const ServiceAttributes = ({
     form.setFieldValue(`serviceAttributeValues`, updatedSubChildData)
     setServiceAttributesData({ ...form.values, serviceAttributeValues: updatedSubChildData })
   }
+
   return (
     <div className="h-fit border-2 border-[#FFFFFF80] border-opacity-30 rounded-lg w-full pl-4 py-4">
       <div className="inline-block w-11/12 h-12 text-lg font-bold text-white">Thuộc Tính:</div>
@@ -122,26 +125,29 @@ const ServiceAttributes = ({
               readOnly
             />
           ) : (
-            <FormInput
-              autoComplete="off"
-              name="attribute"
-              className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30
+            <>
+              <FormInput
+                autoComplete="off"
+                name="attribute"
+                className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30
             ${form.errors.attribute && form.touched.attribute ? 'placeholder:text-red-500' : ''}
             `}
-              placeholder={
-                !!form.errors.attribute && form.touched.attribute ? form.errors.attribute : 'Tên thuộc tính: Rank'
-              }
-              disabled={false}
-              onChange={(e) => {
-                handleChange('attribute', e)
-              }}
-              onBlur={form.handleBlur}
-              value={form.values.attribute}
-              error={!!form.errors.attribute && form.touched.attribute}
-              errorMessage={''}
-            />
+                placeholder={
+                  !!form.errors.attribute && form.touched.attribute ? form.errors.attribute : 'Tên thuộc tính: Rank'
+                }
+                disabled={false}
+                onChange={(e) => {
+                  handleChange('attribute', e)
+                }}
+                onBlur={form.handleBlur}
+                value={form.values.attribute}
+                error={!!form.errors.attribute && form.touched.attribute}
+                errorMessage={''}
+              />
+            </>
           )}
         </div>
+
         <div className="inline-block text-white">
           <Minus theme="filled" size="14" fill="#ffffff" />
         </div>
@@ -179,6 +185,9 @@ const ServiceAttributes = ({
             />
           )}
         </div>
+        {isAttributeUnique(form.values.attribute, index) && (
+          <div className="w-full mt-1 text-xs text-red-500">Tên thuộc tính đã tồn tại</div>
+        )}
       </div>
 
       <div className="w-full mb-4">

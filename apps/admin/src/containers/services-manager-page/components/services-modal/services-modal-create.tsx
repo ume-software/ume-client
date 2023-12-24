@@ -10,6 +10,7 @@ import { useFormik } from 'formik'
 import Image from 'next/legacy/image'
 import { PrismaWhereConditionType, prismaWhereConditionToJsonString } from 'query-string-prisma-ume'
 import {
+  CreateServiceAttributeRequest,
   HandleServiceAttributeRequestHandleTypeEnum,
   HandleServiceAttributeValueRequestHandleTypeEnum,
   ServicePagingResponse,
@@ -48,7 +49,7 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
       viName: '',
       imageUrl: '',
       isActivated: true,
-      serviceAttributes: [] as Array<Object>,
+      serviceAttributes: [] as Array<CreateServiceAttributeRequest>,
       selectedImage: null,
     },
     validationSchema: Yup.object({
@@ -116,7 +117,6 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
       refetchOnMount: true,
       onSuccess(data) {
         setServiceList(data.data)
-        console.log(data.data)
         if (data.data.count != 0) {
           setIsExitName(true)
         } else {
@@ -310,9 +310,31 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
     }
   }
   function isDisableButton() {
-    return !form.isValid || form.values.name == '' || (isExitName ? true : false) || (isExitViName ? true : false)
+    return (
+      !form.isValid ||
+      form.values.name == '' ||
+      (isExitName ? true : false) ||
+      (isExitViName ? true : false) ||
+      !isValidUniqueAtrribute()
+    )
   }
-
+  const isAttributeUnique = (newAttributeValue, index) => {
+    let flag = false
+    if (newAttributeValue.length != 0) {
+      const attributeValues = form.values.serviceAttributes.filter((_, i) => i !== index).map((row) => row.attribute)
+      if (attributeValues.includes(newAttributeValue)) {
+        flag = true
+      }
+    }
+    return flag
+  }
+  function isValidUniqueAtrribute() {
+    const attributeValues = form.values.serviceAttributes.map((attribute) => attribute.attribute)
+    const lengthSet = new Set(attributeValues).size
+    return lengthSet === attributeValues.length
+  }
+  console.log('isValidUniqueAtrribute ' + isValidUniqueAtrribute())
+  console.log('isDisableButton: ' + isDisableButton())
   return (
     <div>
       <form onSubmit={form.handleSubmit} className="flex flex-col mb-4 gap-y-4">
@@ -412,22 +434,25 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
           {/* compent-child */}
 
           <div className="grid grid-cols-2 gap-4 px-4 pb-4 mt-6">
-            {form.values.serviceAttributes.map((childData, index) => (
-              <div className="col-span-1 " key={index}>
-                <ServiceAttributes
-                  index={index}
-                  serviceAttributesData={childData}
-                  setServiceAttributesData={(data) => {
-                    const updatedSubChildData = [...form.values.serviceAttributes]
-                    updatedSubChildData[index] = data
-                    form.setFieldValue(`serviceAttributes[${index}]`, data)
-                  }}
-                  removeChildComponent={(index) => {
-                    removeChildComponent(index)
-                  }}
-                />
-              </div>
-            ))}
+            {form.values.serviceAttributes.map((childData, index) => {
+              return (
+                <div className="col-span-1 " key={index}>
+                  <ServiceAttributes
+                    index={index}
+                    serviceAttributesData={childData}
+                    setServiceAttributesData={(data) => {
+                      const updatedSubChildData = [...form.values.serviceAttributes]
+                      updatedSubChildData[index] = data
+                      form.setFieldValue(`serviceAttributes[${index}]`, data)
+                    }}
+                    removeChildComponent={(index) => {
+                      removeChildComponent(index)
+                    }}
+                    isAttributeUnique={isAttributeUnique}
+                  />
+                </div>
+              )
+            })}
             <div className="col-span-1 ">
               <div className="flex items-center justify-center w-full h-full">
                 <div className="w-40">

@@ -418,6 +418,18 @@ export const ServicesModalUpdate = ({ idService, closeFunction, openValue }: ISe
   function isDisableButton() {
     return !form.isValid || !form.dirty || (isExitName ? true : false) || (isExitViName ? true : false)
   }
+  const isAttributeUnique = (newAttributeValue, index) => {
+    let flag = false
+    console.log(index)
+    if (newAttributeValue.length != 0) {
+      const attributeValues = form.values.serviceAttributes.filter((_, i) => i !== index).map((row) => row.attribute)
+      console.log(attributeValues)
+      if (attributeValues.includes(newAttributeValue)) {
+        flag = true
+      }
+    }
+    return flag
+  }
   return (
     <div>
       <form onSubmit={form.handleSubmit} className="flex flex-col mb-4 gap-y-4">
@@ -565,6 +577,7 @@ export const ServicesModalUpdate = ({ idService, closeFunction, openValue }: ISe
                   removeChildComponent={(index) => {
                     removeChildComponent(index)
                   }}
+                  isAttributeUnique={isAttributeUnique}
                 />
               </div>
             ))}
