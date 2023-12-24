@@ -9,7 +9,9 @@ const removeItem = (key: string) => {
   return localStorage.removeItem(key)
 }
 const getItem = (key: string) => {
-  return JSON.parse(localStorage.getItem(key) || '')
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem(key) ? JSON.parse(localStorage.getItem(key) || '') : undefined
+  }
 }
 
 export { setItem, clearStorage, removeItem, getItem }

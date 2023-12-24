@@ -8,7 +8,8 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   loadingIconColor?: 'white' | 'black'
   isLoading?: boolean
   isOutlinedButton?: boolean
-  isDisabled?: boolean
+  isActive?: boolean
+  isDisable?: boolean
   icon?: ReactNode
 }
 const DEFAULT_STYLE = `rounded-md border-1 dark:bg-accent dark:hover:bg-accent-focus dark:focus:bg-accent-focus dark:active:bg-accent/99 font-medium text-white`
@@ -21,31 +22,32 @@ export const Button = ({
   isOutlinedButton = false,
   icon,
   type = 'submit',
-  isDisabled = false,
+  isActive = true,
+  isDisable = false,
   ...props
 }: ButtonProps) => {
   const btnClass =
     DEFAULT_STYLE +
-    (isDisabled
-      ? ` ${isOutlinedButton ? '!bg-[#e9eef5] !text-slate-800 opacity-60' : '!bg-slate-300'}`
+    (isActive
+      ? ` ${isOutlinedButton ? 'bg-purple-700 text-slate-800 cursor-pointer' : 'bg-gray-600'}`
       : ` ${isOutlinedButton && 'border border-slate-300'}`) +
     (customCSS ? ` ${customCSS}` : '')
 
   return (
     <>
-      <div className={btnClass}>
-        <button
-          {...props}
-          type={type}
-          disabled={isDisabled}
-          className="w-full h-full btn"
-          tabIndex={99}
-          style={{ borderRadius: 3 }}
-        >
-          <div className="flex items-center justify-center gap-x-2">
+      <button
+        {...props}
+        type={type}
+        disabled={isLoading || isDisable}
+        className={`w-fit h-fit btn ${!isOutlinedButton ? 'bg-transparent' : 'bg-transparent cursor-pointer'}`}
+        tabIndex={99}
+        style={{ borderRadius: 3 }}
+      >
+        <div className={btnClass}>
+          <div className="flex items-center justify-center">
             {isLoading && (
               <span
-                className={`spinner h-5 w-5 animate-spin rounded-full border-[3px] border-r-transparent dark:border-navy-300 dark:border-r-transparent ${
+                className={`spinner h-5 w-5 animate-spin rounded-full border-[3px] border-r-transparent ${
                   loadingIconColor === 'white' ? 'border-white' : 'border-black'
                 }`}
               />
@@ -53,8 +55,8 @@ export const Button = ({
             {icon && <span>{icon}</span>}
             {children}
           </div>
-        </button>
-      </div>
+        </div>
+      </button>
       {helper && <span className="button-helper">{helper}</span>}
     </>
   )

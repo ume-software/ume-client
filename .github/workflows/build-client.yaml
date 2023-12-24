@@ -1,8 +1,12 @@
-name: Deploy Backend
- 
-on:
-  push:
+name: Deploy Client
 
+on:
+  pull_request:
+    branches:
+      - '*'
+  push:
+    branches:
+      - main
 jobs:
   deploy-be:
     runs-on: ubuntu-latest
@@ -24,7 +28,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: hieudan/ume:latest
+          tags: huyraw/ume_client:latest
           file: ./dockers/client.Dockerfile
           context: .
 
@@ -37,9 +41,8 @@ jobs:
           key: ${{ secrets.AWS_KEY }}
           port: ${{ secrets.AWS_PORT }}
           script: |-
-            sudo docker pull hieudan/ume
+            sudo docker image prune -af
+            sudo docker pull huyraw/ume_client
             sudo docker stop backend_server
             sudo docker rm backend_server
-            sudo docker run --detach --name backend_server -p 3000:3000 hieudan/ume
-#            sudo docker rmi  $(sudo docker images -aq)
- 
+            sudo docker run --detach --name backend_server -p 3000:3000 huyraw/ume_client

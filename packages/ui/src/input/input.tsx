@@ -1,9 +1,6 @@
-import { Copy, Download, PreviewCloseOne, PreviewOpen } from '@icon-park/react'
+import { PreviewCloseOne, PreviewOpen } from '@icon-park/react'
 
 import React, { ReactNode, useState } from 'react'
-
-import { nanoid } from 'nanoid'
-import ReactTooltip from 'react-tooltip'
 
 import './input.css'
 
@@ -42,9 +39,10 @@ export const TextArea = ({ className, ...props }: TextAreaProps) => {
 interface FormInputProps extends InputProps {
   error: boolean | undefined
   errorMessage: string | undefined
+  isDisable?: boolean
 }
 
-export const FormInput = ({ error, errorMessage, ...props }: FormInputProps) => {
+export const FormInput = ({ error, errorMessage, isDisable, ...props }: FormInputProps) => {
   return (
     <>
       <Input
@@ -53,6 +51,7 @@ export const FormInput = ({ error, errorMessage, ...props }: FormInputProps) => 
         className={`${
           error ? '!border-ume-error  !focus:border-ume-error !focus:outline-ume-error  !hover:border-ume-error' : ''
         } ${props.className} border border-slate-300 `}
+        disabled={isDisable}
       />
       {error ? <span className="block mt-1 text-ume-error text-[14px]">{errorMessage}</span> : null}
     </>
@@ -71,7 +70,7 @@ export const InputWithAffix = ({ position, component, ...props }: InputWithAffix
     <div className={`flex -space-x-px ${props.className}`}>
       {position === 'left' ? (
         <div
-          className={`flex items-center justify-center rounded-l border border-slate-300 px-3.5 font-inter dark:border-navy-450 ${props.iconStyle}`}
+          className={`flex items-center justify-center rounded-l px-3.5 font-inter dark:border-navy-450 ${props.iconStyle}`}
         >
           {component}
         </div>
@@ -85,7 +84,7 @@ export const InputWithAffix = ({ position, component, ...props }: InputWithAffix
       />
       {position === 'right' ? (
         <div
-          className={`flex items-center justify-center rounded-l border border-slate-300 px-3.5 font-inter dark:border-navy-450 ${props.iconStyle}`}
+          className={`flex items-center justify-center rounded-l px-3.5 font-inter dark:border-navy-450 ${props.iconStyle}`}
         >
           {component}
         </div>
@@ -115,7 +114,7 @@ interface InputWithButtonProps extends React.InputHTMLAttributes<HTMLInputElemen
 
 export const InputWithButton = ({ position, component, ...props }: InputWithButtonProps) => {
   return (
-    <div className="relative flex -space-x-px gap-2">
+    <div className="relative flex gap-2 -space-x-px">
       <Input {...props} tabIndex={99} />
       {position === 'left' ? <>{component}</> : null}
       {position === 'right' ? <>{component}</> : null}
@@ -133,117 +132,6 @@ export const FormInputWithButton = ({ error, errorMessage, ...props }: FormInput
     <>
       <InputWithButton {...props} tabIndex={99} />
       {error ? <span className="text-ume-error text-[14px]">{errorMessage}</span> : null}
-    </>
-  )
-}
-
-interface InputWithCopyButton extends React.InputHTMLAttributes<HTMLInputElement> {}
-
-export const InputWithCopyButton = (props: InputWithCopyButton) => {
-  const [copyText, setCopyText] = useState('Copy')
-  const id = nanoid()
-
-  const onCopyClick = (event: React.MouseEvent<HTMLElement>, value: string): void => {
-    if (!navigator.clipboard) {
-      const textArea = document.createElement('textarea')
-      textArea.value = value
-      document.body.appendChild(textArea)
-      textArea.focus()
-      textArea.select()
-      try {
-        document.execCommand('copy')
-      } catch (err) {
-        // message.error('Failed to copy')
-      }
-      document.body.removeChild(textArea)
-      return
-    }
-    navigator.clipboard.writeText(value).then(
-      () => {
-        setCopyText('Copied!')
-        // message.success('Copied to clipboard!')
-      },
-      () => {
-        // message.error('Failed to copy')
-      },
-    )
-  }
-
-  return (
-    <>
-      <ReactTooltip
-        id={`InputWithCopyButton-${id}`}
-        className="rounded-full opacity-100"
-        backgroundColor="#e2e8f9"
-        textColor="#1e293b"
-        place="top"
-        effect="solid"
-      >
-        <p className="text-sm text-black">{copyText}</p>
-      </ReactTooltip>
-      <InputWithButton
-        position="right"
-        component={
-          <button
-            tabIndex={99}
-            data-tip
-            data-for={`InputWithCopyButton-${id}`}
-            className="px-3 border rounded-r border-slate-300"
-            type="button"
-            onClick={(event: React.MouseEvent<HTMLElement>) => {
-              if (!props.disabled) {
-                return onCopyClick(event, (props.value as string) || '')
-              }
-            }}
-            onKeyDown={(e) => {
-              e.key === 'Enter' && onCopyClick(e as any, (props.value as string) || '')
-            }}
-            onMouseLeave={() => setCopyText('Copy')}
-          >
-            <Copy size={22} />
-          </button>
-        }
-        {...props}
-      />
-    </>
-  )
-}
-
-export const InputWithDownloadButton = (props: any) => {
-  const id = nanoid()
-  const { onClick, ...clonedProps } = props
-
-  return (
-    <>
-      <ReactTooltip
-        id={`InputWithDownloadButton-${id}`}
-        className="rounded-full opacity-100"
-        backgroundColor="#e2e8f9"
-        textColor="#1e293b"
-        place="top"
-        effect="solid"
-      >
-        <p className="text-sm text-black">{'Download'}</p>
-      </ReactTooltip>
-      <InputWithButton
-        position="right"
-        component={
-          <button
-            tabIndex={99}
-            data-tip
-            data-for={`InputWithDownloadButton-${id}`}
-            className="px-3 border rounded-r border-slate-300"
-            type="button"
-            onClick={onClick}
-            onKeyDown={(e) => {
-              e.key === 'Enter' && onClick()
-            }}
-          >
-            <Download size={22} />
-          </button>
-        }
-        {...clonedProps}
-      />
     </>
   )
 }

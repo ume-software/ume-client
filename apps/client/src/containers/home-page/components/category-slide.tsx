@@ -6,32 +6,30 @@ import 'swiper/css'
 import { Swiper, SwiperSlide } from 'swiper/react'
 
 interface ICategoryProps {
-  skills: any[]
+  services: any[]
 }
 
 const CategorySlide = (props: ICategoryProps) => {
   return (
-    <>
-      <Swiper spaceBetween={0} slidesPerView="auto" mousewheel={true}>
-        {props?.skills.map((skill) => (
-          <SwiperSlide className="!w-[200px]" key={skill.id}>
-            <div className={`p-3 duration-500 ease-in-out cursor-pointer hover:scale-105`}>
-              <Link href={`/filter-skill/${skill.name}?skillId=${skill.id}`}>
-                <div className="relative w-[170px] h-[260px]">
-                  <Image
-                    key={skill.id}
-                    className="absolute rounded-xl pointer-events-none object-cover"
-                    layout="fill"
-                    src={skill.imageUrl}
-                    alt={skill.name}
-                  />
-                </div>
-              </Link>
-            </div>
-          </SwiperSlide>
-        ))}
-      </Swiper>
-    </>
+    <Swiper spaceBetween={0} slidesPerView="auto" mousewheel={true}>
+      {props?.services.map((service) => (
+        <SwiperSlide className="!w-[200px]" key={service.id}>
+          <div className={`p-3 duration-500 ease-in-out cursor-pointer hover:scale-105`}>
+            <Link href={`/filter-service/${service.name}?service=${service.slug ?? service.id}`}>
+              <div className="relative w-[170px] h-[260px]">
+                <Image
+                  key={service.id}
+                  className="absolute object-cover pointer-events-none rounded-xl"
+                  layout="fill"
+                  src={service.imageUrl}
+                  alt={service.name}
+                />
+              </div>
+            </Link>
+          </div>
+        </SwiperSlide>
+      ))}
+    </Swiper>
   )
 }
 

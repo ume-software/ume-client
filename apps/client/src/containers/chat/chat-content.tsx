@@ -1,28 +1,24 @@
-import { GrinningFaceWithOpenMouth, MoreOne, PhoneTelephone, Picture, Videocamera } from '@icon-park/react'
-import useChatScroll from '~/hook/useChatScroll'
+import { MoreOne, PhoneTelephone, SendOne, Videocamera } from '@icon-park/react'
+import { useAuth } from '~/contexts/auth'
+import { useSockets } from '~/contexts/chatting-context'
+import useChatScroll from '~/hooks/useChatScroll'
 
-import { ReactNode, useContext, useEffect, useId, useRef, useState } from 'react'
+import { ReactNode, useEffect, useRef, useState } from 'react'
 
 import Image from 'next/legacy/image'
 import Link from 'next/link'
-import { ChattingChannelReponse, MemberChatChannelResponse } from 'ume-chatting-service-openapi'
+import { ChattingChannelResponse, MemberChatChannelResponse } from 'ume-chatting-service-openapi'
 
-import {
-  SocketClientEmit,
-  SocketContext,
-  SocketTokenContext,
-  UserContext,
-} from '~/components/layouts/app-layout/app-layout'
 import { CommentSkeletonLoader } from '~/components/skeleton-load'
 
 import { getSocket } from '~/utils/constants'
 import { trpc } from '~/utils/trpc'
 
-interface actionButtonProps {
+interface ActionButtonProps {
   actionButton: ReactNode
 }
 
-const actionButtons: actionButtonProps[] = [
+const actionButtons: ActionButtonProps[] = [
   {
     actionButton: <Videocamera theme="outline" size="20" fill="#FFFFFF" strokeLinejoin="bevel" />,
   },
@@ -37,14 +33,12 @@ const convertArrayObjectToObject = (input: Array<any>, key: string = '_id') => {
     return acc
   }, {})
 }
-const ChatContent = (props: { channel: ChattingChannelReponse }) => {
-  const index = useId()
+const ChatContent = (props: { channel: ChattingChannelResponse }) => {
   const [messageInput, setMessageInput] = useState('')
-  const { userContext } = useContext(UserContext)
-  const { socketClientEmit } = useContext(SocketClientEmit)
-  const { socketContext } = useContext(SocketContext)
-  const { socketToken } = useContext(SocketTokenContext)
-
+  const [displayMessageTime, setDisplayMessageTime] = useState('')
+  const { socket, messages } = useSockets()
+  const { user } = useAuth()
+  const accessToken = localStorage.getItem('accessToken')
   const utils = trpc.useContext()
   const { data: chattingMessageChannel, isLoading: loadingChattingMessageChannel } = trpc.useQuery([
     'chatting.getMessagesByChannelId',
@@ -54,24 +48,24 @@ const ChatContent = (props: { channel: ChattingChannelReponse }) => {
   useChatScroll(divRef, chattingMessageChannel)
 
   useEffect(() => {
-    if (socketContext?.socketChattingContext) {
+    if (socket && messages) {
       utils.invalidateQueries('chatting.getMessagesByChannelId')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socketContext?.socketChattingContext, socketToken])
+  }, [messages, socket])
 
   const mappingMember: { [key: string]: MemberChatChannelResponse } = convertArrayObjectToObject(
-    chattingMessageChannel?.data.members || [],
+    chattingMessageChannel?.data.members ?? [],
     'userId',
   )
 
   const images = chattingMessageChannel?.data.members.filter((member) => {
-    return member.userId.toString() != userContext?.id.toString()
+    return member.userId.toString() != user?.id.toString()
   })!
 
   const handleSentMessage = () => {
-    if (socketToken && messageInput != '') {
-      socketClientEmit?.socketInstanceChatting?.emit(getSocket().SOCKER_CHATTING_SERVER_ON.SENT_MESSAGE_TO_CHANNEL, {
+    if (!!accessToken && messageInput != '') {
+      socket.emit(getSocket().SOCKER_CHATTING_SERVER_ON.SENT_MESSAGE_TO_CHANNEL, {
         channelId: props.channel._id,
         content: messageInput,
       })
@@ -84,15 +78,32 @@ const ChatContent = (props: { channel: ChattingChannelReponse }) => {
     }
   }
 
+  const convertSendDate = (inputTimestamp: string) => {
+    const date = new Date(inputTimestamp)
+
+    const options = { timeZone: 'Asia/Ho_Chi_Minh' }
+
+    const formattedDate = date.toLocaleString('en-US', {
+      ...options,
+      hour12: false,
+      hour: '2-digit',
+      minute: '2-digit',
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    })
+    return formattedDate
+  }
+
   return (
     <>
       {loadingChattingMessageChannel ? (
         <CommentSkeletonLoader />
       ) : (
         <div className="relative max-h-screen overflow-hidden">
-          <div className="w-full flex items-center justify-between">
+          <div className="flex items-center justify-between w-full">
             <Link
-              href={`/player/${images[0].providerInfomation.slug || images[0].providerInfomation.id}`}
+              href={`/profile/${images[0].userInformation.slug ?? images[0].userId}`}
               className="w-3/4 p-2 rounded-lg hover:bg-gray-700"
             >
               {images && (
@@ -102,44 +113,20 @@ const ChatContent = (props: { channel: ChattingChannelReponse }) => {
                       className="absolute rounded-full"
                       layout="fill"
                       objectFit="cover"
-                      src={images[0].userInfomation.avatarUrl!}
+                      src={images[0].userInformation.avatarUrl}
                       alt="Avatar"
                     />
                   </div>
-                  <span className="text-2xl font-bold text-white truncate">{images[0].userInfomation.name || ''}</span>
+                  <span className="text-2xl font-bold text-white truncate">{images[0].userInformation.name || ''}</span>
                 </div>
               )}
             </Link>
-            <div className="flex gap-2">
-              {actionButtons.map((item) => (
-                <div
-                  key={index}
-                  className="p-2 bg-[#413F4D] rounded-full cursor-pointer hover:bg-gray-500 active:bg-gray-400"
-                >
-                  {item.actionButton}
-                </div>
-              ))}
-            </div>
           </div>
-          <div className="flex flex-col gap-2 h-full overflow-y-auto">
-            <div className="flex gap-2 pb-5 overflow-auto border-b-2 border-[#B9B8CC] custom-scrollbar">
-              {/* {props.data?.providerSkills?.map((providerSkill, index) => (
-            <div
-              key={index}
-              className={`px-5 text-center rounded-2xl border-2 cursor-pointer ${gameSelected === index ? 'bg-purple-600 border-indigo-900' : 'bg-[#413F4D]'
-                }`}
-              onClick={() => setGameSelected(index)}
-            >
-              <p className="text-lg font-medium text-white whitespace-nowrap">{providerSkill.skill.name}</p>
-            </div>
-            ))} */}
-            </div>
-            <div className="bg-[#413F4D] p-2 rounded-3xl">
-              {/* <ChatService serviceData={props.data?.providerSkills[gameSelected]} /> */}
-            </div>
+          <div className="flex flex-col h-full gap-2 overflow-y-auto">
+            <div className="flex gap-2 pb-5 overflow-auto border-b-2 border-[#B9B8CC] custom-scrollbar"></div>
           </div>
           <div className="relative">
-            <div className="h-[75vh] flex flex-col justify-end">
+            <div className="h-[78vh] flex flex-col justify-end">
               {/* <!-- message --> */}
               <div
                 ref={divRef}
@@ -148,33 +135,58 @@ const ChatContent = (props: { channel: ChattingChannelReponse }) => {
                 <div className="flex flex-col mt-5 ">
                   {chattingMessageChannel?.data.messages.map((item, index) => {
                     const sender = mappingMember[item.senderId]
-                    const isSeftMessage = sender.userId.toString() == userContext?.id.toString()
+                    const isSeftMessage = sender.userId.toString() == user?.id.toString()
                     return (
-                      <div key={index} className={`flex justify-end  ${!isSeftMessage ? 'flex-row-reverse' : ''} mb-4`}>
-                        <div
-                          className={`max-w-xs mx-2 py-3 px-4 text-white text-lg
+                      <div key={index} className="px-4 py-2 mb-4">
+                        <div className={`flex justify-end items-end ${!isSeftMessage ? 'flex-row-reverse' : ''}`}>
+                          <div
+                            className={`max-w-xs mx-2 py-3 px-4 text-white text-lg
                         ${
                           isSeftMessage
                             ? ' bg-blue-500  rounded-bl-3xl rounded-tl-3xl rounded-tr-xl'
                             : 'bg-gray-700 rounded-br-3xl rounded-tr-3xl rounded-tl-xl'
                         }
+                        ${
+                          `${item?.senderId}_${item?.content}_${index}` == displayMessageTime
+                            ? `${isSeftMessage ? ' bg-blue-700' : ''}`
+                            : ''
+                        }
+                        cursor-pointer
                        whitespace-pre-wrap
                        break-words`}
-                        >
-                          <span>{item.content}</span>
-                        </div>
+                            onClick={() => {
+                              setDisplayMessageTime(
+                                `${item?.senderId}_${item?.content}_${index}` == displayMessageTime
+                                  ? ''
+                                  : `${item?.senderId}_${item?.content}_${index}`,
+                              )
+                            }}
+                            onKeyDown={() => {}}
+                          >
+                            <span>{item.content}</span>
+                          </div>
 
-                        <div className="relative w-8 h-8 ">
-                          <Image
-                            className="rounded-full"
-                            layout="fill"
-                            objectFit="cover"
-                            height={600}
-                            width={600}
-                            src={sender.userInfomation.avatarUrl}
-                            alt="Avatar"
-                          />
+                          <div className="relative w-8 h-8 ">
+                            <Image
+                              className="rounded-full"
+                              layout="fill"
+                              objectFit="cover"
+                              height={600}
+                              width={600}
+                              src={sender.userInformation.avatarUrl}
+                              alt="Avatar"
+                            />
+                          </div>
                         </div>
+                        {`${item?.senderId}_${item?.content}_${index}` == displayMessageTime && (
+                          <p
+                            className={`transition-opacity duration-500 ${
+                              isSeftMessage ? 'text-end pr-10' : 'text-start pl-10'
+                            }`}
+                          >
+                            {convertSendDate(item?.sentAt ?? '')}
+                          </p>
+                        )}
                       </div>
                     )
                   })}
@@ -183,9 +195,9 @@ const ChatContent = (props: { channel: ChattingChannelReponse }) => {
               {/* <!-- end message --> */}
             </div>
             <div className="absolute bottom-2 left-5 right-5  bg-[#15151b] flex items-center gap-3">
-              <div className="p-2 content-center bg-[#413F4D] rounded-full cursor-pointer hover:bg-gray-500 active:bg-gray-400">
+              {/* <div className="p-2 content-center bg-[#413F4D] rounded-full cursor-pointer hover:bg-gray-500 active:bg-gray-400">
                 <Picture theme="outline" size="24" fill="#FFFFFF" strokeLinejoin="bevel" />
-              </div>
+              </div> */}
 
               <div className="w-[100%] h-[40px] relative">
                 <input
@@ -194,10 +206,14 @@ const ChatContent = (props: { channel: ChattingChannelReponse }) => {
                   placeholder="Nhập tin nhắn"
                   value={messageInput}
                   onChange={(e) => setMessageInput(e.target.value)}
-                  onKeyPress={handleKeyPress}
+                  onKeyDown={handleKeyPress}
                 />
-                <div className="absolute transform -translate-y-1/2 rounded-full cursor-pointer top-1/2 right-3 z-4 hover:bg-gray-500 active:bg-gray-400">
-                  <GrinningFaceWithOpenMouth theme="outline" size="24" fill="#FFFFFF" strokeLinejoin="bevel" />
+                <div
+                  className="absolute right-0 p-2 transform -translate-y-1/2 rounded-full cursor-pointer top-1/2 z-4 hover:bg-gray-500 active:bg-gray-400"
+                  onClick={handleSentMessage}
+                  onKeyDown={() => {}}
+                >
+                  <SendOne theme="outline" size="24" fill="#FFFFFF" strokeLinejoin="bevel" />
                 </div>
               </div>
             </div>

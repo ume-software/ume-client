@@ -1,4 +1,5 @@
 import { Left, Right } from '@icon-park/react'
+import ImgForEmpty from 'public/img-for-empty.png'
 
 import { useState } from 'react'
 
@@ -7,10 +8,13 @@ import { ThumbnailResponseTypeEnum } from 'ume-service-openapi'
 
 import { TimeFormat } from '~/components/time-format'
 
-const PostByID = (props) => {
-  const [imageIndex, setImageIndex] = useState(0)
+import { trpc } from '~/utils/trpc'
 
-  const thumbnailsLength = props.postData?.thumbnails?.length - 1
+const PostByID = (props: { postId: string }) => {
+  const [imageIndex, setImageIndex] = useState(0)
+  const getPostById = trpc.useQuery(['community.getPostByID', props.postId])
+
+  const thumbnailsLength = (getPostById?.data?.data.thumbnails?.length ?? 1) - 1
 
   const handleNextImage = () => {
     if (imageIndex < thumbnailsLength) {
@@ -25,58 +29,58 @@ const PostByID = (props) => {
   }
 
   return (
-    <>
-      <div className="grid grid-cols-10">
-        <div className="col-span-8">
-          <div className="h-screen w-full relative">
-            {props.postData?.thumbnails[imageIndex]?.type == ThumbnailResponseTypeEnum.Image ? (
-              <Image
-                src={props.postData?.thumbnails[imageIndex]?.url}
-                alt={`${props.postData?.thumbnails[imageIndex]?.type}`}
-                layout="fill"
-                objectFit="contain"
-              />
-            ) : (
-              <div className="h-[90%] flex justify-center items-center">
-                <video controls autoPlay>
-                  <source src={props.postData?.thumbnails[imageIndex]?.url} type="video/mp4" />
-                  <source src={props.postData?.thumbnails[imageIndex]?.url} type="video/ogg" />
-                </video>
-              </div>
-            )}
+    <div className="grid grid-cols-10">
+      <div className="col-span-8">
+        <div className="relative w-full h-screen">
+          {getPostById?.data?.data?.thumbnails[imageIndex]?.type == ThumbnailResponseTypeEnum.Image ? (
+            <Image
+              src={getPostById?.data?.data?.thumbnails[imageIndex]?.url ?? ImgForEmpty}
+              alt={`${getPostById?.data?.data?.thumbnails[imageIndex]?.type}`}
+              layout="fill"
+              objectFit="scale-down"
+            />
+          ) : (
+            <div className="h-[90%] flex justify-center items-center">
+              <video controls autoPlay>
+                <source src={getPostById?.data?.data?.thumbnails[imageIndex]?.url} type="video/mp4" />
+                <source src={getPostById?.data?.data?.thumbnails[imageIndex]?.url} type="video/ogg" />
+              </video>
+            </div>
+          )}
 
-            <div className="absolute w-full px-10 top-[40%] flex justify-between">
-              <div className="p-3 rounded-full hover:bg-gray-400" onClick={handlePreviousImage}>
-                <Left theme="filled" size="35" fill="#FFFFFF" strokeLinejoin="bevel" />
-              </div>
-              <div className="p-3 rounded-full hover:bg-gray-400" onClick={handleNextImage}>
-                <Right theme="filled" size="35" fill="#FFFFFF" strokeLinejoin="bevel" />
-              </div>
+          <div className="absolute w-full px-10 top-[40%] flex justify-between">
+            <div className="p-3 rounded-full hover:bg-gray-400" onClick={handlePreviousImage}>
+              <Left theme="filled" size="35" fill="#FFFFFF" strokeLinejoin="bevel" />
             </div>
-          </div>
-        </div>
-        <div className="col-span-2 p-5 bg-zinc-800 text-white rounded-tl-xl mr-0">
-          <div className="flex gap-3 mb-5">
-            <div className="relative w-[70px] h-[70px]">
-              <Image
-                className="absolute rounded-full"
-                layout="fill"
-                objectFit="cover"
-                src={props.postData?.user.avatarUrl}
-                alt="Provider Image"
-              />
+            <div className="p-3 rounded-full hover:bg-gray-400" onClick={handleNextImage}>
+              <Right theme="filled" size="35" fill="#FFFFFF" strokeLinejoin="bevel" />
             </div>
-            <div className="flex flex-col">
-              <p className="font-semibold text-xl">{props.postData?.user.name}</p>
-              <p className="font-normal text-lg opacity-40">{TimeFormat({ date: props.postData?.createdAt })}</p>
-            </div>
-          </div>
-          <div>
-            <p className="font-normal text-lg">{props.postData?.content}</p>
           </div>
         </div>
       </div>
-    </>
+      <div className="col-span-2 p-5 mr-0 text-white bg-zinc-800 rounded-tl-xl">
+        <div className="flex gap-3 mb-5">
+          <div className="relative w-[70px] h-[70px]">
+            <Image
+              className="absolute rounded-full"
+              layout="fill"
+              objectFit="cover"
+              src={getPostById?.data?.data?.user.avatarUrl ?? ImgForEmpty}
+              alt="Provider Image"
+            />
+          </div>
+          <div className="flex flex-col">
+            <p className="text-xl font-semibold">{getPostById?.data?.data?.user.name}</p>
+            <p className="text-lg font-normal opacity-40">
+              {TimeFormat({ date: getPostById?.data?.data?.createdAt ?? 0 })}
+            </p>
+          </div>
+        </div>
+        <div>
+          <p className="text-lg font-normal">{getPostById?.data?.data?.content}</p>
+        </div>
+      </div>
+    </div>
   )
 }
 export default PostByID

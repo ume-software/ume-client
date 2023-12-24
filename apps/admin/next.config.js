@@ -1,5 +1,12 @@
 module.exports = {
   reactStrictMode: true,
-  transpilePackages: ['ui'],
-  images: {},
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
+    domains: ['www.ume.software'],
+  },
 }

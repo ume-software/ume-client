@@ -1,18 +1,9 @@
-import { Menu, Transition } from '@headlessui/react'
-import { CloseSmall, Comment, Like, More, ShareTwo, TipsOne } from '@icon-park/react'
+import { CloseSmall, Comment, Like } from '@icon-park/react'
 import { Modal } from '@ume/ui'
+import ImgForEmpty from 'public/img-for-empty.png'
+import { useAuth } from '~/contexts/auth'
 
-import {
-  Dispatch,
-  Fragment,
-  ReactNode,
-  SetStateAction,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react'
+import { Dispatch, ReactNode, SetStateAction, useEffect, useRef, useState } from 'react'
 
 import Image from 'next/legacy/image'
 import Link from 'next/link'
@@ -24,7 +15,6 @@ import PostByID from './post-by-ID'
 import PostImageLayout from './post-image-layout'
 
 import { LoginModal } from '~/components/header/login-modal.component'
-import { SocketTokenContext } from '~/components/layouts/app-layout/app-layout'
 import { TimeFormat } from '~/components/time-format'
 
 import { trpc } from '~/utils/trpc'
@@ -42,7 +32,7 @@ const CommunityPost = (props: CommunityPostProps) => {
   const [isPostModal, setIsPostModal] = useState<boolean>(false)
   const [isLikePost, setIsLikePost] = useState<boolean>(props.data.isLike)
   const [postComment, setPostComment] = useState<number>(0)
-  const { socketToken } = useContext(SocketTokenContext)
+  const { isAuthenticated } = useAuth()
   const [isModalLoginVisible, setIsModalLoginVisible] = useState<boolean>(false)
   const postRef = useRef<HTMLDivElement>(null)
   const likeForPostId = trpc.useMutation(['community.likeForPostId'])
@@ -71,20 +61,20 @@ const CommunityPost = (props: CommunityPostProps) => {
     onClose: handleClose,
     title: titleForm,
     show: isModalVisible,
+    customModalCSS: 'top-32',
     form: modalForm,
     backgroundColor: '#15151b',
+    closeWhenClickOutSide: true,
     closeButtonOnConner: (
-      <>
-        <CloseSmall
-          onClick={handleClose}
-          onKeyDown={(e) => e.key === 'Enter' && handleClose()}
-          tabIndex={1}
-          className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
-          theme="outline"
-          size="24"
-          fill="#FFFFFF"
-        />
-      </>
+      <CloseSmall
+        onClick={handleClose}
+        onKeyDown={(e) => e.key === 'Enter' && handleClose()}
+        tabIndex={1}
+        className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
+        theme="outline"
+        size="24"
+        fill="#FFFFFF"
+      />
     ),
   })
   const PostModal = Modal.useDisplayPost({
@@ -92,20 +82,19 @@ const CommunityPost = (props: CommunityPostProps) => {
     onClose: handleClose,
     title: titleForm,
     show: isModalVisible,
-    form: <PostByID postData={props.data} />,
+    form: <PostByID postId={props.data.id} />,
     backgroundColor: '#15151b',
+    closeWhenClickOutSide: true,
     closeButtonOnConner: (
-      <>
-        <CloseSmall
-          onClick={handleClose}
-          onKeyDown={(e) => e.key === 'Enter' && handleClose()}
-          tabIndex={1}
-          className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
-          theme="outline"
-          size="24"
-          fill="#FFFFFF"
-        />
-      </>
+      <CloseSmall
+        onClick={handleClose}
+        onKeyDown={(e) => e.key === 'Enter' && handleClose()}
+        tabIndex={1}
+        className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
+        theme="outline"
+        size="24"
+        fill="#FFFFFF"
+      />
     ),
   })
 
@@ -127,7 +116,7 @@ const CommunityPost = (props: CommunityPostProps) => {
     setIsPostModal(true)
   }
   const handleLikePost = () => {
-    if (socketToken) {
+    if (isAuthenticated) {
       if (isLikePost) {
         unLikeForPostId.mutate(props?.data?.id, {
           onSuccess: () => {
@@ -151,90 +140,49 @@ const CommunityPost = (props: CommunityPostProps) => {
       <div>
         <LoginModal isModalLoginVisible={isModalLoginVisible} setIsModalLoginVisible={setIsModalLoginVisible} />
       </div>
-      <div ref={postRef} className="bg-zinc-800 rounded-xl mb-10 p-5">
+      <div ref={postRef} className="p-5 mb-10 bg-zinc-800 rounded-xl">
         {isPostModal ? PostModal : InforPostModal}
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between">
           <div className="flex gap-3">
-            <Link href={`player/${props.data.user.slug}`} className="relative w-[70px] h-[70px] cursor-pointer">
+            <Link
+              href={`profile/${props.data.user.slug ?? props.data.userId}`}
+              className="relative xl:w-[70px] xl:h-[70px] lg:w-[60px] lg:h-[60px] w-[50px] h-[50px] cursor-pointer"
+            >
               <Image
                 className="absolute rounded-full"
                 layout="fill"
                 objectFit="cover"
-                src={props.data?.user.avatarUrl}
+                src={props.data?.user.avatarUrl ?? ImgForEmpty}
                 alt="Provider Image"
               />
             </Link>
             <div className="flex flex-col">
               <Link
-                href={`player/${props.data.user.slug}`}
-                className="font-semibold text-xl cursor-pointer hover:underline"
+                href={`profile/${props.data.user.slug ?? props.data.userId}`}
+                className="xl:text-xl lg:text-lg text-md font-semibold cursor-pointer hover:underline"
               >
                 {props.data?.user.name}
               </Link>
-              <p className="font-normal text-lg opacity-40">{TimeFormat({ date: props.data?.createdAt })}</p>
-            </div>
-          </div>
-          <div>
-            <div className="relative">
-              <Menu>
-                <div>
-                  <Menu.Button>
-                    <More theme="outline" size="25" fill="#FFFFFF" strokeLinejoin="bevel" />
-                  </Menu.Button>
-                </div>
-                <Transition
-                  as={Fragment}
-                  enter="transition ease-out duration-400"
-                  enterFrom="transform opacity-0 scale-95"
-                  enterTo="transform opacity-100 scale-100"
-                  leave="transition ease-in duration-400"
-                  leaveFrom="transform opacity-100 scale-100"
-                  leaveTo="transform opacity-0 scale-95"
-                >
-                  <Menu.Items className="absolute w-56 pt-1 pb-1 origin-top-right bg-white divide-y divide-gray-200 rounded-md shadow-lg right-0 ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
-                    <Menu.Item as={'div'}>
-                      {({ active }) => (
-                        <button
-                          className={`${
-                            active ? 'bg-violet-500 text-white' : 'text-gray-900'
-                          } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                        >
-                          <TipsOne theme="outline" size="20" fill="#333" className="mr-3" strokeLinejoin="bevel" />
-                          Report
-                        </button>
-                      )}
-                    </Menu.Item>
-                    <Menu.Item as={'div'}>
-                      {({ active }) => (
-                        <button
-                          className={`${
-                            active ? 'bg-violet-500 text-white' : 'text-gray-900'
-                          } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                        >
-                          <TipsOne theme="outline" size="20" fill="#333" className="mr-3" strokeLinejoin="bevel" />
-                          Report
-                        </button>
-                      )}
-                    </Menu.Item>
-                  </Menu.Items>
-                </Transition>
-              </Menu>
+              <p className="xl:text-lg lg:text-md text-sm font-normal opacity-40">
+                {TimeFormat({ date: props.data?.createdAt })}
+              </p>
             </div>
           </div>
         </div>
         <div className="flex mt-2">
-          <div className="w-full flex flex-col gap-2">
-            <p className="font-normal text-lg">{props.data?.content}</p>
-            <div className="cursor-pointer" onClick={handleOpenImageModal}>
+          <div className="flex flex-col w-full gap-2">
+            <p className="xl:text-lg text-md font-normal">{props.data?.content}</p>
+            <div className="cursor-pointer" onClick={handleOpenImageModal} onKeyDown={() => {}}>
               <PostImageLayout data={props.data?.thumbnails} />
             </div>
           </div>
         </div>
         <div className="mt-3">
-          <div className="flex justify-between p-2 gap-10">
+          <div className="flex justify-between gap-10 p-2">
             <div
-              className="font-medium text-md opacity-30 cursor-pointer hover:opacity-100 truncate"
+              className="font-medium truncate cursor-pointer text-md opacity-30 hover:opacity-100"
               onClick={handleLikeOpen}
+              onKeyDown={() => {}}
             >
               {isLikePost ? (
                 <>Bạn{props.data?.likeCount === 0 ? ' đã thích' : ` và ${props.data?.likeCount} người khác đã thích`}</>
@@ -243,19 +191,21 @@ const CommunityPost = (props: CommunityPostProps) => {
               )}
             </div>
             <div
-              className="font-medium text-md opacity-30 cursor-pointer hover:opacity-100 truncate"
+              className="font-medium truncate cursor-pointer text-md opacity-30 hover:opacity-100"
               onClick={handleCommentOpen}
+              onKeyDown={() => {}}
             >
               {props.data?.commentCount + postComment} bình luận
             </div>
           </div>
-          <div className="w-full grid grid-cols-6 p-1 border-gray-700 border-y-2">
+          <div className="grid w-full grid-cols-4 p-1 border-gray-700 border-y-2">
             <div className="col-span-2">
               <div
                 className={`flex justify-center items-center p-1 gap-2 rounded-lg cursor-pointer hover:bg-gray-700 ${
                   isLikePost ? 'text-purple-600' : ''
                 }`}
                 onClick={handleLikePost}
+                onKeyDown={() => {}}
               >
                 {isLikePost ? (
                   <Like theme="filled" size="20" fill="#7e22ce" strokeLinejoin="bevel" />
@@ -267,17 +217,12 @@ const CommunityPost = (props: CommunityPostProps) => {
             </div>
             <div className="col-span-2">
               <div
-                className="flex justify-center items-center p-1 gap-2 rounded-lg cursor-pointer hover:bg-gray-700"
+                className="flex items-center justify-center gap-2 p-1 rounded-lg cursor-pointer hover:bg-gray-700"
                 onClick={handleCommentOpen}
+                onKeyDown={() => {}}
               >
                 <Comment theme="outline" size="20" fill="#FFFFFF" strokeLinejoin="bevel" />
                 Bình luận
-              </div>
-            </div>
-            <div className="col-span-2">
-              <div className="flex justify-center items-center p-1 gap-2 rounded-lg cursor-pointer hover:bg-gray-700">
-                <ShareTwo theme="outline" size="20" fill="#FFFFFF" strokeLinejoin="bevel" />
-                Chia sẻ
               </div>
             </div>
           </div>

@@ -1,21 +1,37 @@
 module.exports = {
-  reactStrictMode: true,
-  transpilePackages: ['ui'],
+  reactStrictMode: false,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   images: {
-    domains: [
-      'lh3.googleusercontent.com',
-      'cloudflare-ipfs.com',
-      'avatars.githubusercontent.com',
-      'avatars.githubusercontent.com',
-      'cdn.tgdd.vn',
-      'picsum.photos',
-      'loremflickr.com',
-      'static-oss.epal.gg',
-      'cdn.pixabay.com',
-      'global-oss.epal.gg',
-      'files.playerduo.net',
-      'playerduo.net',
-      'www.ume.software',
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
     ],
+    domains: ['www.ume.software', 'www.api.ume.software'],
+  },
+  webpack(config, options) {
+    const { isServer } = options
+    config.module.rules.push({
+      test: /\.(ogg|mp3|wav|mpe?g)$/i,
+      exclude: config.exclude,
+      use: [
+        {
+          loader: require.resolve('url-loader'),
+          options: {
+            limit: config.inlineImageLimit,
+            fallback: require.resolve('file-loader'),
+            publicPath: `${config.assetPrefix}/_next/static/images/`,
+            outputPath: `${isServer ? '../' : ''}static/images/`,
+            name: '[name]-[hash].[ext]',
+            esModule: config.esModule || false,
+          },
+        },
+      ],
+    })
+
+    return config
   },
 }

@@ -6,45 +6,208 @@
 
 
 /* -------------Start custom CSS for ant ------------------*/
-/* table */
-  .ant-table-thead .ant-table-cell {
-  background-color: #7463F0 !important;
-  border-bottom: unset !important;
+/* modal */
+.ant-modal-content {
+  padding: 0 !important;
+  background-color: #15151B !important;
+}
+.ant-modal{
+  height: fit-content !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  background-color: #15151B !important;
+  border-radius: 1rem !important;
+  padding: 6px !important;
+}
+.ant-modal-header{
+  height: fit-content !important;
+  padding: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  background-color: #15151B !important;
+}
+.ant-modal-body{
+  height: fit-content !important;
+  padding: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  background-color: #15151B !important;
+}
+.ant-modal-close{
+  background-color: #413F4D !important;
+  border-radius: 100% !important;
+}
+.ant-modal-close-icon{
   color: white !important;
-  
-  
-  }
-  .ant-table-cell::before{
-    content: unset !important;
-  }
-  .ant-table-row .ant-table-cell{
-    background-color: #292734 !important;
-    border-bottom: unset !important;
-    color: white;
-  }
-  .ant-table-row .ant-table-cell:hover{
-     background: unset;
-  }
+  font-size: small !important;
+}
+.ant-modal-mask{
+  opacity: 40% !important;
+  background: rgb(114, 112, 112) !important;
+}
 
+/* --------------------------------------------------------------- */
+/* table */
+.ant-table-thead .ant-table-cell {
+background-color: #7463F0 !important;
+border-bottom: unset !important;
+color: white !important;
 
-  
+}
+.ant-table-cell::before{
+  content: unset !important;
+}
+.ant-table-row .ant-table-cell{
+  background-color: #292734 !important;
+  border-bottom: unset !important;
+  color: white;
+  /* padding: 0.5rem !important; */
+  font-size: 0.85rem;
+}
+.ant-table-row .ant-table-cell:hover{
+  background: unset;
+}
+.ant-table-placeholder .ant-table-cell {
+  background-color: #292734 !important;
+}
+
+.ant-pagination-options{
+  display: none !important;
+}
+
+/* --------------------------------------------------------------- */
+/* ant-layout-sider ant-layout-sider-dark ant-layout-sider-collapsed ant-layout-sider-has-trigger fixed top-0 w-[21%] z-50 h-screen bg-umeHeader */
+/* ant-layout-sider ant-layout-sider-dark ant-layout-sider-has-trigger fixed top-0 w-[21%] z-50 h-screen bg-umeHeader */
+.ant-layout-sider {
+  min-width: 20rem !important;
+}
+.ant-layout-sider-collapsed {
+  min-width: 7rem !important;
+}
 .ant-layout-sider-children {
-    width: 100%;
-    height: 80%;
+  width: 100%;
+  height: 100%;
 }
 
 .ant-menu {
-    overflow-y: auto;
-    width: 100%;
-    height: 92%;
+  overflow-y: auto;
+  width: 100%;
+  height: 92%;
+  padding-bottom: 1rem;
+  background-color: #292734 !important;
+}
+.ant-menu-root {
+  padding-bottom: 3rem;
+}
+
+.side-bar::-webkit-scrollbar {
+  display: none;               /* width of the entire scrollbar */
 }
 
 .ant-menu-title-content{
-    font-weight: bold;
-    color: white;
+  font-weight: bold;
+  color: white;
 }
 /* -------------and custom for ant ------------------*/
 .content-title {
-    font-weight: bold;
-    font-size: x-large;
+  font-weight: bold;
+  font-size: x-large;
+}
+
+.ant-menu-dark {
+  background-color: #292734 !important;
+}
+
+.ant-dropdown-menu-item-only-child {
+  background-color: #1f2937 !important;
+}
+
+/* --------------------------------------------------------------- */
+
+/* Pagination css */
+
+.ant-pagination {
+  margin-top: 1rem;
+
+}
+.ant-pagination-item-active {
+  background-color: white;
+  border-radius: 50% !important;
+  border: 1px solid gray;
+}
+
+.ant-pagination-item-active div {
+  color: black !important;
+}
+.ant-pagination-item {
+  border: 1px gray solid !important;
+  border-radius: 50% !important;
+}
+
+.ant-dropdown-menu-item {
+  border-radius: 0 !important;
+}
+
+.ant-dropdown-menu {
+  border-radius: 0 !important;
+  border: 0 !important;
+  background-color: #1f2937;
+}
+
+.ant-dropdown .ant-dropdown-menu {
+  background-color: #1f2937 !important;
+}
+/* slect ant design for vourcher */
+
+.ant-select-selector {
+  background-color:#413F4D !important;
+  color: white !important;
+  border: 2px solid rgba(255, 255, 255, 0.3) !important;
+}
+.ant-select-selection-overflow-item{
+  background-color: #7463F0 !important;
+  margin-right: 0.2rem !important;
+  border-radius: 10%;
+  height: 1.6rem !important;
+}
+.ant-select-selection-placeholder {
+  color: #FFFFFF80 !important;
+}
+.ant-select-selection-search{
+  background-color:#413F4D !important;
+}
+.ant-select-selection-overflow-item-suffix{
+  display: none !important;
+}
+.ant-select-focused .ant-select-selector,
+.ant-select-selector:focus,
+.ant-select-selector:active,
+.ant-select-open .ant-select-selector {
+  border: 2px solid rgba(255, 255, 255) !important;
+}
+
+.ant-tabs-tab {
+  color: white !important;
+  border: none !important;
+}
+
+.ant-tabs-nav-wrap {
+  padding: 0 1rem;
+  border: none;
+}
+
+
+
+
+/* --------------------------------------------------------------- */
+/* Dropdown */
+.ant-dropdown-trigger {
+  margin: 0;
+}
+/* input number */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
 }

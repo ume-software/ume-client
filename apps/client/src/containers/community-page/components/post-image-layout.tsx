@@ -7,7 +7,7 @@ const PostImageLayout = (props) => {
   return (
     <div key={props.data.url} className="w-full h-fit">
       {props.data?.length === 1 ? (
-        <div className="relative max-w-[800px] h-[500px]">
+        <div className="relative max-w-[800px] 2xl:h-[500px] xl:h-[350px] lg:h-[300px] h-[250px]">
           {props.data[0]?.type === ThumbnailResponseTypeEnum.Image ? (
             <Image
               className="absolute"
@@ -25,9 +25,9 @@ const PostImageLayout = (props) => {
         </div>
       ) : (
         <>
-          <div className="w-full flex gap-1">
+          <div className="flex w-full gap-1">
             {props.data?.slice(0, MAX_VISIBLE_IMAGES).map((media, index) => (
-              <div className="relative w-full h-[250px]" key={index}>
+              <div className="relative w-full 2xl:h-[250px] xl:h-[200px] lg:h-[150px] h-[100px]" key={index}>
                 {media.type === ThumbnailResponseTypeEnum.Image ? (
                   <Image className="absolute" layout="fill" objectFit="cover" src={media.url} alt={media.type} />
                 ) : (
@@ -43,7 +43,7 @@ const PostImageLayout = (props) => {
           </div>
           <div className="w-full pt-1">
             {remainingImages > 0 && (
-              <div className="relative w-full h-[250px]">
+              <div className="relative w-full 2xl:h-[250px] xl:h-[200px] lg:h-[150px] h-[100px]">
                 {props.data[MAX_VISIBLE_IMAGES]?.type === ThumbnailResponseTypeEnum.Image ? (
                   <Image
                     className="absolute"
@@ -63,7 +63,7 @@ const PostImageLayout = (props) => {
 
                 {remainingImages != 1 && (
                   <div className="absolute top-0 left-0 bottom-0 right-0 bg-[#00000090]">
-                    <div className="h-full flex justify-center items-center">
+                    <div className="flex items-center justify-center h-full">
                       <p className="text-2xl font-semibold">+{remainingImages} more</p>
                     </div>
                   </div>

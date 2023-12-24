@@ -1,13 +1,17 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Send } from '@icon-park/react'
 import { InputWithButton } from '@ume/ui'
+import { useAuth } from '~/contexts/auth'
 
-import { Dispatch, SetStateAction, useContext, useEffect, useId, useRef, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useId, useRef, useState } from 'react'
 
+import { parse } from 'cookie'
+import { isNil } from 'lodash'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
+import { UserInformationResponse } from 'ume-service-openapi'
 
 import { LoginModal } from '~/components/header/login-modal.component'
-import { SocketTokenContext, UserContext } from '~/components/layouts/app-layout/app-layout'
 import { CommentSkeletonLoader } from '~/components/skeleton-load'
 import { TimeFormat } from '~/components/time-format'
 
@@ -21,19 +25,22 @@ interface CommentPostProps {
 
 const CommmentPost = (props: CommentPostProps) => {
   const index = useId()
+  const LIMIT = 10
   const [commnetPostData, setCommnetPostData] = useState<any>([])
   const [page, setPage] = useState<string>('1')
-  const [limit] = useState<string>('10')
-  const { userContext } = useContext(UserContext)
+
+  const { user } = useAuth()
+
+  const accessToken = localStorage.getItem('accessToken')
+
   const containerRef = useRef<HTMLDivElement>(null)
   const [comment, setComment] = useState('')
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
-  const { socketToken } = useContext(SocketTokenContext)
   const {
     data: commentPostByID,
     isLoading: loadingCommentPostByID,
     isFetching: fetchingCommentPostByID,
-  } = trpc.useQuery(['community.getCommentPostByID', { postId: props.postID, limit: limit, page: page }], {
+  } = trpc.useQuery(['community.getCommentPostByID', { postId: props.postID, limit: `${LIMIT}`, page: page }], {
     refetchOnWindowFocus: false,
     refetchOnReconnect: 'always',
     cacheTime: 0,
@@ -57,7 +64,7 @@ const CommmentPost = (props: CommentPostProps) => {
 
         const isAtEnd = scrollTop + clientHeight >= scrollHeight
 
-        if (isAtEnd && Number(commentPostByID?.data.count) > Number(limit) * Number(page)) {
+        if (isAtEnd && Number(commentPostByID?.data.count) > LIMIT * Number(page)) {
           setPage(String(Number(page) + 1))
         }
       }
@@ -75,11 +82,11 @@ const CommmentPost = (props: CommentPostProps) => {
   })
 
   const handleSendComment = () => {
-    if (socketToken) {
+    if (!!accessToken) {
       if (comment != '') {
         try {
           commentForPostId.mutate(
-            { id: props.postID, commentPostRequest: { content: comment, parentCommentId: '' } },
+            { id: props.postID, commentPostRequest: { content: comment, parentCommentId: undefined } },
             {
               onSuccess: (data) => {
                 if (data.success) {
@@ -87,8 +94,8 @@ const CommmentPost = (props: CommentPostProps) => {
                     {
                       user: {
                         slug: '',
-                        avatarUrl: userContext?.avatarUrl,
-                        name: userContext?.name,
+                        avatarUrl: user?.avatarUrl,
+                        name: user?.name,
                       },
                       content: comment,
                       createdAt: Date.now(),
@@ -124,28 +131,32 @@ const CommmentPost = (props: CommentPostProps) => {
           ) : (
             <>
               {commnetPostData.map((data) => (
-                <Link key={index} href={`#${data?.user?.slug}`}>
-                  <div className="flex items-start gap-3 m-5 p-1 rounded-xl">
-                    <div className="relative min-w-[50px] min-h-[50px]">
-                      <Image
-                        className="absolute rounded-full"
-                        layout="fill"
-                        objectFit="cover"
-                        src={data?.user?.avatarUrl}
-                        alt="Provider Image"
-                      />
-                    </div>
+                <>
+                  <div className="flex items-start gap-3 p-1 m-5 rounded-xl">
+                    <Link key={index} href={`profile/${data?.user?.slug ?? data?.userId}`}>
+                      <div className="relative min-w-[50px] min-h-[50px]">
+                        <Image
+                          className="absolute rounded-full"
+                          layout="fill"
+                          objectFit="cover"
+                          src={data?.user?.avatarUrl}
+                          alt="Provider Image"
+                        />
+                      </div>
+                    </Link>
                     <div>
                       <div className="flex flex-col items-start justify-start gap-2 p-2 rounded-xl bg-[#47474780]">
-                        <p className="font-semibold text-lg">{data?.user?.name}</p>
+                        <Link key={index} href={`profile/${data?.user?.slug ?? data?.userId}`}>
+                          <p className="text-lg font-semibold">{data?.user?.name}</p>
+                        </Link>
                         <div>{data?.content}</div>
                       </div>
-                      <p className="font-normal text-sm opacity-40">
+                      <p className="text-sm font-normal opacity-40">
                         {data?.createdAt ? TimeFormat({ date: data?.createdAt }) : ''}
                       </p>
                     </div>
                   </div>
-                </Link>
+                </>
               ))}
             </>
           )}
@@ -158,13 +169,14 @@ const CommmentPost = (props: CommentPostProps) => {
             position={'right'}
             component={
               <div
-                className="flex items-center cursor-pointer rounded-full bg-gray-700 p-2"
+                className="flex items-center p-2 bg-gray-700 rounded-full cursor-pointer"
                 onClick={handleSendComment}
+                onKeyDown={() => {}}
               >
                 <Send theme="filled" size="25" fill="#FFFFFF" strokeLinejoin="bevel" />
               </div>
             }
-            onKeyPress={handleKeyPress}
+            onKeyDown={handleKeyPress}
             value={comment}
             onChange={(e) => setComment(e.target.value)}
           />

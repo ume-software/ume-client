@@ -21,7 +21,7 @@
 
 
 .hide-scrollbar::-webkit-scrollbar {
-  width: 0.5em;
+  width: 0;
   background-color: transparent;
 }
 
@@ -52,7 +52,7 @@
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: #7e22ce;
   border-radius: 8px;
-  min-height: 50px; 
+  min-height: 50px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
@@ -115,4 +115,12 @@
   border: 3px solid;
 }
 
-
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+}
+ 
+input[type=number] {
+  -moz-appearance: textfield;
+}
