@@ -2,6 +2,7 @@ import { DeleteOne, Minus, Plus } from '@icon-park/react'
 import { Button, FormInput } from '@ume/ui'
 
 import * as React from 'react'
+import { useEffect } from 'react'
 
 import { useFormik } from 'formik'
 import {
@@ -18,7 +19,7 @@ export interface IServiceAttributesProps {
   removeChildComponent?: any
   index: number
   isReadOnly?: boolean
-  isAttributeUnique: any
+  isAttributeUnique?: any
 }
 
 const ServiceAttributes = ({
@@ -55,7 +56,7 @@ const ServiceAttributes = ({
       setServiceAttributesData({ ...values })
     },
   })
-  React.useEffect(() => {
+  useEffect(() => {
     form.setFieldValue(`id`, serviceAttributesData.id)
     form.setFieldValue(`attribute`, serviceAttributesData.attribute)
     form.setFieldValue(`viAttribute`, serviceAttributesData.viAttribute)
@@ -66,6 +67,12 @@ const ServiceAttributes = ({
       serviceAttributesData.handleType ?? HandleServiceAttributeRequestHandleTypeEnum.Create,
     )
   }, [serviceAttributesData])
+
+  // useEffect(() => {
+  //   console.log('add child value')
+  //   // console.log(form.values)
+  //   // setServiceAttributesData({ ...form.values })
+  // }, [form.values.serviceAttributeValues])
 
   const handleChange = (fieldName, e) => {
     form.handleChange(e)
@@ -81,6 +88,17 @@ const ServiceAttributes = ({
         handleType: HandleServiceAttributeValueRequestHandleTypeEnum.Create,
       },
     ])
+    let res = form.values
+    res.serviceAttributeValues = [
+      ...form.values.serviceAttributeValues,
+      {
+        value: '',
+        viValue: '',
+        isActivated: true,
+        handleType: HandleServiceAttributeValueRequestHandleTypeEnum.Create,
+      },
+    ]
+    setServiceAttributesData(res)
   }
   const handleRemoveComponent = (index) => {
     removeChildComponent(index)
@@ -90,6 +108,26 @@ const ServiceAttributes = ({
     let deleteAttributeValue = updatedSubChildData.splice(index, 1)
     form.setFieldValue(`serviceAttributeValues`, updatedSubChildData)
     setServiceAttributesData({ ...form.values, serviceAttributeValues: updatedSubChildData })
+  }
+
+  const isValueUnique = (newValue, index) => {
+    let flag = false
+    if (newValue.length != 0) {
+      const attributeValues = form.values.serviceAttributeValues
+        .filter((_, i) => i !== index)
+        .map((row) => row.value.toLowerCase())
+      if (attributeValues.includes(newValue.toLowerCase())) {
+        flag = true
+      }
+      const attributeViValues = form.values.serviceAttributeValues
+        .filter((_, i) => i !== index)
+        .map((row) => row.viValue?.toLowerCase())
+
+      if (attributeViValues.includes(newValue.toLowerCase())) {
+        flag = true
+      }
+    }
+    return flag
   }
 
   return (
@@ -119,7 +157,7 @@ const ServiceAttributes = ({
             `}
               placeholder={'Tên thuộc tính: Trống'}
               disabled={false}
-              value={form.values.attribute}
+              value={form.values.attribute ? form.values.attribute : ''}
               error={!!form.errors.attribute && form.touched.attribute}
               errorMessage={''}
               readOnly
@@ -185,8 +223,18 @@ const ServiceAttributes = ({
             />
           )}
         </div>
-        {isAttributeUnique(form.values.attribute, index) && (
-          <div className="w-full mt-1 text-xs text-red-500">Tên thuộc tính đã tồn tại</div>
+        {!isReadOnly && isAttributeUnique(form.values.attribute, index) && (
+          <div className="inline-block w-2/5 mt-1 text-xs text-red-500 ">Tên thuộc tính đã tồn tại</div>
+        )}
+        {!isReadOnly && isAttributeUnique(form.values.viAttribute, index) && (
+          <>
+            {!isReadOnly && !isAttributeUnique(form.values.attribute, index) && (
+              <div className="inline-block w-2/5 mt-1"></div>
+            )}
+            <div className="inline-block w-2/5 mt-1 ml-4 text-xs text-red-500">
+              Tên thuộc tính tiếng việt đã tồn tại
+            </div>
+          </>
         )}
       </div>
 
@@ -194,6 +242,7 @@ const ServiceAttributes = ({
         {form.values.serviceAttributeValues.map((childData, index) => (
           <div className="flex items-end w-full" key={index}>
             <ServiceAttributeValues
+              indexValue={index}
               serviceAttributeValuesData={childData}
               setServiceAttributeValuesData={(data) => {
                 const updatedSubChildData = [...form.values.serviceAttributeValues]
@@ -202,6 +251,7 @@ const ServiceAttributes = ({
                 setServiceAttributesData({ ...form.values, serviceAttributeValues: updatedSubChildData })
               }}
               isReadOnly={isReadOnly}
+              isValueUnique={isValueUnique}
             />
             {!isReadOnly && (
               <div className="w-1/12">

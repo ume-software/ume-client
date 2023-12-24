@@ -1,4 +1,5 @@
 import { Plus } from '@icon-park/react'
+import { Dict } from '@trpc/server'
 import { Button, FormInput } from '@ume/ui'
 import { uploadImageServices } from '~/api/upload-media'
 import useDebounce from '~/hooks/adminDebounce'
@@ -312,29 +313,109 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
   function isDisableButton() {
     return (
       !form.isValid ||
-      form.values.name == '' ||
+      !form.dirty ||
       (isExitName ? true : false) ||
       (isExitViName ? true : false) ||
-      !isValidUniqueAtrribute()
+      isInValidUniqueAttribute() ||
+      isInvalidValidateValues()
     )
   }
+
   const isAttributeUnique = (newAttributeValue, index) => {
     let flag = false
     if (newAttributeValue.length != 0) {
-      const attributeValues = form.values.serviceAttributes.filter((_, i) => i !== index).map((row) => row.attribute)
-      if (attributeValues.includes(newAttributeValue)) {
+      const attributeValues = form.values.serviceAttributes
+        .filter((_, i) => i !== index)
+        .map((row) => row.attribute.toLowerCase())
+      if (attributeValues.includes(newAttributeValue.toLowerCase())) {
+        flag = true
+      }
+      const attributeViValues = form.values.serviceAttributes
+        .filter((_, i) => i !== index)
+        .map((row) => row.viAttribute?.toLowerCase())
+
+      if (attributeViValues.includes(newAttributeValue.toLowerCase())) {
         flag = true
       }
     }
     return flag
   }
-  function isValidUniqueAtrribute() {
-    const attributeValues = form.values.serviceAttributes.map((attribute) => attribute.attribute)
-    const lengthSet = new Set(attributeValues).size
-    return lengthSet === attributeValues.length
+
+  function isInValidUniqueAttribute() {
+    let flag = false
+    const attributeValues = form.values.serviceAttributes.map((row) => row.attribute.toLowerCase())
+    if (attributeValues.length > 0) {
+      const checkDuplicateAttribute = attributeValues.length != new Set(attributeValues).size
+      if (checkDuplicateAttribute) {
+        return true
+      }
+    }
+    const attributeViValues = form.values.serviceAttributes
+      .map((row) => row.viAttribute?.toLowerCase())
+      .filter((value) => value != '')
+    if (attributeViValues.length > 0) {
+      const checkDuplicateViAttribute = attributeViValues.length != new Set(attributeViValues).size
+      if (checkDuplicateViAttribute) {
+        return true
+      }
+    }
+    if (attributeValues.length > 0 && attributeViValues.length > 0) {
+      const isAttributeInViAttributes = attributeValues
+        .filter((_, index) => attributeValues[index] !== attributeViValues[index])
+        .some((value) => attributeViValues.includes(value))
+      if (isAttributeInViAttributes) {
+        return true
+      }
+    }
+    return flag
   }
-  console.log('isValidUniqueAtrribute ' + isValidUniqueAtrribute())
-  console.log('isDisableButton: ' + isDisableButton())
+
+  function isInvalidValidateValues() {
+    const isValid = form.values.serviceAttributes.map((row) => {
+      const isValidValue = validateListValue(row.serviceAttributeValues)
+      if (isValidValue) {
+        return true
+      } else {
+        false
+      }
+    })
+    if (isValid) {
+      const result = isValid.includes(true)
+      if (result) {
+        return true
+      }
+    }
+    return false
+  }
+
+  function validateListValue(listValue) {
+    let flag = false
+    const values = listValue.map((row) => row.value.toLowerCase())
+    if (values.length > 0) {
+      const checkDuplicateValues = values.length != new Set(values).size
+      if (checkDuplicateValues) {
+        return true
+      }
+    }
+    const viValues = listValue.map((row) => row.viValue?.toLowerCase())
+    if (viValues.length > 0) {
+      const checkDuplicateViValues =
+        viValues.filter((value) => value != '').length != new Set(viValues.filter((value) => value != '')).size
+      if (checkDuplicateViValues) {
+        return true
+      }
+    }
+
+    if (values.length > 0 && viValues.length > 0) {
+      const isValueInViValues = values
+        .filter((_, index) => values[index] !== viValues[index])
+        .some((value) => viValues.includes(value))
+      if (isValueInViValues) {
+        return true
+      }
+    }
+    return flag
+  }
   return (
     <div>
       <form onSubmit={form.handleSubmit} className="flex flex-col mb-4 gap-y-4">

@@ -99,6 +99,7 @@ export const ServicesModalUpdate = ({ idService, closeFunction, openValue }: ISe
     },
     validationSchema: Yup.object({
       name: Yup.string().required('Tên dịch vụ bắt buộc'),
+      viName: Yup.string(),
       serviceAttributes: Yup.array()
         .of(
           Yup.object({
@@ -180,7 +181,15 @@ export const ServicesModalUpdate = ({ idService, closeFunction, openValue }: ISe
         setServiceList(data.data)
         console.log(data.data)
         if (data.data.count != 0) {
-          if (debouncedName != nameInit) setIsExitName(true)
+          const idRow = data.data.row ? data.data.row[0]?.id : undefined
+          if (idRow !== idService) {
+            if (debouncedName != nameInit) setIsExitName(true)
+            else {
+              setIsExitName(false)
+            }
+          } else {
+            setIsExitName(false)
+          }
         } else {
           setIsExitName(false)
         }
@@ -223,15 +232,21 @@ export const ServicesModalUpdate = ({ idService, closeFunction, openValue }: ISe
       onSuccess(data) {
         setServiceList(data.data)
         if (data.data.count != 0) {
-          if (debouncedViName != viNameInit) setIsExitViName(true)
+          const idRow = data.data.row ? data.data.row[0]?.id : undefined
+          if (idRow !== idService) {
+            if (debouncedViName != viNameInit) setIsExitViName(true)
+            else {
+              setIsExitViName(false)
+            }
+          } else {
+            setIsExitViName(false)
+          }
         } else {
           setIsExitViName(false)
         }
       },
     },
   )
-  console.log('isExitName: ' + isExitName)
-  console.log('isExitViName: ' + isExitViName)
   function closeHandleSmall() {
     openConfirmModalCancel()
   }
@@ -416,20 +431,110 @@ export const ServicesModalUpdate = ({ idService, closeFunction, openValue }: ISe
     }
   }
   function isDisableButton() {
-    return !form.isValid || !form.dirty || (isExitName ? true : false) || (isExitViName ? true : false)
+    return (
+      !form.isValid ||
+      !form.dirty ||
+      (isExitName ? true : false) ||
+      (isExitViName ? true : false) ||
+      isInValidUniqueAttribute() ||
+      isInvalidValidateValues()
+    )
   }
   const isAttributeUnique = (newAttributeValue, index) => {
     let flag = false
-    console.log(index)
     if (newAttributeValue.length != 0) {
-      const attributeValues = form.values.serviceAttributes.filter((_, i) => i !== index).map((row) => row.attribute)
-      console.log(attributeValues)
-      if (attributeValues.includes(newAttributeValue)) {
+      const attributeValues = form.values.serviceAttributes
+        .filter((_, i) => i !== index)
+        .map((row) => row.attribute.toLowerCase())
+      if (attributeValues.includes(newAttributeValue.toLowerCase())) {
+        flag = true
+      }
+      const attributeViValues = form.values.serviceAttributes
+        .filter((_, i) => i !== index)
+        .map((row) => row.viAttribute?.toLowerCase())
+
+      if (attributeViValues.includes(newAttributeValue.toLowerCase())) {
         flag = true
       }
     }
     return flag
   }
+
+  function isInvalidValidateValues() {
+    const isValid = form.values.serviceAttributes.map((row) => {
+      const isValidValue = validateListValue(row.serviceAttributeValues)
+      if (isValidValue) {
+        return true
+      } else {
+        false
+      }
+    })
+    if (isValid) {
+      const result = isValid.includes(true)
+      if (result) {
+        return true
+      }
+    }
+    return false
+  }
+  function validateListValue(listValue) {
+    let flag = false
+    const values = listValue.map((row) => row.value.toLowerCase())
+    if (values.length > 0) {
+      const checkDuplicateValues = values.length != new Set(values).size
+      if (checkDuplicateValues) {
+        return true
+      }
+    }
+    const viValues = listValue.map((row) => row.viValue?.toLowerCase())
+    if (viValues.length > 0) {
+      const checkDuplicateViValues =
+        viValues.filter((value) => value != '').length != new Set(viValues.filter((value) => value != '')).size
+      if (checkDuplicateViValues) {
+        return true
+      }
+    }
+
+    if (values.length > 0 && viValues.length > 0) {
+      const isValueInViValues = values
+        .filter((_, index) => values[index] !== viValues[index])
+        .some((value) => viValues.includes(value))
+      if (isValueInViValues) {
+        return true
+      }
+    }
+    return flag
+  }
+
+  function isInValidUniqueAttribute() {
+    let flag = false
+    const attributeValues = form.values.serviceAttributes.map((row) => row.attribute.toLowerCase())
+    if (attributeValues.length > 0) {
+      const checkDuplicateAttribute = attributeValues.length != new Set(attributeValues).size
+      if (checkDuplicateAttribute) {
+        return true
+      }
+    }
+    const attributeViValues = form.values.serviceAttributes
+      .map((row) => row.viAttribute?.toLowerCase())
+      .filter((value) => value != '')
+    if (attributeViValues.length > 0) {
+      const checkDuplicateViAttribute = attributeViValues.length != new Set(attributeViValues).size
+      if (checkDuplicateViAttribute) {
+        return true
+      }
+    }
+    if (attributeValues.length > 0 && attributeViValues.length > 0) {
+      const isAttributeInViAttributes = attributeValues
+        .filter((_, index) => attributeValues[index] !== attributeViValues[index])
+        .some((value) => attributeViValues.includes(value))
+      if (isAttributeInViAttributes) {
+        return true
+      }
+    }
+    return flag
+  }
+
   return (
     <div>
       <form onSubmit={form.handleSubmit} className="flex flex-col mb-4 gap-y-4">
