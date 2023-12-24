@@ -59,8 +59,8 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
   const issuer = voucherDetails?.admin?.name ?? voucherDetails?.provider?.name ?? ''
   const approverInit = voucherDetails?.admin?.name ?? ''
   const statusInit = voucherDetails?.status ?? ''
-  const startDateInit = voucherDetails?.startDate ? new Date(voucherDetails?.startDate).toISOString().split('T')[0] : ''
-  const endDateInit = voucherDetails?.endDate ? new Date(voucherDetails?.endDate).toISOString().split('T')[0] : ''
+  const startDateInit = voucherDetails?.startDate ? convertToISODate(voucherDetails?.startDate) : ''
+  const endDateInit = voucherDetails?.endDate ? convertToISODate(voucherDetails?.endDate) : ''
   const numVoucherInit = voucherDetails?.numberIssued ?? 0
   const numUserCanUseInit = voucherDetails?.numberUsablePerBooker ?? 0
   const typeVoucherInit = voucherDetails?.type ?? ''
@@ -145,6 +145,7 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
       resetForm()
     },
   })
+
   React.useEffect(() => {
     if (updateVoucherAdmin) {
       form.resetForm({
@@ -297,6 +298,24 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
       throw new Error('Invalid date format')
     }
   }
+  function convertToIsoStartDate(startDate) {
+    let endDateTime = new Date(startDate)
+    endDateTime.setHours(0, 0, 0)
+    let isoDate = endDateTime.toISOString()
+    return isoDate
+  }
+  function convertToIsoEndDate(endDate) {
+    let endDateTime = new Date(endDate)
+    endDateTime.setHours(23, 59, 59)
+    let isoDate = endDateTime.toISOString()
+    return isoDate
+  }
+  function convertToISODate(zoneDate) {
+    let inputDate = new Date(zoneDate).toLocaleDateString('en-GB')
+    const [day, month, year] = inputDate.split('/')
+    const isoDate = new Date(`${year}-${month}-${day}`).toISOString().split('T')[0]
+    return isoDate
+  }
   async function submitHandle() {
     setOpenConfirm(false)
     setIsCreate(false)
@@ -326,7 +345,6 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
           parseFloat(form.values.minimumBookingTotalPriceForUsage.toString().replace(/,/g, '')),
           minimumBookingTotalPriceForUsageInit,
         ],
-
         maximumDiscountValue: [
           parseFloat(form.values.maximumDiscountValue.toString().replace(/,/g, '')),
           maximumDiscountValueInit,
@@ -335,7 +353,13 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
       let reqWithValuesNotNull = {}
       for (let key in req) {
         if (req[key][0] != req[key][1]) {
-          reqWithValuesNotNull[key] = req[key][0]
+          if (key == 'startDate') {
+            reqWithValuesNotNull[key] = convertToIsoStartDate(req[key][0])
+          } else if (key == 'endDate') {
+            reqWithValuesNotNull[key] = convertToIsoEndDate(req[key][0])
+          } else {
+            reqWithValuesNotNull[key] = req[key][0]
+          }
         }
       }
       if (reqWithValuesNotNull) {
@@ -544,7 +568,7 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                       value={form.values.endDate}
                       error={!!form.errors.endDate && form.touched.endDate}
                       errorMessage={form.errors.endDate}
-                      min={endDateInit > form.values.startDate ? endDateInit : form.values.startDate}
+                      min={form.values.startDate}
                       required
                     />
                   </div>
