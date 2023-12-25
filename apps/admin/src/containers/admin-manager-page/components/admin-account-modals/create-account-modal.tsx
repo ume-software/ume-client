@@ -166,12 +166,19 @@ const CreateAccountModal = ({ openValue, closeFunction }: ICreateAdminProps) => 
     return !form.isValid || form.values.name == ''
   }
   function closeHandleSmall() {
-    openConfirmModalCancel()
+    if (
+      form.values.name == '' &&
+      form.values.userName == '' &&
+      form.values.password == '' &&
+      form.values.selectedImage == null
+    ) {
+      closeHandle()
+    } else openConfirmModalCancel()
   }
 
   return (
     <ModalBase
-      width={'60%'}
+      width={'50%'}
       titleValue="Tạo tài khoản quản trị viên"
       openValue={openValue}
       closeFunction={closeHandleSmall}
@@ -183,9 +190,9 @@ const CreateAccountModal = ({ openValue, closeFunction }: ICreateAdminProps) => 
           onSubmit={(e) => {
             e.preventDefault()
           }}
-          className="text-white grid grid-cols-5"
+          className="text-white grid grid-cols-6"
         >
-          <div className="col-span-2 pl-5">
+          <div className="col-span-1 pl-5">
             <div
               className={`
                 w-36 h-36 overflow-hidden rounded-full bg-[#413F4D]
@@ -222,21 +229,22 @@ const CreateAccountModal = ({ openValue, closeFunction }: ICreateAdminProps) => 
               />
             </div>
           </div>
-          <div className="col-span-3">
+          <div className="col-span-1"></div>
+          <div className="col-span-4 ml-10">
             <div className="grid grid-cols-6 mb-3">
               <label className="col-span-2 flex items-center" htmlFor="name">
                 *Họ và tên
               </label>
               <FormInput
                 name="name"
-                placeholder={form.errors.name ? form.errors.name : 'Nguyễn Văn An'}
+                placeholder={form.errors.name && form.touched.name ? form.errors.name : 'Nguyễn Văn An'}
                 onBlur={form.handleBlur}
                 value={form.values.name}
                 error={!!form.errors.name && form.touched.name}
                 errorMessage={''}
                 onChange={form.handleChange}
                 disabled={false}
-                className={`bg-[#413F4D] border-2 col-span-4 border-[#FFFFFF] w-[80%] ml-2 h-8  border-opacity-30 ${
+                className={`bg-[#413F4D] border-2 col-span-4 border-[#FFFFFF] w-[75%] ml-2 h-8  border-opacity-30 ${
                   form.errors.name && form.touched.name ? 'placeholder:text-red-500' : ''
                 }`}
               />
@@ -247,14 +255,14 @@ const CreateAccountModal = ({ openValue, closeFunction }: ICreateAdminProps) => 
               </label>
               <FormInput
                 name="userName"
-                placeholder={form.errors.userName ? form.errors.userName : 'adminAnNV'}
+                placeholder={form.errors.userName && form.touched.userName ? form.errors.userName : 'adminAnNV'}
                 onBlur={form.handleBlur}
                 value={form.values.userName}
                 error={!!form.errors.userName && form.touched.userName}
                 errorMessage={''}
                 onChange={form.handleChange}
                 disabled={false}
-                className={`bg-[#413F4D] border-2 col-span-4 border-[#FFFFFF] w-[80%] ml-2 h-8  border-opacity-30 ${
+                className={`bg-[#413F4D] border-2 col-span-4 border-[#FFFFFF] w-[75%] ml-2 h-8  border-opacity-30 ${
                   form.errors.userName && form.touched.userName ? 'placeholder:text-red-500' : ''
                 }`}
               />
@@ -273,7 +281,7 @@ const CreateAccountModal = ({ openValue, closeFunction }: ICreateAdminProps) => 
                 errorMessage={''}
                 onChange={form.handleChange}
                 disabled={false}
-                className={`bg-[#413F4D] border-2 col-span-4 border-[#FFFFFF] w-[80%] ml-2 h-8  border-opacity-30 ${
+                className={`bg-[#413F4D] border-2 col-span-4 border-[#FFFFFF] w-[75%] ml-2 h-8  border-opacity-30 ${
                   form.errors.password && form.touched.password ? 'placeholder:text-red-500' : ''
                 }`}
               />
@@ -334,7 +342,7 @@ const CreateAccountModal = ({ openValue, closeFunction }: ICreateAdminProps) => 
                 ]}
               ></Select>
             </div>
-            <div className="grid grid-cols-6 mb-3">
+            <div className="grid grid-cols-6 mb-3 ">
               <label className="col-span-2 flex items-center" htmlFor="dob">
                 Ngày sinh
               </label>
@@ -347,7 +355,7 @@ const CreateAccountModal = ({ openValue, closeFunction }: ICreateAdminProps) => 
                 onChange={form.handleChange}
                 max={new Date().toISOString().split('T')[0]}
                 disabled={false}
-                className={`bg-[#413F4D] border-2 col-span-4 border-[#FFFFFF] w-[50%] ml-2 h-8  border-opacity-30`}
+                className={`bg-[#413F4D] border-2 col-span-4 border-[#FFFFFF] w-[75%] ml-2 h-8  border-opacity-30`}
               />
             </div>
             <div className="grid grid-cols-6 mb-3">
@@ -362,7 +370,7 @@ const CreateAccountModal = ({ openValue, closeFunction }: ICreateAdminProps) => 
                 value={form.values.email}
                 onChange={form.handleChange}
                 disabled={false}
-                className={`bg-[#413F4D] border-2 col-span-4 border-[#FFFFFF] w-[80%] ml-2 h-8  border-opacity-30`}
+                className={`bg-[#413F4D] border-2 col-span-4 border-[#FFFFFF] w-[75%] ml-2 h-8  border-opacity-30`}
               />
             </div>
             <div className="grid grid-cols-6 mb-3">
@@ -378,13 +386,13 @@ const CreateAccountModal = ({ openValue, closeFunction }: ICreateAdminProps) => 
                 errorMessage={''}
                 onChange={form.handleChange}
                 disabled={false}
-                className={`bg-[#413F4D] border-2 col-span-4 border-[#FFFFFF] w-[80%] ml-2 h-8  border-opacity-30 ${
+                className={`bg-[#413F4D] border-2 col-span-4 border-[#FFFFFF] w-[75%] ml-2 h-8  border-opacity-30 ${
                   form.errors.phone && form.touched.phone ? 'placeholder:text-red-500' : ''
                 }`}
               />
             </div>
           </div>
-          <div className="col-span-5 flex justify-center pb-4 mt-10">
+          <div className="col-span-6 flex justify-center pb-4 mt-10">
             <Button
               isActive={false}
               onClick={closeHandleSmall}

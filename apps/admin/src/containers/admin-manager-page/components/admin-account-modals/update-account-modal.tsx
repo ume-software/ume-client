@@ -69,7 +69,9 @@ const UpdateAccountModal = ({ id, openValue, closeFunction }: IUpdateAdminProps)
   )
 
   function openCancelConfirmHandle() {
-    setOpenConfirm(true)
+    if (!form.dirty) {
+      cancelConfirmHandle()
+    } else setOpenConfirm(true)
   }
 
   function cancelConfirmHandle() {

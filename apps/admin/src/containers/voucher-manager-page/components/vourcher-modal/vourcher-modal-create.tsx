@@ -193,7 +193,8 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
   }
 
   function openConfirmModalCancel() {
-    setOpenConfirm(true)
+    if (!form.dirty) closeHandle()
+    else setOpenConfirm(true)
   }
   function openConfirmModal() {
     setIsCreate(true)
@@ -434,7 +435,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                       type="text"
                     />
                     {adminCheckVoucherCodeExisted?.isExisted && (
-                      <div className="w-full ml-4 text-xs text-red-500">Mã đã tồn tại</div>
+                      <div className="w-full ml-4 my-1 text-xs text-red-500">Mã đã tồn tại</div>
                     )}
                   </div>
                 </div>

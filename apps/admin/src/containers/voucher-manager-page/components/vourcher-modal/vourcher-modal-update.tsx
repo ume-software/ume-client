@@ -270,7 +270,8 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
   }
 
   function openConfirmModalCancel() {
-    setOpenConfirm(true)
+    if (!form.dirty) closeHandle()
+    else setOpenConfirm(true)
   }
   function openConfirmModal() {
     setIsCreate(true)
@@ -529,7 +530,7 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                       type="text"
                     />
                     {adminCheckVoucherCodeExisted?.isExisted && debouncedValue != vourcherCodeInit && (
-                      <div className="w-full ml-4 text-xs text-red-500">Mã đã tồn tại</div>
+                      <div className="w-full ml-4 my-1 text-xs text-red-500">Mã đã tồn tại</div>
                     )}
                   </div>
                 </div>
@@ -565,7 +566,7 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                 </div>
                 <div className="h-12 text-white">
                   Ngày kết thúc:
-                  <div className="inline-block w-1/3 ">
+                  <div className="inline-block w-1/3  ml-3">
                     <FormInput
                       name="endDate"
                       className="bg-[#413F4D] border-2 border-[#FFFFFF] h-8 ml-4 border-opacity-30"
@@ -580,7 +581,10 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                     />
                   </div>
                 </div>
-                <div className="h-12 text-white">{/* Trạng thái: <span className="font-bold">{status}</span> */}</div>
+                <div className="h-12 text-white">
+                  Trạng thái: <span className="font-bold">{voucherDetails?.status}</span>
+                </div>
+                <div className="h-12 text-white" aria-disabled></div>
               </div>
             </div>
 

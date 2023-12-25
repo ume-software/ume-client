@@ -18,10 +18,12 @@ type IContentRender = PropsWithChildren & {
 
 const ContentRender = ({ width, openSideBar, children }: IContentRender) => {
   if (width >= 900) {
-    if (width <= 1920 && width >= 1707 && openSideBar) {
-      return <div className={`pl-[18%] mt-16 w-full pr-[2%] py-5 min-h-screen bg-[#15151b] text-white`}>{children}</div>
-    } else if (((width >= 1200 && width <= 1537) || width <= 1720 || width >= 1920) && openSideBar) {
-      return <div className={`pl-[22%] mt-16 w-full pr-[2%] py-5 min-h-screen bg-[#15151b] text-white`}>{children}</div>
+    if (width <= 1919 && width >= 1707 && openSideBar) {
+      return <div className={`pl-[19%] mt-16 w-full pr-[2%] py-5 min-h-screen bg-[#15151b] text-white`}>{children}</div>
+    } else if (((width >= 1200 && width <= 1537) || width <= 1720 || width > 1920) && openSideBar) {
+      return <div className={`pl-[21%] mt-16 w-full pr-[2%] py-5 min-h-screen bg-[#15151b] text-white`}>{children}</div>
+    } else if (width >= 1800 && width <= 1920 && openSideBar) {
+      return <div className={`pl-[17%] mt-16 w-full pr-[2%] py-5 min-h-screen bg-[#15151b] text-white`}>{children}</div>
     } else {
       return <div className={`pl-[9%] mt-16 w-full pr-[2%] py-5 min-h-screen bg-[#15151b] text-white`}>{children}</div>
     }

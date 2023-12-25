@@ -74,8 +74,10 @@ export const Header = ({ handleOpen, openSideBar, setOpenPopupSideBar, openPopup
           ? 'pl-7%'
           : !openSideBar || width <= 1200
           ? 'pl-[9%]'
-          : width <= 1920 && width >= 1707 && openSideBar
-          ? 'pl-[18%]'
+          : width <= 1919 && width >= 1707 && openSideBar
+          ? 'pl-[19%]'
+          : width >= 1800 && width <= 1920 && openSideBar
+          ? 'pl-[17%]'
           : 'pl-[21%]'
       } shadow-md`}
     >
