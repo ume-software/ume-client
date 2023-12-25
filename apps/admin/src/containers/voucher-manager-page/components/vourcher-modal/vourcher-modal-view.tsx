@@ -1,5 +1,4 @@
 import { Button, TextArea } from '@ume/ui'
-import coinIcon from 'public/coin-icon.png'
 import empty_img from 'public/empty_error.png'
 
 import { useState } from 'react'
@@ -57,12 +56,12 @@ export default function VourcherModalView({ vourcherId, closeFunction, openValue
   const issuer = voucherDetails?.provider?.name || voucherDetails?.admin?.name
   const approver = voucherDetails?.admin?.name || ''
   const status = voucherDetails?.status || ''
-  const createAt = voucherDetails?.createdAt || ''
+  const createAt = voucherDetails?.startDate || ''
   const endDate = voucherDetails?.endDate || ''
   const numVoucher = voucherDetails?.numberIssued || ''
   const numUserCanUse = voucherDetails?.numberUsablePerBooker || ''
   const typeVoucher = voucherDetails?.type || ''
-  const applyTime = voucherDetails?.applyISODayOfWeek || ''
+  const applyTime = voucherDetails?.applyISODayOfWeek || []
   const numVoucherInDay = voucherDetails?.dailyNumberIssued || ''
   const numUserCanUseInDay = voucherDetails?.dailyUsageLimitPerBooker || ''
   const minimize = voucherDetails?.discountValue || ''
@@ -80,6 +79,13 @@ export default function VourcherModalView({ vourcherId, closeFunction, openValue
       .toString()
       .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
   }
+  function convertToISODate(zoneDate) {
+    let inputDate = new Date(zoneDate).toLocaleDateString('en-GB')
+    const [day, month, year] = inputDate.split('/')
+    const isoDate = new Date(`${year}-${month}-${day}`).toISOString().split('T')[0]
+    return isoDate
+  }
+  console.log(voucherDetails)
 
   return (
     <div>

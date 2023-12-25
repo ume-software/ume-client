@@ -1,15 +1,20 @@
 import { Plus } from '@icon-park/react'
+import { Dict } from '@trpc/server'
 import { Button, FormInput } from '@ume/ui'
 import { uploadImageServices } from '~/api/upload-media'
+import useDebounce from '~/hooks/adminDebounce'
 
 import { useRef, useState } from 'react'
 
 import { notification } from 'antd'
 import { useFormik } from 'formik'
 import Image from 'next/legacy/image'
+import { PrismaWhereConditionType, prismaWhereConditionToJsonString } from 'query-string-prisma-ume'
 import {
+  CreateServiceAttributeRequest,
   HandleServiceAttributeRequestHandleTypeEnum,
   HandleServiceAttributeValueRequestHandleTypeEnum,
+  ServicePagingResponse,
 } from 'ume-service-openapi'
 import * as Yup from 'yup'
 
@@ -33,7 +38,11 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
   const imageInputRef = useRef<HTMLInputElement>(null)
   const [children, setChildren] = useState<JSX.Element[]>([])
   const createService = trpc.useMutation(['services.createService'])
+  const [serviceList, setServiceList] = useState<ServicePagingResponse | undefined>()
+  const [isExitName, setIsExitName] = useState<boolean>(false)
+  const [isExitViName, setIsExitViName] = useState<boolean>(false)
   const utils = trpc.useContext()
+  const NOT_EXITED = 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
 
   const form = useFormik({
     initialValues: {
@@ -41,7 +50,7 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
       viName: '',
       imageUrl: '',
       isActivated: true,
-      serviceAttributes: [] as Array<Object>,
+      serviceAttributes: [] as Array<CreateServiceAttributeRequest>,
       selectedImage: null,
     },
     validationSchema: Yup.object({
@@ -73,6 +82,94 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
       resetForm()
     },
   })
+  const debouncedName = useDebounce<string>(form.values.name, 500)
+  const debouncedViName = useDebounce<string>(form.values.viName, 500)
+  const checkNameQuery: PrismaWhereConditionType<ServicePagingResponse> = Object.assign({
+    OR: [
+      {
+        name: {
+          equals: debouncedName ? debouncedName + '' : NOT_EXITED,
+          mode: 'insensitive',
+        },
+      },
+      {
+        viName: {
+          equals: debouncedName ? debouncedName + '' : NOT_EXITED,
+          mode: 'insensitive',
+        },
+      },
+    ],
+  })
+  trpc.useQuery(
+    [
+      'services.getServiceList',
+      {
+        limit: '1',
+        page: '1',
+        select: undefined,
+        where: prismaWhereConditionToJsonString(checkNameQuery, ['isUndefined']),
+        order: undefined,
+      },
+    ],
+    {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: 'always',
+      cacheTime: 0,
+      refetchOnMount: true,
+      onSuccess(data) {
+        setServiceList(data.data)
+        if (data.data.count != 0) {
+          setIsExitName(true)
+        } else {
+          setIsExitName(false)
+        }
+      },
+    },
+  )
+
+  const checkViNameQuery: PrismaWhereConditionType<ServicePagingResponse> = Object.assign({
+    OR: [
+      {
+        name: {
+          equals: debouncedViName ? debouncedViName + '' : NOT_EXITED,
+          mode: 'insensitive',
+        },
+      },
+      {
+        viName: {
+          equals: debouncedViName ? debouncedViName + '' : NOT_EXITED,
+          mode: 'insensitive',
+        },
+      },
+    ],
+  })
+  trpc.useQuery(
+    [
+      'services.getServiceList',
+      {
+        limit: '1',
+        page: '1',
+        select: undefined,
+        where: prismaWhereConditionToJsonString(checkViNameQuery, ['isUndefined']),
+        order: undefined,
+      },
+    ],
+    {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: 'always',
+      cacheTime: 0,
+      refetchOnMount: true,
+      onSuccess(data) {
+        setServiceList(data.data)
+        if (data.data.count != 0) {
+          setIsExitViName(true)
+        } else {
+          setIsExitViName(false)
+        }
+      },
+    },
+  )
+
   function closeHandleSmall() {
     openConfirmModalCancel()
   }
@@ -155,6 +252,7 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
       return false
     }
   }
+
   async function submitHandle() {
     setOpenConfirm(false)
     setIsCreate(false)
@@ -212,7 +310,112 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
       }
     }
   }
+  function isDisableButton() {
+    return (
+      !form.isValid ||
+      !form.dirty ||
+      (isExitName ? true : false) ||
+      (isExitViName ? true : false) ||
+      isInValidUniqueAttribute() ||
+      isInvalidValidateValues()
+    )
+  }
 
+  const isAttributeUnique = (newAttributeValue, index) => {
+    let flag = false
+    if (newAttributeValue.length != 0) {
+      const attributeValues = form.values.serviceAttributes
+        .filter((_, i) => i !== index)
+        .map((row) => row.attribute.toLowerCase())
+      if (attributeValues.includes(newAttributeValue.toLowerCase())) {
+        flag = true
+      }
+      const attributeViValues = form.values.serviceAttributes
+        .filter((_, i) => i !== index)
+        .map((row) => row.viAttribute?.toLowerCase())
+
+      if (attributeViValues.includes(newAttributeValue.toLowerCase())) {
+        flag = true
+      }
+    }
+    return flag
+  }
+
+  function isInValidUniqueAttribute() {
+    let flag = false
+    const attributeValues = form.values.serviceAttributes.map((row) => row.attribute.toLowerCase())
+    if (attributeValues.length > 0) {
+      const checkDuplicateAttribute = attributeValues.length != new Set(attributeValues).size
+      if (checkDuplicateAttribute) {
+        return true
+      }
+    }
+    const attributeViValues = form.values.serviceAttributes
+      .map((row) => row.viAttribute?.toLowerCase())
+      .filter((value) => value != '')
+    if (attributeViValues.length > 0) {
+      const checkDuplicateViAttribute = attributeViValues.length != new Set(attributeViValues).size
+      if (checkDuplicateViAttribute) {
+        return true
+      }
+    }
+    if (attributeValues.length > 0 && attributeViValues.length > 0) {
+      const isAttributeInViAttributes = attributeValues
+        .filter((_, index) => attributeValues[index] !== attributeViValues[index])
+        .some((value) => attributeViValues.includes(value))
+      if (isAttributeInViAttributes) {
+        return true
+      }
+    }
+    return flag
+  }
+
+  function isInvalidValidateValues() {
+    const isValid = form.values.serviceAttributes.map((row) => {
+      const isValidValue = validateListValue(row.serviceAttributeValues)
+      if (isValidValue) {
+        return true
+      } else {
+        false
+      }
+    })
+    if (isValid) {
+      const result = isValid.includes(true)
+      if (result) {
+        return true
+      }
+    }
+    return false
+  }
+
+  function validateListValue(listValue) {
+    let flag = false
+    const values = listValue.map((row) => row.value.toLowerCase())
+    if (values.length > 0) {
+      const checkDuplicateValues = values.length != new Set(values).size
+      if (checkDuplicateValues) {
+        return true
+      }
+    }
+    const viValues = listValue.map((row) => row.viValue?.toLowerCase())
+    if (viValues.length > 0) {
+      const checkDuplicateViValues =
+        viValues.filter((value) => value != '').length != new Set(viValues.filter((value) => value != '')).size
+      if (checkDuplicateViValues) {
+        return true
+      }
+    }
+
+    if (values.length > 0 && viValues.length > 0) {
+      const isValueInViValues = values
+        .filter((_, index) => values[index] !== viValues[index])
+        .some((value) => viValues.includes(value))
+      if (isValueInViValues) {
+        return true
+      }
+    }
+    return flag
+  }
   return (
     <div>
       <form onSubmit={form.handleSubmit} className="flex flex-col mb-4 gap-y-4">
@@ -281,6 +484,7 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
                       error={!!form.errors.name && form.touched.name}
                       errorMessage={''}
                     />
+                    {isExitName && <div className="w-full text-xs text-red-500">Tên dịch vụ đã tồn tại</div>}
                   </div>
                 </div>
                 <div className="h-12 text-white">
@@ -302,6 +506,7 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
                       error={!!form.errors.viName && form.touched.viName}
                       errorMessage={''}
                     />
+                    {isExitViName && <div className="w-full text-xs text-red-500">Tên dịch vụ đã tồn tại</div>}
                   </div>
                 </div>
               </div>
@@ -310,22 +515,25 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
           {/* compent-child */}
 
           <div className="grid grid-cols-2 gap-4 px-4 pb-4 mt-6">
-            {form.values.serviceAttributes.map((childData, index) => (
-              <div className="col-span-1 " key={index}>
-                <ServiceAttributes
-                  index={index}
-                  serviceAttributesData={childData}
-                  setServiceAttributesData={(data) => {
-                    const updatedSubChildData = [...form.values.serviceAttributes]
-                    updatedSubChildData[index] = data
-                    form.setFieldValue(`serviceAttributes[${index}]`, data)
-                  }}
-                  removeChildComponent={(index) => {
-                    removeChildComponent(index)
-                  }}
-                />
-              </div>
-            ))}
+            {form.values.serviceAttributes.map((childData, index) => {
+              return (
+                <div className="col-span-1 " key={index}>
+                  <ServiceAttributes
+                    index={index}
+                    serviceAttributesData={childData}
+                    setServiceAttributesData={(data) => {
+                      const updatedSubChildData = [...form.values.serviceAttributes]
+                      updatedSubChildData[index] = data
+                      form.setFieldValue(`serviceAttributes[${index}]`, data)
+                    }}
+                    removeChildComponent={(index) => {
+                      removeChildComponent(index)
+                    }}
+                    isAttributeUnique={isAttributeUnique}
+                  />
+                </div>
+              )
+            })}
             <div className="col-span-1 ">
               <div className="flex items-center justify-center w-full h-full">
                 <div className="w-40">
@@ -353,7 +561,7 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
             <Button
               isActive={false}
               customCSS={`mx-6 px-4 py-1 border-2 ${
-                form.isValid && form.values.name != '' && 'hover:scale-110 bg-[#7463F0] border-[#7463F0] '
+                !isDisableButton() && 'hover:scale-110 bg-[#7463F0] border-[#7463F0] '
               }
               `}
               onClick={(e) => {
@@ -364,7 +572,7 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
                   openConfirmModal()
                 }
               }}
-              isDisable={!form.isValid || form.values.name === ''}
+              isDisable={isDisableButton()}
               isLoading={createService.isLoading}
             >
               {'Tạo'}
