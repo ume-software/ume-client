@@ -137,7 +137,9 @@ export const ServicesModalUpdate = ({ idService, closeFunction, openValue }: ISe
   }, [nameInit])
 
   function closeHandleSmall() {
-    openConfirmModalCancel()
+    if (!form.dirty) {
+      closeHandle()
+    } else openConfirmModalCancel()
   }
   function openConfirmModalCancel() {
     setOpenConfirm(true)

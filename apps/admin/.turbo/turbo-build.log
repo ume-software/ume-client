@@ -23,10 +23,10 @@ info  - Linting and checking validity of types...
 66:6  Warning: React Hook React.useEffect has a missing dependency: 'form'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
 
 ./src/containers/services-manager-page/components/services-modal/services-modal-update.tsx
-137:6  Warning: React Hook React.useEffect has missing dependencies: 'createdAtInit', 'form', 'imageUrlInit', 'isActivatedInit', 'serviceAttributesInit', 'servicesDetails', and 'viNameInit'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+137:6  Warning: React Hook React.useEffect has missing dependencies: 'createdAtInit', 'form', 'imageUrlInit', 'isActivatedInit', 'numberUsedInit', 'serviceAttributesInit', 'servicesDetails', and 'viNameInit'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
 
 ./src/containers/services-manager-page/components/services-modal/services-modal-view.tsx
-105:6  Warning: React Hook useEffect has missing dependencies: 'createdAtInit', 'form', 'imageUrlInit', 'isActivatedInit', 'nameInit', 'serviceAttributesInit', and 'viNameInit'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+105:6  Warning: React Hook useEffect has missing dependencies: 'createdAtInit', 'form', 'imageUrlInit', 'isActivatedInit', 'nameInit', 'numberUsedInit', 'serviceAttributesInit', and 'viNameInit'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
 
 ./src/containers/voucher-manager-page/components/vourcher-modal/vourcher-modal-update.tsx
 176:6  Warning: React Hook React.useEffect has missing dependencies: 'ImageInit', 'applyTimeInit', 'audienceInit', 'descriptionInit', 'discountUnitInit', 'form', 'maximumDiscountValueInit', 'minimizeInit', 'minimumBookingDurationForUsageInit', 'minimumBookingTotalPriceForUsageInit', 'nameInit', 'numUserCanUseInDayInit', 'numUserCanUseInit', 'numVoucherInDayInit', 'numVoucherInit', 'startDateInit', 'statusInit', 'typeVoucherInit', 'updateVoucherAdmin', and 'vourcherCodeInit'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
@@ -46,18 +46,18 @@ Route (pages)                                  Size     First Load JS
 ┌ λ /                                          257 B           192 kB
 ├   /_app                                      0 B             192 kB
 ├ λ /404                                       334 B           192 kB
-├ ○ /admin-account-manager (475 ms)            1.84 kB         194 kB
+├ ○ /admin-account-manager                     1.84 kB         194 kB
 ├ λ /api/status                                0 B             192 kB
 ├ λ /api/trpc/[trpc]                           0 B             192 kB
-├ ○ /complaint-booking-manager (512 ms)        1.85 kB         194 kB
+├ ○ /complaint-booking-manager                 1.85 kB         194 kB
 ├ ○ /dashboard (507 ms)                        1.82 kB         194 kB
-├ ○ /kyc-manager/kyc-all (513 ms)              1.84 kB         194 kB
-├ ○ /kyc-manager/kyc-pending                   1.85 kB         194 kB
-├ ○ /provider-manager (500 ms)                 1.84 kB         194 kB
-├ ○ /report-manager                            1.83 kB         194 kB
-├ ○ /services-manager (680 ms)                 1.84 kB         194 kB
+├ ○ /kyc-manager/kyc-all (503 ms)              1.84 kB         194 kB
+├ ○ /kyc-manager/kyc-pending (383 ms)          1.85 kB         194 kB
+├ ○ /provider-manager (397 ms)                 1.84 kB         194 kB
+├ ○ /report-manager (406 ms)                   1.83 kB         194 kB
+├ ○ /services-manager (425 ms)                 1.84 kB         194 kB
 ├ ○ /signin                                    1.81 kB         194 kB
-├ ○ /transaction-manager/booking (509 ms)      1.85 kB         194 kB
+├ ○ /transaction-manager/booking               1.85 kB         194 kB
 ├ ○ /transaction-manager/deposit               1.85 kB         194 kB
 ├ ○ /transaction-manager/donation              1.85 kB         194 kB
 ├ ○ /transaction-manager/withdrawal            1.86 kB         194 kB
@@ -68,9 +68,9 @@ Route (pages)                                  Size     First Load JS
 + First Load JS shared by all                  198 kB
   ├ chunks/framework-22108eb722d84e59.js       45.4 kB
   ├ chunks/main-1549b305685c3af3.js            26.7 kB
-  ├ chunks/pages/_app-2a10e0a34e7fc616.js      118 kB
-  ├ chunks/webpack-b6ad43109970aad7.js         2.25 kB
-  └ css/f9a5698e2e5dfeb6.css                   6.4 kB
+  ├ chunks/pages/_app-e9d0aa4b13059a1b.js      118 kB
+  ├ chunks/webpack-4dbe6c6829c5bd8c.js         2.25 kB
+  └ css/cdf1df16a446a2fa.css                   6.4 kB
 
 λ  (Server)  server-side renders at runtime (uses getInitialProps or getServerSideProps)
 ○  (Static)  automatically rendered as static HTML (uses no initial props)

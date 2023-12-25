@@ -74,7 +74,9 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
     },
   })
   function closeHandleSmall() {
-    openConfirmModalCancel()
+    if (!form.dirty) {
+      closeHandle()
+    } else openConfirmModalCancel()
   }
   function openConfirmModalCancel() {
     setOpenConfirm(true)
@@ -265,7 +267,7 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
               </div>
               <div className="flex flex-col justify-center w-2/6 ">
                 <div className="w-full h-24 text-white">
-                  <div className="inline-block w-full h-8">Tên dịch vụ:</div>
+                  <div className="inline-block w-full h-8">*Tên dịch vụ:</div>
                   <div className="inline-block w-full ">
                     <FormInput
                       autoComplete="off"
@@ -273,7 +275,7 @@ export default function ServicesModalCreate({ closeFunction, openValue }: IServi
                       className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8 border-opacity-30 ${
                         form.errors.name && form.touched.name ? 'placeholder:text-red-500' : ''
                       }`}
-                      placeholder={!!form.errors.name && form.touched.name ? form.errors.name : 'Tên dịch vụ bắt buộc '}
+                      placeholder={!!form.errors.name && form.touched.name ? form.errors.name : 'League of legends'}
                       disabled={false}
                       onChange={form.handleChange}
                       onBlur={form.handleBlur}

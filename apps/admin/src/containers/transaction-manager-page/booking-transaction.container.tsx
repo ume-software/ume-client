@@ -3,8 +3,10 @@ import { Input } from '@ume/ui'
 
 import React, { useState } from 'react'
 
+import { Tag } from 'antd'
 import { ColumnsType } from 'antd/es/table'
 import { PrismaWhereConditionType, prismaWhereConditionToJsonString } from 'query-string-prisma-ume'
+import { BookingHistoryPagingResponse } from 'ume-service-openapi'
 
 import { locale } from '~/components/common-table/EmptyTableComponent'
 import CommonTable from '~/components/common-table/Table'
@@ -22,12 +24,82 @@ type TableProps = {
   createdAt: string
 }
 
+const statusFilterItems = [
+  {
+    key: 'all',
+    label: (
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
+        Tất cả
+      </Tag>
+    ),
+  },
+  {
+    key: 'INIT',
+    label: (
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
+        Đang chờ
+      </Tag>
+    ),
+  },
+  {
+    key: 'USER_CANCEL',
+    label: (
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
+        Người thuê hủy
+      </Tag>
+    ),
+  },
+  {
+    key: 'PROVIDER_CANCEL',
+    label: (
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
+        Đã từ chối
+      </Tag>
+    ),
+  },
+  {
+    key: 'PROVIDER_ACCEPT',
+    label: (
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
+        Đang cung cấp
+      </Tag>
+    ),
+  },
+  {
+    key: 'USER_FINISH_SOON',
+    label: (
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
+        Kết thúc sớm
+      </Tag>
+    ),
+  },
+  {
+    key: 'FINISHED',
+    label: (
+      <Tag className="flex justify-center w-full px-3 py-2 bg-white rounded-lg hover:bg-gray-500 hover:text-white">
+        Đã kết thúc
+      </Tag>
+    ),
+  },
+]
+
+const mappingStatus = {
+  all: 'Tất cả',
+  INIT: 'Đang chờ',
+  USER_CANCEL: 'Người thuê hủy',
+  PROVIDER_CANCEL: 'Đã từ chối',
+  PROVIDER_ACCEPT: 'Đang cung cấp',
+  USER_FINISH_SOON: 'Kết thúc sớm',
+  FINISHED: 'Đã kết thúc',
+  PROVIDER_FINISH_SOON: 'Nhà cung cấp kết thúc sớm',
+}
+
 const BookingTransactionContainer = () => {
-  const [transactions, setTransactions] = useState<any>()
+  const [transactions, setTransactions] = useState<BookingHistoryPagingResponse>()
   const [count, setCount] = useState(0)
   const [page, setPage] = useState(1)
   const [filter, setFilter] = useState({
-    platform: 'all',
+    status: 'all',
     search: '',
   })
   const [searchChange, setSearchChange] = useState('')
@@ -61,7 +133,9 @@ const BookingTransactionContainer = () => {
         },
       },
     ],
+    status: filter.status !== 'all' ? filter.status : undefined,
   })
+  console.log(transactions)
 
   const ORDER = [{ createdAt: 'asc' }]
   const SELECT = ['$all', { providerService: ['$all', { provider: ['$all'] }], booker: ['$all'] }]
@@ -85,6 +159,16 @@ const BookingTransactionContainer = () => {
       },
     },
   )
+
+  const handleFilter = (title, key) => {
+    setPage(1)
+    if (title == 'status') {
+      setFilter({
+        ...filter,
+        status: key,
+      })
+    }
+  }
 
   const handleSearchChange = (e) => {
     if (e.target.value == '') {
@@ -146,6 +230,19 @@ const BookingTransactionContainer = () => {
       align: 'center',
     },
     {
+      title: 'Trạng thái',
+      dataIndex: 'status',
+      width: '10%',
+      align: 'center',
+      render(status) {
+        return (
+          <div className="flex justify-center items-center">
+            <div className="p-2 rounded-lg bg-white text-black min-w-[80%] font-bold">{mappingStatus[status]}</div>
+          </div>
+        )
+      },
+    },
+    {
       title: 'Ngày giao dịch',
       dataIndex: 'createdAt',
       width: '10%',
@@ -159,7 +256,14 @@ const BookingTransactionContainer = () => {
     <div>
       <span className="content-title">Quản lý nạp tiền</span>
       <div className="flex flex-col my-10">
-        <div className="flex items-center justify-end">
+        <div className="flex items-center justify-between">
+          <FilterDropdown
+            id={'status'}
+            CustomCss="w-[12rem]"
+            title={`Trạng thái: ${mappingStatus[filter.status]}`}
+            items={statusFilterItems}
+            handleFilter={handleFilter}
+          />
           <div className="flex items-center border-2 border-white rounded-lg bg-umeHeader">
             <Search className="pl-2 rounded-full active:bg-gray-700" theme="outline" size="24" fill="#fff" />
             <Input
