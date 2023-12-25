@@ -170,11 +170,9 @@ const EditProfile = () => {
 
   const handleUpdateInformation = async () => {
     if (editAccountInforFormRef.current) {
+      const slugUpdate = form.values.slug == '' ? undefined : form.values.slug
+      const dobUpdate = form.values.dob == '' ? undefined : form.values.dob
       if (selectedImage.avatarURL) {
-        const slugUpdate = form.values.slug == '' ? undefined : form.values.slug
-
-        console.log(slugUpdate)
-
         const formData = new FormData(editAccountInforFormRef.current)
         const file = formData.get('files')
         const image = new FormData()
@@ -187,7 +185,7 @@ const EditProfile = () => {
               updateInformation.mutate(
                 {
                   avatarUrl: String(responseData.data.data.results),
-                  dob: form.values.dob,
+                  dob: dobUpdate,
                   gender: form.values.gender.key,
                   name: form.values.name?.trim(),
                   slug: slugUpdate,
@@ -228,10 +226,10 @@ const EditProfile = () => {
         try {
           updateInformation.mutate(
             {
-              dob: form.values.dob,
+              dob: dobUpdate,
               gender: form.values.gender.key,
               name: form.values.name?.trim(),
-              slug: form.values.slug?.trim(),
+              slug: slugUpdate,
               phone: form.values.phone,
             },
             {
@@ -266,6 +264,7 @@ const EditProfile = () => {
       <ConfirmForm
         title="Thay đổi thông tin cá nhân"
         description="Bạn có chấp nhận thay đổi thông tin cá nhân hay không?"
+        isLoading={updateInformation.isLoading}
         onClose={handleClose}
         onOk={() => {
           handleUpdateInformation()

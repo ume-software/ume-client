@@ -1,4 +1,3 @@
-import { CheckSmall, CloseSmall } from '@icon-park/react'
 import { useAuth } from '~/contexts/auth'
 
 import { useState } from 'react'
@@ -13,7 +12,7 @@ import { trpc } from '~/utils/trpc'
 const EditNotificated = () => {
   const [userInfo, setUserInfo] = useState<UserInformationResponse>()
   const { logout, isAuthenticated } = useAuth()
-  trpc.useQuery(['identity.identityInfo'], {
+  const { isLoading: isGetIdentityInforLoading } = trpc.useQuery(['identity.identityInfo'], {
     onSuccess(data) {
       setUserInfo(data.data)
     },
@@ -23,13 +22,15 @@ const EditNotificated = () => {
     enabled: isAuthenticated,
   })
 
+  const utils = trpc.useContext()
+
   const updateInformation = trpc.useMutation(['identity.updateUserProfile'])
 
   return (
     <div className="w-full px-10">
       <div className="flex items-center gap-3">
         <p className="text-4xl font-bold">Cài đặt thông báo</p>
-        {updateInformation.isLoading && (
+        {(updateInformation.isLoading || isGetIdentityInforLoading) && (
           <div className="flex items-center justify-center">
             <span
               className={`spinner h-5 w-5 animate-spin rounded-full border-[3px] border-r-transparent border-white}`}
@@ -54,10 +55,7 @@ const EditNotificated = () => {
                   { ...userInfo, isAllowNotificationToEmail: value },
                   {
                     onSuccess() {
-                      const updatedUserInfor = {
-                        ...userInfo,
-                        isAllowNotificationToEmail: value,
-                      }
+                      utils.invalidateQueries('identity.identityInfo')
                     },
                   },
                 )
@@ -77,10 +75,7 @@ const EditNotificated = () => {
                     { ...userInfo, isAllowNotificationMessage: value },
                     {
                       onSuccess() {
-                        const updatedUserInfor = {
-                          ...userInfo,
-                          isAllowNotificationMessage: value,
-                        }
+                        utils.invalidateQueries('identity.identityInfo')
                       },
                     },
                   )

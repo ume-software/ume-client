@@ -142,7 +142,7 @@ const RechargeForm = ({ handleClose, qrContent, setQRContent }: ReachargeFromPro
                             <p>Giá: </p>
                             <div className="flex items-center">
                               <p>
-                                {(price + price * platform.tax).toLocaleString('en-US', {
+                                {(price + price * platform.tax + 2000).toLocaleString('en-US', {
                                   currency: 'VND',
                                 })}
                               </p>
@@ -203,6 +203,7 @@ const RechargeForm = ({ handleClose, qrContent, setQRContent }: ReachargeFromPro
                             type="button"
                             isActive={true}
                             isOutlinedButton={!!values.balance}
+                            isLoading={requestRecharge.isLoading}
                             onClick={() => {
                               handleSubmit()
                             }}

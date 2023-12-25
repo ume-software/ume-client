@@ -200,7 +200,6 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
     PREVIOUS_BOOKING: ' Người đã từng thuê',
     TOP_5_BOOKER: ' Top 5 người thuê',
     TOP_10_BOOKER: ' Top 10 người thuê',
-    SELECTIVE_BOOKER: 'Người đặt chọn',
   }
 
   const mappingType = {
@@ -581,6 +580,9 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                             if (form.values.numVoucherInDay > newValue) {
                               form.setFieldValue('numVoucherInDay', newValue)
                             }
+                            if (parseInt(form.values.numUserCanUseInDay + '') > newValue) {
+                              form.setFieldValue('numUserCanUseInDay', newValue)
+                            }
                           }
                         } else {
                           e.target.value = '0'
@@ -612,6 +614,9 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                             e.target.value = form.values.numVoucher + ''
                           } else {
                             e.target.value = newValue.toString()
+                            if (parseInt(form.values.numUserCanUseInDay + '') > newValue) {
+                              form.setFieldValue('numUserCanUseInDay', newValue)
+                            }
                           }
                         } else {
                           e.target.value = '0'
@@ -773,8 +778,15 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                       onChange={(e) => {
                         const newValue = parseInt(e.target.value)
                         if (!isNaN(newValue) && newValue >= 1) {
-                          if (newValue > parseInt(form.values.numVoucherInDay + '')) {
-                            e.target.value = form.values.numVoucherInDay + ''
+                          if (
+                            newValue > parseInt(form.values.numVoucherInDay + '') ||
+                            newValue > parseInt(form.values.numUserCanUse + '')
+                          ) {
+                            if (parseInt(form.values.numVoucherInDay + '') < parseInt(form.values.numUserCanUse + '')) {
+                              e.target.value = form.values.numVoucherInDay + ''
+                            } else {
+                              e.target.value = form.values.numUserCanUse + ''
+                            }
                           } else {
                             e.target.value = newValue.toString()
                           }
@@ -921,10 +933,6 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                         label: mappingRecipientType.PREVIOUS_BOOKING,
                       },
                       {
-                        value: CreateVoucherRequestRecipientTypeEnum.SelectiveBooker,
-                        label: mappingRecipientType.SELECTIVE_BOOKER,
-                      },
-                      {
                         value: CreateVoucherRequestRecipientTypeEnum.Top10Booker,
                         label: mappingRecipientType.TOP_10_BOOKER,
                       },
@@ -936,7 +944,7 @@ export default function VourcherModalUpdate({ vourcherId, closeFunction, openVal
                   />
                 </div>
                 <div className="h-12 text-white">
-                  Khuyến mãi dùng cho hóa đơn có giờ tối thiểu (giờ):
+                  Khuyến mãi dùng cho hóa đơn có giờ tối thiểu:
                   <div className="inline-block w-1/5 ">
                     <FormInput
                       name="minimumBookingDurationForUsage"

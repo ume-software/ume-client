@@ -13,17 +13,7 @@ export const socket = (token: string | null) => {
       path: '/ume-service/socket/',
     })
 
-    const socketInstanceChatting = socketio.connect(getEnv().baseSocketChattingURL, {
-      reconnection: false,
-      secure: true,
-      rejectUnauthorized: false,
-      auth: {
-        authorization: `Bearer ${token}`,
-      },
-      path: '/chatting-service/socket/',
-    })
-
-    return { socketInstanceBooking, socketInstanceChatting }
+    return { socketInstanceBooking }
   } else {
     return null
   }

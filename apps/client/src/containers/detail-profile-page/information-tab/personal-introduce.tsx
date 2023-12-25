@@ -19,8 +19,6 @@ const PersonalIntroduce = (props: { data: UserInformationResponse }) => {
       enabled: !!props.data.slug || !!props.data.id,
     }) ?? undefined
 
-  console.log(feedbackByUserSlug.data)
-
   return (
     <>
       <div className="p-10 bg-zinc-800 rounded-3xl">
@@ -61,7 +59,7 @@ const PersonalIntroduce = (props: { data: UserInformationResponse }) => {
                     {/* <span className="text-sm font-normal opacity-30">
                       -- {feedback.booking?.providerService?.service?.name} --
                     </span> */}
-                    <span className="font-normal text-md pl-3">{feedback.content}</span>
+                    <span className="font-normal text-md">{feedback.content}</span>
                   </div>
                 </Link>
               ))

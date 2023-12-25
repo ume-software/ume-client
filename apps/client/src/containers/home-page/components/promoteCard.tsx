@@ -54,7 +54,9 @@ const PromoteCard = (props: { data: FilterProviderResponse; filterAttributeValue
                           key={serviceAttrValues.value + indexAttrValue + index}
                           className="inline-block px-5 py-2 mb-3 mr-3 text-sm font-bold rounded-lg w-fit bg-zinc-500"
                         >
-                          {serviceAttrValues.viValue}
+                          {serviceAttrValues.viValue && serviceAttrValues.viValue != ''
+                            ? serviceAttrValues.viValue
+                            : serviceAttrValues.value}
                         </div>
                       ),
                   )}

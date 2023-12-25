@@ -55,26 +55,55 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
   const [total, setTotal] = useState(0)
   const [totalAfterDiscount, setTotalAfterDiscount] = useState(0)
 
+  const isSpecialTime = (startTimeOfDay: string | undefined, endTimeOfDay: string | undefined) => {
+    if (startTimeOfDay && endTimeOfDay) {
+      const currentTime = new Date()
+      const currentHours = currentTime.getHours()
+      const currentMinutes = currentTime.getMinutes()
+
+      const [startHours, startMinutes] = startTimeOfDay.split(':').map(Number)
+      const [endHours, endMinutes] = endTimeOfDay.split(':').map(Number)
+
+      return (
+        (startHours > endHours &&
+          (currentHours > startHours ||
+            (currentHours === startHours && currentMinutes >= startMinutes) ||
+            currentHours < endHours ||
+            (currentHours === endHours && currentMinutes <= endMinutes))) ||
+        (startHours < endHours &&
+          (currentHours > startHours || (currentHours === startHours && currentMinutes >= startMinutes)) &&
+          (currentHours < endHours || (currentHours === endHours && currentMinutes <= endMinutes)))
+      )
+    }
+    return false
+  }
+
   const handleTotal = () => {
     const selectedItem = props.data.providerServices?.find((item) => booking.providerServiceId == item.id)
+    const selectedItemPrice =
+      selectedItem?.bookingCosts?.find((spectialTime) => {
+        if (isSpecialTime(spectialTime?.startTimeOfDay, spectialTime?.endTimeOfDay)) {
+          return spectialTime
+        }
+      })?.amount ?? selectedItem?.defaultCost
     const voucher = myVoucher?.row?.find((voucher) => voucher.code == booking?.voucherIds)
     const voucherValue =
       voucher?.discountUnit == VoucherResponseDiscountUnitEnum.Cash
         ? voucher.discountValue
         : VoucherResponseDiscountUnitEnum.Percent
-        ? ((selectedItem?.defaultCost ?? 0) * booking.bookingPeriod * (voucher?.discountValue ?? 0)) / 100
+        ? ((selectedItemPrice ?? 0) * booking.bookingPeriod * (voucher?.discountValue ?? 0)) / 100
         : 0
 
-    setTotal((selectedItem?.defaultCost ?? 0) * booking.bookingPeriod)
+    setTotal((selectedItemPrice ?? 0) * booking.bookingPeriod)
 
     setTotalAfterDiscount(
       voucher?.discountUnit == VoucherResponseDiscountUnitEnum.Cash
-        ? (selectedItem?.defaultCost ?? 0) * booking.bookingPeriod > (voucherValue ?? 1)
-          ? (selectedItem?.defaultCost ?? 0) * booking.bookingPeriod - (voucherValue ?? 1)
+        ? (selectedItemPrice ?? 0) * booking.bookingPeriod > (voucherValue ?? 1)
+          ? (selectedItemPrice ?? 0) * booking.bookingPeriod - (voucherValue ?? 1)
           : 0
         : VoucherResponseDiscountUnitEnum.Percent
-        ? (selectedItem?.defaultCost ?? 0) * booking.bookingPeriod - (voucherValue ?? 0)
-        : (selectedItem?.defaultCost ?? 0) * booking.bookingPeriod,
+        ? (selectedItemPrice ?? 0) * booking.bookingPeriod - (voucherValue ?? 0)
+        : (selectedItemPrice ?? 0) * booking.bookingPeriod,
     )
   }
   useEffect(() => {
@@ -102,7 +131,7 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
   }, [props.data, slug.service, myVoucher?.row])
 
   const handleCreateBooking = (booking: BookingProviderRequest) => {
-    if (accountBalance.data?.data.totalBalanceAvailable! >= total) {
+    if (accountBalance.data?.data.totalBalanceAvailable! >= totalAfterDiscount) {
       try {
         createBooking.mutate(booking, {
           onSuccess: (data) => {

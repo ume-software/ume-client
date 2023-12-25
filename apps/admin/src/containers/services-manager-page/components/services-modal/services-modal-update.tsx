@@ -62,7 +62,7 @@ export const ServicesModalUpdate = ({ idService, closeFunction, openValue }: ISe
   const viNameInit = servicesDetails?.viName ?? ''
   const imageUrlInit = servicesDetails?.imageUrl ?? empty_img
   const isActivatedInit = true
-  const numberUsedInit = 100
+  const numberUsedInit = servicesDetails?.countProviderUsed
   const createdAtInit = servicesDetails?.createdAt
     ? new Date(servicesDetails?.createdAt).toLocaleDateString('en-GB')
     : ''
@@ -489,6 +489,7 @@ export const ServicesModalUpdate = ({ idService, closeFunction, openValue }: ISe
               Hủy
             </Button>
             <Button
+              isActive={false}
               customCSS={`mx-6 px-4 py-1 border-2 ${
                 !isDisableButton() && 'hover:scale-110 bg-[#7463F0] border-[#7463F0]'
               }`}

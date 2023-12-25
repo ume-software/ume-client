@@ -51,7 +51,6 @@ const genderData: GenderProps[] = [
 const FilterContainer = ({ service, listSubAttributeService }) => {
   const router = useRouter()
   const basePath = router.asPath.split('?')[0]
-  const serviceName = router.asPath.split('/')[2].split('?')[0].replace(/%20/g, ' ')
   const slug = router.query
 
   const limit = '20'
@@ -129,6 +128,12 @@ const FilterContainer = ({ service, listSubAttributeService }) => {
       },
     },
   )
+
+  const serviceName =
+    listSkils.find((skill) => skill?.slug == service)?.viName &&
+    listSkils.find((skill) => skill?.slug == service)?.viName != ''
+      ? listSkils.find((skill) => skill?.slug == service)?.viName
+      : listSkils.find((skill) => skill?.slug == service)?.name
 
   const handlePriceChange = (value: [number, number]) => {
     setPriceRange(value)
