@@ -3,17 +3,11 @@ info  - Loaded env from D:\GitHub\ume-client\apps\admin\.env.local
 info  - Loaded env from D:\GitHub\ume-client\apps\admin\.env.production
 info  - Linting and checking validity of types...
 
-Failed to compile.
-
 ./src/components/header/index.tsx
 55:6  Warning: React Hook useEffect has missing dependencies: 'adminInfo', 'handleLogOut', 'login', and 'user'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
 
 ./src/containers/admin-manager-page/components/admin-account-modals/update-account-modal.tsx
 55:6  Warning: React Hook useEffect has a missing dependency: 'form'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
-
-./src/containers/dashboard-page/components/service-statistic.component.tsx
-256:12  Error: 'HighchartsReact' is not defined.  react/jsx-no-undef
-300:12  Error: 'HighchartsReact' is not defined.  react/jsx-no-undef
 
 ./src/containers/kyc-provider-page/components/kyc-list.tsx
 102:1  Warning: Delete `␍⏎`  prettier/prettier
@@ -23,53 +17,60 @@ Failed to compile.
 65:19  Warning: Image elements must have an alt prop, either with meaningful text, or an empty string for decorative images.  jsx-a11y/alt-text
 
 ./src/containers/services-manager-page/components/services-modal/services-atrribute-value.tsx
-48:6  Warning: React Hook React.useEffect has a missing dependency: 'form'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+52:6  Warning: React Hook React.useEffect has a missing dependency: 'form'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
 
 ./src/containers/services-manager-page/components/services-modal/services-attribute-childrend.tsx
-66:6  Warning: React Hook React.useEffect has a missing dependency: 'form'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+69:6  Warning: React Hook useEffect has a missing dependency: 'form'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
 
 ./src/containers/services-manager-page/components/services-modal/services-modal-update.tsx
-137:6  Warning: React Hook React.useEffect has missing dependencies: 'createdAtInit', 'form', 'imageUrlInit', 'isActivatedInit', 'numberUsedInit', 'serviceAttributesInit', 'servicesDetails', and 'viNameInit'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+144:6  Warning: React Hook React.useEffect has missing dependencies: 'createdAtInit', 'form', 'imageUrlInit', 'isActivatedInit', 'numberUsedInit', 'serviceAttributesInit', 'servicesDetails', and 'viNameInit'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
 
 ./src/containers/services-manager-page/components/services-modal/services-modal-view.tsx
 105:6  Warning: React Hook useEffect has missing dependencies: 'createdAtInit', 'form', 'imageUrlInit', 'isActivatedInit', 'nameInit', 'numberUsedInit', 'serviceAttributesInit', and 'viNameInit'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
 
 ./src/containers/voucher-manager-page/components/vourcher-modal/vourcher-modal-update.tsx
-176:6  Warning: React Hook React.useEffect has missing dependencies: 'ImageInit', 'applyTimeInit', 'audienceInit', 'descriptionInit', 'discountUnitInit', 'form', 'maximumDiscountValueInit', 'minimizeInit', 'minimumBookingDurationForUsageInit', 'minimumBookingTotalPriceForUsageInit', 'nameInit', 'numUserCanUseInDayInit', 'numUserCanUseInit', 'numVoucherInDayInit', 'numVoucherInit', 'startDateInit', 'statusInit', 'typeVoucherInit', 'updateVoucherAdmin', and 'vourcherCodeInit'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+178:6  Warning: React Hook React.useEffect has missing dependencies: 'ImageInit', 'applyTimeInit', 'audienceInit', 'descriptionInit', 'discountUnitInit', 'form', 'maximumDiscountValueInit', 'minimizeInit', 'minimumBookingDurationForUsageInit', 'minimumBookingTotalPriceForUsageInit', 'nameInit', 'numUserCanUseInDayInit', 'numUserCanUseInit', 'numVoucherInDayInit', 'numVoucherInit', 'startDateInit', 'statusInit', 'typeVoucherInit', 'updateVoucherAdmin', and 'vourcherCodeInit'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
 
 info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules
-error Command failed with exit code 1.
-info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+info  - Creating an optimized production build...
+info  - Compiled successfully
+info  - Collecting page data...
+info  - Generating static pages (0/17)
+info  - Generating static pages (4/17)
+info  - Generating static pages (8/17)
+info  - Generating static pages (12/17)
+info  - Generating static pages (17/17)
+info  - Finalizing page optimization...
 
-Route (pages)                                  Size     First Load JS
-┌ λ /                                          257 B           192 kB
-├   /_app                                      0 B             192 kB
-├ λ /404                                       334 B           192 kB
-├ ○ /admin-account-manager                     1.84 kB         194 kB
-├ λ /api/status                                0 B             192 kB
-├ λ /api/trpc/[trpc]                           0 B             192 kB
-├ ○ /complaint-booking-manager                 1.85 kB         194 kB
-├ ○ /dashboard (507 ms)                        1.82 kB         194 kB
-├ ○ /kyc-manager/kyc-all (503 ms)              1.84 kB         194 kB
-├ ○ /kyc-manager/kyc-pending (383 ms)          1.85 kB         194 kB
-├ ○ /provider-manager (397 ms)                 1.84 kB         194 kB
-├ ○ /report-manager (406 ms)                   1.83 kB         194 kB
-├ ○ /services-manager (425 ms)                 1.84 kB         194 kB
-├ ○ /signin                                    1.81 kB         194 kB
-├ ○ /transaction-manager/booking               1.85 kB         194 kB
-├ ○ /transaction-manager/deposit               1.85 kB         194 kB
-├ ○ /transaction-manager/donation              1.85 kB         194 kB
-├ ○ /transaction-manager/withdrawal            1.86 kB         194 kB
-├ ○ /user-manager                              1.84 kB         194 kB
-├ ○ /voucher-manager/approve-provider-voucher  1.86 kB         194 kB
-├ ○ /voucher-manager/voucher-by-admin          1.86 kB         194 kB
-└ ○ /voucher-manager/voucher-by-provider       1.86 kB         194 kB
-+ First Load JS shared by all                  198 kB
-  ├ chunks/framework-22108eb722d84e59.js       45.4 kB
-  ├ chunks/main-1549b305685c3af3.js            26.7 kB
-  ├ chunks/pages/_app-e9d0aa4b13059a1b.js      118 kB
-  ├ chunks/webpack-4dbe6c6829c5bd8c.js         2.25 kB
-  └ css/cdf1df16a446a2fa.css                   6.4 kB
+Route (pages)                                           Size     First Load JS
+┌ λ /                                                   257 B           192 kB
+├   /_app                                               0 B             192 kB
+├ λ /404                                                334 B           192 kB
+├ ○ /admin-account-manager                              1.84 kB         194 kB
+├ λ /api/status                                         0 B             192 kB
+├ λ /api/trpc/[trpc]                                    0 B             192 kB
+├ ○ /complaint-booking-manager                          1.85 kB         194 kB
+├ ○ /dashboard (1617 ms)                                1.82 kB         194 kB
+├ ○ /kyc-manager/kyc-all (2225 ms)                      1.84 kB         194 kB
+├ ○ /kyc-manager/kyc-pending (1751 ms)                  1.85 kB         194 kB
+├ ○ /provider-manager (1544 ms)                         1.84 kB         194 kB
+├ ○ /report-manager (1585 ms)                           1.83 kB         194 kB
+├ ○ /services-manager (1392 ms)                         1.84 kB         194 kB
+├ ○ /signin (1349 ms)                                   1.81 kB         194 kB
+├ ○ /transaction-manager/booking (927 ms)               1.85 kB         194 kB
+├ ○ /transaction-manager/deposit (433 ms)               1.85 kB         194 kB
+├ ○ /transaction-manager/donation (598 ms)              1.85 kB         194 kB
+├ ○ /transaction-manager/withdrawal (508 ms)            1.86 kB         194 kB
+├ ○ /user-manager (554 ms)                              1.84 kB         194 kB
+├ ○ /voucher-manager/approve-provider-voucher (427 ms)  1.86 kB         194 kB
+├ ○ /voucher-manager/voucher-by-admin                   1.85 kB         194 kB
+└ ○ /voucher-manager/voucher-by-provider                1.86 kB         194 kB
++ First Load JS shared by all                           198 kB
+  ├ chunks/framework-22108eb722d84e59.js                45.4 kB
+  ├ chunks/main-1549b305685c3af3.js                     26.7 kB
+  ├ chunks/pages/_app-e9d0aa4b13059a1b.js               118 kB
+  ├ chunks/webpack-2ca8f9cfec1badba.js                  2.25 kB
+  └ css/cdf1df16a446a2fa.css                            6.4 kB
 
 λ  (Server)  server-side renders at runtime (uses getInitialProps or getServerSideProps)
 ○  (Static)  automatically rendered as static HTML (uses no initial props)

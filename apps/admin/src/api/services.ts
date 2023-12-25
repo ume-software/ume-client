@@ -11,7 +11,7 @@ import {
   getServiceDetails,
   getServiceList,
   statisticMostUsedService,
-  statisticProviderService,
+  statisticService,
   updateService,
 } from './services/services-service'
 
