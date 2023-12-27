@@ -564,15 +564,7 @@ const FilterContainer = ({ service, listSubAttributeService }) => {
                   }`}
                   className="mb-10"
                 >
-                  <PromoteCard
-                    data={provider}
-                    filterAttributeValueData={attributeFilter.flatMap(
-                      (listSubAttr) =>
-                        listSubAttr.subAttr?.map(
-                          (itemSubAttr) => itemSubAttr.subAttrViValue ?? itemSubAttr.subAttrValue,
-                        ) ?? [],
-                    )}
-                  />
+                  <PromoteCard data={provider} />
                 </Link>
               ))
             ) : (

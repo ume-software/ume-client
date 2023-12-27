@@ -1,5 +1,5 @@
-import { AddPicture, DeleteFive } from '@icon-park/react'
-import { Button, TextArea } from '@ume/ui'
+import { AddPicture, CloseSmall, DeleteFive } from '@icon-park/react'
+import { Button, Modal, TextArea } from '@ume/ui'
 import { uploadAudio, uploadImage } from '~/apis/upload-media'
 
 import { ChangeEvent, FormEvent, useEffect, useId, useState } from 'react'
@@ -14,7 +14,7 @@ interface ThumbnailsProps {
   type: string | undefined
 }
 
-const CreatePost = (props: any) => {
+const CreatePost = ({ isModalCreatePostVisible, setIsModalCreatePostVisible }) => {
   const index = useId()
   const [content, setContent] = useState<string>('')
   const createNewPost = trpc.useMutation(['community.createNewPost'])
@@ -97,7 +97,7 @@ const CreatePost = (props: any) => {
                   description: 'Bài viết mới đã được tạo thành công.',
                   placement: 'bottomLeft',
                 })
-                props.handleClose()
+                setIsModalCreatePostVisible(false)
               }
             },
           },
@@ -113,83 +113,104 @@ const CreatePost = (props: any) => {
     }
   }, [removeMedia])
 
-  return (
-    <form onSubmit={handleCreateNewPost} className="px-5 py-3">
-      <div className="max-h-[450px] flex flex-col text-white overflow-y-auto p-5 custom-scrollbar gap-5">
-        <div className="flex flex-col gap-3">
-          <label>Nội dung</label>
-          <TextArea className="bg-[#413F4D]" rows={5} value={content} onChange={(e) => setContent(e.target.value)} />
-        </div>
-        <div className="relative flex flex-col gap-3">
-          <div className="relative flex items-center justify-between">
-            <label>Hình ảnh</label>
-            <div className="relative cursor-pointer w-fit">
-              {!mediaFiles ? (
-                <label className="z-10 flex items-center justify-start gap-2 p-3 bg-purple-600 rounded-lg hover:bg-gray-700">
-                  <AddPicture theme="filled" size="15" fill="#FFFFFF" strokeLinejoin="bevel" />
-                  Chọn ảnh
-                </label>
-              ) : (
-                <div
-                  className="p-2 rounded-full hover:bg-gray-700"
-                  onClick={() => setRemoveMedia(true)}
-                  onKeyDown={() => {}}
-                >
-                  <DeleteFive theme="filled" size="20" fill="#FFFFFF" strokeLinejoin="bevel" />
+  const CreatePostModal = Modal.useEditableForm({
+    onOK: () => {},
+    onClose: () => setIsModalCreatePostVisible(false),
+    title: <p className="text-white">Tạo bài viết</p>,
+    show: isModalCreatePostVisible,
+    customModalCSS: 'top-32',
+    form: (
+      <form onSubmit={handleCreateNewPost} className="px-5 py-3">
+        <div className="max-h-[450px] flex flex-col text-white overflow-y-auto p-5 custom-scrollbar gap-5">
+          <div className="flex flex-col gap-3">
+            <label>Nội dung</label>
+            <TextArea className="bg-[#413F4D]" rows={5} value={content} onChange={(e) => setContent(e.target.value)} />
+          </div>
+          <div className="relative flex flex-col gap-3">
+            <div className="relative flex items-center justify-between">
+              <label>Hình ảnh</label>
+              <div className="relative cursor-pointer w-fit">
+                {!mediaFiles ? (
+                  <label className="z-10 flex items-center justify-start gap-2 p-3 bg-purple-600 rounded-lg hover:bg-gray-700">
+                    <AddPicture theme="filled" size="15" fill="#FFFFFF" strokeLinejoin="bevel" />
+                    Chọn ảnh
+                  </label>
+                ) : (
+                  <div
+                    className="p-2 rounded-full hover:bg-gray-700"
+                    onClick={() => setRemoveMedia(true)}
+                    onKeyDown={() => {}}
+                  >
+                    <DeleteFive theme="filled" size="20" fill="#FFFFFF" strokeLinejoin="bevel" />
+                  </div>
+                )}
+                <div className={`absolute w-full h-full top-0 left-0 ${mediaFiles && '-z-10'}`}>
+                  <input
+                    className="w-full h-full opacity-0"
+                    type="file"
+                    name="files"
+                    onChange={(e) => handleMediaChange(e)}
+                    multiple
+                  />
                 </div>
-              )}
-              <div className={`absolute w-full h-full top-0 left-0 ${mediaFiles && '-z-10'}`}>
-                <input
-                  className="w-full h-full opacity-0"
-                  type="file"
-                  name="files"
-                  onChange={(e) => handleMediaChange(e)}
-                  multiple
-                />
               </div>
             </div>
-          </div>
-          <div className="flex flex-col gap-2">
-            {!removeMedia &&
-              mediaFiles?.map((file: File) => {
-                if (file.type.startsWith('image/')) {
-                  // eslint-disable-next-line @next/next/no-img-element
-                  return (
+            <div className="flex flex-col gap-2">
+              {!removeMedia &&
+                mediaFiles?.map((file: File) => {
+                  if (file.type.startsWith('image/')) {
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      key={index}
-                      src={URL.createObjectURL(file)}
-                      alt="ImageUpload"
-                      className="rounded-lg border-2 border-opacity-30 p-2"
-                    />
-                  )
-                } else if (file.type.startsWith('video/')) {
-                  const videoUrl = URL.createObjectURL(file)
-                  return (
-                    <video key={index} src={videoUrl} controls className="rounded-lg border-2 border-opacity-30 p-2">
-                      Your browser does not support the video tag.
-                    </video>
-                  )
-                }
-                return null
-              })}
+                    return (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        key={index}
+                        src={URL.createObjectURL(file)}
+                        alt="ImageUpload"
+                        className="rounded-lg border-2 border-opacity-30 p-2"
+                      />
+                    )
+                  } else if (file.type.startsWith('video/')) {
+                    const videoUrl = URL.createObjectURL(file)
+                    return (
+                      <video key={index} src={videoUrl} controls className="rounded-lg border-2 border-opacity-30 p-2">
+                        Your browser does not support the video tag.
+                      </video>
+                    )
+                  }
+                  return null
+                })}
+            </div>
           </div>
         </div>
-      </div>
-      <div className="p-5 mt-3 text-center">
-        <Button
-          customCSS={`!rounded-2xl w-full !text-white py-2 px-5 font-semibold text-lg text-center ${
-            !(content === '' && !mediaFiles) && 'hover:scale-105'
-          }`}
-          type="submit"
-          isActive={true}
-          isOutlinedButton={!(content === '' && !mediaFiles)}
-          isLoading={createNewPost.isLoading}
-        >
-          Tạo bài viết
-        </Button>
-      </div>
-    </form>
-  )
+        <div className="p-5 mt-3 text-center">
+          <Button
+            customCSS={`!rounded-2xl w-full !text-white py-2 px-5 font-semibold text-lg text-center ${
+              !(content === '' && !mediaFiles) && 'hover:scale-105'
+            }`}
+            type="submit"
+            isActive={true}
+            isOutlinedButton={!(content === '' && !mediaFiles)}
+            isLoading={createNewPost.isLoading}
+          >
+            Tạo bài viết
+          </Button>
+        </div>
+      </form>
+    ),
+    backgroundColor: '#15151b',
+    closeWhenClickOutSide: true,
+    closeButtonOnConner: (
+      <CloseSmall
+        onClick={() => setIsModalCreatePostVisible(false)}
+        onKeyDown={(e) => e.key === 'Enter' && setIsModalCreatePostVisible(false)}
+        className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
+        theme="outline"
+        size="24"
+        fill="#FFFFFF"
+      />
+    ),
+  })
+
+  return <>{CreatePostModal}</>
 }
 export default CreatePost

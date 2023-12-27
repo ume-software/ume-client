@@ -6,7 +6,7 @@ import React, { useEffect, useRef } from 'react'
 import Image from 'next/legacy/image'
 import { FilterProviderResponse } from 'ume-service-openapi'
 
-const PromoteCard = (props: { data: FilterProviderResponse; filterAttributeValueData?: string[] }) => {
+const PromoteCard = (props: { data: FilterProviderResponse }) => {
   const [isPlaying, setIsPlaying] = React.useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
@@ -70,7 +70,7 @@ const PromoteCard = (props: { data: FilterProviderResponse; filterAttributeValue
   }
 
   return (
-    <div className="bg-[#292734] text-white rounded-3xl pl-6 my-3 max-w-72 h-full group hover:duration-500 hover:ease-in-out block">
+    <div className="bg-[#292734] text-white rounded-3xl pl-6 my-3 h-full w-full group hover:duration-500 hover:ease-in-out block">
       <div className="flex flex-row justify-between">
         <div className="w-[140px] h-[140px] relative -translate-y-6 group-hover:scale-110 duration-500">
           <Image

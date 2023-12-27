@@ -7,7 +7,6 @@ import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 
 import Image from 'next/legacy/image'
 import { useRouter } from 'next/router'
-import { UserInformationResponse } from 'ume-service-openapi'
 
 import { trpc } from '~/utils/trpc'
 
@@ -54,7 +53,6 @@ const AlbumTab = () => {
       <CloseSmall
         onClick={handleClose}
         onKeyDown={(e) => e.key === 'Enter' && handleClose()}
-        tabIndex={1}
         className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
         theme="outline"
         size="24"
@@ -95,7 +93,7 @@ const AlbumTab = () => {
   return (
     <>
       {isPostModal && PostModal}
-      <div ref={containerRef} className="w-full px-10">
+      <div ref={containerRef} className="w-full">
         {album && album.length > 0 ? (
           <div className="grid w-full grid-cols-8 gap-10">
             {album.map((item, index) => (

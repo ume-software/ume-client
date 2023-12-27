@@ -2,8 +2,7 @@ import { useAuth } from '~/contexts/auth'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import { isNil } from 'lodash'
-import { PostResponse, UserInformationResponse } from 'ume-service-openapi'
+import { PostResponse } from 'ume-service-openapi'
 
 import CommunityPost from './community-post'
 

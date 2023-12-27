@@ -5,7 +5,6 @@ import cover3 from 'public/cover3.jpg'
 import { Carousel } from 'antd'
 import Image from 'next/legacy/image'
 
-//TODO: fix this component to use dynamic
 const Cover = () => {
   return (
     <div>
