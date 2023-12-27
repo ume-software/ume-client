@@ -4,15 +4,18 @@ import { z } from 'zod'
 import { createRouter } from './configurations'
 import {
   commentForPostId,
+  createInstantCard,
   createNewPost,
   donateProviderTop,
   donateUserTop,
   getCommentPostByID,
+  getInstantCard,
   getLikePostByID,
   getPostByID,
   getSuggestPost,
   getSuggestPostFollowing,
   getSuggestPostWithoutCookies,
+  getTopInstantCardHashTags,
   likeForPostId,
   unlikeForPostId,
   watchedPost,
@@ -111,5 +114,29 @@ export const communityRouter = createRouter()
     input: z.string(),
     resolve: async ({ input }) => {
       return await donateUserTop(input)
+    },
+  })
+  .query('getTopInstantCardHashTags', {
+    resolve: async () => {
+      return await getTopInstantCardHashTags()
+    },
+  })
+  .query('getInstantCard', {
+    input: z.object({
+      limit: z.string(),
+      page: z.string(),
+    }),
+    resolve: async ({ input, ctx }) => {
+      return await getInstantCard(input, ctx)
+    },
+  })
+  .mutation('createInstantCard', {
+    input: z.object({
+      content: z.string(),
+      gradientColors: z.string(),
+      hashTags: z.array(z.string()),
+    }),
+    resolve: async ({ input, ctx }) => {
+      return await createInstantCard(input, ctx)
     },
   })
