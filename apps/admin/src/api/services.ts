@@ -18,6 +18,7 @@ import {
 export const servicesRouter = createRouter()
   .query('getServiceList', {
     input: z.object({
+      limit: z.optional(z.string()),
       page: z.string(),
       select: z.optional(z.string()),
       where: z.optional(z.string()),
