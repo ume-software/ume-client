@@ -1,11 +1,12 @@
 import ImgForEmpty from 'public/img-for-empty.png'
 
-import { Dispatch, SetStateAction } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 
 import Image from 'next/legacy/image'
 import { BookingProviderRequest, VoucherPagingResponse, VoucherResponseDiscountUnitEnum } from 'ume-service-openapi'
 
 const VoucherApply = (props: {
+  isModalVoucherOpen: boolean
   setIsModalVoucherOpen: Dispatch<SetStateAction<boolean>>
   voucherSelected: string[] | undefined
   setVoucherSelected: Dispatch<SetStateAction<BookingProviderRequest>>
@@ -13,6 +14,20 @@ const VoucherApply = (props: {
   duration: number
   price: number
 }) => {
+  const [voucherSelect, setVoucherSelect] = useState<string[] | undefined>(undefined)
+
+  useEffect(() => {
+    setVoucherSelect(props.voucherSelected)
+  }, [props.voucherSelected, props.isModalVoucherOpen])
+
+  const handleSelect = () => {
+    props.setVoucherSelected((prevData) => ({
+      ...prevData,
+      voucherIds: voucherSelect,
+    }))
+    props.setIsModalVoucherOpen(false)
+  }
+
   return (
     <>
       {(props.data?.row?.length ?? 0) > 0 ? (
@@ -33,17 +48,14 @@ const VoucherApply = (props: {
                       props.duration >= (voucher?.minimumBookingDurationForUsage ?? 0) &&
                       props.price >= (voucher?.minimumBookingTotalPriceForUsage ?? 0)
                     ) {
-                      props.setVoucherSelected((prevData) => ({
-                        ...prevData,
-                        voucherIds: [String(voucher.code)] ?? [],
-                      }))
+                      setVoucherSelect([String(voucher.code)] ?? [])
                     }
                   }}
                   onKeyDown={() => {}}
                 >
                   <div
                     className={`flex border-2 gap-3 ${
-                      props.voucherSelected?.find((voucherSelec) => voucherSelec == voucher.code)
+                      voucherSelect?.find((voucherSelec) => voucherSelec == voucher.code)
                         ? 'border-purple-600'
                         : 'border-white border-opacity-30'
                     }  rounded-2xl`}
@@ -101,11 +113,9 @@ const VoucherApply = (props: {
             <button
               className="w-[90%] text-xl font-bold bg-purple-600 rounded-3xl p-3 hover:scale-105"
               type="button"
-              onClick={() => {
-                props.setIsModalVoucherOpen(false)
-              }}
+              onClick={handleSelect}
             >
-              Đóng
+              Áp dụng
             </button>
           </div>
         </>
