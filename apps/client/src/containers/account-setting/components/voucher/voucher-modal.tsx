@@ -1,35 +1,30 @@
-import { CloseSmall, Plus } from '@icon-park/react';
-import { Button, FormInput, FormInputWithAffix, Modal, TextArea } from '@ume/ui';
-import { uploadImage } from '~/apis/upload-media';
-import { useAuth } from '~/contexts/auth';
-import { ActionEnum } from '~/enumVariable/enumVariable';
-import useDebounce from '~/hooks/useDebounce';
+import { CloseSmall, Plus } from '@icon-park/react'
+import { Button, FormInput, FormInputWithAffix, Modal, TextArea } from '@ume/ui'
+import { uploadImage } from '~/apis/upload-media'
+import { useAuth } from '~/contexts/auth'
+import { ActionEnum } from '~/enumVariable/enumVariable'
+import useDebounce from '~/hooks/useDebounce'
 
+import * as React from 'react'
+import { useRef, useState } from 'react'
 
+import { notification } from 'antd'
+import { useFormik } from 'formik'
+import Image from 'next/legacy/image'
+import {
+  CreateVoucherRequestDiscountUnitEnum,
+  CreateVoucherRequestRecipientTypeEnum,
+  CreateVoucherRequestTypeEnum,
+  VoucherResponse,
+  VoucherResponseStatusEnum,
+} from 'ume-service-openapi'
+import * as Yup from 'yup'
 
-import * as React from 'react';
-import { useRef, useState } from 'react';
+import MenuForVoucher from './menu-voucher'
 
+import ConfirmForm from '~/components/confirm-form/confirm-form'
 
-
-import { notification } from 'antd';
-import { useFormik } from 'formik';
-import Image from 'next/legacy/image';
-import { CreateVoucherRequestDiscountUnitEnum, CreateVoucherRequestRecipientTypeEnum, CreateVoucherRequestTypeEnum, VoucherResponse, VoucherResponseStatusEnum } from 'ume-service-openapi';
-import * as Yup from 'yup';
-
-
-
-import MenuForVoucher from './menu-voucher';
-
-
-
-import ConfirmForm from '~/components/confirm-form/confirm-form';
-
-
-
-import { trpc } from '~/utils/trpc';
-
+import { trpc } from '~/utils/trpc'
 
 interface IEnumType {
   key: string | number
@@ -101,6 +96,7 @@ export default function VourcherModal(
   const { user } = useAuth()
   const issuer = user?.name
   const today = new Date().toISOString().split('T')[0]
+
   const createVoucherFormRef = useRef<HTMLFormElement>(null)
 
   const form = useFormik({
@@ -385,6 +381,7 @@ export default function VourcherModal(
             ? 'Bạn có chấp nhận tạo khuyến mãi mới hay không?'
             : 'Bạn có chấp nhận cập khuyến mãi này hay không?'
         }`}
+        isLoading={providerCreateVoucher.isLoading || providerUpdateVoucher.isLoading}
         onClose={handleClose}
         onOk={() => {
           props.actionModal == ActionEnum.CREATE ? handleSubmitCreateVoucher() : handleSubmitUpdateVoucher()
@@ -397,7 +394,6 @@ export default function VourcherModal(
       <CloseSmall
         onClick={handleClose}
         onKeyDown={(e) => e.key === 'Enter' && handleClose()}
-        tabIndex={1}
         className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
         theme="outline"
         size="24"
@@ -432,7 +428,7 @@ export default function VourcherModal(
               minimumBookingDurationForUsage: Number(form.values.minimumBookingDurationForUsage),
               minimumBookingTotalPriceForUsage: Number(form.values.minimumBookingTotalPriceForUsage?.replace(/,/g, '')),
               startDate: new Date(today).toISOString(),
-              endDate: new Date(form.values.endDate).toISOString(),
+              endDate: new Date(new Date(form.values.endDate).setHours(23, 59, 59, 999)).toISOString(),
               applyISODayOfWeek: form.values.applyTime as number[],
             },
             {
@@ -774,7 +770,11 @@ export default function VourcherModal(
                     value={form.values.endDate}
                     error={!!form.errors.endDate && form.touched.endDate}
                     errorMessage={''}
-                    min={form.values.startDate}
+                    min={
+                      new Date(new Date(form.values.startDate).getTime() + 24 * 60 * 60 * 1000)
+                        .toISOString()
+                        .split('T')[0]
+                    }
                     required
                   />
                   {!!form.errors.endDate && form.touched.endDate && (

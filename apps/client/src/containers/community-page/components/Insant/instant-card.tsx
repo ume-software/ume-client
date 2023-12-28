@@ -83,9 +83,19 @@ const InstantCard = (props: { data: InstantCardResponse }) => {
           </Link>
           <span>{props.data.content}</span>
         </div>
+        <div>
+          {props.data?.instantCardHashTags?.map((hashtag) => (
+            <div
+              key={hashtag.hashTagId}
+              className="inline-block text-white text-sm font-semibold mr-3 mb-3 p-2 rounded-lg bg-white bg-opacity-20"
+            >
+              {hashtag.hashTag.content}
+            </div>
+          ))}
+        </div>
         {props.data.userId != user?.id && (
           <CustomDrawer
-            customOpenBtn={`rounded-full text-white bg-white bg-opacity-30 border-2 border-white border-opacity-30 font-semibold text-lg cursor-pointer hover:scale-105 text-center`}
+            customOpenBtn={`rounded-full text-white bg-white bg-opacity-30 border-2 border-white border-opacity-20 font-semibold text-lg cursor-pointer hover:scale-105 text-center`}
             openBtn={
               <button
                 className="w-full h-full flex items-center justify-center bg-transparent focus:outline-none"

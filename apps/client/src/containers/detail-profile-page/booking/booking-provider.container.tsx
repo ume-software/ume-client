@@ -330,6 +330,7 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
                 open={isModalVoucherOpen}
               >
                 <VoucherApply
+                  isModalVoucherOpen={isModalVoucherOpen}
                   setIsModalVoucherOpen={setIsModalVoucherOpen}
                   voucherSelected={booking.voucherIds}
                   setVoucherSelected={setBooking}
