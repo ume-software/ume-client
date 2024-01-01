@@ -3,7 +3,6 @@ import { Check, CheckOne, CloseSmall, Info, Pencil } from '@icon-park/react'
 import { Button, FormInput, Input, Modal } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
 import { uploadImage } from '~/apis/upload-media'
-import { GenderEnum } from '~/enumVariable/enumVariable'
 import useDebounce from '~/hooks/useDebounce'
 
 import { Fragment, useEffect, useRef, useState } from 'react'
@@ -18,6 +17,7 @@ import { KYCFormStep } from './kyc-form'
 import ConfirmForm from '~/components/confirm-form/confirm-form'
 import { SkeletonForAccountSetting } from '~/components/skeleton-load'
 
+import { GenderEnum } from '~/utils/enumVariable'
 import { trpc } from '~/utils/trpc'
 
 interface GenderProps {

@@ -2,7 +2,6 @@
 import { Menu, Transition } from '@headlessui/react'
 import { Check, CloseSmall, Down } from '@icon-park/react'
 import { Button, FormInput, FormInputWithAffix, Modal } from '@ume/ui'
-import { ActionEnum } from '~/enumVariable/enumVariable'
 
 import { Fragment, useEffect, useId, useState } from 'react'
 
@@ -13,6 +12,7 @@ import * as Yup from 'yup'
 
 import ConfirmForm from '~/components/confirm-form/confirm-form'
 
+import { ActionEnum } from '~/utils/enumVariable'
 import { trpc } from '~/utils/trpc'
 
 interface PlatformProps {

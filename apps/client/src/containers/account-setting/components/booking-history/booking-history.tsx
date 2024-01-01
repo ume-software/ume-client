@@ -1,6 +1,5 @@
 import { Lock } from '@icon-park/react'
 import { useAuth } from '~/contexts/auth'
-import { BookingHistoryEnum } from '~/enumVariable/enumVariable'
 
 import { Fragment, ReactElement, useState } from 'react'
 
@@ -10,6 +9,7 @@ import { UserInformationResponse } from 'ume-service-openapi'
 
 import BookingTableHistory from './booking-history-table'
 
+import { BookingHistoryEnum } from '~/utils/enumVariable'
 import { trpc } from '~/utils/trpc'
 
 interface TabDataProps {

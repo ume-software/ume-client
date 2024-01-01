@@ -24,6 +24,13 @@ import MenuForVoucher from './menu-voucher'
 
 import ConfirmForm from '~/components/confirm-form/confirm-form'
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+import { ActionEnum } from '~/utils/enumVariable'
+=======
+>>>>>>> origin/main
+=======
+>>>>>>> origin/main
 import { trpc } from '~/utils/trpc'
 
 interface IEnumType {
@@ -959,7 +966,7 @@ export default function VourcherModal(
                   />
                 </div>
                 {!!form.errors.numUserCanUseInDay && form.touched.numUserCanUseInDay && (
-                  <p className="absolute bottom-0 right-44 text-xs text-red-500">{form.errors.numUserCanUseInDay}</p>
+                  <p className="absolute bottom-0 text-xs text-red-500 right-44">{form.errors.numUserCanUseInDay}</p>
                 )}
               </div>
               <div className="flex items-center gap-5 text-white">
@@ -1007,7 +1014,7 @@ export default function VourcherModal(
                   )}
                 </div>
                 {form.values.discountUnit == CreateVoucherRequestDiscountUnitEnum.Percent && (
-                  <div className="relative flex items-center w-fit h-12">
+                  <div className="relative flex items-center h-12 w-fit">
                     Giảm tối đa:
                     <div className="flex items-center w-5/12">
                       <FormInputWithAffix

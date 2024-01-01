@@ -3,7 +3,6 @@ import { AddPicture, Check, CloseSmall, DeleteFive, Down } from '@icon-park/reac
 import { Button, Input, InputWithAffix, Modal, TextArea } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
 import { uploadAudio, uploadImage } from '~/apis/upload-media'
-import { BookingHistoryStatusEnum } from '~/enumVariable/enumVariable'
 
 import { ChangeEvent, Dispatch, Fragment, SetStateAction, useEffect, useId, useRef, useState } from 'react'
 
@@ -18,6 +17,7 @@ import {
 
 import ConfirmForm from '~/components/confirm-form/confirm-form'
 
+import { BookingHistoryStatusEnum } from '~/utils/enumVariable'
 import { trpc } from '~/utils/trpc'
 
 interface ComplainTicketProps {

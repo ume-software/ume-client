@@ -47,9 +47,9 @@ const Chat = (props: { providerId?: string }) => {
       ) : (
         <>
           {chattingChannels && chattingChannels?.data.row.length != 0 ? (
-            <div className="grid w-full h-full grid-cols-10 pl-5 pr-5">
-              <div className="relative col-span-3 overflow-y-auto hide-scrollbar border-r-2 border-[#B9B8CC]">
-                <div className="absolute top-0 left-0 right-0 bg-[#15151b] mx-0 z-50">
+            <div className="grid w-full h-full grid-cols-10 pl-5">
+              <div className="relative col-span-3 hide-scrollbar border-r-2 border-[#B9B8CC]">
+                <div className="absolute top-0 left-0 right-0 bg-[#15151b] mx-0 z-50 mr-4">
                   <InputWithAffix
                     placeholder="Tìm kiếm..."
                     value={searchText}
@@ -88,7 +88,7 @@ const Chat = (props: { providerId?: string }) => {
                     return (
                       <div
                         key={index}
-                        className={`flex py-2 px-2 my-2 items-center cursor-pointer
+                        className={`flex py-2 px-2 my-2 items-center cursor-pointer mr-4
                 ${
                   channelSelected?._id === item._id ? 'border-l-3 bg-gray-700 rounded-lg' : ''
                 }  hover:bg-gray-700 hover:rounded-lg`}

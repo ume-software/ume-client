@@ -1,5 +1,3 @@
-import { ComplainEnum } from '~/enumVariable/enumVariable'
-
 import { useEffect, useState } from 'react'
 
 import Link from 'next/link'
@@ -15,6 +13,7 @@ import ResponseComplainTicketModal from './response-complain'
 import { TableSkeletonLoader } from '~/components/skeleton-load'
 import Table from '~/components/table/table'
 
+import { ComplainEnum } from '~/utils/enumVariable'
 import { trpc } from '~/utils/trpc'
 
 interface IEnumType {

@@ -1,7 +1,6 @@
 import { Menu, Transition } from '@headlessui/react'
 import { CloseSmall, DeleteFive, Down, Plus, Save, Write } from '@icon-park/react'
 import { Button, FormInputWithAffix, Input, InputWithAffix, Modal, TextArea } from '@ume/ui'
-import { MenuModalEnum } from '~/enumVariable/enumVariable'
 
 import { Fragment, useEffect, useState } from 'react'
 
@@ -17,6 +16,7 @@ import {
 import ConfirmForm from '~/components/confirm-form/confirm-form'
 import { SkeletonProviderService } from '~/components/skeleton-load'
 
+import { MenuModalEnum } from '~/utils/enumVariable'
 import { trpc } from '~/utils/trpc'
 
 interface ServiceForm {

@@ -2,7 +2,6 @@ import { Menu, Transition } from '@headlessui/react'
 import { Check, Search, SortTwo } from '@icon-park/react'
 import { InputWithAffix } from '@ume/ui'
 import { GenderProps, OnlineProps, OrderByProps } from '~/containers/filter-page/components/iFilter'
-import { GenderEnum } from '~/enumVariable/enumVariable'
 import useDebounce from '~/hooks/useDebounce'
 
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react'
@@ -15,6 +14,7 @@ import PromoteCard from './promoteCard'
 
 import { PlayerSkeletonLoader } from '~/components/skeleton-load'
 
+import { GenderEnum } from '~/utils/enumVariable'
 import { trpc } from '~/utils/trpc'
 
 export interface IPromotion {}

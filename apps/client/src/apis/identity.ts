@@ -1,5 +1,3 @@
-import { GenderEnum } from '~/enumVariable/enumVariable'
-
 import {
   AttachmentRequestTypeEnum,
   CreateBookingComplaintRequestComplaintTypeEnum,
@@ -52,6 +50,8 @@ import {
   userKYC,
   userUpdateProviderProfile,
 } from './services/identity-service'
+
+import { GenderEnum } from '~/utils/enumVariable'
 
 export const identityRouter = createRouter()
   .query('identityInfo', {

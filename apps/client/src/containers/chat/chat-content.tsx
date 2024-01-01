@@ -1,10 +1,21 @@
-import { MoreOne, PhoneTelephone, SendOne, Videocamera } from '@icon-park/react'
+import { MoreOne, PhoneTelephone, SendOne, Tool, Videocamera } from '@icon-park/react'
 import { useAuth } from '~/contexts/auth'
 import { useSockets } from '~/contexts/chatting-context'
 import useChatScroll from '~/hooks/useChatScroll'
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+import { useContext, useEffect, useRef, useState } from 'react'
+
+import { Tooltip } from 'antd'
+=======
 import { ReactNode, useEffect, useRef, useState } from 'react'
 
+>>>>>>> origin/main
+=======
+import { ReactNode, useEffect, useRef, useState } from 'react'
+
+>>>>>>> origin/main
 import Image from 'next/legacy/image'
 import Link from 'next/link'
 import { ChattingChannelResponse, MemberChatChannelResponse } from 'ume-chatting-service-openapi'
@@ -14,19 +25,6 @@ import { CommentSkeletonLoader } from '~/components/skeleton-load'
 import { getSocket } from '~/utils/constants'
 import { trpc } from '~/utils/trpc'
 
-interface ActionButtonProps {
-  actionButton: ReactNode
-}
-
-const actionButtons: ActionButtonProps[] = [
-  {
-    actionButton: <Videocamera theme="outline" size="20" fill="#FFFFFF" strokeLinejoin="bevel" />,
-  },
-  {
-    actionButton: <PhoneTelephone theme="outline" size="20" fill="#FFFFFF" strokeLinejoin="bevel" />,
-  },
-  { actionButton: <MoreOne theme="outline" size="20" fill="#FFFFFF" strokeLinejoin="bevel" /> },
-]
 const convertArrayObjectToObject = (input: Array<any>, key: string = '_id') => {
   return input.reduce((acc, obj) => {
     acc[obj[key]] = obj
@@ -102,28 +100,37 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
       ) : (
         <div className="relative max-h-screen overflow-hidden">
           <div className="flex items-center justify-between w-full">
-            <Link
-              href={`/profile/${images[0].userInformation.slug ?? images[0].userId}`}
-              className="w-3/4 p-2 rounded-lg hover:bg-gray-700"
-            >
-              {images && (
-                <div className="flex items-center gap-3">
-                  <div className="relative min-w-[50px] min-h-[50px] max-w-[50px] max-h-[50px]">
-                    <Image
-                      className="absolute rounded-full"
-                      layout="fill"
-                      objectFit="cover"
-                      src={images[0].userInformation.avatarUrl}
-                      alt="Avatar"
-                    />
+            <div>
+              <Link
+                href={`/profile/${images[0].userInformation.slug ?? images[0].userId}`}
+                className="w-3/4 p-2 rounded-lg hover:bg-gray-700"
+              >
+                {images && (
+                  <div className="flex items-center gap-3">
+                    <div className="relative min-w-[50px] min-h-[50px] max-w-[50px] max-h-[50px]">
+                      <Image
+                        className="absolute rounded-full"
+                        layout="fill"
+                        objectFit="cover"
+                        src={images[0].userInformation.avatarUrl}
+                        alt="Avatar"
+                      />
+                    </div>
+                    <span className="text-2xl font-bold text-white truncate">
+                      {images[0].userInformation.name || ''}
+                    </span>
                   </div>
-                  <span className="text-2xl font-bold text-white truncate">{images[0].userInformation.name || ''}</span>
-                </div>
-              )}
-            </Link>
+                )}
+              </Link>
+            </div>
+            <div className="px-4 py-3 mt-4 mr-4 ease-in-out hover:bg-slate-700 rounded-3xl">
+              <Tooltip title="Gọi video">
+                <Videocamera theme="outline" size="24" fill="#FFFFFF" strokeLinejoin="bevel" />
+              </Tooltip>
+            </div>
           </div>
           <div className="flex flex-col h-full gap-2 overflow-y-auto">
-            <div className="flex gap-2 pb-5 overflow-auto border-b-2 border-[#B9B8CC] custom-scrollbar"></div>
+            <div className="flex gap-2 overflow-auto border-b-2 border-[#B9B8CC] custom-scrollbar"></div>
           </div>
           <div className="relative">
             <div className="h-[78vh] flex flex-col justify-end">
@@ -195,10 +202,6 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
               {/* <!-- end message --> */}
             </div>
             <div className="absolute bottom-2 left-5 right-5  bg-[#15151b] flex items-center gap-3">
-              {/* <div className="p-2 content-center bg-[#413F4D] rounded-full cursor-pointer hover:bg-gray-500 active:bg-gray-400">
-                <Picture theme="outline" size="24" fill="#FFFFFF" strokeLinejoin="bevel" />
-              </div> */}
-
               <div className="w-[100%] h-[40px] relative">
                 <input
                   type="text"

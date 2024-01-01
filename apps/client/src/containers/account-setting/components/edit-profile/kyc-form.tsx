@@ -2,7 +2,6 @@ import { ArrowRight } from '@icon-park/react'
 import { Button, FormInput } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
 import { uploadImage } from '~/apis/upload-media'
-import { GenderEnum } from '~/enumVariable/enumVariable'
 
 import { FormEvent, useState } from 'react'
 
@@ -11,6 +10,7 @@ import { FormikErrors, useFormik } from 'formik'
 import Image from 'next/legacy/image'
 import { UserSendKYCRequest } from 'ume-service-openapi'
 
+import { GenderEnum } from '~/utils/enumVariable'
 import { trpc } from '~/utils/trpc'
 
 type KYCFormStepProps = {
