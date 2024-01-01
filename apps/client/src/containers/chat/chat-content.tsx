@@ -4,9 +4,14 @@ import { useSockets } from '~/contexts/chatting-context'
 import useChatScroll from '~/hooks/useChatScroll'
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { useContext, useEffect, useRef, useState } from 'react'
 
 import { Tooltip } from 'antd'
+=======
+import { ReactNode, useEffect, useRef, useState } from 'react'
+
+>>>>>>> origin/main
 =======
 import { ReactNode, useEffect, useRef, useState } from 'react'
 
