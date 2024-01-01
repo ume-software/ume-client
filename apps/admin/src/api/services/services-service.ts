@@ -12,14 +12,23 @@ import {
 import { UnitQueryTime } from '~/utils/constant'
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
-export const getServiceList = async (ctx, query: { page: string; select?: string; where?: string; order?: string }) => {
+export const getServiceList = async (
+  ctx,
+  query: { limit?: string; page: string; select?: string; where?: string; order?: string },
+) => {
   try {
     const cookies = parse(ctx.req.headers.cookie ?? '')
     const response = await new AdminManageServiceApi({
       basePath: getEnv().baseUmeServiceURL,
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
-    }).adminGetAllServices('10', query.page, query.select || '["$all"]', query.where, '[{"createdAt":"desc"}]')
+    }).adminGetAllServices(
+      query.limit || '10',
+      query.page,
+      query.select || '["$all"]',
+      query.where,
+      '[{"createdAt":"desc"}]',
+    )
 
     return {
       data: response.data,

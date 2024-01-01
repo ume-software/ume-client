@@ -35,14 +35,14 @@ const Table = (props: {
                 {props?.data?.map((data, index) => (
                   <tr key={data.providerId || data.userId} className="">
                     <td className="py-2">
-                      <div className="min-w-[30px]">
-                        {index == 0 && <Image src={medalTop1} width={25} height={35} alt="coin" />}
-                        {index == 1 && <Image src={medalTop2} width={25} height={35} alt="coin" />}
-                        {index == 2 && <Image src={medalTop3} width={25} height={35} alt="coin" />}
+                      <div className="2xl:min-w-[20px] min-w-[10px]">
+                        {index == 0 && <Image src={medalTop1} width={20} height={30} alt="coin" />}
+                        {index == 1 && <Image src={medalTop2} width={20} height={30} alt="coin" />}
+                        {index == 2 && <Image src={medalTop3} width={20} height={30} alt="coin" />}
                       </div>
                     </td>
                     <td className="py-2">
-                      <div className="min-w-[120px] flex justify-center items-center flex-col lg:flex-row gap-2">
+                      <div className="2xl:min-w-[120px] min-w-[90px] flex 2xl:flex-row justify-center items-center flex-col gap-2">
                         <div className="relative w-8 h-8">
                           <Image
                             className="absolute rounded-full"
@@ -52,11 +52,13 @@ const Table = (props: {
                             alt="Donationr Image"
                           />
                         </div>
-                        <p className="max-w-[150px] truncate">{data?.donor?.name || data?.recipient?.name}</p>
+                        <p className="2xl:max-w-[150px] max-w-[80px] truncate">
+                          {data?.donor?.name || data?.recipient?.name}
+                        </p>
                       </div>
                     </td>
                     <td className="py-2">
-                      <div className="min-w-[80px]">
+                      <div className="2xl:min-w-[80px] min-w-[60px]">
                         {Math.floor(
                           data?.totalCoinDonation ?? data?.totalBalanceDonated ?? data?.totalReceivedAmount,
                         )?.toLocaleString('en-US')}

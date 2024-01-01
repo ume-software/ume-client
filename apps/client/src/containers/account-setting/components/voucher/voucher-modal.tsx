@@ -23,7 +23,10 @@ import MenuForVoucher from './menu-voucher'
 
 import ConfirmForm from '~/components/confirm-form/confirm-form'
 
+<<<<<<< HEAD
 import { ActionEnum } from '~/utils/enumVariable'
+=======
+>>>>>>> origin/main
 import { trpc } from '~/utils/trpc'
 
 interface IEnumType {
@@ -96,6 +99,7 @@ export default function VourcherModal(
   const { user } = useAuth()
   const issuer = user?.name
   const today = new Date().toISOString().split('T')[0]
+
   const createVoucherFormRef = useRef<HTMLFormElement>(null)
 
   const form = useFormik({
@@ -380,6 +384,7 @@ export default function VourcherModal(
             ? 'Bạn có chấp nhận tạo khuyến mãi mới hay không?'
             : 'Bạn có chấp nhận cập khuyến mãi này hay không?'
         }`}
+        isLoading={providerCreateVoucher.isLoading || providerUpdateVoucher.isLoading}
         onClose={handleClose}
         onOk={() => {
           props.actionModal == ActionEnum.CREATE ? handleSubmitCreateVoucher() : handleSubmitUpdateVoucher()
@@ -392,7 +397,6 @@ export default function VourcherModal(
       <CloseSmall
         onClick={handleClose}
         onKeyDown={(e) => e.key === 'Enter' && handleClose()}
-        tabIndex={1}
         className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
         theme="outline"
         size="24"
@@ -427,7 +431,7 @@ export default function VourcherModal(
               minimumBookingDurationForUsage: Number(form.values.minimumBookingDurationForUsage),
               minimumBookingTotalPriceForUsage: Number(form.values.minimumBookingTotalPriceForUsage?.replace(/,/g, '')),
               startDate: new Date(today).toISOString(),
-              endDate: new Date(form.values.endDate).toISOString(),
+              endDate: new Date(new Date(form.values.endDate).setHours(23, 59, 59, 999)).toISOString(),
               applyISODayOfWeek: form.values.applyTime as number[],
             },
             {
@@ -769,7 +773,11 @@ export default function VourcherModal(
                     value={form.values.endDate}
                     error={!!form.errors.endDate && form.touched.endDate}
                     errorMessage={''}
-                    min={form.values.startDate}
+                    min={
+                      new Date(new Date(form.values.startDate).getTime() + 24 * 60 * 60 * 1000)
+                        .toISOString()
+                        .split('T')[0]
+                    }
                     required
                   />
                   {!!form.errors.endDate && form.touched.endDate && (
@@ -954,7 +962,7 @@ export default function VourcherModal(
                   />
                 </div>
                 {!!form.errors.numUserCanUseInDay && form.touched.numUserCanUseInDay && (
-                  <p className="absolute bottom-0 right-44 text-xs text-red-500">{form.errors.numUserCanUseInDay}</p>
+                  <p className="absolute bottom-0 text-xs text-red-500 right-44">{form.errors.numUserCanUseInDay}</p>
                 )}
               </div>
               <div className="flex items-center gap-5 text-white">
@@ -1002,7 +1010,7 @@ export default function VourcherModal(
                   )}
                 </div>
                 {form.values.discountUnit == CreateVoucherRequestDiscountUnitEnum.Percent && (
-                  <div className="relative flex items-center w-fit h-12">
+                  <div className="relative flex items-center h-12 w-fit">
                     Giảm tối đa:
                     <div className="flex items-center w-5/12">
                       <FormInputWithAffix

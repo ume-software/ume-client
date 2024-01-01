@@ -1,15 +1,20 @@
 import { MoreOne, PhoneTelephone, SendOne, Tool, Videocamera } from '@icon-park/react'
 import { useAuth } from '~/contexts/auth'
+import { useSockets } from '~/contexts/chatting-context'
 import useChatScroll from '~/hooks/useChatScroll'
 
+<<<<<<< HEAD
 import { useContext, useEffect, useRef, useState } from 'react'
 
 import { Tooltip } from 'antd'
+=======
+import { ReactNode, useEffect, useRef, useState } from 'react'
+
+>>>>>>> origin/main
 import Image from 'next/legacy/image'
 import Link from 'next/link'
 import { ChattingChannelResponse, MemberChatChannelResponse } from 'ume-chatting-service-openapi'
 
-import { SocketClientEmit, SocketContext } from '~/components/layouts/app-layout/app-layout'
 import { CommentSkeletonLoader } from '~/components/skeleton-load'
 
 import { getSocket } from '~/utils/constants'
@@ -24,8 +29,7 @@ const convertArrayObjectToObject = (input: Array<any>, key: string = '_id') => {
 const ChatContent = (props: { channel: ChattingChannelResponse }) => {
   const [messageInput, setMessageInput] = useState('')
   const [displayMessageTime, setDisplayMessageTime] = useState('')
-  const { socketClientEmit } = useContext(SocketClientEmit)
-  const { socketContext } = useContext(SocketContext)
+  const { socket, messages } = useSockets()
   const { user } = useAuth()
   const accessToken = localStorage.getItem('accessToken')
   const utils = trpc.useContext()
@@ -37,11 +41,11 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
   useChatScroll(divRef, chattingMessageChannel)
 
   useEffect(() => {
-    if (socketContext?.socketChattingContext) {
+    if (socket && messages) {
       utils.invalidateQueries('chatting.getMessagesByChannelId')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socketContext?.socketChattingContext, !!accessToken, !!user])
+  }, [messages, socket])
 
   const mappingMember: { [key: string]: MemberChatChannelResponse } = convertArrayObjectToObject(
     chattingMessageChannel?.data.members ?? [],
@@ -54,7 +58,7 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
 
   const handleSentMessage = () => {
     if (!!accessToken && messageInput != '') {
-      socketClientEmit?.socketInstanceChatting?.emit(getSocket().SOCKER_CHATTING_SERVER_ON.SENT_MESSAGE_TO_CHANNEL, {
+      socket.emit(getSocket().SOCKER_CHATTING_SERVER_ON.SENT_MESSAGE_TO_CHANNEL, {
         channelId: props.channel._id,
         content: messageInput,
       })

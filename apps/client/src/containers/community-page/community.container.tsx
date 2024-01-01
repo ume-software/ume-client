@@ -1,9 +1,12 @@
-import { CloseSmall, Earth, EveryUser, Lock, Plus } from '@icon-park/react'
-import { Modal } from '@ume/ui'
+import { Earth, EveryUser, Lock, Plus, UserToUserTransmission } from '@icon-park/react'
 import { useAuth } from '~/contexts/auth'
 
-import { ReactNode, useId, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 
+import { useRouter } from 'next/router'
+
+import CreateInstantCard from './components/Insant/create-instant-card'
+import Instant from './components/Insant/instant'
 import CreatePost from './components/create-post'
 import FollowingPost from './components/following-post'
 import GeneralPost from './components/general-post'
@@ -20,8 +23,8 @@ interface CommunityProps {
 
 const postTypeData: CommunityProps[] = [
   {
-    key: 'General',
-    postTypeName: 'Chung',
+    key: 'GeneralPost',
+    postTypeName: 'Bài viết',
     icon: <Earth theme="outline" size="18" fill="#FFFFFF" strokeLinejoin="bevel" />,
     postTypeChildren: <GeneralPost />,
   },
@@ -31,60 +34,69 @@ const postTypeData: CommunityProps[] = [
     icon: <EveryUser theme="outline" size="18" fill="#FFFFFF" strokeLinejoin="bevel" />,
     postTypeChildren: <FollowingPost />,
   },
+  {
+    key: 'Instant',
+    postTypeName: 'Tìm bạn',
+    icon: <UserToUserTransmission theme="outline" size="18" fill="#FFFFFF" strokeLinejoin="bevel" />,
+    postTypeChildren: <Instant />,
+  },
 ]
 
 const CommunityContainer = () => {
-  const index = useId()
+  const router = useRouter()
+  const basePath = router.asPath.split('?')[0]
+  const slug = router.query
 
   const { user, isAuthenticated } = useAuth()
 
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
-  const [isModalVisible, setIsModalVisible] = useState(false)
-  const [socialSelected, setSocialSelected] = useState<CommunityProps>({
-    key: 'General',
-    postTypeName: 'Chung',
-    icon: <Earth theme="outline" size="18" fill="#FFFFFF" strokeLinejoin="bevel" />,
-    postTypeChildren: <GeneralPost />,
-  })
+  const [isModalCreatePostVisible, setIsModalCreatePostVisible] = useState(false)
+  const [isModalCreateInstantCardVisible, setIsModalCreateInstantCardVisible] = useState(false)
+  const [socialSelected, setSocialSelected] = useState<CommunityProps>(
+    postTypeData.find((postType) => postType.key == slug?.tab?.toString()) ?? postTypeData[0],
+  )
 
-  const handleClose = () => {
-    setIsModalVisible(false)
+  const handleChangeTab = (item: CommunityProps) => {
+    router.replace(
+      {
+        pathname: basePath,
+        query: { tab: item.key },
+      },
+      undefined,
+      { shallow: true },
+    )
   }
 
-  const CreatePostModal = Modal.useEditableForm({
-    onOK: () => {},
-    onClose: handleClose,
-    title: <p className="text-white">Tạo bài viết</p>,
-    show: isModalVisible,
-    customModalCSS: 'top-32',
-    form: <CreatePost handleClose={handleClose} />,
-    backgroundColor: '#15151b',
-    closeWhenClickOutSide: true,
-    closeButtonOnConner: (
-      <CloseSmall
-        onClick={handleClose}
-        onKeyDown={(e) => e.key === 'Enter' && handleClose()}
-        tabIndex={1}
-        className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
-        theme="outline"
-        size="24"
-        fill="#FFFFFF"
-      />
-    ),
-  })
+  useEffect(() => {
+    setSocialSelected(
+      isAuthenticated
+        ? postTypeData.find((postType) => postType.key == slug?.tab?.toString()) ?? postTypeData[0]
+        : postTypeData[0],
+    )
+  }, [isAuthenticated, slug?.tab])
 
   const handleCreatePost = () => {
-    setIsModalVisible(!!user || isAuthenticated)
-    setIsModalLoginVisible(!(user || isAuthenticated))
+    setIsModalCreatePostVisible(!!user || isAuthenticated)
+    setIsModalLoginVisible(!(user ?? isAuthenticated))
+  }
+  const handleCreateInstantCard = () => {
+    setIsModalCreateInstantCardVisible(!!user || isAuthenticated)
+    setIsModalLoginVisible(!(user ?? isAuthenticated))
   }
 
   return (
     <>
-      <div>
-        <LoginModal isModalLoginVisible={isModalLoginVisible} setIsModalLoginVisible={setIsModalLoginVisible} />
-      </div>
-      {isModalVisible && CreatePostModal}
-      <div className="min-h-screen" style={{ margin: '0 70px' }}>
+      <LoginModal isModalLoginVisible={isModalLoginVisible} setIsModalLoginVisible={setIsModalLoginVisible} />
+      <CreatePost
+        isModalCreatePostVisible={isModalCreatePostVisible}
+        setIsModalCreatePostVisible={setIsModalCreatePostVisible}
+      />
+      <CreateInstantCard
+        isModalCreateInstantCardVisible={isModalCreateInstantCardVisible}
+        setIsModalCreateInstantCardVisible={setIsModalCreateInstantCardVisible}
+      />
+
+      <div className="min-h-screen 2xl:ml-[170px] 2xl:mr-[100px] mx-[70px]">
         <div className="grid grid-cols-10 gap-10 text-white">
           <div className="relative col-span-6 xl:col-span-2">
             <div className="flex xl:flex-col xl:items-start items-center gap-10 xl:border-none border-b-2 border-white border-opacity-30 xl:sticky fixed xl:top-20 top-16 left-0 right-[90px] z-[5]">
@@ -92,26 +104,26 @@ const CommunityContainer = () => {
                 <div className="flex gap-5 xl:flex-col">
                   {postTypeData.map((item) => (
                     <div
-                      key={index}
+                      key={item.key}
                       className={`flex items-center p-3 rounded-xl cursor-pointer hover:bg-gray-700
-                      ${item.key == 'Following' && !user && 'justify-between opacity-30'}
+                      ${!(item.key == 'GeneralPost') && !user && 'justify-between opacity-30'}
                       ${socialSelected.key === item.key ? 'bg-gray-700' : ''}`}
                       onClick={() => {
-                        if (item.key == 'Following' && !(!!user || isAuthenticated)) {
+                        if (!(item.key == 'GeneralPost') && !(!!user || isAuthenticated)) {
                           setIsModalLoginVisible(true)
                         } else {
-                          setSocialSelected(item)
+                          handleChangeTab(item)
                         }
                       }}
                       onKeyDown={() => {}}
                     >
                       <div className="flex items-center gap-2">
                         {item.icon}
-                        <p className="text-xs font-normal truncate xl:text-lg lg:text-sm lg:font-semibold">
+                        <p className="text-xs font-normal truncate xl:text-lg lg:text-sm lg:font-semibold 2xl:max-w-none max-w-[100px]">
                           {item.postTypeName}
                         </p>
                       </div>
-                      {item.key == 'Following' && !(!!user || isAuthenticated) && (
+                      {!(item.key == 'GeneralPost') && !(!!user || isAuthenticated) && (
                         <Lock className="justify-items-end" theme="outline" size="20" fill="#fff" />
                       )}
                     </div>
@@ -126,18 +138,28 @@ const CommunityContainer = () => {
                 </div>
               </div>
               <div className="hidden xl:block xl:w-full">
-                <div
-                  className="rounded-full w-full min-w-[200px] text-white bg-purple-700 py-2 font-medium xl:text-xl lg:text-lg text-md hover:scale-105 text-center cursor-pointer"
-                  onClick={handleCreatePost}
-                  onKeyDown={() => {}}
-                >
-                  Tạo bài viết
-                </div>
+                {socialSelected.key != 'Instant' ? (
+                  <div
+                    className="rounded-full w-full min-w-[200px] text-white bg-purple-700 py-2 font-medium xl:text-xl lg:text-lg text-md hover:scale-105 text-center cursor-pointer"
+                    onClick={handleCreatePost}
+                    onKeyDown={() => {}}
+                  >
+                    Tạo bài viết
+                  </div>
+                ) : (
+                  <div
+                    className="rounded-full w-full min-w-[200px] text-white bg-purple-700 py-2 font-medium xl:text-xl lg:text-lg text-md hover:scale-105 text-center cursor-pointer"
+                    onClick={handleCreateInstantCard}
+                    onKeyDown={() => {}}
+                  >
+                    Tạo tìm kiếm
+                  </div>
+                )}
               </div>
             </div>
           </div>
           <div className="col-span-6 mt-5 xl:col-span-5 xl:mt-0">{socialSelected.postTypeChildren}</div>
-          <div className="col-span-4 xl:col-span-3">
+          <div className="col-span-4 xl:col-span-3 max-w-[350px]">
             <div className="sticky xl:top-20 top-36">
               <TopDonation />
             </div>

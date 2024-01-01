@@ -1,9 +1,18 @@
 import detailBackground from 'public/detail-cover-background.png'
 import ImgForEmpty from 'public/img-for-empty.png'
+import logo from 'public/logo.png'
 
 import React from 'react'
 
 import Image from 'next/legacy/image'
+
+const PageLoading = () => {
+  return (
+    <div className="flex items-center justify-center h-screen animate-spin rounded-xl p-5">
+      <Image width={130} height={130} alt="logo-ume" src={logo} layout="fixed" />
+    </div>
+  )
+}
 
 const PostSkeletonLoader = () => {
   return (
@@ -69,7 +78,7 @@ const PlayerSkeletonLoader = () => {
       {[...Array(8)].map((_, index) => (
         <div
           key={index}
-          className="bg-[#292734] text-white rounded-3xl pl-6 pb-4 mt-6 max-w-72 h-70 group hover:duration-500 hover:ease-in-out block"
+          className="bg-[#292734] text-white rounded-3xl pl-6 pb-4 mt-6 w-full h-72 group hover:duration-500 hover:ease-in-out block"
         >
           <div className="flex flex-row justify-between">
             <div className="w-[140px] h-[140px] relative bg-gray-300 animate-pulse"></div>
@@ -79,6 +88,9 @@ const PlayerSkeletonLoader = () => {
             <h3 className="w-2/3 mt-2 text-lg font-semibold bg-gray-300 animate-pulse">&nbsp;</h3>
             <div className="w-20 h-5 mt-2 bg-gray-300 animate-pulse"></div>
             <div className="w-2/3 h-4 mt-2 font-sans bg-gray-300 animate-pulse"></div>
+            <div className="w-16 h-4 mt-2 bg-gray-300 animate-pulse"></div>
+          </div>
+          <div className="flex justify-end pr-6">
             <div className="w-16 h-4 mt-2 bg-gray-300 animate-pulse"></div>
           </div>
         </div>
@@ -229,7 +241,7 @@ const SkeletonForAccountSetting = () => {
 const SkeletonDetailProvider = () => {
   return (
     <>
-      <div style={{ height: '380px', margin: '0 70px' }}>
+      <div style={{ height: '380px', margin: '0 150px' }}>
         <div className="absolute left-0 top-16" style={{ width: '100%', height: '416px' }}>
           <Image layout="fill" src={detailBackground} alt="background" />
         </div>
@@ -249,15 +261,17 @@ const SkeletonDetailProvider = () => {
           </div>
         </div>
       </div>
-      <div className="grid w-full h-screen grid-cols-10 gap-10 px-10 mt-10">
-        <div className="col-span-2">
-          <BGFullGridSkeleton />
-        </div>
-        <div className="col-span-5">
-          <BGFullGridSkeleton />
-        </div>
-        <div className="col-span-3">
-          <BGFullGridSkeleton />
+      <div className="mx-[150px]">
+        <div className="grid w-full h-screen grid-cols-9 gap-10 px-10 mt-10">
+          <div className="col-span-2">
+            <BGFullGridSkeleton />
+          </div>
+          <div className="col-span-5">
+            <BGFullGridSkeleton />
+          </div>
+          <div className="col-span-2">
+            <BGFullGridSkeleton />
+          </div>
         </div>
       </div>
     </>
@@ -284,6 +298,7 @@ const SkeletonProviderService = () => {
 }
 
 export {
+  PageLoading,
   PostSkeletonLoader,
   CommentSkeletonLoader,
   PlayerSkeletonLoader,

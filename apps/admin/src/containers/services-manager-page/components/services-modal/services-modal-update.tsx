@@ -2,6 +2,7 @@ import { DeleteOne, Plus } from '@icon-park/react'
 import { Button, FormInput } from '@ume/ui'
 import empty_img from 'public/empty_error.png'
 import { uploadImageServices } from '~/api/upload-media'
+import useDebounce from '~/hooks/adminDebounce'
 
 import * as React from 'react'
 import { useRef, useState } from 'react'
@@ -9,10 +10,12 @@ import { useRef, useState } from 'react'
 import { Select, notification } from 'antd'
 import { useFormik } from 'formik'
 import Image from 'next/legacy/image'
+import { PrismaWhereConditionType, prismaWhereConditionToJsonString } from 'query-string-prisma-ume'
 import {
   HandleServiceAttributeRequest,
   HandleServiceAttributeRequestHandleTypeEnum,
   HandleServiceAttributeValueRequestHandleTypeEnum,
+  ServicePagingResponse,
   ServiceResponse,
   UpdateServiceRequest,
 } from 'ume-service-openapi'
@@ -79,7 +82,10 @@ export const ServicesModalUpdate = ({ idService, closeFunction, openValue }: ISe
     }) ?? []
 
   const updateService = trpc.useMutation(['services.updateService'])
-
+  const [isExitName, setIsExitName] = useState<boolean>(false)
+  const [isExitViName, setIsExitViName] = useState<boolean>(false)
+  const NOT_EXITED = 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
+  const [serviceList, setServiceList] = useState<ServicePagingResponse | undefined>()
   const form = useFormik({
     initialValues: {
       name: nameInit,
@@ -93,6 +99,7 @@ export const ServicesModalUpdate = ({ idService, closeFunction, openValue }: ISe
     },
     validationSchema: Yup.object({
       name: Yup.string().required('Tên dịch vụ bắt buộc'),
+      viName: Yup.string(),
       serviceAttributes: Yup.array()
         .of(
           Yup.object({
@@ -136,8 +143,114 @@ export const ServicesModalUpdate = ({ idService, closeFunction, openValue }: ISe
     }
   }, [nameInit])
 
+  const debouncedName = useDebounce<string>(form.values.name, 500)
+  const debouncedViName = useDebounce<string>(form.values.viName, 500)
+  const checkNameQuery: PrismaWhereConditionType<ServicePagingResponse> = Object.assign({
+    OR: [
+      {
+        name: {
+          equals: debouncedName ? debouncedName + '' : NOT_EXITED,
+          mode: 'insensitive',
+        },
+      },
+      {
+        viName: {
+          equals: debouncedName ? debouncedName + '' : NOT_EXITED,
+          mode: 'insensitive',
+        },
+      },
+    ],
+  })
+  trpc.useQuery(
+    [
+      'services.getServiceList',
+      {
+        limit: '1',
+        page: '1',
+        select: undefined,
+        where: prismaWhereConditionToJsonString(checkNameQuery, ['isUndefined']),
+        order: undefined,
+      },
+    ],
+    {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: 'always',
+      cacheTime: 0,
+      refetchOnMount: true,
+      onSuccess(data) {
+        setServiceList(data.data)
+        console.log(data.data)
+        if (data.data.count != 0) {
+          const idRow = data.data.row ? data.data.row[0]?.id : undefined
+          if (idRow !== idService) {
+            if (debouncedName != nameInit) setIsExitName(true)
+            else {
+              setIsExitName(false)
+            }
+          } else {
+            setIsExitName(false)
+          }
+        } else {
+          setIsExitName(false)
+        }
+      },
+    },
+  )
+
+  const checkViNameQuery: PrismaWhereConditionType<ServicePagingResponse> = Object.assign({
+    OR: [
+      {
+        name: {
+          equals: debouncedViName ? debouncedViName + '' : NOT_EXITED,
+          mode: 'insensitive',
+        },
+      },
+      {
+        viName: {
+          equals: debouncedViName ? debouncedViName + '' : NOT_EXITED,
+          mode: 'insensitive',
+        },
+      },
+    ],
+  })
+  trpc.useQuery(
+    [
+      'services.getServiceList',
+      {
+        limit: '1',
+        page: '1',
+        select: undefined,
+        where: prismaWhereConditionToJsonString(checkViNameQuery, ['isUndefined']),
+        order: undefined,
+      },
+    ],
+    {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: 'always',
+      cacheTime: 0,
+      refetchOnMount: true,
+      onSuccess(data) {
+        setServiceList(data.data)
+        if (data.data.count != 0) {
+          const idRow = data.data.row ? data.data.row[0]?.id : undefined
+          if (idRow !== idService) {
+            if (debouncedViName != viNameInit) setIsExitViName(true)
+            else {
+              setIsExitViName(false)
+            }
+          } else {
+            setIsExitViName(false)
+          }
+        } else {
+          setIsExitViName(false)
+        }
+      },
+    },
+  )
   function closeHandleSmall() {
-    openConfirmModalCancel()
+    if (!form.dirty) {
+      closeHandle()
+    } else openConfirmModalCancel()
   }
   function openConfirmModalCancel() {
     setOpenConfirm(true)
@@ -320,8 +433,110 @@ export const ServicesModalUpdate = ({ idService, closeFunction, openValue }: ISe
     }
   }
   function isDisableButton() {
-    return !form.isValid || !form.dirty
+    return (
+      !form.isValid ||
+      !form.dirty ||
+      (isExitName ? true : false) ||
+      (isExitViName ? true : false) ||
+      isInValidUniqueAttribute() ||
+      isInvalidValidateValues()
+    )
   }
+  const isAttributeUnique = (newAttributeValue, index) => {
+    let flag = false
+    if (newAttributeValue.length != 0) {
+      const attributeValues = form.values.serviceAttributes
+        .filter((_, i) => i !== index)
+        .map((row) => row.attribute.toLowerCase())
+      if (attributeValues.includes(newAttributeValue.toLowerCase())) {
+        flag = true
+      }
+      const attributeViValues = form.values.serviceAttributes
+        .filter((_, i) => i !== index)
+        .map((row) => row.viAttribute?.toLowerCase())
+
+      if (attributeViValues.includes(newAttributeValue.toLowerCase())) {
+        flag = true
+      }
+    }
+    return flag
+  }
+
+  function isInvalidValidateValues() {
+    const isValid = form.values.serviceAttributes.map((row) => {
+      const isValidValue = validateListValue(row.serviceAttributeValues)
+      if (isValidValue) {
+        return true
+      } else {
+        false
+      }
+    })
+    if (isValid) {
+      const result = isValid.includes(true)
+      if (result) {
+        return true
+      }
+    }
+    return false
+  }
+  function validateListValue(listValue) {
+    let flag = false
+    const values = listValue.map((row) => row.value.toLowerCase())
+    if (values.length > 0) {
+      const checkDuplicateValues = values.length != new Set(values).size
+      if (checkDuplicateValues) {
+        return true
+      }
+    }
+    const viValues = listValue.map((row) => row.viValue?.toLowerCase())
+    if (viValues.length > 0) {
+      const checkDuplicateViValues =
+        viValues.filter((value) => value != '').length != new Set(viValues.filter((value) => value != '')).size
+      if (checkDuplicateViValues) {
+        return true
+      }
+    }
+
+    if (values.length > 0 && viValues.length > 0) {
+      const isValueInViValues = values
+        .filter((_, index) => values[index] !== viValues[index])
+        .some((value) => viValues.includes(value))
+      if (isValueInViValues) {
+        return true
+      }
+    }
+    return flag
+  }
+
+  function isInValidUniqueAttribute() {
+    let flag = false
+    const attributeValues = form.values.serviceAttributes.map((row) => row.attribute.toLowerCase())
+    if (attributeValues.length > 0) {
+      const checkDuplicateAttribute = attributeValues.length != new Set(attributeValues).size
+      if (checkDuplicateAttribute) {
+        return true
+      }
+    }
+    const attributeViValues = form.values.serviceAttributes
+      .map((row) => row.viAttribute?.toLowerCase())
+      .filter((value) => value != '')
+    if (attributeViValues.length > 0) {
+      const checkDuplicateViAttribute = attributeViValues.length != new Set(attributeViValues).size
+      if (checkDuplicateViAttribute) {
+        return true
+      }
+    }
+    if (attributeValues.length > 0 && attributeViValues.length > 0) {
+      const isAttributeInViAttributes = attributeValues
+        .filter((_, index) => attributeValues[index] !== attributeViValues[index])
+        .some((value) => attributeViValues.includes(value))
+      if (isAttributeInViAttributes) {
+        return true
+      }
+    }
+    return flag
+  }
+
   return (
     <div>
       <form onSubmit={form.handleSubmit} className="flex flex-col mb-4 gap-y-4">
@@ -390,6 +605,7 @@ export const ServicesModalUpdate = ({ idService, closeFunction, openValue }: ISe
                       error={!!form.errors.name && form.touched.name}
                       errorMessage={''}
                     />
+                    {isExitName && <div className="w-full text-xs text-red-500">Tên dịch vụ đã tồn tại</div>}
                   </div>
                 </div>
                 <div className="w-64 h-12 text-white">
@@ -411,6 +627,7 @@ export const ServicesModalUpdate = ({ idService, closeFunction, openValue }: ISe
                       error={!!form.errors.viName && form.touched.viName}
                       errorMessage={''}
                     />
+                    {isExitViName && <div className="w-full text-xs text-red-500">Tên dịch vụ đã tồn tại</div>}
                   </div>
                 </div>
               </div>
@@ -467,6 +684,7 @@ export const ServicesModalUpdate = ({ idService, closeFunction, openValue }: ISe
                   removeChildComponent={(index) => {
                     removeChildComponent(index)
                   }}
+                  isAttributeUnique={isAttributeUnique}
                 />
               </div>
             ))}

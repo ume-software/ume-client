@@ -91,6 +91,7 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
       numVoucher: Yup.number().moreThan(0),
       numVoucherInDay: Yup.number().moreThan(0),
       minimize: Yup.number().moreThan(0),
+      vourcherCode: Yup.string().required('Mã là bắt buộc'),
     }),
     onSubmit: (values, { resetForm }) => {
       setSubmiting(true)
@@ -192,7 +193,8 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
   }
 
   function openConfirmModalCancel() {
-    setOpenConfirm(true)
+    if (!form.dirty) closeHandle()
+    else setOpenConfirm(true)
   }
   function openConfirmModal() {
     setIsCreate(true)
@@ -227,6 +229,19 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
     const newDate = new Date(reversedDate)
     return newDate
   }
+  function convertToIsoStartDate(startDate) {
+    let endDateTime = new Date(startDate)
+    endDateTime.setHours(0, 0, 0)
+    let isoDate = endDateTime.toISOString()
+    return isoDate
+  }
+  function convertToIsoEndDate(endDate) {
+    let endDateTime = new Date(endDate)
+    endDateTime.setHours(23, 59, 59)
+    let isoDate = endDateTime.toISOString()
+    return isoDate
+  }
+
   async function submitHandle() {
     setOpenConfirm(false)
     setIsCreate(false)
@@ -260,9 +275,16 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
         }
         for (let key in req) {
           if (req[key]) {
-            reqWithValuesNotNull[key] = req[key]
+            if (key == 'startDate') {
+              reqWithValuesNotNull[key] = convertToIsoStartDate(req[key])
+            } else if (key == 'endDate') {
+              reqWithValuesNotNull[key] = convertToIsoEndDate(req[key])
+            } else {
+              reqWithValuesNotNull[key] = req[key]
+            }
           }
         }
+        console.log(reqWithValuesNotNull)
 
         createNewVoucherAdmin.mutate(reqWithValuesNotNull, {
           onSuccess: (data) => {
@@ -389,12 +411,18 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                   </div>
                 </div>
                 <div className="flex h-12 text-white ">
-                  <span className="min-w-[3rem]"> Mã:</span>
+                  <span className="min-w-[3rem]"> *Mã:</span>
                   <div className="inline-block w-2/3 h-12 ml-4">
                     <FormInput
                       name="vourcherCode"
-                      className="bg-[#413F4D] border-2 border-[#FFFFFF] h-8  border-opacity-30"
-                      placeholder="Mã: SUPPERSALE"
+                      className={`bg-[#413F4D] border-2 border-[#FFFFFF] h-8  border-opacity-30 ${
+                        form.errors.vourcherCode && form.touched.vourcherCode ? 'placeholder:text-red-500' : ''
+                      }`}
+                      placeholder={
+                        !!form.errors.vourcherCode && form.touched.vourcherCode
+                          ? form.errors.vourcherCode
+                          : 'Mã: SUPPERSALE '
+                      }
                       disabled={false}
                       onChange={(e) => {
                         e.target.value = e.target.value.toUpperCase()
@@ -403,11 +431,11 @@ export default function VourcherModalCreate({ closeFunction, openValue }: IVourc
                       onBlur={form.handleBlur}
                       value={form.values.vourcherCode}
                       error={!!form.errors.vourcherCode && form.touched.vourcherCode}
-                      errorMessage={form.errors.vourcherCode}
+                      errorMessage={''}
                       type="text"
                     />
                     {adminCheckVoucherCodeExisted?.isExisted && (
-                      <div className="w-full ml-4 text-xs text-red-500">Mã đã tồn tại</div>
+                      <div className="w-full ml-4 my-1 text-xs text-red-500">Mã đã tồn tại</div>
                     )}
                   </div>
                 </div>

@@ -53,7 +53,7 @@ const PostTab = (props: { providerId: string }) => {
   }, [scrollPosition])
 
   return (
-    <div ref={containerRef} className="w-full h-screen px-10 mt-3 text-center">
+    <div ref={containerRef} className="w-full h-screen mt-3 text-center">
       {(isPostByUserSlugLoading ?? isPostByUserSlugFetching) && postByUserSlug ? (
         <div className="grid w-full grid-cols-8 gap-10">
           {[...Array(8)].map((_, index) => (

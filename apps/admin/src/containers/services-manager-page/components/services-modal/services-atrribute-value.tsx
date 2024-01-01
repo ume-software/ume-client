@@ -8,16 +8,20 @@ import { HandleServiceAttributeValueRequestHandleTypeEnum } from 'ume-service-op
 import * as Yup from 'yup'
 
 export interface IServiceAttributeValuesProps {
+  indexValue?: string
   serviceAttributeValuesData: any
   setServiceAttributeValuesData: any
   isReadOnly?: boolean
   handleType?: HandleServiceAttributeValueRequestHandleTypeEnum
+  isValueUnique?: any
 }
 
 export const ServiceAttributeValues = ({
+  indexValue,
   serviceAttributeValuesData,
   setServiceAttributeValuesData,
   isReadOnly,
+  isValueUnique,
 }: IServiceAttributeValuesProps) => {
   const form = useFormik({
     initialValues: {
@@ -120,6 +124,17 @@ export const ServiceAttributeValues = ({
           />
         )}
       </div>
+      {!isReadOnly && isValueUnique(form.values.value, indexValue) && (
+        <div className="inline-block w-2/5 mt-1 ml-10 text-xs text-red-500 ">Tên giá trị đã tồn tại</div>
+      )}
+      {!isReadOnly && isValueUnique(form.values.viValue, indexValue) && (
+        <>
+          {!isReadOnly && !isValueUnique(form.values.value, indexValue) && (
+            <div className="inline-block w-2/5 mt-1 ml-10"></div>
+          )}
+          <div className="inline-block w-2/5 mt-1 ml-5 text-xs text-red-500">Tên giá trị tiếng việt đã tồn tại</div>
+        </>
+      )}
     </div>
   )
 }

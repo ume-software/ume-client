@@ -2,7 +2,14 @@ import { TRPCError } from '@trpc/server'
 import { getEnv } from '~/env'
 
 import { parse } from 'cookie'
-import { CommentPostRequest, CreateNewPostRequest, DonationApi, PostApi } from 'ume-service-openapi'
+import {
+  CommentPostRequest,
+  CreateNewPostRequest,
+  DonationApi,
+  HashTagApi,
+  InstantCardApi,
+  PostApi,
+} from 'ume-service-openapi'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
@@ -247,6 +254,65 @@ export const donateUserTop = async (input) => {
     throw new TRPCError({
       code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
       message: error.message || 'Failed to get list post',
+    })
+  }
+}
+
+export const getTopInstantCardHashTags = async () => {
+  try {
+    const response = await new HashTagApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+    }).getTopInstantCardHashTags('10')
+    return {
+      data: response.data,
+      success: true,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.message || 'Failed to get list hastag',
+    })
+  }
+}
+
+export const getInstantCard = async (query: { limit: string; page: string }, ctx) => {
+  try {
+    const response = await new InstantCardApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+    }).getAllInstantCard(query.limit, query.page, '["$all"]', undefined, '[{"createdAt":"desc"}]')
+    return {
+      data: response.data,
+      success: true,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.message || 'Failed to get list instant',
+    })
+  }
+}
+
+export const createInstantCard = async (
+  query: { content: string; gradientColors: string; hashTags: string[] },
+  ctx,
+) => {
+  const cookies = parse(ctx.req.headers.cookie)
+  try {
+    const response = await new InstantCardApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).createInstantCard(query)
+    return {
+      data: response.data,
+      success: true,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.message || 'Failed to get create instant card',
     })
   }
 }

@@ -18,7 +18,7 @@ const Sidebar = ({ handleOpen, openSideBar, openPopupSideBar, setOpenPopupSideBa
   if (width >= 900) {
     if (width >= 1200 && openSideBar) {
       return (
-        <div className="fixed top-0 w-[19rem] z-50 h-[100%] bg-umeHeader px-2">
+        <div className="fixed top-0 w-[18rem] z-50 h-[100%] bg-umeHeader px-2">
           <div className="pt-3 w-full flex justify-center px-4 mb-4">
             <Image width={150} height={50} src={WhiteTextLogo} alt="logo" />
           </div>
