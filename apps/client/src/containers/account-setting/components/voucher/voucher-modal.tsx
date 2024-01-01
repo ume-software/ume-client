@@ -2,7 +2,6 @@ import { CloseSmall, Plus } from '@icon-park/react'
 import { Button, FormInput, FormInputWithAffix, Modal, TextArea } from '@ume/ui'
 import { uploadImage } from '~/apis/upload-media'
 import { useAuth } from '~/contexts/auth'
-import { ActionEnum } from '~/enumVariable/enumVariable'
 import useDebounce from '~/hooks/useDebounce'
 
 import * as React from 'react'
@@ -24,13 +23,7 @@ import MenuForVoucher from './menu-voucher'
 
 import ConfirmForm from '~/components/confirm-form/confirm-form'
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 import { ActionEnum } from '~/utils/enumVariable'
-=======
->>>>>>> origin/main
-=======
->>>>>>> origin/main
 import { trpc } from '~/utils/trpc'
 
 interface IEnumType {

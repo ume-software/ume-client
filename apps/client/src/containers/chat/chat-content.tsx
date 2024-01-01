@@ -1,21 +1,11 @@
-import { MoreOne, PhoneTelephone, SendOne, Tool, Videocamera } from '@icon-park/react'
+import { MoreOne, SendOne, Tool, Videocamera } from '@icon-park/react'
 import { useAuth } from '~/contexts/auth'
 import { useSockets } from '~/contexts/chatting-context'
 import useChatScroll from '~/hooks/useChatScroll'
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { Tooltip } from 'antd'
-=======
-import { ReactNode, useEffect, useRef, useState } from 'react'
-
->>>>>>> origin/main
-=======
-import { ReactNode, useEffect, useRef, useState } from 'react'
-
->>>>>>> origin/main
 import Image from 'next/legacy/image'
 import Link from 'next/link'
 import { ChattingChannelResponse, MemberChatChannelResponse } from 'ume-chatting-service-openapi'
