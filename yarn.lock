@@ -1688,6 +1688,11 @@ agent-base@6:
   dependencies:
     debug "4"
 
+agora-rtc-react@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/agora-rtc-react/-/agora-rtc-react-2.0.0.tgz#3c273570de25cc67efcb73f797ce78061af23bdf"
+  integrity sha512-LQE2i8WF61zDlYpeqV2G5bAp0gpRChNVDgZN30i3y/fA9W//bFfgihzoDQJryJ+JYpzNA6c8Aqzwgg/7lMgQiA==
+
 ajv-keywords@^3.5.2:
   version "3.5.2"
   resolved "https://registry.yarnpkg.com/ajv-keywords/-/ajv-keywords-3.5.2.tgz#31f29da5ab6e00d1c2d329acf7b5929614d5014d"

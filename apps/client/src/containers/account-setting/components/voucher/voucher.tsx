@@ -1,6 +1,5 @@
 import { CloseSmall } from '@icon-park/react'
 import { Button, Modal } from '@ume/ui'
-import { ActionEnum } from '~/enumVariable/enumVariable'
 
 import { useEffect, useState } from 'react'
 
@@ -18,6 +17,7 @@ import ConfirmForm from '~/components/confirm-form/confirm-form'
 import { TableSkeletonLoader } from '~/components/skeleton-load'
 import Table from '~/components/table/table'
 
+import { ActionEnum } from '~/utils/enumVariable'
 import { trpc } from '~/utils/trpc'
 
 interface IEnumType {

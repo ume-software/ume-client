@@ -3,7 +3,6 @@ import { Check, DownOne, Plus, Search, SortTwo } from '@icon-park/react'
 import { Button, CustomDrawer, InputWithAffix } from '@ume/ui'
 import CategoryDrawer from '~/containers/home-page/components/category-drawer'
 import PromoteCard from '~/containers/home-page/components/promoteCard'
-import { GenderEnum } from '~/enumVariable/enumVariable'
 import useDebounce from '~/hooks/useDebounce'
 
 import { Fragment, useCallback, useContext, useEffect, useRef, useState } from 'react'
@@ -19,6 +18,7 @@ import { AttrbuteProps, GenderProps, OnlineProps, OrderByProps } from './iFilter
 import { DrawerContext } from '~/components/layouts/app-layout/app-layout'
 import { PlayerSkeletonLoader } from '~/components/skeleton-load'
 
+import { GenderEnum } from '~/utils/enumVariable'
 import { trpc } from '~/utils/trpc'
 
 const orderBy: OrderByProps[] = [

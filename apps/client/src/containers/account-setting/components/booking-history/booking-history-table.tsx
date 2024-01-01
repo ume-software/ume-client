@@ -1,5 +1,3 @@
-import { BookingHistoryEnum, BookingHistoryStatusEnum } from '~/enumVariable/enumVariable'
-
 import { useEffect, useState } from 'react'
 
 import Link from 'next/link'
@@ -11,6 +9,7 @@ import ComplainTicketModal from './complain-ticket-modal'
 import { TableSkeletonLoader } from '~/components/skeleton-load'
 import Table from '~/components/table/table'
 
+import { BookingHistoryEnum, BookingHistoryStatusEnum } from '~/utils/enumVariable'
 import { trpc } from '~/utils/trpc'
 
 interface IEnumType {

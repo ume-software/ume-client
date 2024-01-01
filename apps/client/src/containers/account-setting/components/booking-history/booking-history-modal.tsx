@@ -1,13 +1,14 @@
 import { CloseSmall } from '@icon-park/react'
 import { Modal } from '@ume/ui'
 import ImgForEmpty from 'public/img-for-empty.png'
-import { BookingHistoryStatusEnum } from '~/enumVariable/enumVariable'
 
 import { Dispatch, SetStateAction } from 'react'
 
 import Image from 'next/legacy/image'
 import Link from 'next/link'
 import { BookingHistoryResponse } from 'ume-service-openapi'
+
+import { BookingHistoryStatusEnum } from '~/utils/enumVariable'
 
 interface ComplainTicketProps {
   isModalBookingHistoryDetailVisible: boolean

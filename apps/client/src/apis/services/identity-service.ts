@@ -1,5 +1,4 @@
 import { TRPCError } from '@trpc/server'
-import { GenderEnum } from '~/enumVariable/enumVariable'
 import { getEnv } from '~/env'
 
 import { parse } from 'cookie'
@@ -27,6 +26,7 @@ import {
   VoucherApi,
 } from 'ume-service-openapi'
 
+import { GenderEnum } from '~/utils/enumVariable'
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
 export const getIdentityInfo = async (ctx) => {

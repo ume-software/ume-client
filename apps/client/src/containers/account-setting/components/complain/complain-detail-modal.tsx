@@ -1,6 +1,5 @@
 import { CloseSmall } from '@icon-park/react'
 import { Modal } from '@ume/ui'
-import { BookingHistoryStatusEnum, ComplainEnum } from '~/enumVariable/enumVariable'
 
 import { Dispatch, SetStateAction } from 'react'
 
@@ -11,6 +10,8 @@ import {
   BookingComplaintResponseComplaintStatusEnum,
   CreateBookingComplaintRequestComplaintTypeEnum,
 } from 'ume-service-openapi'
+
+import { BookingHistoryStatusEnum, ComplainEnum } from '~/utils/enumVariable'
 
 interface ComplainTicketProps {
   isModalComplainDetailVisible: boolean

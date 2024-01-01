@@ -2,7 +2,6 @@ import { CheckOne, CloseSmall } from '@icon-park/react'
 import { Button, FieldLabel, FormInput, Modal } from '@ume/ui'
 import momo from 'public/momo-logo.png'
 import vnpay from 'public/vnpay-logo.png'
-import { RechargeEnum } from '~/enumVariable/enumVariable'
 
 import { useId, useState } from 'react'
 
@@ -12,6 +11,7 @@ import Image from 'next/image'
 import { StaticImageData } from 'next/legacy/image'
 import * as Yup from 'yup'
 
+import { RechargeEnum } from '~/utils/enumVariable'
 import { trpc } from '~/utils/trpc'
 
 interface IRechargeModalProps {
