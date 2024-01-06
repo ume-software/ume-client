@@ -5,6 +5,7 @@ import { createRouter } from './configurations'
 import {
   createBooking,
   donationForRecipient,
+  estimateBookingCost,
   getAlbumByUserSlug,
   getAllNotice,
   getCanFeedbackProvider,
@@ -91,6 +92,16 @@ export const bookingRouter = createRouter()
     }),
     resolve: async ({ input, ctx }) => {
       return await getMyVoucherForBooking(input, ctx)
+    },
+  })
+  .mutation('estimateBookingCost', {
+    input: z.object({
+      providerServiceId: z.string(),
+      bookingPeriod: z.number(),
+      voucherIds: z.array(z.string()).optional(),
+    }),
+    resolve: async ({ ctx, input }) => {
+      return await estimateBookingCost(input, ctx)
     },
   })
   .mutation('createBooking', {

@@ -34,6 +34,7 @@ const VideoRoom = () => {
   const [users, setUsers] = useState<any[]>([])
   const [tracks, setTracks] = useState<any[]>([])
   const [localTracks, setLocalTracks] = useState<any[]>([])
+  const [isJoinChannel, setIsJoinChannel] = useState<boolean>(false)
 
   const [rtcAgora, setRtcAgora] = useState<CallResponse>()
   trpc.useQuery(
@@ -57,6 +58,7 @@ const VideoRoom = () => {
 
   const handleUserJoined = async (user, mediaType) => {
     await client.subscribe(user, mediaType)
+    setIsJoinChannel(true)
 
     if (mediaType === 'video') {
       setUsers((prevUsers) => [...prevUsers, user])
@@ -69,6 +71,7 @@ const VideoRoom = () => {
 
   const handleUserLeft = (user) => {
     setUsers((prevUsers) => [...prevUsers.filter((prevUser) => prevUser.uid !== user.uid)])
+    setIsJoinChannel(false)
   }
 
   const handleLeaveChannel = () => {
@@ -86,7 +89,7 @@ const VideoRoom = () => {
     const uid: any = rtcAgora?.uid ?? 0
     const rtcAgoraToken = rtcAgora?.rtcToken ?? null
     await client.join(getEnv().agoraAppID, slug.channelId?.toString() ?? '', rtcAgoraToken, uid)
-
+    setIsJoinChannel(true)
     const [audioTrack, videoTrack] = await AgoraRTC.createMicrophoneAndCameraTracks()
     setLocalTracks([audioTrack, videoTrack])
     setUsers((prevUsers) => [...prevUsers, { uid, videoTrack, audioTrack }])
@@ -95,7 +98,7 @@ const VideoRoom = () => {
   }
 
   useEffect(() => {
-    if (rtcAgora) {
+    if (rtcAgora && !isJoinChannel) {
       initAgora()
 
       return () => {
@@ -109,7 +112,7 @@ const VideoRoom = () => {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rtcAgora])
+  }, [rtcAgora?.rtcToken])
 
   return (
     <div className="min-h-screen text-white">

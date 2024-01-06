@@ -7,7 +7,7 @@ export const getEnv = () => {
   const baseSocketBookingURL = process.env.NEXT_PUBLIC_BASE_BOOKING_SOCKET_URL ?? 'https://api.ume.software:8001'
   const baseSocketChattingURL = process.env.NEXT_PUBLIC_BASE_CHATTING_SOCKET_URL ?? 'https://api.ume.software:8002'
 
-  const agoraAppID = process.env.AGORA_APP_ID ?? '04577dcb148e400a98f40b14f27c18dc'
+  const agoraAppID = process.env.AGORA_APP_ID ?? 'deb87355aa6647739307678644d833cb'
   return {
     baseUmeServiceURL,
     baseChattingURL,
