@@ -81,4 +81,4 @@ export const SocketChattingProvider = (props: any) => {
   return <SocketChattingContext.Provider value={contextValue}>{props.children}</SocketChattingContext.Provider>
 }
 
-export const useSockets = () => useContext(SocketChattingContext)
+export const useChattingSockets = () => useContext(SocketChattingContext)

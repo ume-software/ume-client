@@ -49,16 +49,28 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
 
   const [total, setTotal] = useState(0)
   const [totalAfterDiscount, setTotalAfterDiscount] = useState(0)
+  const [isError, setIsError] = useState<boolean>(false)
 
   const estimateBookingCost = trpc.useMutation(['booking.estimateBookingCost'])
 
   useEffect(() => {
-    estimateBookingCost.mutate(booking, {
-      onSuccess(data) {
-        setTotal(data.data.totalCostBeforeVoucher)
-        setTotalAfterDiscount(data.data.totalCostSpendBooking)
-      },
-    })
+    if (booking.providerServiceId != '') {
+      estimateBookingCost.mutate(booking, {
+        onSuccess(data) {
+          setIsError(false)
+          setTotal(data.data.totalCostBeforeVoucher)
+          setTotalAfterDiscount(data.data.totalCostSpendBooking)
+        },
+        onError: (error) => {
+          setIsError(true)
+          notification.warning({
+            message: 'Tạo đơn thất bại',
+            description: `${error.message}`,
+            placement: 'bottomLeft',
+          })
+        },
+      })
+    }
   }, [booking])
 
   useEffect(() => {
@@ -303,7 +315,7 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
           <div className="flex justify-between border-b-2 border-[#B9B8CC] pb-5">
             <p className="text-3xl font-bold ">Thành tiền:</p>
 
-            {booking.providerServiceId && (
+            {!isError && booking.providerServiceId && (
               <div className="flex items-end gap-2">
                 {total != totalAfterDiscount && (
                   <span className="flex items-center text-xl font-bold line-through opacity-30">
@@ -339,12 +351,12 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
           <button
             type="button"
             className={`w-full h-fit py-2 mt-2 text-2xl font-bold text-white ${
-              !booking.providerServiceId || estimateBookingCost.isLoading
+              !booking.providerServiceId || estimateBookingCost.isLoading || isError
                 ? 'border border-1 bg-zinc-800 cursor-not-allowed'
                 : 'border border-1 border-transparent bg-purple-700 hover:scale-105'
             }  rounded-full `}
             onClick={() => {
-              if (booking.providerServiceId && !estimateBookingCost.isLoading) handleCreateBooking(booking)
+              if (booking.providerServiceId && !estimateBookingCost.isLoading && !isError) handleCreateBooking(booking)
             }}
           >
             Đặt

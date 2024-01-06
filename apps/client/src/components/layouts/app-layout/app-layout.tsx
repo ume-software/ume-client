@@ -1,7 +1,7 @@
 import NotiSound from 'public/sounds/notification.mp3'
 import { socket } from '~/apis/socket/socket-connect'
 import { useAuth } from '~/contexts/auth'
-import { useSockets } from '~/contexts/chatting-context'
+import { useChattingSockets } from '~/contexts/chatting-context'
 
 import {
   Dispatch,
@@ -58,7 +58,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const [userInfo, setUserInfo] = useState<UserInformationResponse>()
   let accessToken
   const { isAuthenticated } = useAuth()
-  const { messages } = useSockets()
+  const { messages } = useChattingSockets()
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const utils = trpc.useContext()
 
@@ -113,7 +113,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accessToken, isAuthenticated, userInfo])
-
+  console.log(socketContext)
   useEffect(() => {
     if (messages && (messages?.length ?? 0) > 0) {
       messages[messages?.length - 1]?.senderId != userInfo?.id &&

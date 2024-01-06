@@ -1,6 +1,6 @@
 import { SendOne, Videocamera } from '@icon-park/react'
 import { useAuth } from '~/contexts/auth'
-import { useSockets } from '~/contexts/chatting-context'
+import { useChattingSockets } from '~/contexts/chatting-context'
 import useChatScroll from '~/hooks/useChatScroll'
 
 import { useEffect, useRef, useState } from 'react'
@@ -27,7 +27,7 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
 
   const [messageInput, setMessageInput] = useState('')
   const [displayMessageTime, setDisplayMessageTime] = useState('')
-  const { socket, messages } = useSockets()
+  const { socket, messages } = useChattingSockets()
   const { user } = useAuth()
   const accessToken = localStorage.getItem('accessToken')
   const utils = trpc.useContext()
