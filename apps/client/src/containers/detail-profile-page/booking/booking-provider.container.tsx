@@ -9,12 +9,7 @@ import { Fragment, useEffect, useState } from 'react'
 import { Drawer, notification } from 'antd'
 import Image from 'next/legacy/image'
 import { useRouter } from 'next/router'
-import {
-  BookingProviderRequest,
-  UserInformationResponse,
-  VoucherPagingResponse,
-  VoucherResponseDiscountUnitEnum,
-} from 'ume-service-openapi'
+import { BookingProviderRequest, UserInformationResponse, VoucherPagingResponse } from 'ume-service-openapi'
 
 import VoucherApply from './voucher-apply'
 
@@ -54,60 +49,28 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
 
   const [total, setTotal] = useState(0)
   const [totalAfterDiscount, setTotalAfterDiscount] = useState(0)
+  const [isError, setIsError] = useState<boolean>(false)
 
-  const isSpecialTime = (startTimeOfDay: string | undefined, endTimeOfDay: string | undefined) => {
-    if (startTimeOfDay && endTimeOfDay) {
-      const currentTime = new Date()
-      const currentHours = currentTime.getHours()
-      const currentMinutes = currentTime.getMinutes()
+  const estimateBookingCost = trpc.useMutation(['booking.estimateBookingCost'])
 
-      const [startHours, startMinutes] = startTimeOfDay.split(':').map(Number)
-      const [endHours, endMinutes] = endTimeOfDay.split(':').map(Number)
-
-      return (
-        (startHours > endHours &&
-          (currentHours > startHours ||
-            (currentHours === startHours && currentMinutes >= startMinutes) ||
-            currentHours < endHours ||
-            (currentHours === endHours && currentMinutes <= endMinutes))) ||
-        (startHours < endHours &&
-          (currentHours > startHours || (currentHours === startHours && currentMinutes >= startMinutes)) &&
-          (currentHours < endHours || (currentHours === endHours && currentMinutes <= endMinutes)))
-      )
-    }
-    return false
-  }
-
-  const handleTotal = () => {
-    const selectedItem = props.data.providerServices?.find((item) => booking.providerServiceId == item.id)
-    const selectedItemPrice =
-      selectedItem?.bookingCosts?.find((spectialTime) => {
-        if (isSpecialTime(spectialTime?.startTimeOfDay, spectialTime?.endTimeOfDay)) {
-          return spectialTime
-        }
-      })?.amount ?? selectedItem?.defaultCost
-    const voucher = myVoucher?.row?.find((voucher) => voucher.code == booking?.voucherIds)
-    const voucherValue =
-      voucher?.discountUnit == VoucherResponseDiscountUnitEnum.Cash
-        ? voucher.discountValue
-        : VoucherResponseDiscountUnitEnum.Percent
-        ? ((selectedItemPrice ?? 0) * booking.bookingPeriod * (voucher?.discountValue ?? 0)) / 100
-        : 0
-
-    setTotal((selectedItemPrice ?? 0) * booking.bookingPeriod)
-
-    setTotalAfterDiscount(
-      voucher?.discountUnit == VoucherResponseDiscountUnitEnum.Cash
-        ? (selectedItemPrice ?? 0) * booking.bookingPeriod > (voucherValue ?? 1)
-          ? (selectedItemPrice ?? 0) * booking.bookingPeriod - (voucherValue ?? 1)
-          : 0
-        : VoucherResponseDiscountUnitEnum.Percent
-        ? (selectedItemPrice ?? 0) * booking.bookingPeriod - (voucherValue ?? 0)
-        : (selectedItemPrice ?? 0) * booking.bookingPeriod,
-    )
-  }
   useEffect(() => {
-    handleTotal()
+    if (booking.providerServiceId != '') {
+      estimateBookingCost.mutate(booking, {
+        onSuccess(data) {
+          setIsError(false)
+          setTotal(data.data.totalCostBeforeVoucher)
+          setTotalAfterDiscount(data.data.totalCostSpendBooking)
+        },
+        onError: (error) => {
+          setIsError(true)
+          notification.warning({
+            message: 'Tạo đơn thất bại',
+            description: `${error.message}`,
+            placement: 'bottomLeft',
+          })
+        },
+      })
+    }
   }, [booking])
 
   useEffect(() => {
@@ -123,7 +86,7 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
                   (voucherDetail) =>
                     booking.bookingPeriod >= (voucherDetail?.minimumBookingDurationForUsage ?? 0) &&
                     total >= (voucherDetail?.minimumBookingTotalPriceForUsage ?? 0),
-                )?.code ?? '',
+                )?.id ?? '',
               ),
             ]
           : [],
@@ -229,6 +192,7 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
                                 key={index}
                                 onClick={() => {
                                   setBooking((prevData) => ({ ...prevData, providerServiceId: data.id ?? '' }))
+                                  setTotal(data?.defaultCost ?? 0)
                                   setMenuShow('')
                                 }}
                                 onKeyDown={() => {}}
@@ -315,7 +279,13 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
                   placeholder="Chọn khuyến mãi"
                   className="!bg-zinc-800 w-fit rounded-xl border border-white border-opacity-30"
                   styleInput="bg-transparent border-transparent border-l-white border-opacity-30 hover:border-transparent hover:border-l-white hover:border-opacity-30 focus:outline-none"
-                  value={booking.voucherIds}
+                  value={
+                    myVoucher?.row?.find(
+                      (mv) =>
+                        mv.id ==
+                        (booking.voucherIds && (booking.voucherIds?.length ?? 0) > 0 ? booking.voucherIds[0] : ''),
+                    )?.code ?? ''
+                  }
                   readOnly
                   component={<Right theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />}
                 />
@@ -344,7 +314,8 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
 
           <div className="flex justify-between border-b-2 border-[#B9B8CC] pb-5">
             <p className="text-3xl font-bold ">Thành tiền:</p>
-            {booking.providerServiceId && (
+
+            {!isError && booking.providerServiceId && (
               <div className="flex items-end gap-2">
                 {total != totalAfterDiscount && (
                   <span className="flex items-center text-xl font-bold line-through opacity-30">
@@ -355,13 +326,20 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
                     <span className="text-xs italic"> đ</span>
                   </span>
                 )}
-                <p className="flex items-center text-3xl font-bold ">
+                <p className="flex items-center text-3xl font-bold">
                   {booking.bookingPeriod}h giá{' '}
                   {totalAfterDiscount.toLocaleString('en-US', {
                     currency: 'VND',
                   })}
                   đ
                 </p>
+                <span className="self-start h-3 w-3">
+                  {estimateBookingCost.isLoading && (
+                    <div
+                      className={`spinner h-3 w-3 animate-spin rounded-full border-[3px] border-r-transparent border-white`}
+                    />
+                  )}
+                </span>
               </div>
             )}
           </div>
@@ -373,10 +351,12 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
           <button
             type="button"
             className={`w-full h-fit py-2 mt-2 text-2xl font-bold text-white ${
-              !booking.providerServiceId ? 'border bg-zinc-800 cursor-not-allowed' : 'bg-purple-700 hover:scale-105'
+              !booking.providerServiceId || estimateBookingCost.isLoading || isError
+                ? 'border border-1 bg-zinc-800 cursor-not-allowed'
+                : 'border border-1 border-transparent bg-purple-700 hover:scale-105'
             }  rounded-full `}
             onClick={() => {
-              if (booking.providerServiceId) handleCreateBooking(booking)
+              if (booking.providerServiceId && !estimateBookingCost.isLoading && !isError) handleCreateBooking(booking)
             }}
           >
             Đặt

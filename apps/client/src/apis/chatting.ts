@@ -1,7 +1,12 @@
 import { z } from 'zod'
 
 import { createRouter } from './configurations'
-import { createNewChatChannel, getListChattingChannels, getMessagesByChannelId } from './services/chatting-service'
+import {
+  createNewChatChannel,
+  getListChattingChannels,
+  getMessagesByChannelId,
+  getTokenForVideoCall,
+} from './services/chatting-service'
 
 export const chattingRouter = createRouter()
   .query('getListChattingChannels', {
@@ -29,5 +34,14 @@ export const chattingRouter = createRouter()
     }),
     resolve: async ({ ctx, input }) => {
       return await createNewChatChannel(input, ctx)
+    },
+  })
+  .query('getTokenForVideoCall', {
+    input: z.object({
+      channelId: z.string(),
+      privilegeExpireTime: z.number(),
+    }),
+    resolve: async ({ ctx, input }) => {
+      return await getTokenForVideoCall(input, ctx)
     },
   })

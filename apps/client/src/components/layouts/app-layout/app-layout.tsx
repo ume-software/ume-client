@@ -1,7 +1,7 @@
 import NotiSound from 'public/sounds/notification.mp3'
 import { socket } from '~/apis/socket/socket-connect'
 import { useAuth } from '~/contexts/auth'
-import { useSockets } from '~/contexts/chatting-context'
+import { useChattingSockets } from '~/contexts/chatting-context'
 
 import {
   Dispatch,
@@ -30,10 +30,10 @@ type AppLayoutProps = PropsWithChildren
 interface SocketContext {
   socketContext: {
     socketNotificateContext: any[]
-    socketLivestreamContext: any[]
+    socketVideoCallContext: any[]
   }
   setSocketContext: Dispatch<
-    SetStateAction<{ socketNotificateContext: any[]; socketChattingContext: any[]; socketLivestreamContext: any[] }>
+    SetStateAction<{ socketNotificateContext: any[]; socketChattingContext: any[]; socketVideoCallContext: any[] }>
   >
 }
 interface DrawerProps {
@@ -44,7 +44,7 @@ interface DrawerProps {
 export const SocketContext = createContext<SocketContext>({
   socketContext: {
     socketNotificateContext: [],
-    socketLivestreamContext: [],
+    socketVideoCallContext: [],
   },
   setSocketContext: () => {},
 })
@@ -58,7 +58,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const [userInfo, setUserInfo] = useState<UserInformationResponse>()
   let accessToken
   const { isAuthenticated } = useAuth()
-  const { messages } = useSockets()
+  const { messages } = useChattingSockets()
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const utils = trpc.useContext()
 
@@ -69,7 +69,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const [childrenDrawer, setChildrenDrawer] = useState<ReactNode>()
   const [socketContext, setSocketContext] = useState<SocketContext['socketContext']>({
     socketNotificateContext: [],
-    socketLivestreamContext: [],
+    socketVideoCallContext: [],
   })
 
   trpc.useQuery(['identity.identityInfo'], {
@@ -100,6 +100,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           utils.invalidateQueries('identity.identityInfo')
           setSocketContext((prev) => ({ ...prev, socketNotificateContext: args }))
         })
+        socketInstance.socketInstanceBooking.on(getSocket().SOCKET_SERVER_EMIT.CALL_FROM_CHANNEL, (...args) => {
+          setSocketContext((prev) => ({ ...prev, socketVideoCallContext: args }))
+        })
       }
 
       return () => {
@@ -110,7 +113,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accessToken, isAuthenticated, userInfo])
-
+  console.log(socketContext)
   useEffect(() => {
     if (messages && (messages?.length ?? 0) > 0) {
       messages[messages?.length - 1]?.senderId != userInfo?.id &&

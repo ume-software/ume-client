@@ -2,7 +2,7 @@ import { ArrowLeft, Dot } from '@icon-park/react'
 import { CustomDrawer } from '@ume/ui'
 import Chat from '~/containers/chat/chat.container'
 import { useAuth } from '~/contexts/auth'
-import { useSockets } from '~/contexts/chatting-context'
+import { useChattingSockets } from '~/contexts/chatting-context'
 
 import { useContext, useEffect, useState } from 'react'
 
@@ -21,7 +21,7 @@ export const Sidebar = () => {
     accessToken = localStorage.getItem('accessToken')
   }
   const [userInfo, setUserInfo] = useState<UserInformationResponse>()
-  const { socket, messages } = useSockets()
+  const { socket, messages } = useChattingSockets()
   const [isModalLoginVisible, setIsModalLoginVisible] = useState(false)
   const [showMessage, setShowMessage] = useState(false)
   const utils = trpc.useContext()

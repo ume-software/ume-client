@@ -9,7 +9,7 @@ import Image from 'next/legacy/image'
 const PageLoading = () => {
   return (
     <div className="flex items-center justify-center h-screen animate-spin rounded-xl p-5">
-      <Image width={130} height={130} alt="logo-ume" src={logo} layout="fixed" />
+      <Image width={100} height={100} alt="logo-ume" src={logo} layout="fixed" />
     </div>
   )
 }

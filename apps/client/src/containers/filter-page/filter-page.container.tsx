@@ -6,8 +6,6 @@ import { useRouter } from 'next/router'
 import FilterContainer from './components/filter.container'
 import { AttrbuteProps } from './components/iFilter'
 
-import { AppLayout } from '~/components/layouts/app-layout/app-layout'
-
 import { trpc } from '~/utils/trpc'
 
 const FilterPage = (props) => {

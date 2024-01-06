@@ -2,7 +2,7 @@ import { TRPCError } from '@trpc/server'
 import { getEnv } from '~/env'
 
 import { parse } from 'cookie'
-import { ChatChannelApi, CreateChannelRequest } from 'ume-chatting-service-openapi'
+import { CallApi, ChatChannelApi, CreateChannelRequest } from 'ume-chatting-service-openapi'
 
 import { getTRPCErrorTypeFromErrorStatus } from '~/utils/errors'
 
@@ -44,6 +44,7 @@ export const getMessagesByChannelId = async (query: { channelId: string; limit: 
     })
   }
 }
+
 export const createNewChatChannel = async (receiverId: CreateChannelRequest, ctx) => {
   const cookies = parse(ctx.req.headers.cookie)
   try {
@@ -52,6 +53,27 @@ export const createNewChatChannel = async (receiverId: CreateChannelRequest, ctx
       isJsonMime: () => true,
       accessToken: cookies['accessToken'],
     }).createNewChannel(receiverId)
+
+    return {
+      data: response.data,
+      success: true,
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status) || 500,
+      message: error.message || 'Failed to create new chat channel',
+    })
+  }
+}
+
+export const getTokenForVideoCall = async (query: { channelId: string; privilegeExpireTime: number }, ctx) => {
+  const cookies = parse(ctx.req.headers.cookie)
+  try {
+    const response = await new CallApi({
+      basePath: getEnv().baseChattingURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).getTokenCallByChannelId(query.channelId, query.privilegeExpireTime)
 
     return {
       data: response.data,

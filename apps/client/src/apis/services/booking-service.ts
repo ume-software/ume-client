@@ -173,6 +173,27 @@ export const getMyVoucherForBooking = async (
   }
 }
 
+export const estimateBookingCost = async (query: BookingProviderRequest, ctx) => {
+  const cookies = parse(ctx.req.headers.cookie ?? '')
+  try {
+    const reponse = await new BookingApi({
+      basePath: getEnv().baseUmeServiceURL,
+      isJsonMime: () => true,
+      accessToken: cookies['accessToken'],
+    }).estimateBooking(query)
+    return {
+      data: reponse.data,
+      success: true,
+      message: '',
+    }
+  } catch (error) {
+    throw new TRPCError({
+      code: getTRPCErrorTypeFromErrorStatus(error.response?.status),
+      message: error.response?.data.message || 'Fail to create new booking',
+    })
+  }
+}
+
 export const createBooking = async (provider: BookingProviderRequest, ctx) => {
   try {
     const cookies = parse(ctx.req.headers.cookie)
