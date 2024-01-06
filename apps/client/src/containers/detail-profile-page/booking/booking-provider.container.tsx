@@ -180,6 +180,7 @@ const BookingProvider = (props: { data: UserInformationResponse }) => {
                                 key={index}
                                 onClick={() => {
                                   setBooking((prevData) => ({ ...prevData, providerServiceId: data.id ?? '' }))
+                                  setTotal(data?.defaultCost ?? 0)
                                   setMenuShow('')
                                 }}
                                 onKeyDown={() => {}}
