@@ -216,7 +216,7 @@ const ComplainTableHistory = (props: { typeTable }) => {
           >
             {bookingComplainHistoryArray[10]?.booker?.name}
           </Link>,
-          bookingComplainHistoryArray[11]?.booking?.service?.name,
+          bookingComplainHistoryArray[10]?.providerService?.service?.name,
           <span key={bookingComplainHistoryArray[0] + 'description'} className="max-w-96 line-clamp-3">
             {bookingComplainHistoryArray[5]}
           </span>,

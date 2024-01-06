@@ -89,14 +89,18 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       if (socketInstance?.socketInstanceBooking) {
         socketInstance.socketInstanceBooking.on(getSocket().SOCKET_SERVER_EMIT.USER_BOOKING_PROVIDER, (...args) => {
           audioRef.current?.play()
+          console.log('user Booking', args)
+
           setSocketContext((prev) => ({ ...prev, socketNotificateContext: args }))
         })
         socketInstance.socketInstanceBooking.on(getSocket().SOCKET_SERVER_EMIT.PROVIDER_HANDLED_BOOKING, (...args) => {
           audioRef.current?.play()
+          console.log('provider Booking', args)
           setSocketContext((prev) => ({ ...prev, socketNotificateContext: args }))
         })
         socketInstance.socketInstanceBooking.on(getSocket().SOCKET_SERVER_EMIT.ADMIN_HANDLE_KYC, (...args) => {
           audioRef.current?.play()
+          console.log('end soon Booking', args)
           utils.invalidateQueries('identity.identityInfo')
           setSocketContext((prev) => ({ ...prev, socketNotificateContext: args }))
         })

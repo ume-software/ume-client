@@ -15,9 +15,9 @@ function CategoryDrawer({ data, loadingService }) {
   return (
     <CustomDrawer
       drawerTitle="Tất cả dịch vụ"
-      customOpenBtn="p-2 mr-2 rounded-xl cursor-pointer justify-self-end font-semibold active:bg-gray-200 hover:bg-blue-500 "
+      customOpenBtn="mr-2 rounded-xl cursor-pointer justify-self-end font-semibold active:bg-gray-200 hover:bg-blue-500 "
       openBtn={
-        <div onClick={handleAllServiceOpen} onKeyDown={() => {}}>
+        <div className="w-full h-full p-2" onClick={handleAllServiceOpen} onKeyDown={() => {}}>
           Tất cả dịch vụ
         </div>
       }

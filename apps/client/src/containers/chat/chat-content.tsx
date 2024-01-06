@@ -1,4 +1,4 @@
-import { MoreOne, SendOne, Tool, Videocamera } from '@icon-park/react'
+import { SendOne, Videocamera } from '@icon-park/react'
 import { useAuth } from '~/contexts/auth'
 import { useSockets } from '~/contexts/chatting-context'
 import useChatScroll from '~/hooks/useChatScroll'
@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Tooltip } from 'antd'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { ChattingChannelResponse, MemberChatChannelResponse } from 'ume-chatting-service-openapi'
 
 import { CommentSkeletonLoader } from '~/components/skeleton-load'
@@ -22,6 +23,8 @@ const convertArrayObjectToObject = (input: Array<any>, key: string = '_id') => {
   }, {})
 }
 const ChatContent = (props: { channel: ChattingChannelResponse }) => {
+  const router = useRouter()
+
   const [messageInput, setMessageInput] = useState('')
   const [displayMessageTime, setDisplayMessageTime] = useState('')
   const { socket, messages } = useSockets()
@@ -83,6 +86,10 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
     return formattedDate
   }
 
+  const handleCallVideo = () => {
+    router.replace(`/video-call?channelId=${props.channel._id}`)
+  }
+
   return (
     <>
       {loadingChattingMessageChannel ? (
@@ -90,30 +97,30 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
       ) : (
         <div className="relative max-h-screen overflow-hidden">
           <div className="flex items-center justify-between w-full">
-            <div>
-              <Link
-                href={`/profile/${images[0].userInformation.slug ?? images[0].userId}`}
-                className="w-3/4 p-2 rounded-lg hover:bg-gray-700"
-              >
-                {images && (
-                  <div className="flex items-center gap-3">
-                    <div className="relative min-w-[50px] min-h-[50px] max-w-[50px] max-h-[50px]">
-                      <Image
-                        className="absolute rounded-full"
-                        layout="fill"
-                        objectFit="cover"
-                        src={images[0].userInformation.avatarUrl}
-                        alt="Avatar"
-                      />
-                    </div>
-                    <span className="text-2xl font-bold text-white truncate">
-                      {images[0].userInformation.name || ''}
-                    </span>
+            <Link
+              href={`/profile/${images[0].userInformation.slug ?? images[0].userId}`}
+              className="w-3/4 p-2 rounded-lg hover:bg-gray-700"
+            >
+              {images && (
+                <div className="flex items-center gap-3">
+                  <div className="relative min-w-[50px] min-h-[50px] max-w-[50px] max-h-[50px]">
+                    <Image
+                      className="absolute rounded-full"
+                      layout="fill"
+                      objectFit="cover"
+                      src={images[0].userInformation.avatarUrl}
+                      alt="Avatar"
+                    />
                   </div>
-                )}
-              </Link>
-            </div>
-            <div className="px-4 py-3 mt-4 mr-4 ease-in-out hover:bg-slate-700 rounded-3xl">
+                  <span className="text-2xl font-bold text-white truncate">{images[0].userInformation.name || ''}</span>
+                </div>
+              )}
+            </Link>
+            <div
+              className="px-4 py-3 mt-4 mr-4 ease-in-out hover:bg-slate-700 rounded-3xl cursor-pointer"
+              onClick={handleCallVideo}
+              onKeyDown={() => {}}
+            >
               <Tooltip title="Gọi video">
                 <Videocamera theme="outline" size="24" fill="#FFFFFF" strokeLinejoin="bevel" />
               </Tooltip>

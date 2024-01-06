@@ -116,14 +116,16 @@ const ComplainDetailModal = ({
                     width={50}
                     height={50}
                     src={
-                      (bookingSelected?.booking?.providerService?.provider as any)?.avatarUrl ??
-                      bookingSelected?.booking?.booker?.avatarUrl ??
-                      'public/img-for-empty.png'
+                      complainType == ComplainEnum.COMPLAIN_OF_ME
+                        ? (bookingSelected?.booking?.providerService?.provider as any)?.avatarUrl
+                        : bookingSelected?.booking?.booker?.avatarUrl ?? 'public/img-for-empty.png'
                     }
                     alt="Avatar"
                   />
-                  <span className="text-lg font-semibold text-white truncate group-hover:underline">
-                    {bookingSelected?.booking?.booker?.name}
+                  <span className="max-w-[200px] text-lg font-semibold text-white truncate group-hover:underline">
+                    {complainType == ComplainEnum.COMPLAIN_OF_ME
+                      ? (bookingSelected?.booking?.providerService?.provider as any)?.name
+                      : bookingSelected?.booking?.booker?.name}
                   </span>
                 </div>
               </Link>
@@ -240,7 +242,6 @@ const ComplainDetailModal = ({
       <CloseSmall
         onClick={() => setIsModalComplainDetailVisible(false)}
         onKeyDown={(e) => e.key === 'Enter' && setIsModalComplainDetailVisible(false)}
-        tabIndex={1}
         className=" bg-[#3b3470] rounded-full cursor-pointer top-2 right-2 hover:rounded-full hover:bg-slate-300/20 active:bg-slate-300/25 dark:hover:bg-navy-300/20 dark:focus:bg-navy-300/20 dark:active:bg-navy-300/25 "
         theme="outline"
         size="24"
