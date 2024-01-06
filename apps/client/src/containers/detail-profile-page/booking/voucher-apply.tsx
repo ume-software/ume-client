@@ -48,14 +48,14 @@ const VoucherApply = (props: {
                       props.duration >= (voucher?.minimumBookingDurationForUsage ?? 0) &&
                       props.price >= (voucher?.minimumBookingTotalPriceForUsage ?? 0)
                     ) {
-                      setVoucherSelect([String(voucher.code)] ?? [])
+                      setVoucherSelect([String(voucher.id)] ?? [])
                     }
                   }}
                   onKeyDown={() => {}}
                 >
                   <div
                     className={`flex border-2 gap-3 ${
-                      voucherSelect?.find((voucherSelec) => voucherSelec == voucher.code)
+                      voucherSelect?.find((voucherSelec) => voucherSelec == voucher.id)
                         ? 'border-purple-600'
                         : 'border-white border-opacity-30'
                     }  rounded-2xl`}

@@ -30,10 +30,10 @@ type AppLayoutProps = PropsWithChildren
 interface SocketContext {
   socketContext: {
     socketNotificateContext: any[]
-    socketLivestreamContext: any[]
+    socketVideoCallContext: any[]
   }
   setSocketContext: Dispatch<
-    SetStateAction<{ socketNotificateContext: any[]; socketChattingContext: any[]; socketLivestreamContext: any[] }>
+    SetStateAction<{ socketNotificateContext: any[]; socketChattingContext: any[]; socketVideoCallContext: any[] }>
   >
 }
 interface DrawerProps {
@@ -44,7 +44,7 @@ interface DrawerProps {
 export const SocketContext = createContext<SocketContext>({
   socketContext: {
     socketNotificateContext: [],
-    socketLivestreamContext: [],
+    socketVideoCallContext: [],
   },
   setSocketContext: () => {},
 })
@@ -69,7 +69,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const [childrenDrawer, setChildrenDrawer] = useState<ReactNode>()
   const [socketContext, setSocketContext] = useState<SocketContext['socketContext']>({
     socketNotificateContext: [],
-    socketLivestreamContext: [],
+    socketVideoCallContext: [],
   })
 
   trpc.useQuery(['identity.identityInfo'], {
@@ -89,20 +89,19 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       if (socketInstance?.socketInstanceBooking) {
         socketInstance.socketInstanceBooking.on(getSocket().SOCKET_SERVER_EMIT.USER_BOOKING_PROVIDER, (...args) => {
           audioRef.current?.play()
-          console.log('user Booking', args)
-
           setSocketContext((prev) => ({ ...prev, socketNotificateContext: args }))
         })
         socketInstance.socketInstanceBooking.on(getSocket().SOCKET_SERVER_EMIT.PROVIDER_HANDLED_BOOKING, (...args) => {
           audioRef.current?.play()
-          console.log('provider Booking', args)
           setSocketContext((prev) => ({ ...prev, socketNotificateContext: args }))
         })
         socketInstance.socketInstanceBooking.on(getSocket().SOCKET_SERVER_EMIT.ADMIN_HANDLE_KYC, (...args) => {
           audioRef.current?.play()
-          console.log('end soon Booking', args)
           utils.invalidateQueries('identity.identityInfo')
           setSocketContext((prev) => ({ ...prev, socketNotificateContext: args }))
+        })
+        socketInstance.socketInstanceBooking.on(getSocket().SOCKET_SERVER_EMIT.CALL_FROM_CHANNEL, (...args) => {
+          setSocketContext((prev) => ({ ...prev, socketVideoCallContext: args }))
         })
       }
 

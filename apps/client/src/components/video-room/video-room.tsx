@@ -82,35 +82,48 @@ const VideoRoom = () => {
     router.replace('/')
   }
 
-  const initAgora = async () => {
-    client.on('user-published', handleUserJoined)
-    client.on('user-unpublished', handleUserLeft)
-
-    const uid: any = rtcAgora?.uid ?? 0
-    const rtcAgoraToken = rtcAgora?.rtcToken ?? null
-    await client.join(getEnv().agoraAppID, slug.channelId?.toString() ?? '', rtcAgoraToken, uid)
-    setIsJoinChannel(true)
-    const [audioTrack, videoTrack] = await AgoraRTC.createMicrophoneAndCameraTracks()
-    setLocalTracks([audioTrack, videoTrack])
-    setUsers((prevUsers) => [...prevUsers, { uid, videoTrack, audioTrack }])
-    setTracks([audioTrack, videoTrack])
-    await client.publish([audioTrack, videoTrack])
-  }
-
   useEffect(() => {
     if (rtcAgora && !isJoinChannel) {
-      initAgora()
+      client.on('user-published', handleUserJoined)
+      client.on('user-left', handleUserLeft)
 
-      return () => {
-        for (let localTrack of localTracks) {
-          localTrack.stop()
-          localTrack.close()
-        }
+      const uid: any = rtcAgora?.uid ?? 0
+      const rtcAgoraToken = rtcAgora?.rtcToken ?? null
+      client
+        .join(getEnv().agoraAppID, slug.channelId?.toString() ?? '', rtcAgoraToken, uid)
+        .then((uid) => Promise.all([AgoraRTC.createMicrophoneAndCameraTracks(), uid]))
+        .then(([tracks, uid]) => {
+          setIsJoinChannel(true)
+
+          const [audioTrack, videoTrack] = tracks
+          setLocalTracks(tracks)
+          setUsers((previousUsers) => [
+            ...previousUsers,
+            {
+              uid,
+              videoTrack,
+              audioTrack,
+            },
+          ])
+          setTracks([audioTrack, videoTrack])
+          client.publish(tracks)
+        })
+    }
+    return () => {
+      for (let localTrack of localTracks) {
+        localTrack.stop()
+        localTrack.close()
+      }
+      if (isJoinChannel) {
         client.off('user-published', handleUserJoined)
         client.off('user-unpublished', handleUserLeft)
-        client.unpublish(tracks).then(() => client.leave())
+        client.unpublish(tracks).then(() => {
+          setIsJoinChannel(false)
+          return client.leave()
+        })
       }
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rtcAgora?.rtcToken])
 
