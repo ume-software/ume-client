@@ -4,7 +4,8 @@ import { getEnv } from '~/env'
 
 import { useEffect, useState } from 'react'
 
-import AgoraRTC from 'agora-rtc-sdk-ng'
+import AgoraRTC, { UID } from 'agora-rtc-sdk-ng'
+import { isNil } from 'lodash'
 import { useRouter } from 'next/router'
 import { CallResponse } from 'ume-chatting-service-openapi'
 import { UserInformationResponse } from 'ume-service-openapi'
@@ -35,6 +36,7 @@ const VideoRoom = () => {
   const [tracks, setTracks] = useState<any[]>([])
   const [localTracks, setLocalTracks] = useState<any[]>([])
   const [isJoinChannel, setIsJoinChannel] = useState<boolean>(false)
+  const [myUid, setMyUid] = useState<UID>(0)
 
   const [rtcAgora, setRtcAgora] = useState<CallResponse>()
   trpc.useQuery(
@@ -43,9 +45,14 @@ const VideoRoom = () => {
       { channelId: slug.channelId?.toString() ?? '', privilegeExpireTime: expireAgoraTime },
     ],
     {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: 'always',
+      cacheTime: 0,
+      refetchOnMount: false,
       onSuccess(data) {
         setRtcAgora(data.data)
       },
+      enabled: isNil(client.channelName) && isNil(slug.tk),
     },
   )
 
@@ -83,49 +90,93 @@ const VideoRoom = () => {
   }
 
   useEffect(() => {
-    if (rtcAgora && !isJoinChannel) {
-      client.on('user-published', handleUserJoined)
-      client.on('user-left', handleUserLeft)
-
+    client.on('user-published', handleUserJoined)
+    client.on('user-left', handleUserLeft)
+    client.on('user-joined', () => setIsJoinChannel(true))
+    if (slug.tk?.toString() && slug.u?.toString()) {
+      const uid = Number(slug.u?.toString() ?? 0)
+      const rtcAgoraToken = slug.tk?.toString() ?? ''
+      try {
+        client
+          .join(getEnv().agoraAppID, slug.channelId?.toString() ?? '', rtcAgoraToken, uid)
+          .then((uid) => Promise.all([AgoraRTC.createMicrophoneAndCameraTracks(), uid]))
+          .then(([tracks, uid]) => {
+            const [audioTrack, videoTrack] = tracks
+            setLocalTracks(tracks)
+            setUsers((previousUsers) => [
+              ...previousUsers.filter((preUser) => preUser.uid == uid),
+              {
+                uid,
+                videoTrack,
+                audioTrack,
+              },
+            ])
+            setIsJoinChannel(true)
+            setMyUid(uid)
+            setTracks([audioTrack, videoTrack])
+            if (audioTrack && videoTrack) {
+              client.publish(tracks)
+            }
+          })
+      } catch (error) {
+        console.log(error)
+      }
+    } else if (rtcAgora && !isJoinChannel && isNil(client.channelName)) {
       const uid: any = rtcAgora?.uid ?? 0
       const rtcAgoraToken = rtcAgora?.rtcToken ?? null
-      client
-        .join(getEnv().agoraAppID, slug.channelId?.toString() ?? '', rtcAgoraToken, uid)
-        .then((uid) => Promise.all([AgoraRTC.createMicrophoneAndCameraTracks(), uid]))
-        .then(([tracks, uid]) => {
-          setIsJoinChannel(true)
-
-          const [audioTrack, videoTrack] = tracks
-          setLocalTracks(tracks)
-          setUsers((previousUsers) => [
-            ...previousUsers,
-            {
-              uid,
-              videoTrack,
-              audioTrack,
-            },
-          ])
-          setTracks([audioTrack, videoTrack])
-          client.publish(tracks)
-        })
+      client.disableDualStream()
+      try {
+        client
+          .join(getEnv().agoraAppID, slug.channelId?.toString() ?? '', rtcAgoraToken, uid)
+          .then((uid) => Promise.all([AgoraRTC.createMicrophoneAndCameraTracks(), uid]))
+          .then(([tracks, uid]) => {
+            const [audioTrack, videoTrack] = tracks
+            setLocalTracks(tracks)
+            setUsers((previousUsers) => [
+              ...previousUsers.filter((preUser) => preUser.uid == uid),
+              {
+                uid,
+                videoTrack,
+                audioTrack,
+              },
+            ])
+            setIsJoinChannel(true)
+            setMyUid(uid)
+            setTracks([audioTrack, videoTrack])
+            if (audioTrack && videoTrack) {
+              client.publish(tracks)
+            }
+          })
+      } catch (error) {
+        console.log(error)
+      }
+    } else {
+      client.leave()
     }
+
     return () => {
       for (let localTrack of localTracks) {
         localTrack.stop()
         localTrack.close()
       }
-      if (isJoinChannel) {
+      if (isJoinChannel && tracks.length > 0) {
         client.off('user-published', handleUserJoined)
         client.off('user-unpublished', handleUserLeft)
-        client.unpublish(tracks).then(() => {
+        if (client.channelName) {
+          client.unpublish(tracks).then(() => {
+            setTracks([])
+            setIsJoinChannel(false)
+            client.leave()
+          })
+        } else {
           setIsJoinChannel(false)
-          return client.leave()
-        })
+          client.leave()
+        }
       }
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rtcAgora?.rtcToken])
+  }, [rtcAgora, slug.tk, slug.u])
 
   return (
     <div className="min-h-screen text-white">
@@ -133,7 +184,7 @@ const VideoRoom = () => {
       <div className="grid grid-cols-6 pl-10 pr-20 mb-10">
         {users.map((user) => (
           <div key={user.uid.toString()} className={`2xl:col-span-3 lg:col-span-2 col-span-1 px-5 rounded-lg`}>
-            <VideoPlayer user={user} />
+            <VideoPlayer user={user} myUid={myUid} />
           </div>
         ))}
       </div>

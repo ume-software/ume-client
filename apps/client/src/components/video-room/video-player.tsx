@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 
-export const VideoPlayer = ({ user }) => {
+export const VideoPlayer = ({ user, myUid }) => {
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -10,7 +10,8 @@ export const VideoPlayer = ({ user }) => {
 
   return (
     <div className="w-full h-full">
-      Uid: {user.uid}
+      {/* {(user.uid = myUid && <p>Tôi</p>)} */}
+      {user.uid}
       <div ref={ref} className="w-full h-full min-w-[640px] min-h-[480px]"></div>
     </div>
   )
