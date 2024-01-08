@@ -1,3 +1,4 @@
+import { Videocamera } from '@icon-park/react'
 import NotiSound from 'public/sounds/notification.mp3'
 import { socket } from '~/apis/socket/socket-connect'
 import { useAuth } from '~/contexts/auth'
@@ -16,6 +17,7 @@ import {
 } from 'react'
 
 import { isNil } from 'lodash'
+import Link from 'next/link'
 import { UserInformationResponse } from 'ume-service-openapi'
 
 import { Footer } from '~/components/footer/footer.component'
@@ -58,7 +60,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const [userInfo, setUserInfo] = useState<UserInformationResponse>()
   let accessToken
   const { isAuthenticated } = useAuth()
-  const { messages } = useChattingSockets()
+  const { messages, newCall } = useChattingSockets()
+  const [isPressCalling, setIsPressCalling] = useState<boolean>(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const utils = trpc.useContext()
 
@@ -80,6 +83,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     enabled: isNil(userInfo),
   })
 
+  console.log(newCall)
+
   useEffect(() => {
     if (!!accessToken || isAuthenticated) {
       utils.invalidateQueries(['booking.getUserBySlug'])
@@ -100,9 +105,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           utils.invalidateQueries('identity.identityInfo')
           setSocketContext((prev) => ({ ...prev, socketNotificateContext: args }))
         })
-        socketInstance.socketInstanceBooking.on(getSocket().SOCKET_SERVER_EMIT.CALL_FROM_CHANNEL, (...args) => {
-          setSocketContext((prev) => ({ ...prev, socketVideoCallContext: args }))
-        })
       }
 
       return () => {
@@ -113,7 +115,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accessToken, isAuthenticated, userInfo])
-  console.log(socketContext)
+
   useEffect(() => {
     if (messages && (messages?.length ?? 0) > 0) {
       messages[messages?.length - 1]?.senderId != userInfo?.id &&
@@ -126,8 +128,24 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     () => ({ socketContext, setSocketContext, childrenDrawer, setChildrenDrawer }),
     [socketContext, setSocketContext, childrenDrawer, setChildrenDrawer],
   )
+
+  useEffect(() => {
+    setIsPressCalling(false)
+  }, [newCall])
+
   return (
     <SocketContext.Provider value={socketClientEmitValue}>
+      {newCall?.rtcToken && !isPressCalling && (
+        <div className="absolute top-0 left-0 w-full min-h-screen bg-black bg-opacity-50 z-50 flex justify-center items-center">
+          <Link
+            href={`/video-call?channelId=${newCall?.channelName}&u=${newCall?.uid}&tk=${newCall?.rtcToken}`}
+            className="bg-green-500 p-5 rounded-full cursor-pointer"
+            onClick={() => setIsPressCalling(true)}
+          >
+            <Videocamera theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
+          </Link>
+        </div>
+      )}
       <audio ref={audioRef} src={NotiSound} />
       <div className="flex flex-col">
         <div className="fixed z-10 flex flex-col w-full ">

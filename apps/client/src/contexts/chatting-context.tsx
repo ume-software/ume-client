@@ -14,12 +14,20 @@ interface MesageProps {
   senderId: string
 }
 
+interface CallProps {
+  channelName: string
+  rtcToken: string
+  uid: number
+}
+
 interface ChattingContext {
   socket: Socket
   channelId?: string
   setChannelId: (newChannelId: string) => void
   messages?: MesageProps[]
   setMessages: (newMessages: MesageProps[]) => void
+  newCall?: CallProps
+  setNewCall: (newCalling: CallProps) => void
 }
 
 const createSocket = (token: string): Socket =>
@@ -37,6 +45,7 @@ const SocketChattingContext = createContext<ChattingContext>({
   socket: {} as Socket,
   setChannelId: () => false,
   setMessages: () => false,
+  setNewCall: () => false,
 })
 
 export const SocketChattingProvider = (props: any) => {
@@ -45,6 +54,7 @@ export const SocketChattingProvider = (props: any) => {
 
   const [channelId, setChannelId] = useState<string>('')
   const [messages, setMessages] = useState<MesageProps[]>([])
+  const [newCall, setNewCall] = useState<CallProps | undefined>(undefined)
 
   if (typeof window !== 'undefined') {
     token = localStorage.getItem('accessToken')
@@ -59,8 +69,10 @@ export const SocketChattingProvider = (props: any) => {
       setChannelId: (newChannelId: string) => setChannelId(newChannelId),
       messages,
       setMessages: (newMessages: MesageProps[]) => setMessages(newMessages),
+      newCall,
+      setNewCall: (newCalling: CallProps) => setNewCall(newCalling),
     }),
-    [channelId, messages, socket],
+    [channelId, messages, newCall, socket],
   )
 
   useEffect(() => {
@@ -70,6 +82,9 @@ export const SocketChattingProvider = (props: any) => {
         setMessages((messages) => [...messages, { content, channelId, sentAt, senderId }])
       },
     )
+    socket.on(getSocket().SOCKER_CHATTING_SERVER_EMIT.CALL_FROM_CHANNEL, ({ channelName, rtcToken, uid }) => {
+      setNewCall({ channelName, rtcToken, uid })
+    })
   }, [socket, user])
 
   useEffect(() => {
