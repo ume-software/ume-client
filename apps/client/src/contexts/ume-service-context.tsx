@@ -1,59 +1,95 @@
-// import { Socket, io } from 'socket.io-client'
-// import { getEnv } from '~/env'
+import { Socket, io } from 'socket.io-client'
+import { getEnv } from '~/env'
 
-// import { createContext, useEffect, useMemo } from 'react'
+import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 
-// import { useAuth } from './auth'
+import { BookingHistoryResponse } from 'ume-service-openapi'
 
-// import { getSocket } from '~/utils/constants'
+import { useAuth } from './auth'
 
-// interface UmeServiceSocketProps {
-//   socketUmeService: Socket
-//   userBooking: any
-//   setUserBooking: any
-//   [key: string]: any
-// }
+import { getSocket } from '~/utils/constants'
 
-// const createSocket = (token: string): Socket =>
-//   io(getEnv().baseSocketBookingURL, {
-//     reconnection: false,
-//     secure: true,
-//     rejectUnauthorized: false,
-//     auth: {
-//       authorization: `Bearer ${token}`,
-//     },
-//     path: '/ume-service/socket/',
-//   })
+interface UmeServiceSocketProps {
+  socketUmeService: Socket
+  userBooking: BookingHistoryResponse[]
+  setUserBooking?: (newBooking: BookingHistoryResponse[]) => void
+  adminHandleKYC: any
+  setAdminHandleKYC?: (adminRes: any) => void
+  callingFormOtherUser: any
+  setCallingFormOtherUser?: (newCall: any) => void
+  [key: string]: any
+}
 
-// const SocketUmeServiceContext = createContext<UmeServiceSocketProps>({
-//   socketUmeService: {} as Socket,
-// })
+const createSocket = (token: string): Socket =>
+  io(getEnv().baseSocketBookingURL, {
+    reconnection: false,
+    secure: true,
+    rejectUnauthorized: false,
+    auth: {
+      authorization: `Bearer ${token}`,
+    },
+    path: '/ume-service/socket/',
+  })
 
-// export const SocketUmeServiceProvider = (props: any) => {
-//   const { user } = useAuth()
-//   let token
+const SocketUmeServiceContext = createContext<UmeServiceSocketProps>({
+  socketUmeService: {} as Socket,
+  userBooking: [],
+  setUserBooking: () => false,
+  adminHandleKYC: [],
+  setAdminHandleKYC: () => false,
+  callingFormOtherUser: [],
+  setCallingFormOtherUser: () => false,
+})
 
-//   // if (typeof window !== 'undefined') {
-//     token = localStorage.getItem('accessToken')
-//   }
+export const SocketUmeServiceProvider = (props: any) => {
+  const { user } = useAuth()
+  let token
 
-//   const socket = createSocket(token)
+  const [userBooking, setUserBooking] = useState<BookingHistoryResponse[]>([])
+  const [adminHandleKYC, setAdminHandleKYC] = useState<any>([])
+  const [callingFormOtherUser, setCallingFormOtherUser] = useState<any>([])
 
-//   const contextValue = useMemo(() => ({ socket }), [socket])
+  if (typeof window !== 'undefined') {
+    token = localStorage.getItem('accessToken')
+  }
 
-//   useEffect(() => {
-//     socket.on(getSocket().SOCKET_SERVER_EMIT.USER_BOOKING_PROVIDER, (...args) => {
-//       setSocketContext((prev) => ({ ...prev, socketNotificateContext: args }))
-//     })
-//     socket.on(getSocket().SOCKET_SERVER_EMIT.PROVIDER_HANDLED_BOOKING, (...args) => {
-//       setSocketContext((prev) => ({ ...prev, socketNotificateContext: args }))
-//     })
-//     socket.on(getSocket().SOCKET_SERVER_EMIT.ADMIN_HANDLE_KYC, (...args) => {
-//       utils.invalidateQueries('identity.identityInfo')
-//       setSocketContext((prev) => ({ ...prev, socketNotificateContext: args }))
-//     })
-//     socket.on(getSocket().SOCKET_SERVER_EMIT.CALL_FROM_CHANNEL, (...args) => {
-//       setSocketContext((prev) => ({ ...prev, socketVideoCallContext: args }))
-//     })
-//   })
-// }
+  const socketUmeService = createSocket(token)
+
+  const contextValue = useMemo(
+    () => ({
+      socketUmeService,
+      userBooking,
+      setUserBooking: (newBooking: BookingHistoryResponse[]) => setUserBooking(newBooking),
+      adminHandleKYC,
+      setAdminHandleKYC: (adminRes: any) => setAdminHandleKYC(adminRes),
+      callingFormOtherUser,
+      setCallingFormOtherUser: (newCall: any) => setCallingFormOtherUser(newCall),
+    }),
+    [socketUmeService, userBooking, adminHandleKYC, callingFormOtherUser],
+  )
+
+  useEffect(() => {
+    socketUmeService.on(getSocket().SOCKET_SERVER_EMIT.USER_BOOKING_PROVIDER, (...args) => {
+      setUserBooking({ ...args })
+    })
+    socketUmeService.on(getSocket().SOCKET_SERVER_EMIT.PROVIDER_HANDLED_BOOKING, (...args) => {
+      setUserBooking({ ...args })
+    })
+    socketUmeService.on(getSocket().SOCKET_SERVER_EMIT.ADMIN_HANDLE_KYC, (...args) => {
+      setAdminHandleKYC({ ...args })
+    })
+    socketUmeService.on(getSocket().SOCKET_SERVER_EMIT.CALL_FROM_CHANNEL, (...args) => {
+      setCallingFormOtherUser({ ...args })
+    })
+  }, [socketUmeService, user])
+
+  useEffect(() => {
+    return () => {
+      socketUmeService.disconnect()
+    }
+  }, [socketUmeService])
+
+  return <SocketUmeServiceContext.Provider value={contextValue}>{props.children}</SocketUmeServiceContext.Provider>
+}
+
+export const useUmeServiceSockets = () => useContext(SocketUmeServiceContext)

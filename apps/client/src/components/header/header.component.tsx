@@ -7,14 +7,14 @@ import MainNotificate from '~/containers/notificate/main-notificate.container'
 import OrderNotificationForProvider from '~/containers/notificate/provider-order-notificate.container'
 import OrderNotificationForUser from '~/containers/notificate/user-order-notificate.container'
 import { useAuth } from '~/contexts/auth'
+import { useUmeServiceSockets } from '~/contexts/ume-service-context'
 
-import React, { Fragment, ReactElement, useContext, useEffect, useState } from 'react'
+import React, { Fragment, ReactElement, useEffect, useState } from 'react'
 
 import { isNil } from 'lodash'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
 
-import { SocketContext } from '../layouts/app-layout/app-layout'
 import { DropDownMenu } from './drop-down.component'
 import { LoginModal } from './login-modal.component'
 import { MoreMenu } from './more-menu.component'
@@ -34,9 +34,9 @@ export const Header: React.FC = React.memo(() => {
   const [balance, setBalance] = useState<any>()
   const [notificatedAmount, setNotificatedAmount] = useState<number>(0)
   const [selectedTab, setSelectedTab] = useState('Chính')
-  const { socketContext } = useContext(SocketContext)
+  const { adminHandleKYC, userBooking } = useUmeServiceSockets()
   const [isModalLoginVisible, setIsModalLoginVisible] = React.useState(false)
-  let accessToken
+
   const { login, logout, user, isAuthenticated } = useAuth()
   const utils = trpc.useContext()
 
@@ -75,17 +75,22 @@ export const Header: React.FC = React.memo(() => {
     setSelectedTab(target)
   }
 
+  console.log(userBooking)
+
   useEffect(() => {
-    if (socketContext.socketNotificateContext[0]?.status == 'PROVIDER_ACCEPT') {
+    if (userBooking[0]?.status == 'PROVIDER_ACCEPT') {
       setNotificatedAmount(notificatedAmount + 1)
       utils.invalidateQueries('booking.getCurrentBookingForUser')
-    } else if (socketContext.socketNotificateContext[0]?.status == 'USER_FINISH_SOON') {
+    } else if (userBooking[0]?.status == 'USER_FINISH_SOON') {
       setNotificatedAmount(notificatedAmount + 1)
       utils.invalidateQueries('booking.getCurrentBookingForProvider')
-    } else if (socketContext.socketNotificateContext[0]) {
+    } else if (userBooking[0]) {
+      setNotificatedAmount(notificatedAmount + 1)
+    } else if (adminHandleKYC[0]) {
+      utils.invalidateQueries('identity.identityInfo')
       setNotificatedAmount(notificatedAmount + 1)
     }
-  }, [socketContext.socketNotificateContext[0]])
+  }, [userBooking, userBooking[0]])
 
   return (
     <div className="fixed !z-50 flex items-center justify-between w-full min-h-[6vh] bg-umeHeader ">

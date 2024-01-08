@@ -1,4 +1,7 @@
-import { useCallback, useContext, useEffect, useRef, useState } from 'react'
+import ImgForEmpty from 'public/img-for-empty.png'
+import { useUmeServiceSockets } from '~/contexts/ume-service-context'
+
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { parse } from 'cookie'
 import { isNil } from 'lodash'
@@ -6,7 +9,6 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { UserInformationResponse } from 'ume-service-openapi'
 
-import { SocketContext } from '~/components/layouts/app-layout/app-layout'
 import { NotificateSkeletonLoader } from '~/components/skeleton-load'
 import { TimeFormat } from '~/components/time-format'
 
@@ -25,7 +27,7 @@ const OrderNotificationForUser = () => {
     },
     enabled: isNil(userInfo),
   })
-  const { socketContext } = useContext(SocketContext)
+  const { userBooking } = useUmeServiceSockets()
   const [page, setPage] = useState<number>(1)
   const limit = '10'
   const [listNotificated, setListNotificated] = useState<any>([])
@@ -84,9 +86,11 @@ const OrderNotificationForUser = () => {
             <NotificateSkeletonLoader />
           ) : (
             <>
-              {socketContext.socketNotificateContext[0]?.status == 'PROVIDER_ACCEPT' && (
+              {userBooking && userBooking[0]?.status == 'PROVIDER_ACCEPT' && (
                 <Link
-                  href={`/profile/${socketContext.socketNotificateContext[0]?.providerService?.provider?.slug}?tab=service&service=${socketContext.socketNotificateContext[0]?.providerService?.service?.slug}`}
+                  href={`/profile/${
+                    userBooking && (userBooking[0]?.providerService?.provider as any)?.slug
+                  }?tab=service&service=${userBooking[0]?.providerService?.service?.slug}`}
                 >
                   <div className="px-2 py-3 border-b-2 border-gray-200 rounded-t-lg cursor-pointer border-opacity-30 hover:bg-gray-700">
                     <div className="grid grid-cols-10">
@@ -94,7 +98,10 @@ const OrderNotificationForUser = () => {
                         <div className="w-[90%] h-full relative rounded-lg">
                           <Image
                             className="rounded-lg"
-                            src={socketContext.socketNotificateContext[0]?.providerService?.provider?.avatarUrl}
+                            src={
+                              (userBooking && (userBooking[0]?.providerService?.provider as any)?.avatarUrl) ??
+                              ImgForEmpty
+                            }
                             alt="Game Image"
                             layout="fill"
                             objectFit="contain"
@@ -106,18 +113,20 @@ const OrderNotificationForUser = () => {
                           <div>
                             <p className="inline font-bold">
                               {' '}
-                              {socketContext.socketNotificateContext[0]?.providerService?.provider?.name}
+                              {userBooking && (userBooking[0]?.providerService?.provider as any)?.name}
                             </p>{' '}
                             đã chấp nhận yêu cầu thuê của bạn với thời gian là:{' '}
                             <p className="inline font-bold">
-                              {socketContext.socketNotificateContext[0]?.bookingPeriod ||
-                                socketContext.socketNotificateContext[0]?.data?.bookingPeriod}
+                              {(userBooking && userBooking[0]?.bookingPeriod) ||
+                                (userBooking && (userBooking[0] as any)?.data?.bookingPeriod)}
                               h
                             </p>
                           </div>
                         </div>
                         <p className="space-y-2 font-bold text-end text-md opacity-30">
-                          {TimeFormat({ date: socketContext.socketNotificateContext[0]?.createdAt })}
+                          {TimeFormat({
+                            date: userBooking && userBooking[0]?.createdAt,
+                          })}
                         </p>
                       </div>
                     </div>
@@ -161,7 +170,7 @@ const OrderNotificationForUser = () => {
                     </div>
                   </Link>
                 ))
-              ) : socketContext.socketNotificateContext[0]?.status == 'PROVIDER_ACCEPT' ? (
+              ) : userBooking && userBooking[0]?.status == 'PROVIDER_ACCEPT' ? (
                 <></>
               ) : (
                 <div>Chưa có thông báo mới!</div>

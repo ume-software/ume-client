@@ -5,6 +5,7 @@ import '@ume/ui/styles.css'
 import { RootRouterTypes } from '~/apis'
 import { AuthProvider } from '~/contexts/auth'
 import { SocketChattingProvider } from '~/contexts/chatting-context'
+import { SocketUmeServiceProvider } from '~/contexts/ume-service-context'
 import '~/styles/globals.css'
 
 import type { AppProps } from 'next/app'
@@ -15,11 +16,13 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <GoogleOAuthProvider clientId="539493137887-3d21r0n63uuh66bmd6cog1fkih85h93m.apps.googleusercontent.com">
       <AuthProvider>
-        <SocketChattingProvider>
-          <AppLayout>
-            <Component {...pageProps} />
-          </AppLayout>
-        </SocketChattingProvider>
+        <SocketUmeServiceProvider>
+          <SocketChattingProvider>
+            <AppLayout>
+              <Component {...pageProps} />
+            </AppLayout>
+          </SocketChattingProvider>
+        </SocketUmeServiceProvider>
       </AuthProvider>
     </GoogleOAuthProvider>
   )

@@ -1,6 +1,7 @@
 import { SendOne, Videocamera } from '@icon-park/react'
 import { useAuth } from '~/contexts/auth'
 import { useChattingSockets } from '~/contexts/chatting-context'
+import { useUmeServiceSockets } from '~/contexts/ume-service-context'
 import useChatScroll from '~/hooks/useChatScroll'
 
 import { useEffect, useRef, useState } from 'react'
@@ -27,6 +28,7 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
 
   const [messageInput, setMessageInput] = useState('')
   const [displayMessageTime, setDisplayMessageTime] = useState('')
+  const { callingFormOtherUser } = useUmeServiceSockets()
   const { socket, messages } = useChattingSockets()
   const { user } = useAuth()
   const accessToken = localStorage.getItem('accessToken')
@@ -87,6 +89,7 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
   }
 
   const handleCallVideo = () => {
+    // socketUmeService.emit(getSocket().)
     router.replace(`/video-call?channelId=${props.channel._id}`)
   }
 

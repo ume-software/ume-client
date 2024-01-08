@@ -1,15 +1,15 @@
 import { Button } from '@ume/ui'
+import ImgForEmpty from 'public/img-for-empty.png'
+import { useUmeServiceSockets } from '~/contexts/ume-service-context'
 
-import { useCallback, useContext, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { notification } from 'antd'
-import { parse } from 'cookie'
 import { isNil } from 'lodash'
 import Image from 'next/image'
 import Link from 'next/link'
 import { BookingHandleRequestStatusEnum, UserInformationResponse } from 'ume-service-openapi'
 
-import { SocketContext } from '~/components/layouts/app-layout/app-layout'
 import { NotificateSkeletonLoader } from '~/components/skeleton-load'
 import { TimeFormat } from '~/components/time-format'
 
@@ -28,7 +28,7 @@ const OrderNotificationForProvider = () => {
     enabled: isNil(userInfo),
   })
 
-  const { socketContext } = useContext(SocketContext)
+  const { userBooking } = useUmeServiceSockets()
   const [page, setPage] = useState<number>(1)
   const limit = '10'
   const [listNotificated, setListNotificated] = useState<any>([])
@@ -177,20 +177,15 @@ const OrderNotificationForProvider = () => {
             <NotificateSkeletonLoader />
           ) : (
             <>
-              {socketContext.socketNotificateContext[0]?.status == 'USER_FINISH_SOON' && (
-                <Link
-                  href={`/profile/${
-                    socketContext.socketNotificateContext[0]?.booker?.slug ??
-                    socketContext.socketNotificateContext[0]?.booker?.id
-                  }`}
-                >
+              {userBooking && userBooking[0]?.status == 'USER_FINISH_SOON' && (
+                <Link href={`/profile/${userBooking && (userBooking[0]?.booker?.slug ?? userBooking[0]?.booker?.id)}`}>
                   <div className="px-2 py-3 border-b-2 border-gray-200 rounded-t-lg cursor-pointer border-opacity-30 hover:bg-gray-700">
                     <div className="grid grid-cols-10">
                       <div className="col-span-3">
                         <div className="w-[90%] h-full relative rounded-lg">
                           <Image
                             className="rounded-lg"
-                            src={socketContext.socketNotificateContext[0]?.booker?.avatarUrl}
+                            src={(userBooking && userBooking[0]?.booker?.avatarUrl) ?? ImgForEmpty}
                             alt="Game Image"
                             layout="fill"
                             objectFit="contain"
@@ -200,15 +195,14 @@ const OrderNotificationForProvider = () => {
                       <div className="col-span-7">
                         <div className="flex flex-col gap-2">
                           <div>
-                            <p className="inline font-bold">
-                              {' '}
-                              {socketContext.socketNotificateContext[0]?.booker?.name}
-                            </p>{' '}
-                            đã kết thúc sớm phiên thuê
+                            <p className="inline font-bold"> {userBooking && userBooking[0]?.booker?.name}</p> đã kết
+                            thúc sớm phiên thuê
                           </div>
                         </div>
                         <p className="space-y-2 font-bold text-end text-md opacity-30">
-                          {TimeFormat({ date: socketContext.socketNotificateContext[0]?.createdAt })}
+                          {TimeFormat({
+                            date: userBooking && userBooking[0]?.createdAt,
+                          })}
                         </p>
                       </div>
                     </div>
@@ -284,7 +278,7 @@ const OrderNotificationForProvider = () => {
                     )}
                   </div>
                 ))
-              ) : socketContext.socketNotificateContext[0]?.status == 'USER_FINISH_SOON' ? (
+              ) : userBooking && userBooking[0]?.status == 'USER_FINISH_SOON' ? (
                 <></>
               ) : (
                 <div>Chưa có thông báo mới!</div>
