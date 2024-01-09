@@ -1,4 +1,4 @@
-import { Videocamera } from '@icon-park/react'
+import { PhoneOff, Videocamera } from '@icon-park/react'
 import NotiSound from 'public/sounds/notification.mp3'
 import { socket } from '~/apis/socket/socket-connect'
 import { useAuth } from '~/contexts/auth'
@@ -83,8 +83,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     enabled: isNil(userInfo),
   })
 
-  console.log(newCall)
-
   useEffect(() => {
     if (!!accessToken || isAuthenticated) {
       utils.invalidateQueries(['booking.getUserBySlug'])
@@ -136,14 +134,23 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   return (
     <SocketContext.Provider value={socketClientEmitValue}>
       {newCall?.rtcToken && !isPressCalling && (
-        <div className="absolute top-0 left-0 w-full min-h-screen bg-black bg-opacity-50 z-50 flex justify-center items-center">
+        <div className="fixed top-30 left-30 w-full min-h-screen bg-black bg-opacity-50 z-50 flex justify-center items-center gap-5">
           <Link
-            href={`/video-call?channelId=${newCall?.channelName}&u=${newCall?.uid}&tk=${newCall?.rtcToken}`}
+            href={`/video-call?channelId=${encodeURIComponent(newCall?.channelName)}&uid=${encodeURIComponent(
+              newCall?.uid,
+            )}&tk=${encodeURIComponent(newCall?.rtcToken)}`}
             className="bg-green-500 p-5 rounded-full cursor-pointer"
             onClick={() => setIsPressCalling(true)}
           >
             <Videocamera theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
           </Link>
+          <button
+            type="button"
+            className="bg-red-500 p-5 rounded-full cursor-pointer"
+            onClick={() => setIsPressCalling(true)}
+          >
+            <PhoneOff theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
+          </button>
         </div>
       )}
       <audio ref={audioRef} src={NotiSound} />

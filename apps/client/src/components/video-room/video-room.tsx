@@ -4,7 +4,7 @@ import { getEnv } from '~/env'
 
 import { useEffect, useState } from 'react'
 
-import AgoraRTC, { UID } from 'agora-rtc-sdk-ng'
+import AgoraRTC from 'agora-rtc-sdk-ng'
 import { isNil } from 'lodash'
 import { useRouter } from 'next/router'
 import { CallResponse } from 'ume-chatting-service-openapi'
@@ -36,7 +36,8 @@ const VideoRoom = () => {
   const [tracks, setTracks] = useState<any[]>([])
   const [localTracks, setLocalTracks] = useState<any[]>([])
   const [isJoinChannel, setIsJoinChannel] = useState<boolean>(false)
-  const [myUid, setMyUid] = useState<UID>(0)
+
+  const [myUid, setMyUid] = useState<number>(0)
 
   const [rtcAgora, setRtcAgora] = useState<CallResponse>()
   trpc.useQuery(
@@ -92,10 +93,13 @@ const VideoRoom = () => {
   useEffect(() => {
     client.on('user-published', handleUserJoined)
     client.on('user-left', handleUserLeft)
-    client.on('user-joined', () => setIsJoinChannel(true))
-    if (slug.tk?.toString() && slug.u?.toString()) {
-      const uid = Number(slug.u?.toString() ?? 0)
-      const rtcAgoraToken = slug.tk?.toString() ?? ''
+
+    client.disableDualStream()
+
+    if (slug.tk?.toString() && slug.uid?.toString() && !isJoinChannel) {
+      const uid = Number(decodeURIComponent(slug.uid?.toString()) ?? 0)
+      const rtcAgoraToken = decodeURIComponent(slug.tk?.toString()) ?? ''
+      setMyUid(uid)
       try {
         client
           .join(getEnv().agoraAppID, slug.channelId?.toString() ?? '', rtcAgoraToken, uid)
@@ -104,7 +108,7 @@ const VideoRoom = () => {
             const [audioTrack, videoTrack] = tracks
             setLocalTracks(tracks)
             setUsers((previousUsers) => [
-              ...previousUsers.filter((preUser) => preUser.uid == uid),
+              ...previousUsers,
               {
                 uid,
                 videoTrack,
@@ -112,7 +116,6 @@ const VideoRoom = () => {
               },
             ])
             setIsJoinChannel(true)
-            setMyUid(uid)
             setTracks([audioTrack, videoTrack])
             if (audioTrack && videoTrack) {
               client.publish(tracks)
@@ -124,7 +127,7 @@ const VideoRoom = () => {
     } else if (rtcAgora && !isJoinChannel && isNil(client.channelName)) {
       const uid: any = rtcAgora?.uid ?? 0
       const rtcAgoraToken = rtcAgora?.rtcToken ?? null
-      client.disableDualStream()
+      setMyUid(uid)
       try {
         client
           .join(getEnv().agoraAppID, slug.channelId?.toString() ?? '', rtcAgoraToken, uid)
@@ -133,7 +136,7 @@ const VideoRoom = () => {
             const [audioTrack, videoTrack] = tracks
             setLocalTracks(tracks)
             setUsers((previousUsers) => [
-              ...previousUsers.filter((preUser) => preUser.uid == uid),
+              ...previousUsers,
               {
                 uid,
                 videoTrack,
@@ -141,7 +144,6 @@ const VideoRoom = () => {
               },
             ])
             setIsJoinChannel(true)
-            setMyUid(uid)
             setTracks([audioTrack, videoTrack])
             if (audioTrack && videoTrack) {
               client.publish(tracks)
@@ -176,13 +178,19 @@ const VideoRoom = () => {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rtcAgora, slug.tk, slug.u])
+  }, [rtcAgora, slug.tk, slug.uid])
+
+  function removeDuplicates(arr) {
+    return arr.filter((item, index, self) => {
+      const firstIndex = self.findIndex((i) => i.uid === item.uid)
+      return index === firstIndex
+    })
+  }
 
   return (
-    <div className="min-h-screen text-white">
-      VideoCall
+    <div className="min-h-screen text-white mt-32">
       <div className="grid grid-cols-6 pl-10 pr-20 mb-10">
-        {users.map((user) => (
+        {removeDuplicates(users).map((user) => (
           <div key={user.uid.toString()} className={`2xl:col-span-3 lg:col-span-2 col-span-1 px-5 rounded-lg`}>
             <VideoPlayer user={user} myUid={myUid} />
           </div>
