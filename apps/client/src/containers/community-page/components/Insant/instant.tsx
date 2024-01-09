@@ -54,6 +54,13 @@ const Instant = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scrollPosition])
 
+  function removeDuplicates(arr) {
+    return arr.filter((item, index, self) => {
+      const firstIndex = self.findLastIndex((i) => i.id === item.id)
+      return index === firstIndex
+    })
+  }
+
   return (
     <>
       {isIntantCardLoading && !isIntantCardFetching ? (
@@ -61,7 +68,7 @@ const Instant = () => {
       ) : (
         <div ref={containerRef} className="grid grid-cols-2">
           {instantCards && (instantCards.length ?? 0) > 0 ? (
-            instantCards?.map((instantCard) => (
+            removeDuplicates(instantCards)?.map((instantCard) => (
               <div key={instantCard.id} className="xl:col-span-1 col-span-2 p-3">
                 <InstantCard data={instantCard} />
               </div>
