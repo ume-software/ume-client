@@ -88,6 +88,7 @@ const CreateInstantCard = ({ isModalCreateInstantCardVisible, setIsModalCreateIn
             })
             setIsModalCreateInstantCardVisible(false)
             utils.invalidateQueries('community.getTopInstantCardHashTags')
+            utils.invalidateQueries('community.getInstantCard')
           },
         },
       )

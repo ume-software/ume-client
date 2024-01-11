@@ -44,3 +44,8 @@ export enum BookingHistoryStatusEnum {
   USER_FINISH_SOON = 'USER_FINISH_SOON',
   INIT = 'INIT',
 }
+
+export enum CallEnum {
+  CANCEL = 'CANCEL',
+  LEAVE = 'LEAVE',
+}

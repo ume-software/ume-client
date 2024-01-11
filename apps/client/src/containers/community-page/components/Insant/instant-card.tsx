@@ -81,13 +81,13 @@ const InstantCard = (props: { data: InstantCardResponse }) => {
             />
             <p className="text-lg font-semibold group-hover:underline">{props.data?.user?.name}</p>
           </Link>
-          <span>{props.data.content}</span>
+          <span className="text-lg font-semibold whitespace-normal break-all">{props.data.content}</span>
         </div>
         <div>
           {props.data?.instantCardHashTags?.map((hashtag) => (
             <div
               key={hashtag.hashTagId}
-              className="inline-block text-white text-sm font-semibold mr-3 mb-3 p-2 rounded-lg bg-white bg-opacity-20"
+              className="inline-block text-white text-md font-semibold mr-3 mb-3 p-2 rounded-lg bg-white bg-opacity-20"
             >
               {hashtag.hashTag.content}
             </div>
