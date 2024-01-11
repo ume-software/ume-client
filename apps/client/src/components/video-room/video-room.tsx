@@ -1,5 +1,6 @@
 import { PhoneOff } from '@icon-park/react'
 import { useAuth } from '~/contexts/auth'
+import { useChattingSockets } from '~/contexts/chatting-context'
 import { getEnv } from '~/env'
 
 import { useEffect, useState } from 'react'
@@ -10,8 +11,11 @@ import { useRouter } from 'next/router'
 import { CallResponse } from 'ume-chatting-service-openapi'
 import { UserInformationResponse } from 'ume-service-openapi'
 
+import { EndCallCountDown } from './end-call-countdown'
 import { VideoPlayer } from './video-player'
 
+import { getSocket } from '~/utils/constants'
+import { CallEnum } from '~/utils/enumVariable'
 import { trpc } from '~/utils/trpc'
 
 const client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' })
@@ -23,6 +27,7 @@ const VideoRoom = () => {
   const expireAgoraTime = Math.floor(Date.now() / 1000) + 86400
 
   const { isAuthenticated } = useAuth()
+  const { socket: socketChattingEmit, setNewCall, endCallType, setEndCallType } = useChattingSockets()
   const [userInfo, setUserInfo] = useState<UserInformationResponse | null>(null)
   const { isFetching, isLoading } = trpc.useQuery(['identity.identityInfo'], {
     onSuccess(data) {
@@ -36,6 +41,7 @@ const VideoRoom = () => {
   const [tracks, setTracks] = useState<any[]>([])
   const [localTracks, setLocalTracks] = useState<any[]>([])
   const [isJoinChannel, setIsJoinChannel] = useState<boolean>(false)
+  const [remainingTime, setRemainingTime] = useState<number>(5)
 
   const [myUid, setMyUid] = useState<number>(0)
 
@@ -83,11 +89,15 @@ const VideoRoom = () => {
   }
 
   const handleLeaveChannel = () => {
+    socketChattingEmit.emit(getSocket().SOCKER_CHATTING_SERVER_ON.LEAVE_CALL_CHANNEL, {
+      channelId: client?.channelName,
+    })
     for (let localTrack of localTracks) {
       localTrack.stop()
       localTrack.close()
     }
     router.replace('/')
+    setNewCall(undefined)
   }
 
   useEffect(() => {
@@ -187,9 +197,45 @@ const VideoRoom = () => {
     })
   }
 
+  useEffect(() => {
+    if (
+      (endCallType?.type == CallEnum.CANCEL || endCallType?.type == CallEnum.LEAVE) &&
+      endCallType?.channelId == client.channelName
+    ) {
+      const intervalId = setInterval(() => {
+        const newRemainingTime = remainingTime - 1
+        setRemainingTime(newRemainingTime)
+      }, 1000)
+
+      return () => clearInterval(intervalId)
+    }
+  }, [endCallType, remainingTime])
+
+  useEffect(() => {
+    if (
+      (endCallType?.type == CallEnum.CANCEL || endCallType?.type == CallEnum.LEAVE) &&
+      endCallType?.channelId == client.channelName &&
+      remainingTime <= 0
+    ) {
+      handleLeaveChannel()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [endCallType, remainingTime])
+
   return (
-    <div className="min-h-screen text-white mt-32">
-      <div className="grid grid-cols-6 pl-10 pr-20 mb-10">
+    <div className="min-h-screen text-white mt-20">
+      {(endCallType?.type == CallEnum.CANCEL || endCallType?.type == CallEnum.LEAVE) &&
+        endCallType?.channelId == client.channelName && (
+          <>
+            {endCallType?.type == CallEnum.CANCEL ? (
+              <p className="text-center text-xl font-bold text-red-700">Cuộc gọi đã bị từ chối</p>
+            ) : (
+              <p className="text-center text-xl font-bold text-red-700">Đối phương đã rời cuộc gọi</p>
+            )}
+            <EndCallCountDown remainingTimeLeft={remainingTime} />
+          </>
+        )}
+      <div className="grid grid-cols-6 pl-10 pr-20 my-10">
         {removeDuplicates(users).map((user) => (
           <div key={user.uid.toString()} className={`2xl:col-span-3 lg:col-span-2 col-span-1 px-5 rounded-lg`}>
             <VideoPlayer user={user} myUid={myUid} />
@@ -208,4 +254,5 @@ const VideoRoom = () => {
     </div>
   )
 }
+
 export default VideoRoom

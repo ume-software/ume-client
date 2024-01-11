@@ -60,7 +60,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const [userInfo, setUserInfo] = useState<UserInformationResponse>()
   let accessToken
   const { isAuthenticated } = useAuth()
-  const { messages, newCall } = useChattingSockets()
+  const { socket: socketChattingEmit, messages, newCall, setEndCallType } = useChattingSockets()
   const [isPressCalling, setIsPressCalling] = useState<boolean>(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const utils = trpc.useContext()
@@ -131,26 +131,33 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     setIsPressCalling(false)
   }, [newCall])
 
+  const handleCancelCall = () => {
+    socketChattingEmit.emit(getSocket().SOCKER_CHATTING_SERVER_ON.CANCEL_CALL_CHANNEL, {
+      channelId: newCall?.channelName,
+    })
+    setEndCallType(undefined)
+    setIsPressCalling(true)
+  }
+
   return (
     <SocketContext.Provider value={socketClientEmitValue}>
       {newCall?.rtcToken && !isPressCalling && (
-        <div className="fixed top-30 left-30 w-full min-h-screen bg-black bg-opacity-50 z-50 flex justify-center items-center gap-5">
-          <Link
-            href={`/video-call?channelId=${encodeURIComponent(newCall?.channelName)}&uid=${encodeURIComponent(
-              newCall?.uid,
-            )}&tk=${encodeURIComponent(newCall?.rtcToken)}`}
-            className="bg-green-500 p-5 rounded-full cursor-pointer"
-            onClick={() => setIsPressCalling(true)}
-          >
-            <Videocamera theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
-          </Link>
-          <button
-            type="button"
-            className="bg-red-500 p-5 rounded-full cursor-pointer"
-            onClick={() => setIsPressCalling(true)}
-          >
-            <PhoneOff theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
-          </button>
+        <div className="fixed top-30 left-30 w-full min-h-screen bg-black bg-opacity-50 z-50 flex flex-col justify-center gap-5">
+          <p className="text-center text-white text-3xl font-bold">{newCall?.userInformation?.name} đang gọi đến...</p>
+          <div className="flex justify-center items-center">
+            <Link
+              href={`/video-call?channelId=${encodeURIComponent(newCall?.channelName)}&uid=${encodeURIComponent(
+                newCall?.uid,
+              )}&tk=${encodeURIComponent(newCall?.rtcToken)}`}
+              className="bg-green-500 p-5 rounded-full cursor-pointer"
+              onClick={() => setIsPressCalling(true)}
+            >
+              <Videocamera theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
+            </Link>
+            <button type="button" className="bg-red-500 p-5 rounded-full cursor-pointer" onClick={handleCancelCall}>
+              <PhoneOff theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
+            </button>
+          </div>
         </div>
       )}
       <audio ref={audioRef} src={NotiSound} />
