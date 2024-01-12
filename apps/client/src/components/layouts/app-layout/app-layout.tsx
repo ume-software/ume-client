@@ -144,7 +144,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       {newCall?.rtcToken && !isPressCalling && (
         <div className="fixed top-30 left-30 w-full min-h-screen bg-black bg-opacity-50 z-50 flex flex-col justify-center gap-5">
           <p className="text-center text-white text-3xl font-bold">{newCall?.userInformation?.name} đang gọi đến...</p>
-          <div className="flex justify-center items-center">
+          <div className="flex justify-center items-center gap-5">
             <Link
               href={`/video-call?channelId=${encodeURIComponent(newCall?.channelName)}&uid=${encodeURIComponent(
                 newCall?.uid,
