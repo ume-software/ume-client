@@ -73,6 +73,7 @@ const VideoRoom = () => {
   const handleUserJoined = async (user, mediaType) => {
     await client.subscribe(user, mediaType)
     setIsJoinChannel(true)
+    setEndCallType(undefined)
 
     if (mediaType === 'video') {
       setUsers((prevUsers) => [...prevUsers, user])
@@ -92,6 +93,7 @@ const VideoRoom = () => {
     socketChattingEmit.emit(getSocket().SOCKER_CHATTING_SERVER_ON.LEAVE_CALL_CHANNEL, {
       channelId: client?.channelName,
     })
+    setEndCallType(undefined)
     for (let localTrack of localTracks) {
       localTrack.stop()
       localTrack.close()
