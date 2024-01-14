@@ -87,7 +87,13 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
   }
 
   const handleCallVideo = () => {
-    router.replace(`/video-call?channelId=${props.channel._id}`)
+    // router.replace(`/video-call?channelId=${props.channel._id}`)
+
+    window.open(
+      `${window.location.origin}/video-call?channelId=${props.channel._id}`,
+      'winname',
+      'directories=no,titlebar=no,toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=no,width=1200,height=850',
+    )
   }
 
   return (

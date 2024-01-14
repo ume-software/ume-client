@@ -87,12 +87,16 @@ const VideoRoom = () => {
   const handleUserLeft = (user) => {
     setUsers((prevUsers) => [...prevUsers.filter((prevUser) => prevUser.uid !== user.uid)])
     setIsJoinChannel(false)
+    handleLeaveChannel()
   }
 
   const handleLeaveChannel = () => {
-    socketChattingEmit.emit(getSocket().SOCKER_CHATTING_SERVER_ON.LEAVE_CALL_CHANNEL, {
-      channelId: client?.channelName,
-    })
+    socketChattingEmit.emit(
+      getSocket().SOCKER_CHATTING_SERVER_ON.LEAVE_CALL_CHANNEL,
+      JSON.stringify({
+        channelId: client?.channelName,
+      }),
+    )
     setEndCallType(undefined)
     for (let localTrack of localTracks) {
       localTrack.stop()
@@ -105,6 +109,7 @@ const VideoRoom = () => {
   useEffect(() => {
     client.on('user-published', handleUserJoined)
     client.on('user-left', handleUserLeft)
+    client.on('user-unpublished', handleLeaveChannel)
 
     client.disableDualStream()
 
@@ -223,6 +228,8 @@ const VideoRoom = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [endCallType, remainingTime])
+
+  console.log(endCallType)
 
   return (
     <div className="min-h-screen text-white mt-20">

@@ -131,6 +131,17 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     setIsPressCalling(false)
   }, [newCall])
 
+  const handleAcceptCall = (newCall) => {
+    setIsPressCalling(true)
+    window.open(
+      `${window.location.origin}/video-call?channelId=${encodeURIComponent(
+        newCall?.channelName,
+      )}&uid=${encodeURIComponent(newCall?.uid)}&tk=${encodeURIComponent(newCall?.rtcToken)}`,
+      'winname',
+      'directories=no,titlebar=no,toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=no,width=1200,height=850',
+    )
+  }
+
   const handleCancelCall = () => {
     socketChattingEmit.emit(getSocket().SOCKER_CHATTING_SERVER_ON.CANCEL_CALL_CHANNEL, {
       channelId: newCall?.channelName,
@@ -145,15 +156,13 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         <div className="fixed top-30 left-30 w-full min-h-screen bg-black bg-opacity-50 z-50 flex flex-col justify-center gap-5">
           <p className="text-center text-white text-3xl font-bold">{newCall?.userInformation?.name} đang gọi đến...</p>
           <div className="flex justify-center items-center gap-5">
-            <Link
-              href={`/video-call?channelId=${encodeURIComponent(newCall?.channelName)}&uid=${encodeURIComponent(
-                newCall?.uid,
-              )}&tk=${encodeURIComponent(newCall?.rtcToken)}`}
+            <button
+              type="button"
               className="bg-green-500 p-5 rounded-full cursor-pointer"
-              onClick={() => setIsPressCalling(true)}
+              onClick={() => handleAcceptCall(newCall)}
             >
               <Videocamera theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
-            </Link>
+            </button>
             <button type="button" className="bg-red-500 p-5 rounded-full cursor-pointer" onClick={handleCancelCall}>
               <PhoneOff theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
             </button>
