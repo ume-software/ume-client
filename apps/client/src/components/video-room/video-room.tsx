@@ -41,7 +41,7 @@ const VideoRoom = () => {
   const [tracks, setTracks] = useState<any[]>([])
   const [localTracks, setLocalTracks] = useState<any[]>([])
   const [isJoinChannel, setIsJoinChannel] = useState<boolean>(false)
-  const [remainingTime, setRemainingTime] = useState<number>(5)
+  const [remainingTime, setRemainingTime] = useState<number>(3)
 
   const [myUid, setMyUid] = useState<number>(0)
 
@@ -87,23 +87,20 @@ const VideoRoom = () => {
   const handleUserLeft = (user) => {
     setUsers((prevUsers) => [...prevUsers.filter((prevUser) => prevUser.uid !== user.uid)])
     setIsJoinChannel(false)
-    handleLeaveChannel()
   }
 
   const handleLeaveChannel = () => {
-    socketChattingEmit.emit(
-      getSocket().SOCKER_CHATTING_SERVER_ON.LEAVE_CALL_CHANNEL,
-      JSON.stringify({
-        channelId: client?.channelName,
-      }),
-    )
+    socketChattingEmit.emit(getSocket().SOCKER_CHATTING_SERVER_ON.LEAVE_CALL_CHANNEL, {
+      channelId: client?.channelName,
+    })
     setEndCallType(undefined)
+    setNewCall(undefined)
     for (let localTrack of localTracks) {
       localTrack.stop()
       localTrack.close()
     }
-    router.replace('/')
-    setNewCall(undefined)
+    // router.replace('/')
+    window.close()
   }
 
   useEffect(() => {
@@ -229,8 +226,6 @@ const VideoRoom = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [endCallType, remainingTime])
 
-  console.log(endCallType)
-
   return (
     <div className="min-h-screen text-white mt-20">
       {(endCallType?.type == CallEnum.CANCEL || endCallType?.type == CallEnum.LEAVE) &&
@@ -253,8 +248,8 @@ const VideoRoom = () => {
       </div>
       <div className="flex justify-center">
         <div
-          className="p-5 ml-10 mr-20 my-10 rounded-full bg-red-500 cursor-pointer"
-          onClick={() => handleLeaveChannel()}
+          className="p-5 ml-10 mr-20 my-10 rounded-full bg-red-500 cursor-pointer z-10"
+          onClick={handleLeaveChannel}
           onKeyDown={() => {}}
         >
           <PhoneOff theme="outline" size="25" fill="#FFF" strokeLinejoin="bevel" />
