@@ -17,7 +17,6 @@ import {
 } from 'react'
 
 import { isNil } from 'lodash'
-import Link from 'next/link'
 import { UserInformationResponse } from 'ume-service-openapi'
 
 import { Footer } from '~/components/footer/footer.component'
@@ -60,7 +59,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const [userInfo, setUserInfo] = useState<UserInformationResponse>()
   let accessToken
   const { isAuthenticated } = useAuth()
-  const { socket: socketChattingEmit, messages, newCall, setEndCallType } = useChattingSockets()
+  const { socket: socketChattingEmit, messages, newCall, setNewCall, endCallType } = useChattingSockets()
   const [isPressCalling, setIsPressCalling] = useState<boolean>(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const utils = trpc.useContext()
@@ -146,7 +145,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     socketChattingEmit.emit(getSocket().SOCKER_CHATTING_SERVER_ON.CANCEL_CALL_CHANNEL, {
       channelId: newCall?.channelName,
     })
-    setEndCallType(undefined)
+    setNewCall(undefined)
     setIsPressCalling(true)
   }
 
@@ -163,7 +162,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             >
               <Videocamera theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
             </button>
-            <button type="button" className="bg-red-500 p-5 rounded-full cursor-pointer" onClick={handleCancelCall}>
+            <button
+              type="button"
+              className="bg-red-500 p-5 rounded-full cursor-pointer z-10"
+              onClick={handleCancelCall}
+            >
               <PhoneOff theme="outline" size="20" fill="#FFF" strokeLinejoin="bevel" />
             </button>
           </div>
