@@ -31,10 +31,15 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
   const { user } = useAuth()
   const accessToken = localStorage.getItem('accessToken')
   const utils = trpc.useContext()
-  const { data: chattingMessageChannel, isLoading: loadingChattingMessageChannel } = trpc.useQuery([
-    'chatting.getMessagesByChannelId',
-    { channelId: props.channel._id, limit: 'unlimited', page: '1' },
-  ])
+  const { data: chattingMessageChannel, isLoading: loadingChattingMessageChannel } = trpc.useQuery(
+    ['chatting.getMessagesByChannelId', { channelId: props.channel._id, limit: 'unlimited', page: '1' }],
+    {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: 'always',
+      cacheTime: 0,
+      refetchOnMount: true,
+    },
+  )
   const divRef = useRef(null)
   useChatScroll(divRef, chattingMessageChannel)
 
@@ -95,6 +100,8 @@ const ChatContent = (props: { channel: ChattingChannelResponse }) => {
       'directories=no,titlebar=no,toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=no,width=1200,height=850',
     )
   }
+
+  console.log(chattingMessageChannel)
 
   return (
     <>
