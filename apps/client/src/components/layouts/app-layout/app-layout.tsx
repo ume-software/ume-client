@@ -60,7 +60,14 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const [userInfo, setUserInfo] = useState<UserInformationResponse>()
   let accessToken
   const { isAuthenticated } = useAuth()
-  const { socket: socketChattingEmit, messages, newCall, setNewCall, endCallType } = useChattingSockets()
+  const {
+    socket: socketChattingEmit,
+    messages,
+    newCall,
+    setNewCall,
+    endCallType,
+    setEndCallType,
+  } = useChattingSockets()
   const [isPressCalling, setIsPressCalling] = useState<boolean>(false)
   const defaultAudioRef = useRef<HTMLAudioElement | null>(null)
   const defaultCallRef = useRef<HTMLAudioElement | null>(null)
@@ -130,7 +137,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
   useEffect(() => {
     if (isPressCalling) setIsPressCalling(false)
-    if (!isPressCalling && newCall && (newCall.userInformation as any).id != userInfo?.id) {
+    if (!isPressCalling && newCall) {
       defaultCallRef.current?.play()
     } else {
       const audioElement = defaultCallRef?.current
@@ -139,9 +146,14 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         audioElement.currentTime = 0
       }
     }
-  }, [newCall, isPressCalling, userInfo?.id])
+  }, [newCall, isPressCalling, endCallType])
 
   const handleAcceptCall = (newCall) => {
+    const audioElement = defaultCallRef?.current
+    if (audioElement) {
+      audioElement?.pause()
+      audioElement.currentTime = 0
+    }
     window.open(
       `${window.location.origin}/video-call?channelId=${encodeURIComponent(
         newCall?.channelName,
@@ -151,17 +163,22 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     )
     setIsPressCalling(true)
     setNewCall(undefined)
+    setEndCallType(undefined)
   }
 
   const handleCancelCall = () => {
-    socketChattingEmit.emit(getSocket().SOCKER_CHATTING_SERVER_ON.CANCEL_CALL_CHANNEL, {
-      channelId: newCall?.channelName,
-    })
-    setNewCall(undefined)
-    setIsPressCalling(true)
+    const audioElement = defaultCallRef?.current
+    if (audioElement) {
+      audioElement?.pause()
+      audioElement.currentTime = 0
+      socketChattingEmit.emit(getSocket().SOCKER_CHATTING_SERVER_ON.CANCEL_CALL_CHANNEL, {
+        channelId: newCall?.channelName,
+      })
+      setNewCall(undefined)
+      setEndCallType(undefined)
+      setIsPressCalling(true)
+    }
   }
-
-  console.log('newCall', newCall)
 
   return (
     <SocketContext.Provider value={socketClientEmitValue}>

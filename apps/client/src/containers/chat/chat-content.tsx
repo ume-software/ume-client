@@ -23,8 +23,6 @@ const convertArrayObjectToObject = (input: Array<any>, key: string = '_id') => {
   }, {})
 }
 const ChatContent = (props: { channel: ChattingChannelResponse }) => {
-  const router = useRouter()
-
   const [messageInput, setMessageInput] = useState('')
   const [displayMessageTime, setDisplayMessageTime] = useState('')
   const { socket, messages } = useChattingSockets()
