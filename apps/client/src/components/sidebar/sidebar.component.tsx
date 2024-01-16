@@ -79,9 +79,10 @@ export const Sidebar = () => {
       </div>
       <div className="flex flex-col items-center justify-center gap-8 px-4 pt-10">
         <CustomDrawer
-          customOpenBtn={`p-2 bg-gray-700 rounded-full cursor-pointer hover:bg-gray-500 active:bg-gray-400`}
+          customOpenBtn={`bg-gray-700 rounded-full cursor-pointer hover:bg-gray-500 active:bg-gray-400`}
           openBtn={
             <div
+              className="w-full h-full p-2"
               onClick={() => handleChatOpen()}
               onKeyDown={(event) => {
                 if (event.key === 'Enter' || event.key === ' ') {

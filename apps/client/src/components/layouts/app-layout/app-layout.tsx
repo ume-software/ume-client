@@ -1,5 +1,6 @@
 import { PhoneOff, Videocamera } from '@icon-park/react'
 import NotiSound from 'public/sounds/notification.mp3'
+import PhoneCallingSound from 'public/sounds/phone-calling-sound.mp3'
 import { socket } from '~/apis/socket/socket-connect'
 import { useAuth } from '~/contexts/auth'
 import { useChattingSockets } from '~/contexts/chatting-context'
@@ -59,9 +60,17 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const [userInfo, setUserInfo] = useState<UserInformationResponse>()
   let accessToken
   const { isAuthenticated } = useAuth()
-  const { socket: socketChattingEmit, messages, newCall, setNewCall, endCallType } = useChattingSockets()
+  const {
+    socket: socketChattingEmit,
+    messages,
+    newCall,
+    setNewCall,
+    endCallType,
+    setEndCallType,
+  } = useChattingSockets()
   const [isPressCalling, setIsPressCalling] = useState<boolean>(false)
-  const audioRef = useRef<HTMLAudioElement | null>(null)
+  const defaultAudioRef = useRef<HTMLAudioElement | null>(null)
+  const defaultCallRef = useRef<HTMLAudioElement | null>(null)
   const utils = trpc.useContext()
 
   if (typeof window !== 'undefined') {
@@ -90,15 +99,15 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
       if (socketInstance?.socketInstanceBooking) {
         socketInstance.socketInstanceBooking.on(getSocket().SOCKET_SERVER_EMIT.USER_BOOKING_PROVIDER, (...args) => {
-          audioRef.current?.play()
+          defaultAudioRef.current?.play()
           setSocketContext((prev) => ({ ...prev, socketNotificateContext: args }))
         })
         socketInstance.socketInstanceBooking.on(getSocket().SOCKET_SERVER_EMIT.PROVIDER_HANDLED_BOOKING, (...args) => {
-          audioRef.current?.play()
+          defaultAudioRef.current?.play()
           setSocketContext((prev) => ({ ...prev, socketNotificateContext: args }))
         })
         socketInstance.socketInstanceBooking.on(getSocket().SOCKET_SERVER_EMIT.ADMIN_HANDLE_KYC, (...args) => {
-          audioRef.current?.play()
+          defaultAudioRef.current?.play()
           utils.invalidateQueries('identity.identityInfo')
           setSocketContext((prev) => ({ ...prev, socketNotificateContext: args }))
         })
@@ -117,7 +126,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     if (messages && (messages?.length ?? 0) > 0) {
       messages[messages?.length - 1]?.senderId != userInfo?.id &&
         userInfo?.isAllowNotificationMessage &&
-        audioRef.current?.play()
+        defaultAudioRef.current?.play()
     }
   }, [messages, userInfo?.id, userInfo?.isAllowNotificationMessage])
 
@@ -127,11 +136,24 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   )
 
   useEffect(() => {
-    setIsPressCalling(false)
-  }, [newCall])
+    if (isPressCalling) setIsPressCalling(false)
+    if (!isPressCalling && newCall) {
+      defaultCallRef.current?.play()
+    } else {
+      const audioElement = defaultCallRef?.current
+      if (audioElement) {
+        audioElement?.pause()
+        audioElement.currentTime = 0
+      }
+    }
+  }, [newCall, isPressCalling, endCallType])
 
   const handleAcceptCall = (newCall) => {
-    setIsPressCalling(true)
+    const audioElement = defaultCallRef?.current
+    if (audioElement) {
+      audioElement?.pause()
+      audioElement.currentTime = 0
+    }
     window.open(
       `${window.location.origin}/video-call?channelId=${encodeURIComponent(
         newCall?.channelName,
@@ -139,14 +161,23 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       'winname',
       'directories=no,titlebar=no,toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=no,width=1200,height=850',
     )
+    setIsPressCalling(true)
+    setNewCall(undefined)
+    setEndCallType(undefined)
   }
 
   const handleCancelCall = () => {
-    socketChattingEmit.emit(getSocket().SOCKER_CHATTING_SERVER_ON.CANCEL_CALL_CHANNEL, {
-      channelId: newCall?.channelName,
-    })
-    setNewCall(undefined)
-    setIsPressCalling(true)
+    const audioElement = defaultCallRef?.current
+    if (audioElement) {
+      audioElement?.pause()
+      audioElement.currentTime = 0
+      socketChattingEmit.emit(getSocket().SOCKER_CHATTING_SERVER_ON.CANCEL_CALL_CHANNEL, {
+        channelId: newCall?.channelName,
+      })
+      setNewCall(undefined)
+      setEndCallType(undefined)
+      setIsPressCalling(true)
+    }
   }
 
   return (
@@ -172,7 +203,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           </div>
         </div>
       )}
-      <audio ref={audioRef} src={NotiSound} />
+      <audio ref={defaultAudioRef} src={NotiSound} />
+      <audio ref={defaultCallRef} src={PhoneCallingSound} />
       <div className="flex flex-col">
         <div className="fixed z-10 flex flex-col w-full ">
           <Header />

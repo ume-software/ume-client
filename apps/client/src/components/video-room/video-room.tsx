@@ -106,7 +106,7 @@ const VideoRoom = () => {
   useEffect(() => {
     client.on('user-published', handleUserJoined)
     client.on('user-left', handleUserLeft)
-    client.on('user-unpublished', handleLeaveChannel)
+    // client.on('user-unpublished', handleLeaveChannel)
 
     client.disableDualStream()
 
@@ -219,6 +219,7 @@ const VideoRoom = () => {
     if (
       (endCallType?.type == CallEnum.CANCEL || endCallType?.type == CallEnum.LEAVE) &&
       endCallType?.channelId == client.channelName &&
+      endCallType.senderId != userInfo?.id &&
       remainingTime <= 0
     ) {
       handleLeaveChannel()
@@ -229,7 +230,8 @@ const VideoRoom = () => {
   return (
     <div className="min-h-screen text-white mt-20">
       {(endCallType?.type == CallEnum.CANCEL || endCallType?.type == CallEnum.LEAVE) &&
-        endCallType?.channelId == client.channelName && (
+        endCallType?.channelId == client.channelName &&
+        endCallType.senderId != userInfo?.id && (
           <>
             {endCallType?.type == CallEnum.CANCEL ? (
               <p className="text-center text-xl font-bold text-red-700">Cuộc gọi đã bị từ chối</p>

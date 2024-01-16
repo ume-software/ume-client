@@ -100,7 +100,7 @@ const CustomDrawer = ({
   }
   return (
     <>
-      <div onClick={showDrawer} className={`cursor-pointer ${customOpenBtn}`} onKeyDown={() => {}}>
+      <div onClick={showDrawer} className={`w-fit h-fit cursor-pointer ${customOpenBtn}`} onKeyDown={() => {}}>
         {openBtn}
       </div>
       <Drawer
