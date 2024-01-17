@@ -8,7 +8,6 @@ import { useEffect, useRef, useState } from 'react'
 import { Tooltip } from 'antd'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 import { ChattingChannelResponse, MemberChatChannelResponse } from 'ume-chatting-service-openapi'
 
 import { CommentSkeletonLoader } from '~/components/skeleton-load'
